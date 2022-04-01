@@ -1,0 +1,24 @@
+
+.theme-light.btn-primary{
+    background-color: unset;
+    border-color:unset;
+    border:unset;
+}
+.theme-light.btn-primary:focus::before{
+  opacity:0.24; 
+}
+.theme-light.btn-primary::before
+{
+  background-color: currentColor;
+  border-radius: inherit;
+  bottom: 0;
+  color: inherit;
+  content: "";
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+}

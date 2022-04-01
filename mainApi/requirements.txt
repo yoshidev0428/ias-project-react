@@ -1,0 +1,27 @@
+#bioformats==0.1.15
+
+celery # workers
+aioredis # asyncio redis api
+uvicorn #  asgi server
+
+fastapi # main api framework
+pydantic[email] # for models
+pymongo # mongoDb api
+motor # asyncio mongo driver
+passlib[bcrypt] # for password hashing
+python-jose[cryptography] # encryption
+python-multipart # form data, used for uploading multiple files
+
+pyotp # for OTP, One-time password
+aiofiles # file support for asyncio
+Pillow # Python Imaging Library
+
+pytest  # for testing
+pytest-asyncio
+httpx  # http client for testing http endpoints
+qrcode[pil]  # for generating QR codes
+scikit-image
+flowdec[tf_gpu]
+tensorflow_addons
+jsons
+histomicstk
