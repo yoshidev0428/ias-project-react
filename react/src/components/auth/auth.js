@@ -26,7 +26,7 @@ const Auth = (props) => {
         }
         {props.authPage === 'otpQRPage' && 
           <div>
-            <RegisterOTP_QR />
+            <RegisterOtpQr />
           </div>
         }
       </div>
