@@ -13,6 +13,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [error, setError] = useState('');
 
   const showLogin = async (e) => {
     store.dispatch({type:"auth_setAuthPage", page:"loginPage"});

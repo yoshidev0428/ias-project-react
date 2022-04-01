@@ -53,4 +53,4 @@ const RegisterOtpQr = (props) => {
 }
 
 
-export default connect(mapStateToPros)(RegisterOTP_QR);
+export default connect(mapStateToPros)(RegisterOtpQr);
