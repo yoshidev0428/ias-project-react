@@ -6,8 +6,6 @@ import store from '../../reducers';
 
 
 const Register = () => {
-  // History hook
-  const history = useHistory();
 
   // User information hook
   const [firstName, setFirstName] = useState('');
@@ -15,7 +13,6 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [error, setError] = useState('');
 
   const showLogin = async (e) => {
     store.dispatch({type:"auth_setAuthPage", page:"loginPage"});
@@ -63,10 +60,10 @@ const Register = () => {
           store.dispatch({type:"auth_setAuthPage", page:OTP_QR_PAGE});
         }
       })
-      .catch(error => {
+      .catch(e => {
         /* Error with registration of user */
         store.dispatch({type:"logOut"});
-        console.log(error);
+        console.log(e);
         // if (error.status === 401) {
         //   context.dispatch("logOut");
         //   this.$message({

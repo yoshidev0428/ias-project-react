@@ -7,7 +7,7 @@ import store from "../../reducers";
 const mapStateToPros = state => ({
     otpSecrets: state.auth.otpSecrets
   })
-const RegisterOTP_QR = (props) => {
+const RegisterOtpQr = (props) => {
     const handleContinue = async() => {
         store.dispatch({type:"auth_setAuthPage", page:null});
         store.dispatch({type:"auth_setAuthSecrets", payload:null});

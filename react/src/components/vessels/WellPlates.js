@@ -33,7 +33,7 @@ export default function WellPlates (props) {
             : radiusCalculated / 2)
 
     useEffect(() => {
-        if (width != props.width || rows != props.rows || cols != props.cols || showName != props.showName) {
+        if (width !== props.width || rows !== props.rows || cols !== props.cols || showName !== props.showName) {
 
             if (props.width * VESSEL_WELLPLATE_RATIO > VESSEL_WELLPLATE_MAX_HEIGHT) {
                 calculateDRect.height = VESSEL_WELLPLATE_MAX_HEIGHT;

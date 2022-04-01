@@ -72,7 +72,7 @@ export default function Slides(props) {
     const [slide, setSlide] = useState(calculateDSlide);
 
     useEffect(() => {
-        if (width != props.width || count != props.count || showNumber != props.showNumber) {
+        if (width !== props.width || count !== props.count || showNumber !== props.showNumber) {
 
             if (props.count < 3) {
                 if (props.width * VESSEL_SLIDE_H_RATIO > VESSEL_SLIDE_MAX_HEIGHT) {

@@ -1,6 +1,6 @@
 import * as CONST from '../../constants/authConstant'
 const DEFAULT_PARAMS = {
-  isLoggedIn: sessionStorage.getItem("authToken") != null,
+  isLoggedIn: sessionStorage.getItem("authToken") !== null,
   token: sessionStorage.getItem("authToken"),
   tokenType: sessionStorage.getItem("authTokenType"),
   authPage: sessionStorage.getItem("authToken") ? null : CONST.LOGIN_PAGE,

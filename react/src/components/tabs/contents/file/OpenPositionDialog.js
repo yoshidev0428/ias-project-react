@@ -276,7 +276,7 @@ const DropzoneNamesFiles = () => {
 
   // Select example string in names&types tab
   // const selectExampleString = () => {
-  //   if (typeof window.getSelection != "undefined") {
+  //   if (typeof window.getSelection !== "undefined") {
   //     try {
   //       let sel = window.getSelection(),
   //         range = sel.getRangeAt(0);

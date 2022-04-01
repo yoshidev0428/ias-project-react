@@ -12,13 +12,10 @@ const mapStateToProps = state => ({
   
 })
 const Login = (props) => {
-  // History hook
-  const history = useHistory();
   // User information hook
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
-  const [error, setError] = useState('');
   // Function to call submit
   const handleLogin = async (e) => {
     // Prevents page reload on wrongs creds

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect  } from 'react-redux'
 import Login from "./login";
 import Register from "./register";
-import RegisterOTP_QR from "./register_otp_qr";
+import RegisterOtpQr from "./register_otp_qr";
 
 const mapStateToProps = state => ({
   authPage:state.auth.authPage
