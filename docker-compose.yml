@@ -20,16 +20,16 @@ services:
       - ./shared_utils:/app/shared_utils:rm
       - ./celery_tasks:/app/celery_tasks:rm
     command: ["sh", "./mainApi/start.sh"]
-  nginx:
-    depends_on: 
-        - mainApi
-    container_name: proxy-app
-    build: 
-        context: ./react/
-        dockerfile: Dockerfile
-    ports: 
-        - "3000:3000"
-    restart: always
+  # nginx:
+  #   depends_on: 
+  #       - mainApi
+  #   container_name: proxy-app
+  #   build: 
+  #       context: ./react/
+  #       dockerfile: Dockerfile
+  #   ports: 
+  #       - "3000:3000"
+  #   restart: always
   mongo:
     image: mongo:latest
     restart: unless-stopped
