@@ -4,8 +4,8 @@ services:
 
   mainapi:
     build:
-      context: .
-      dockerfile: mainApi/Dockerfile
+      context: ./mainApi
+      dockerfile: Dockerfile
     ports:
       - 8000:8000
     env_file:
@@ -34,6 +34,17 @@ services:
 #    command: ["uvicorn", "mainApi.app:app", "--host", "0.0.0.0", "--port", "8000"]
     command: ["sh", "./mainApi/start.sh"]
 
+
+  nginx:
+    depends_on: 
+        - mainApi
+    container_name: proxy-app
+    build: 
+        context: ./react/
+        dockerfile: Dockerfile
+    ports: 
+        - "3000:3000"
+    restart: always
 #  frontend:
 #    build:
 #      context: .
