@@ -15,7 +15,7 @@ export default function Dishes(props) {
   }
 
   const max_radius = calculateDRect.height - VESSEL_DISH_GAP;
-
+  const [selected, setSelected] = useState(false);
   const [width, setWidth] = useState(props.width);
   const [size, setSize] = useState(props.size);
   const [rect, setRect] = useState(calculateDRect);
@@ -47,7 +47,7 @@ export default function Dishes(props) {
 
   return (
     <div style={{ width: rect.width, height: rect.height }} className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center">
-      <div style={{ width: radious, height: radious }} className="border border-dark rounded-circle">
+      <div style={{ width: radious, height: radious }} className={'border border-dark rounded-circle dish-box ' + (selected ? 'selected' : '')} onClick={() => {setSelected(!selected)}}>
 
       </div>
     </div>

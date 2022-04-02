@@ -98,8 +98,8 @@ export default function WellPlates (props) {
                                 }
                                 {
                                     [...Array(cols)].map((x, c) =>
-                                        <div key={"circle" + holeNumber(r, c)} style={{ width: radious, height: radious }} className="border border-dark rounded-circle">
-                                            {showNumber ? holeNumber(r, c) : ''}
+                                        <div key={"circle" + holeNumber(r, c)} style={{ width: radious, height: radious }} className="d-flex justify-content-center align-items-center border border-dark rounded-circle">
+                                            <span className='primary--text'>{showNumber ? holeNumber(r, c) : ''}</span>
                                         </div>
                                     )
                                 }

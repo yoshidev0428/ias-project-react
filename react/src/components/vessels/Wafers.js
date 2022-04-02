@@ -13,6 +13,7 @@ export default function Wafers (props) {
         calculateDRect.height = props.width * VESSEL_WAFER_RATIO;
     }
 
+    const [selected, setSelected] = useState(false);
     const max_radius = calculateDRect.height - VESSEL_WAFER_GAP;
     const [width, setWidth] = useState(props.width);
     const [size, setSize] = useState(props.size);
@@ -45,7 +46,7 @@ export default function Wafers (props) {
     const renderDishes = () => {
         return (
             <div style={{ width: rect.width, height: rect.height }} className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center">
-                <div style={{ width: radious, height: radious }} className="border border-dark rounded-circle">
+                <div style={{ width: radious, height: radious }} className={'border border-dark rounded-circle wafer-box ' + (selected ? 'selected' : '')} onClick={() => {setSelected(!selected)}}>
 
                 </div>
             </div>
