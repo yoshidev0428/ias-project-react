@@ -48,9 +48,9 @@ jobs:
       - name: Log in to GitHub container registry
         uses: docker/login-action@v1.10.0
         with:
-          registry: ghcr.io          
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          registry: iasprojectacr.azurecr.io         
+          username: 00000000-0000-0000-0000-000000000000
+          password: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikk3QjY6NlQ0QTpUWlYzOllJT046Rk9ESjpOWlRDOjVVUFk6M0JWMzpGRlhPOlE1NEs6M0JCSzpHVFgzIn0.eyJqdGkiOiJkMDVkNmJmNy1mODI5LTQzNDktYTdiMi02YTRmZTg2YTQ4NWUiLCJzdWIiOiJsaXZlLmNvbSNkYWlzdWtla3Vib3RhQG91dGxvb2suanAiLCJuYmYiOjE2NDg5NDEyMDIsImV4cCI6MTY0ODk1MjkwMiwiaWF0IjoxNjQ4OTQxMjAyLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJpYXNwcm9qZWN0YWNyLmF6dXJlY3IuaW8iLCJ2ZXJzaW9uIjoiMS4wIiwicmlkIjoiMTE4NTQwMTZmMzE5NGU4ZDkwNjBiZGIzNGU5NGEyOTAiLCJncmFudF90eXBlIjoicmVmcmVzaF90b2tlbiIsImFwcGlkIjoiYzQ0YjQwODMtM2JiMC00OWMxLWI0N2QtOTc0ZTUzY2JkZjNjIiwidGVuYW50IjoiNWJjN2JjNmMtZDViZi00MDkzLWEyNzYtZGM0ZmNhMzM3YjA3IiwicGVybWlzc2lvbnMiOnsiQWN0aW9ucyI6WyJyZWFkIiwid3JpdGUiLCJkZWxldGUiXSwiTm90QWN0aW9ucyI6bnVsbH0sInJvbGVzIjpbXX0.BDdX8WGPqX7HaF8SnL3XzxRTgnTKMVY-DEclIuAlMx7SFTithDa3NUnqTN5w1Ujjtjm6kBvGJ7b9b5N3Fs_QpwAUV7KNf8gwUJSmPojRnik6Ypvtqpw_zqYaxkYJ524Ka26NrszN4kFogbp4p4tVMAZgKEh0_wEFcbjgMfeeOO34U8s96d8EYxjC3p6TF6XTDzmHmkeoqruWvFkk9wMDjRhGFtNpv1My5wuEygY2Kr3P_esZoKyrPJiFOlYisYvBRNrVzBcNPRN9hIW-MQFpXo_WoMakMAN_5s6sEPtbHebEJdTVc-qg7bZ_IPIMBDzbosPVUjdra3JFKSxEYgWOIA
 
       - name: Lowercase the repo name and username
         run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
