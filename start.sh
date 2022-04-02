@@ -6,7 +6,7 @@ docker compose build
 echo ------ Docker Build Complete
 docker compose up -d
 echo ------ Started Backend
-cd vue
+cd react
 echo ------ Starting Frontend
 npm install
-npm run serve
+npm start
