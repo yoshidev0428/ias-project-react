@@ -59,7 +59,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
+          tags: iasprojectacr.azurecr.io/ias-project:web-app
           file: ./mainApi/Dockerfile
 
   deploy:
