@@ -78,5 +78,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F59D2230AABE4ACE88051D8DB47BCB31 }}
+          images: 'iasprojectacr.azurecr.io/ias-project:web-app'
