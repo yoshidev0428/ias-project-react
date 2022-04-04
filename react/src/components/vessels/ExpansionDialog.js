@@ -76,7 +76,7 @@ export const ExpansionDialog = (props) => {
                 case 'Slide':
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: 700 }}><Slides width={700} count={vessel.count} key={vessel.id} /></div>;
                 case 'WellPlate':
-                    return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: 700 }}><WellPlates width={700} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} key={vessel.id} /></div>;
+                    return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: 700 }}><WellPlates width={700} rows={vessel.rows} cols={vessel.cols} showName={true} key={vessel.id} showNumber={true} /></div>;
                 case 'Dish':
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: 700 }}><Dishes width={700} size={vessel.size} key={vessel.id} /></div>;
                 case 'Wafer':

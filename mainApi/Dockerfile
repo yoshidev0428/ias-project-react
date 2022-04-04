@@ -19,6 +19,8 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     apt-get install -y netcat
 
+RUN pip install histomicstk --find-links https://girder.github.io/large_image_wheels
+
 WORKDIR /app
 
 COPY ./mainApi/requirements.txt /app/requirements.txt
