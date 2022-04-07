@@ -31,7 +31,6 @@ jobs:
       with:
         push: true
         tags: iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d0081a619cdb4df1835e1a11d90f3b22 }}/ias-project:${{ github.sha }}
-        file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
