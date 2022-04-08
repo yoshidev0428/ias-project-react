@@ -23,15 +23,15 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: https://iasprojectreg.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_144542ce90de4a76b87445bc8d9b51c0 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_4bb171bbf4fa453a9001dc9942cc094a }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_9707239ee62c48388962bba17e28201a }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_e85f738fb01d410cba3fadc434870a60 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_144542ce90de4a76b87445bc8d9b51c0 }}/ias-project:${{ github.sha }}
-        file: ./mainApi/Dockerfile
+        tags: iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9707239ee62c48388962bba17e28201a }}/iasprojectreg/ias-project:${{ github.sha }}
+        file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'ias-project'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_966adce26e2449d1b9611421d4e47e10 }}
-        images: 'iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_144542ce90de4a76b87445bc8d9b51c0 }}/ias-project:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_488ad7b8b74d42ca9976a6769544765d }}
+        images: 'iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9707239ee62c48388962bba17e28201a }}/iasprojectreg/ias-project:${{ github.sha }}'
