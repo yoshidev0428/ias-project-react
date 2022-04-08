@@ -26,14 +26,12 @@ jobs:
         username: ${{ secrets.AzureAppService_ContainerUsername_9707239ee62c48388962bba17e28201a }}
         password: ${{ secrets.AzureAppService_ContainerPassword_e85f738fb01d410cba3fadc434870a60 }}
 
-    - name: Azure CLI script
-      uses: azure/CLI@v1
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
       with:
-        azcliversion: 2.0.72
-        inlineScript: |
-         az acr login --name iasprojectreg
-         docker compose up
-         docker compose push
+        push: true
+        tags: iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_9707239ee62c48388962bba17e28201a }}/iasprojectreg/ias-project:${{ github.sha }}
+        file: ./mainApi/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
