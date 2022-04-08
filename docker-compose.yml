@@ -83,9 +83,9 @@ services:
       - image-storage:/image-storage
       - cache-storage:/cache-storage
 
-      - ./stitching:/app
-      - ./shared_utils:/app/shared_utils:ro
-      - ./celery_tasks:/app/celery_tasks:ro
+      # - ./stitching:/app
+      # - ./shared_utils:/app/shared_utils:ro
+      # - ./celery_tasks:/app/celery_tasks:ro
     depends_on:
       - rabbitmq
 volumes:
