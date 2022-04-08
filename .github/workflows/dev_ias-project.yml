@@ -25,13 +25,11 @@ jobs:
         registry: https://iasprojectreg.azurecr.io/
         username: ${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}
         password: ${{ secrets.AzureAppService_ContainerPassword_dce2dc90751f42d3b91dfef151c9baca }}
-
-    - name: Build and push container image to registry
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}
-        file: ./Dockerfile
+       
+    - name: 'build and push'
+      run: |
+        docker build -t iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}
+        docker push --all-tags iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
