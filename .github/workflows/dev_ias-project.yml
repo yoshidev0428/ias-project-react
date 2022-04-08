@@ -26,24 +26,5 @@ jobs:
         username: ${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}
         password: ${{ secrets.AzureAppService_ContainerPassword_dce2dc90751f42d3b91dfef151c9baca }}
        
-    - name: 'build and push'
-      run: |
-        docker build -t iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}
-        docker push --all-tags iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'ias-project'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_bbf80023a43e405da907c66bf08b099e }}
-        images: 'iasprojectreg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_01f6b62726ce4adb81a8fa53700f02ab }}/ias-project:${{ github.sha }}'
+    - name: Start containers
+      run: docker compose -f "docker-compose.yml" up -d
