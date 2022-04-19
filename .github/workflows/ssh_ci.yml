@@ -33,7 +33,7 @@ jobs:
                   cd react && npm -v
                   npm i && npm run build && 
                   rm -R /var/www/html/* && 
-                  mv build/* /var/www/html/ && 
+                  mv ./build/* /var/www/html/ && 
                   cd .. && 
                   sudo docker-compose up -d
          host: ${{ secrets.HOST }}
