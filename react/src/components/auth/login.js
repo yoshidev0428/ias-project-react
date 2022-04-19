@@ -84,7 +84,7 @@ const Login = (props) => {
             </Container>
             <Form onSubmit={handleLogin}>
               <Form.Group controlId="formLoginEmail">
-                <Form.Label>Email333</Form.Label>
+                <Form.Label>Email</Form.Label>
                 <Form.Control type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
               </Form.Group>
               <Form.Group controlId="formLoginPassword">
