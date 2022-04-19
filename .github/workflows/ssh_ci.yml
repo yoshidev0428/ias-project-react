@@ -28,6 +28,11 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
          command: cd ias-project-react && git pull && 
+                  cd react && npm -v
+                  npm i && npm run build && 
+                  rm -R /var/www/html/* && 
+                  mv build/* /var/www/html/ && 
+                  cd .. && 
                   sudo docker-compose up -d
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
