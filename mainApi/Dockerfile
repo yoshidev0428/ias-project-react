@@ -23,13 +23,13 @@ RUN pip install histomicstk --find-links https://girder.github.io/large_image_wh
 
 WORKDIR /app
 
-COPY ./mainApi/requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
 RUN pip install --upgrade -r /app/requirements.txt
 
 EXPOSE 8000
 
-COPY ./mainApi /app/mainApi/
+COPY . /app/mainApi/
 
 RUN chmod -R 777 /app/mainApi/app/static
 
