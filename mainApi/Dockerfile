@@ -34,7 +34,7 @@ COPY . /app/mainApi/
 RUN chmod -R 777 /app/mainApi/app/static
 
 ## Copy shared
-COPY ./shared_utils /app/shared_utils/
-COPY ./celery_tasks/ /app/celery_tasks/
+COPY ../shared_utils /app/shared_utils/
+COPY ../celery_tasks/ /app/celery_tasks/
 
 
