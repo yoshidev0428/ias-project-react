@@ -28,7 +28,7 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
          command: cd ias-project-react && git pull &&
-                  docker compose up -d
+                  docker-compose up -d
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
