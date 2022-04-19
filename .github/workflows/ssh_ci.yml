@@ -1,0 +1,40 @@
+# This is a basic workflow to help you get started with Actions
+
+name: remote ssh command
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the dev branch
+  push:
+    branches: [ dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    name: Build
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      #- uses: actions/checkout@v3
+
+      - name: executing remote ssh commands using password
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+         command: cd ias-project-react && git pull && 
+                  cd react && 
+                  npm i && npm run build && 
+                  rm -R /var/www/html/* && 
+                  mv build/* /var/www/html/ && 
+                  cd .. && 
+                  docker compose up -d
+         host: ${{ secrets.HOST }}
+         username: ${{ secrets.USERNAME }}
+         password: ${{ secrets.PASSWORD }}
+         port: ${{ secrets.PORT }}
