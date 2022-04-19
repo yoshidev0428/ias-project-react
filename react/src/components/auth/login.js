@@ -103,7 +103,7 @@ const Login = (props) => {
               </Button>
             </Form>
             <Button type="button" className="link-button" onClick={showRegistration}>Switch to register</Button>
-            {/* <a href="/register" className="link-button" onClick={showRegistration}>Switch to register11</a> */}
+            {/* <a href="/register" className="link-button" onClick={showRegistration}>Switch to register</a> */}
           </Container>
     </div>    
   );
