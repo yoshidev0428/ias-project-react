@@ -27,12 +27,7 @@ jobs:
       - name: executing remote ssh commands using password
         uses: garygrossgarten/github-action-ssh@release
         with:
-         command: cd ias-project-react && git pull && 
-                  cd react &&
-                  sudo npm i && sudo npm run build && 
-                  sudo rm -R /var/www/html/* && 
-                  sudo mv build/* /var/www/html/ && 
-                  cd .. && 
+         command: cd ias-project-react && git pull
                   sudo docker-compose up -d
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
