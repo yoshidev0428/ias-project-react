@@ -23,18 +23,18 @@ RUN pip install histomicstk --find-links https://girder.github.io/large_image_wh
 
 WORKDIR /app
 
-COPY ./requirements.txt /app/requirements.txt
+COPY ./mainApi/requirements.txt /app/requirements.txt
 
 RUN pip install --upgrade -r /app/requirements.txt
 
 EXPOSE 8000
 
-COPY . /app/mainApi/
+COPY ./mainApi /app/mainApi/
 
 RUN chmod -R 777 /app/mainApi/app/static
 
 ## Copy shared
-COPY ../shared_utils /app/shared_utils/
-COPY ../celery_tasks/ /app/celery_tasks/
+COPY ./shared_utils /app/shared_utils/
+COPY ./celery_tasks/ /app/celery_tasks/
 
 
