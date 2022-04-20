@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import SimpleDialog from "../../../custom/SimpleDialog";
 import { styled } from "@mui/material/styles";
@@ -13,12 +13,27 @@ import TreeItem from "@mui/lab/TreeItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-const Input = styled("input")({
-  display: "none",
-});
-
 const OpenCloudDialog = (props) => {
   const fileInput = React.useRef();
+  const [experimentName, setExperimentName] = useState(null);
+  const [fileName, setFileName] = useState(null);
+  const [cloudData, setCloudData] = useState([]);
+  
+  const handleSelectFile = (e) => {
+    console.log('handleSelectFile', e.target.files)
+    if (e.target.files.length > 0) {
+      const fileName = e.target.files[0].name;
+      setFileName(fileName);
+    }
+  }
+
+  const addImage = (e) => {
+    console.log('addImage', fileName, experimentName)
+    cloudData.push({ experimentName, fileName })
+    setCloudData([...cloudData]);
+    setFileName('');
+    setExperimentName('');
+  }
 
   return (
     <>
@@ -31,28 +46,31 @@ const OpenCloudDialog = (props) => {
         newTitle=""
         click={props.handleClose}
       >
-        <div className="mb-4">
+        <div className="mt-2 mb-4">
           <TextField
-            id="experiment-name"
             label="Experiment name"
-            variant="outlined"
+            variant="standard"
             fullWidth
+            value={experimentName}
+            onChange={e => setExperimentName(e.target.value)}
           />
         </div>
         <div className="mb-4">
           <Typography component="div">Select Data</Typography>
           <label htmlFor="contained-button-file" style={{width: '100%'}}>
-            <Input
+            <input
               ref={fileInput}
+              style={{display: 'none'}}
               accept="image/*"
               id="contained-button-file"
-              multiple
               type="file"
+              onChange={(e) => handleSelectFile(e)}
             />
             <TextField
               label="Click Here"
-              variant="outlined"
+              variant="standard"
               fullWidth
+              value={fileName}
               onClick={() => fileInput.current.click()}
             />
           </label>
@@ -62,9 +80,33 @@ const OpenCloudDialog = (props) => {
             aria-label="file system navigator"
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
-            sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+            sx={{ flexGrow: 1, overflowY: "auto" }}
+            fullWidth
           >
-            <TreeItem nodeId="1" label="Applications">
+            { cloudData.map((item, index) => (
+              <TreeItem
+                key={index}
+                nodeId={index * 2}
+                label={
+                  <FormControlLabel 
+                    label={item.experimentName}
+                    control={<Checkbox/>}
+                  ></FormControlLabel>
+                }
+              >
+                <TreeItem
+                  key={index}
+                  nodeId={index * 2 + 1}
+                  label={
+                    <FormControlLabel 
+                      label={item.fileName}
+                      control={<Checkbox/>}
+                    ></FormControlLabel>
+                  }
+                />
+              </TreeItem>
+            ))}
+            {/* <TreeItem nodeId="1" label="Applications">
               <TreeItem nodeId="2" label="Calendar" />
               <TreeItem
                 label={
@@ -82,7 +124,7 @@ const OpenCloudDialog = (props) => {
               <TreeItem nodeId="6" label="MUI">
                 <TreeItem nodeId="8" label="index.js" />
               </TreeItem>
-            </TreeItem>
+            </TreeItem> */}
           </TreeView>
         </div>
         <div>
@@ -96,7 +138,7 @@ const OpenCloudDialog = (props) => {
             <Button variant="contained" className="ml-2">
               Upload
             </Button>
-            <Button variant="contained">
+            <Button variant="contained" onClick={addImage}>
               Select Data
             </Button>
           </Box>
