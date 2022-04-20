@@ -6,7 +6,7 @@ import './App.scss';
 import Auth from './components/auth/auth';
 import MainFrame from './components/MainFrame';
 const mapStateToProps = state => ({
-  isShowAuthPage: state.auth.authPage !== null,
+  isShowAuthPage: state.auth.authPage == null,
   // isShowAuthPage: false,
   isLoggedIn: !state.auth.isLoggedIn
 })

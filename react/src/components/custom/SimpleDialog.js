@@ -47,7 +47,7 @@ const SimpleDialog = (props) => {
                     >
                         {/* {props.removeTitle} */}
                     </Button>}
-                    <Button variant="contained" color="success" onClick={selected} 
+                    <Button variant="contained" color="success" onClick={props.selected} 
                         disabled={props.selectDisable}
                     >
                         {props.okTitle}
