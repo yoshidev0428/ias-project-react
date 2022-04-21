@@ -74,13 +74,13 @@ export const SelectDialog = (props) => {
         if (vessel) {
             switch (vessel.type) {
                 case 'Slide':
-                    return <div key={vessel.id} className={currentVessel == vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Slides width={width / 6} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Slides width={width / 6} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'WellPlate':
-                    return <div key={vessel.id} className={currentVessel == vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><WellPlates width={width / 6} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><WellPlates width={width / 6} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Dish':
-                    return <div key={vessel.id} className={currentVessel == vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Dishes width={width / 6} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Dishes width={width / 6} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Wafer':
-                    return <div key={vessel.id} className={currentVessel == vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Wafers width={width / 6} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary' : ''} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: width / 6, height: width / 6 }}><Wafers width={width / 6} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
             }
         }
     }

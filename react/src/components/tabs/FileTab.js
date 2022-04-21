@@ -31,7 +31,9 @@ import {
   mdiSortClockAscending,
   mdiCog
  } from '@mdi/js';
+ import {useFlagsStore} from "../../components/state";
 export default function FileTab (props) {
+  const dialogFlag = useFlagsStore(store => store.dialogFlag);
   const refresh = () => {
     console.log("click refresh");
   };
@@ -73,7 +75,8 @@ export default function FileTab (props) {
     setcloudDialog(true);
   }
   const showOpenFileDialog = () =>{
-    setfileDialog(true);
+    // setfileDialog(true);
+    useFlagsStore.setState({ dialogFlag: true });
   }
   const showOpenFolderDialog = () =>{
     // setfolderDialog(true);
@@ -93,7 +96,7 @@ export default function FileTab (props) {
         {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog}/>}
         {cloudDialog && <OpenCloudDialog handleClose={handleClose}/>}
         <CustomButton icon={mdiEmailNewsletter} label="File" click={showOpenFileDialog}/>
-        {fileDialog && <OpenFileDialog title="File" handleClose = {handleClose}/>}
+        {dialogFlag && <OpenFileDialog title="File" handleClose = {handleClose}/>}
         <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={showOpenFolderDialog}/>
         {/* {folderDialog && <OpenFolderDialog title="Folder" handleClose = {handleClose}/>} */}
         <CustomButton icon={mdiDotsGrid} label="Position" click={showPositionDialog}/>
