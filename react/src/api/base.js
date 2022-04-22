@@ -1,6 +1,6 @@
 import axios from "axios";
 import store from '../reducers'
-const state = store.getState();
+var state = store.getState();
 export const BASE_API_URL = "http://localhost:8000/";
 // export const BASE_API_URL = "api:8000/apis/";
 // export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
@@ -19,12 +19,13 @@ export const api = axios.create({
 
 api.interceptors.request.use(request => {
   console.log("[API Request]", request);
-  console.log("111", state.auth);
+  console.log("111", store.getState().auth);
 
   /* add auth headers */
-  if (state.auth.token) {
+  console.log(store.getState().auth.token);
+  if (store.getState().auth.token) {
     request.headers["Authorization"] =
-      state.auth.tokenType + " " + state.auth.token;
+    store.getState().auth.tokenType + " " + store.getState().auth.token;
     request.headers["Content-Type"] = "application/json";
   }
   // if (sessionStorage.getItem("authToken")) {
