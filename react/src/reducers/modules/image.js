@@ -64,7 +64,7 @@ const image = (state = initState, action)  =>{
   switch (action.type) {
     case "image_setNewFiles":
       incLoadingCount(state);
-      API.fileUpload(action.payload.formData)
+      API.fileUpload(action.payload)
       .then(response => {
         setImageUrl(state, response);
         return response;

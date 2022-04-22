@@ -30,10 +30,16 @@ const OpenFileDialog = (props) => {
   };
   const onSelect = () => {
     useFlagsStore.setState({ dialogFlag: false });
+    let files = [];
+    for (let i = 0; i < validatedFiles.length; i++) {
+      files[i] = validatedFiles[i].file
+    }
     if (validatedFiles) {
       var formData = new FormData();
-      formData.append("files", validatedFiles);
-      store.dispatch({type:"image_setNewFiles", payload: {formData}});
+      
+      console.log(validatedFiles);
+      formData.append("files", files[0]);
+      store.dispatch({type:"image_setNewFiles", payload: formData});
     }
   };
   const onClose = () => {
@@ -56,13 +62,14 @@ const OpenFileDialog = (props) => {
             onChange={updateFiles}
             label="Use F for opened files"
             accept="image/*,video/*"
-            multiple
+            // multiple
             style={{backgroundColor:'#1976d2'}}
           />
-          <FileItemContainer view="list">
-            {validatedFiles.map((validatedFile) => (
+          <FileItemContainer view="grid">
+            {validatedFiles.map((validatedFile, idx) => (
               <FileItem
                 {...validatedFile}
+                key={idx}
                 onDelete={onDelete}
                 onSee={(src) => {
                   setImgSource(src);
