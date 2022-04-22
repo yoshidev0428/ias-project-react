@@ -1,5 +1,6 @@
 import axios from "axios";
 import store from '../reducers'
+const state = store.getState();
 // export const BASE_API_URL = "http://localhost:8000/";
 export const BASE_API_URL = "http://20.89.99.224:8000/";
 
