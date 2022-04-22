@@ -26,8 +26,8 @@ if not MONGODB_URL:
     else:
         MONGO_DB_NAME = os.getenv("MONGO_DB", "dev_db")
 
-    # MONGODB_URL = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}"
-    MONGODB_URL = f"mongodb://localhost:{MONGO_PORT}"
+    MONGODB_URL = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}"
+    # MONGODB_URL = f"mongodb://localhost:{MONGO_PORT}"
 
 #
 # class BasicSettings(BaseSettings):
