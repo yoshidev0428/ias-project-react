@@ -1,9 +1,8 @@
 import axios from "axios";
 import store from '../reducers'
-var state = store.getState();
-export const BASE_API_URL = "http://localhost:8000/";
-// export const BASE_API_URL = "api:8000/apis/";
-// export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
+const state = store.getState();
+// export const BASE_API_URL = "http://localhost:8000/";
+export const BASE_API_URL = "http://20.89.99.224/";
 
 export const api = axios.create({
   baseURL: BASE_API_URL,
@@ -19,13 +18,11 @@ export const api = axios.create({
 
 api.interceptors.request.use(request => {
   console.log("[API Request]", request);
-  console.log("111", store.getState().auth);
 
   /* add auth headers */
-  console.log(store.getState().auth.token);
-  if (store.getState().auth.token) {
+  if (state.auth.token) {
     request.headers["Authorization"] =
-    store.getState().auth.tokenType + " " + store.getState().auth.token;
+      state.auth.tokenType + " " + state.auth.token;
     request.headers["Content-Type"] = "application/json";
   }
   // if (sessionStorage.getItem("authToken")) {
@@ -42,7 +39,6 @@ api.interceptors.request.use(request => {
 api.interceptors.response.use(
   response => {
     console.log("[API Response]", response);
-    // return response.data;
     return response;
   },
   error => {
