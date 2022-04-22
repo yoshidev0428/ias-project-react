@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from '../reducers'
 // export const BASE_API_URL = "http://localhost:8000/";
-export const BASE_API_URL = "http://20.210.126.209/:8000/";
+export const BASE_API_URL = "http://20.210.126.209:8000/";
 
 export const api = axios.create({
   baseURL: BASE_API_URL,
