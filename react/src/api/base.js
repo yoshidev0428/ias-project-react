@@ -1,8 +1,7 @@
 import axios from "axios";
 import store from '../reducers'
 var state = store.getState();
-// export const BASE_API_URL = "http://localhost:8000/";
-export const BASE_API_URL = "http://20.89.20.242:8000/";
+export const BASE_API_URL = "http://localhost:8000/";
 // export const BASE_API_URL = "api:8000/apis/";
 // export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
 
