@@ -177,10 +177,10 @@ const handleLeftTabChange = (event, newValue) => {
                     value={leftTabVal} onChange={handleLeftTabChange} 
                     aria-label="scrollable auto tabs example"
               >
-                <Tab style={{ minWidth: "35%" }} icon={<SchoolIcon />} aria-label="school" />
-                <Tab style={{ minWidth: "35%" }} icon={<TuneIcon />} aria-label="tune" />
-                <Tab style={{ minWidth: "35%" }} icon={<FilterAltIcon />} aria-label="filter" />
-                <Tab style={{ minWidth: "35%" }} icon={<InsertDriveFileIcon />} aria-label="file" />
+                <Tab style={{ minWidth: "25%" }} icon={<SchoolIcon />} aria-label="school" />
+                <Tab style={{ minWidth: "25%" }} icon={<TuneIcon />} aria-label="tune" />
+                <Tab style={{ minWidth: "25%" }} icon={<FilterAltIcon />} aria-label="filter" />
+                <Tab style={{ minWidth: "25%" }} icon={<InsertDriveFileIcon />} aria-label="file" />
               </Tabs>
               {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
               {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
@@ -201,11 +201,11 @@ const handleLeftTabChange = (event, newValue) => {
                 allowScrollButtonsMobile
                 value={rightTabVal} onChange={handleRightTabChange}
                 aria-label="scrollable auto tabs example">
-                <Tab style={{ minWidth: "35%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
-                <Tab style={{ minWidth: "35%" }} variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" />
-                <Tab style={{ minWidth: "35%" }} variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" />
-                <Tab style={{ minWidth: "35%" }} variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" />
-                <Tab style={{ minWidth: "35%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
+                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
+                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" />
+                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" />
+                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" />
+                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
               </Tabs>
               {rightTabVal === 0 && <TabContainer><ViewTab /></TabContainer>}
               {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
