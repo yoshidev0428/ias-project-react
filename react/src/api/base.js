@@ -19,9 +19,9 @@ api.interceptors.request.use(request => {
   console.log("[API Request]", request);
 
   /* add auth headers */
-  if (state.auth.token) {
+  if (store.getState().auth.token) {
     request.headers["Authorization"] =
-      state.auth.tokenType + " " + state.auth.token;
+    store.getState().auth.tokenType + " " + store.getState().auth.token;
     request.headers["Content-Type"] = "application/json";
   }
   // if (sessionStorage.getItem("authToken")) {
