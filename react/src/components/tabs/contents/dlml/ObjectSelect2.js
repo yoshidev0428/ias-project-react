@@ -1,15 +1,15 @@
 import React from 'react'
 import SmallCard from "../../../custom/SmallCard"
 import CustomButton from "../../../custom/CustomButton"
-import { 
+import {
     mdiLightbulbOutline,
     mdiLightbulb,
     mdiGestureTap,
     mdiLayersTriple,
     mdiGestureTapButton,
-    mdiCog
+    mdiTrashCanOutline
 } from '@mdi/js';
-export default function ObjectSelect () {
+export default function ObjectSelect() {
 
     const onLight = () => {
         console.log("Light");
@@ -31,20 +31,19 @@ export default function ObjectSelect () {
     }
 
     return (
-        <>
-            <div className="card pa-1">
-                <h6>Object Select</h6>
-                <SmallCard title="Object Brightness" child={true} >
-                    <CustomButton icon={mdiLightbulbOutline} label="Light" onClick={() => onLight()} />
-                    <CustomButton icon={mdiLightbulb} label="Black" onClick={() => onBlack()} />
-                </SmallCard>
-            </div>
-            <SmallCard title="Select Target" child={true}>
-                <CustomButton icon={mdiGestureTap} label="Object" onClick={() => onObject()} />
-                <CustomButton icon={mdiLayersTriple} label="Area" onClick={() => onArea()} />
-                <CustomButton icon={mdiGestureTapButton} label="Back" onClick={() => onBack()} />
-                <CustomButton icon={mdiCog} label="Set" onClick={() => onSet()} />
+        <div className='common-border'>
+            <h6>Object Select</h6>
+            <SmallCard title="Object brightness" child={true} >
+                <CustomButton icon={mdiLightbulbOutline} label="LightOB" onClick={() => onLight()} />
+                <CustomButton icon={mdiLightbulb} label="BlackOB" onClick={() => onBlack()} />
             </SmallCard>
-        </>
+            <div style={{ height: "12px" }}></div>
+            <SmallCard title="Select target" child={true}>
+                <CustomButton icon={mdiGestureTap} label="OB" onClick={() => onObject()} />
+                <CustomButton icon={mdiLayersTriple} label="Area" onClick={() => onArea()} />
+                <CustomButton icon={mdiGestureTapButton} label="BG" onClick={() => onBack()} />
+                <CustomButton icon={mdiTrashCanOutline} label="" onClick={() => onSet()} />
+            </SmallCard>
+        </div>
     )
 }

@@ -10,13 +10,12 @@ export default function SettingsTab() {
   return (
     <>
       <TabItem title="Settings">
-        <Divider />
+        {/* <Divider />
         <Objective />
         <Divider />
         <SmallCard title="Channels">
           <Channnels />
-        </SmallCard>
-
+        </SmallCard> */}
       </TabItem>
     </>
   );

@@ -24,10 +24,9 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import PollIcon from '@mui/icons-material/Poll';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import LinearProgress from '@mui/material/LinearProgress';
+// import LinearProgress from '@mui/material/LinearProgress';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
-
 import ImageViewer from './ImageViewer';
 import DLMLTab from "./tabs/DLMLTab";
 import AdjustTab from "./tabs/AdjustTab";
@@ -37,187 +36,189 @@ import ViewTab from "./tabs/ViewTab";
 import MeasureTab from "./tabs/MeasureTab";
 import ReportTab from "./tabs/ReportTab";
 import SettingsTab from "./tabs/SettingsTab";
-
-
 import store from "../reducers";
 function TabContainer(props) {
-  return (
-    <Typography component="div" style={{ padding: 0 }}>
-      {props.children}
-    </Typography>
-  );
+    return (
+        <Typography component="div" style={{ padding: 0 }}>
+            {props.children}
+        </Typography>
+    );
 }
 
 TabContainer.propTypes = {
-  children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 };
 const MainFrame = () => {
-  const [rightTabVal, setRightTabVal] = React.useState(0);
-  
-  const [leftTabVal, setLeftTabVal] = React.useState(3);
+    const [rightTabVal, setRightTabVal] = React.useState(0);
+    const [leftTabVal, setLeftTabVal] = React.useState(0);
+
+    const handleRightTabChange = (event, newValue) => {
+        setRightTabVal(newValue);
+    };
+    const handleLeftTabChange = (event, newValue) => {
+        setLeftTabVal(newValue);
+    };
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark',
+            primary: {
+                main: '#1976d2',
+            },
+        },
+    });
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        console.log("click");
+        store.dispatch({ type: "auth_logOut" });
+    };
 
 
-const handleRightTabChange = (event, newValue) => {
-  setRightTabVal(newValue);
-};
-const handleLeftTabChange = (event, newValue) => {
-  setLeftTabVal(newValue);
-};
-  const darkTheme = createTheme({
-    palette: {
-      mode: 'dark',
-      primary: {
-        main: '#1976d2',
-      },
-    },
-  });
+    const HeaderContent = () => {
+        return (
+            <Box sx={{ flexGrow: 1 }}>
+                <ThemeProvider theme={darkTheme}>
+                    <AppBar className="main-header" position="static">
+                        <Toolbar>
+                            <IconButton
+                                size="large"
+                                aria-label="account of current user"
+                                aria-controls="menu-appbar"
+                                aria-haspopup="true"
+                                color="inherit"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                                <img
+                                    width="116"
+                                    height="48"
+                                    src='./assets/images/logo75.png'
+                                    alt="Logo"
+                                />
+                            </Typography>
+                            <div>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+                                <Menu
+                                    id="menu-appbar"
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                                </Menu>
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+                                <IconButton
+                                    size="large"
+                                >
+                                    <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
+                                        JM
+                                    </Avatar>
+                                </IconButton>
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+                                <IconButton
+                                    size="large"
+                                    onClick={handleLogout}
+                                    color="inherit"
+                                >
+                                    <Logout />
+                                </IconButton>
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+                            </div>
+                        </Toolbar>
+                    </AppBar>
+                </ThemeProvider>
+            </Box>
+        );
+    }
 
-  const handleLogout = () => {
-    console.log("click");
-    store.dispatch({type:"auth_logOut"});
-  };
-
-
-  const HeaderContent = () =>{
     return (
-      <Box sx={{ flexGrow: 1 }}>
-        <ThemeProvider theme={darkTheme}>
-          <AppBar className="main-header" position="static">
-            <Toolbar>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <img
-                  width="116"
-                  height="48"
-                  src='./assets/images/logo75.png'
-                  alt="Logo"
-                />
-              </Typography>
-              <div>
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
-                </Menu>
-
-                <IconButton
-                  size="large"
-                >
-                  <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
-                    JM
-                  </Avatar>
-                </IconButton>
-
-                <IconButton
-                  size="large"
-                  onClick={handleLogout}
-                  color="inherit"
-                >
-                  <Logout />
-                </IconButton>
-
-              </div>
-            </Toolbar>
-          </AppBar>
-        </ThemeProvider>
-      </Box>
-    );
-  }
-
-  return (
-    <>
-      <HeaderContent/>
-      <Container fluid={true} className="pa-0">
-        <Row noGutters>
-          <Col xs={2} className='border-right p-2'> {/* Left Panel */}
-            <div>
-              <Tabs variant="scrollable" 
-                    scrollButtons="auto" 
-                    value={leftTabVal} onChange={handleLeftTabChange} 
-                    aria-label="scrollable auto tabs example"
-              >
-                <Tab style={{ minWidth: "25%" }} icon={<SchoolIcon />} aria-label="school" />
-                <Tab style={{ minWidth: "25%" }} icon={<TuneIcon />} aria-label="tune" />
-                <Tab style={{ minWidth: "25%" }} icon={<FilterAltIcon />} aria-label="filter" />
-                <Tab style={{ minWidth: "25%" }} icon={<InsertDriveFileIcon />} aria-label="file" />
-              </Tabs>
-              {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
-              {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
-              {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-              {leftTabVal === 3 && <TabContainer><FileTab/></TabContainer>}
-              <LinearProgress variant="determinate" value={30}/>
-            </div>
-          </Col>
-          <Col xs={8}> {/* Central Panel, Viv Image Viewer */}
-            <Container>
-              <ImageViewer/>
+        <>
+            <HeaderContent />
+            <Container fluid={true} className="pa-0" style={{minHeight:"400px"}}>
+                <Row noGutters>
+                    <Col xs={2} className='p-2 border'> {/* Left Panel */}
+                        <div className='card border'>
+                            <div className='card-body'>
+                                <Tabs
+                                    // variant="scrollable"
+                                    value={leftTabVal} onChange={handleLeftTabChange}
+                                    aria-label="tabs example"
+                                    TabIndicatorProps={{
+                                        style: {
+                                            flexDirection: "row",
+                                            justifyContent: "flex-start"
+                                        }
+                                    }}
+                                >
+                                    <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
+                                    <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
+                                    <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
+                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
+                                </Tabs>
+                                {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
+                                {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
+                                {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
+                                {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
+                                {/* <LinearProgress variant="determinate" value={30} /> */}
+                            </div>
+                        </div>
+                    </Col>
+                    <Col xs={8} style={{backgroundColor: "#ddd", minHeight:"800px", Height:"100%"}}> {/* Central Panel, Viv Image Viewer */}
+                        <Container >
+                            <ImageViewer />
+                        </Container>
+                    </Col>
+                    <Col xs={2} className='border-left p-2'>
+                        <div>
+                            <Tabs 
+                                // variant="scrollable"
+                                // scrollButtons
+                                allowScrollButtonsMobile
+                                value={rightTabVal} onChange={handleRightTabChange}
+                                aria-label="scrollable auto tabs example">
+                                <Tab className='tab-button' variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
+                                <Tab className='tab-button' variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" />
+                                <Tab className='tab-button' variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" />
+                                <Tab className='tab-button' variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" />
+                            </Tabs>
+                            {rightTabVal === 0 && <TabContainer><ViewTab /></TabContainer>}
+                            {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
+                            {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
+                            {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
+                        </div>
+                    </Col>
+                </Row>
             </Container>
-          </Col>
-          <Col xs={2} className='border-left p-2'>
-            <div>
-              <Tabs variant="scrollable"
-                scrollButtons
-                allowScrollButtonsMobile
-                value={rightTabVal} onChange={handleRightTabChange}
-                aria-label="scrollable auto tabs example">
-                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
-                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" />
-                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" />
-                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" />
-                <Tab style={{ minWidth: "25%" }} variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
-              </Tabs>
-              {rightTabVal === 0 && <TabContainer><ViewTab /></TabContainer>}
-              {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
-              {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
-              {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
-              {/* {rightTabVal === 4 && <TabContainer><Controller/></TabContainer>} */}
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </>
-  );
+        </>
+    );
 };
 
 export default MainFrame;

@@ -100,7 +100,6 @@ const ImageDropzone = () => {
   const updateFiles = (incommingFiles) => {
     setFiles(incommingFiles);
   };
-  console.log("added file======>  ", files);
   return (
     <Dropzone onChange={updateFiles} value={files}>
       {files.map((file) => (

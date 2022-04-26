@@ -67,7 +67,7 @@ export default function ImageAdjust() {
 
   return (
     <>
-      <div className="pa-1">
+      <div className="pa-1 common-border">
         <div className="d-flex justify-space-between align-center" >
           <h6>Image Adjust</h6>
           <div>

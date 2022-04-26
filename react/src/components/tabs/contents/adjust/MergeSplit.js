@@ -1,9 +1,9 @@
 import SmallCard from '../../../custom/SmallCard'
 import CustomButton from '../../../custom/CustomButton'
-import { 
+import {
     mdiCog
 } from '@mdi/js';
-export default function MergeSplit(){
+export default function MergeSplit() {
     const select1 = () => {
         console.log("Select-1")
     }
@@ -16,15 +16,14 @@ export default function MergeSplit(){
     const select4 = () => {
         console.log("Select-4")
     }
-    const select5 = () => {
-        console.log("Select-5")
-    }
     return (
-      <SmallCard title="MergeSplit" >
-        <CustomButton image="mono" label="8" click={select1}/>
-        <CustomButton image="mono" label="16" click={select2}/>
-        <CustomButton image="mono" label="32" click={select3}/>
-        <CustomButton icon={mdiCog} label="Set" click={select4}/>
-      </SmallCard>
+        <div className=''>
+            <SmallCard title="Merge & Split" >
+                <CustomButton image="c-sep" label="" click={select1} />
+                <CustomButton image="c-merge" label="" click={select2} />
+                <CustomButton image="c-drop" label="" click={select3} />
+                <CustomButton icon={mdiCog} label="" click={select4} />
+            </SmallCard>
+        </div>
     )
 }

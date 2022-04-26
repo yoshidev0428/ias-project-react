@@ -34,7 +34,7 @@ export default function ReportTab () {
   return (
     <>
       <TabItem title="Report">
-        <SmallCard title="Save">
+        {/* <SmallCard title="Save">
           <CustomButton icon={mdiCloudUploadOutline} label="Cloud" click={onClick1}/>
           <CustomButton icon={mdiMicrosoftExcel} label="Excel" click={onClick2}/>
           <CustomButton icon={mdiFileDelimitedOutline} label="CSV" click={onClick3}/>
@@ -44,7 +44,7 @@ export default function ReportTab () {
         <SmallCard title="View">
           <CustomButton icon={mdiChartTimelineVariantShimmer} label="Visual" click={onClick5}/>
           <CustomButton icon={mdiTabletDashboard} label="Tableau" click={onClick6}/>
-        </SmallCard>
+        </SmallCard> */}
       </TabItem>
     </>
   );

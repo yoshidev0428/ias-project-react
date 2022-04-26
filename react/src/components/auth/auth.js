@@ -13,7 +13,7 @@ const Auth = (props) => {
 
     return (
       <div className="auth-container">
-        <h1>{ props.authPage }</h1>
+        {/* <h1>{ props.authPage }</h1> */}
         {props.authPage === 'loginPage' && 
           <div>
             <Login />

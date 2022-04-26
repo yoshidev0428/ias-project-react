@@ -4,11 +4,11 @@ import {
     mdiPlayCircle,
     mdiCog,
     mdiFormatAlignCenter
-}  from '@mdi/js'
+} from '@mdi/js'
 
 import FocusDialog from "./dialog/FocusDialog";
-import {useFlagsStore} from "../../../../components/state";
-export default function FocusStack(){
+import { useFlagsStore } from "../../../../components/state";
+export default function FocusStack() {
     const Focusflag = useFlagsStore(store => store.Focusflag);
     const select1 = () => {
         console.log("Select-1");
@@ -18,13 +18,13 @@ export default function FocusStack(){
         console.log("Select-2")
     }
     return (
-        <>
-        <SmallCard title="Focus Stack">
-            <CustomButton icon={mdiPlayCircle} label="Go" click={select1}/>
-            <CustomButton icon={mdiFormatAlignCenter} label="Alignment" click={select1}/>
-            <CustomButton icon={mdiCog} label="Set" click={select2}/>
-        </SmallCard>
-        {Focusflag && <FocusDialog/>}
-        </>
+        <div className=''>
+            <SmallCard title="Focus Stack">
+                <CustomButton icon={mdiPlayCircle} label="Go" click={select1} />
+                <CustomButton icon={mdiFormatAlignCenter} label="Alignment" click={select1} />
+                <CustomButton icon={mdiCog} label="Set" click={select2} />
+            </SmallCard>
+            {Focusflag && <FocusDialog />}
+        </div>
     )
 }

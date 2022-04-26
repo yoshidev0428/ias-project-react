@@ -9,33 +9,36 @@ import Icon from '@mdi/react';
 // styleLink.href = 
 // "https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 // document.head.appendChild(styleLink);
-const click = async (e) => {
-    // Prevents page reload on wrongs creds
-    console.log("clicked")
-};
+
+// const click = async (e) => {
+//     // Prevents page reload on wrongs creds
+//     console.log("clicked")
+// };
+
 const CustomButton = (props) => {
     const imageUrl = "../../assets/images/" + props.image + ".png";
     return (
-        <IconButton className="pa-0"
-            style = {{minWidth:"16px", height:props.label ? '38px' : '28px', color:'#009688'}}        
+        <IconButton className="mb-1"
+            // style = {{minWidth:"16px", height:props.label ? '38px' : '28px', color:'#009688'}}
+            style = {{minWidth:"25px", height:props.label ? '36px' : '22px', color:'#212529'}}
             onClick={props.click}
-            size = "small"
+            size = "large"
         >
             <div>
                 {props.image && 
-                    <div className="pa-1">
-                        <Image style={{margin: '0 auto', width:'12px', height:'12px'}} src={imageUrl} alt='no image' />
+                    <div className="">
+                        <Image style={{margin: '0 auto', width:'11px', height:'11px'}} src={imageUrl} alt='no image' />
                     </div>
                 }
                 {props.icon && 
                     // <i className="ma-0"> mdi-{ props.icon }</i>
                     // <Icon name={props.icon} />
                     <Icon path={props.icon}
-                        size={1}
+                        size={0.8}
                         horizontal
                         vertical
                         rotate={180}
-                        color="#009688"
+                        color="#212529"
                         />
                 }
                 <div className="label-text">{props.label}</div>

@@ -18,12 +18,12 @@ export default function Dec3D(){
         console.log("Select-2")
     }
     return (
-        <>
+        <div className=''>
             <SmallCard title="3D Deconvolution">
-                <CustomButton icon={mdiPlayCircle} label="3D-Go" click={select1}/>
-                <CustomButton icon={mdiCog} label="Setting" click={select2}/>
+                <CustomButton icon={mdiPlayCircle} label="3DGo" click={select1}/>
+                <CustomButton icon={mdiCog} label="3DSet" click={select2}/>
             </SmallCard>
             {Dialog3dflag && <Dec3dDialog/>}
-        </>
+        </div>
     )
 }

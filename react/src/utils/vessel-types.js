@@ -7,7 +7,7 @@ export const VESSELS = [
     { id: 3, type: "Slide", count: 4, title: "Quarter" }
   ],
   [
-    { id: 4, type: "WellPlate", rows: 2, cols: 3, title: "06", showName: false },
+    { id: 4, type: "WellPlate", rows: 2, cols: 3, title: "6", showName: false },
     { id: 5, type: "WellPlate", rows: 3, cols: 4, title: "12", showName: true },
     { id: 6, type: "WellPlate", rows: 4, cols: 6, title: "24", showName: true },
     { id: 7, type: "WellPlate", rows: 6, cols: 8, title: "48", showName: true },
