@@ -29,13 +29,15 @@ export default function BitConversion() {
     }
 
     return (
-        <SmallCard title="Box Select" >
-            <CustomButton image="mono" label="8" click={select1}/>
-            <CustomButton image="mono" label="16" click={select2}/>
-            <CustomButton image="mono" label="32" click={select3}/>
-            <CustomButton image="color" label="8" click={select4}/>
-            <CustomButton image="color" label="16" click={select5}/>
-            <CustomButton image="color" label="32" click={select6}/>
-      </SmallCard>
+        <div className=''>
+            <SmallCard title="Box Select">
+                <CustomButton image="mono" label="8" click={select1} />
+                <CustomButton image="mono" label="16" click={select2} />
+                <CustomButton image="mono" label="32" click={select3} />
+                <CustomButton image="color" label="8" click={select4} />
+                <CustomButton image="color" label="16" click={select5} />
+                <CustomButton image="color" label="32" click={select6} />
+            </SmallCard>
+        </div>
     )
 }

@@ -1,0 +1,10 @@
+.common-border {
+    border: 2px solid rgba(0, 0, 0, .125);
+}
+
+.tab-button {
+    padding: 0px !important;
+    border: 1px solid rgba(0, 0, 0, .125) !important;
+    min-width: 25% !important;
+    width: 30px !important;
+}

@@ -1,12 +1,10 @@
 import SmallCard from '../../../custom/SmallCard'
 import CustomButton from '../../../custom/CustomButton'
-import { 
+import {
     mdiCog,
-    mdiCreation,
     mdiHdr,
-    mdiThumbUpOutline
 } from '@mdi/js';
-export default function LightSet(){
+export default function LightSet() {
     const select1 = () => {
         console.log("Select-1")
     }
@@ -20,11 +18,13 @@ export default function LightSet(){
         console.log("Select-4")
     }
     return (
-        <SmallCard title="Light Set">
-          <CustomButton icon={mdiCreation} label="Auto" click={select1}/>
-          <CustomButton icon={mdiHdr} label="HDR" click={select2}/>
-          <CustomButton icon={mdiThumbUpOutline} label="Go" click={select3}/>
-          <CustomButton icon={mdiCog} label="Set" click={select4}/>
-        </SmallCard>
+        <div className=''>
+            <SmallCard title="Light Set">
+                <CustomButton image={"auto"} label="" click={select1} />
+                <CustomButton image={"average"} label="" click={select2} />
+                <CustomButton icon={mdiHdr} label="" click={select3} />
+                <CustomButton icon={mdiCog} label="" click={select4} />
+            </SmallCard>
+        </div>
     )
 }

@@ -168,7 +168,7 @@ export default function Channel() {
 
   return (
     <>
-      <div className="pa-1">
+      <div className="pa-1 common-border">
         <div className="d-flex justify-space-between align-center" >
           <h6>Channels</h6>
           <div>

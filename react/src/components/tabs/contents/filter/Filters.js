@@ -15,11 +15,11 @@ export default function Filters(){
         console.log("Select-2")
     }
     return (
-        <>
+        <div className=''>
             <SmallCard title="Filter">
-                <CustomButton icon={mdiNumeric2Box} label="2-D" click={select1}/>
-                <CustomButton icon={mdiNumeric3Box} label="3-D" click={select2}/>
+                <CustomButton icon={mdiNumeric2Box} label="" click={select1}/>
+                <CustomButton icon={mdiNumeric3Box} label="" click={select2}/>
             </SmallCard>
-        </>
+        </div>
     )
 }

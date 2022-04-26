@@ -23,13 +23,13 @@ export default function ClassObjectStatus () {
     }
 
     return (
-        <>
+        <div className=''>
             <SmallCard title="Class & Object Status">
-                <CustomButton icon={mdiSquareRoundedOutline} label="Area" onClick={() => onArea} />
+                {/* <CustomButton icon={mdiSquareRoundedOutline} label="Area" onClick={() => onArea} />
                 <CustomButton icon={mdiPaletteOutline} label="Color" onClick={() => onColor()} />
                 <CustomButton icon={mdiPaletteSwatchOutline} label="Int" onClick={() => onInt()} />
-                <CustomButton icon={mdiCog} label="Set" onClick={() => onSet} />
+                <CustomButton icon={mdiCog} label="Set" onClick={() => onSet} /> */}
             </SmallCard>
-        </>
+        </div>
     )
 }

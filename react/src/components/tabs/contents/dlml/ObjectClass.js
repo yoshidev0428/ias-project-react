@@ -18,12 +18,12 @@ export default function ObjectClass () {
     }
 
     return (
-        <>
-            <SmallCard title="Method Select">
+        <div className=''>
+            <SmallCard title="ObjectClass">
                 <CustomButton icon={mdiCreation} label="Auto" onClick={() => onAuto()} />
                 <CustomButton icon={mdiHandPointingUp} label="Add" onClick={() => onAdd()} />
                 <CustomButton icon={mdiTrashCanOutline} label="Erase" onClick={() => onErase()} />
             </SmallCard>
-        </>
+        </div>
     )
 }

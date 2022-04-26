@@ -14,11 +14,13 @@ export default function MethodSelect () {
     }
 
     return (
-        <>
+        <div className=''>
             <SmallCard title="Method Select">
-                <CustomButton icon={mdiPlusBox} label="New" onClick={() => onNew()} />
-                <CustomButton icon={mdiPlayBox} label="Call" onClick={() => onCall()} />
+                {/* <CustomButton icon={mdiPlusBox} label="New" onClick={() => onNew()} />
+                <CustomButton icon={mdiPlayBox} label="Call" onClick={() => onCall()} /> */}
+                <CustomButton icon={mdiPlusBox} onClick={() => onNew()} />
+                <CustomButton icon={mdiPlayBox} onClick={() => onCall()} />
             </SmallCard>
-        </>
+        </div>
     )
 }

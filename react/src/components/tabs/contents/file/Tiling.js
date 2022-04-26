@@ -142,7 +142,7 @@ const Tiling = (props) => {
               {/* Tiling Control Panel  */}
               <div className="control-panel">
                 {/* Editing */}
-                { selectedIndex === 0 && 
+                { selectedIndex == 0 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Editing</h5></CardContent>
                     <div className="inside">
@@ -152,7 +152,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Alignment */}
-                { selectedIndex === 1 && 
+                { selectedIndex == 1 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Alignment</h5></CardContent>
                     <div className="inside">
@@ -164,7 +164,7 @@ const Tiling = (props) => {
                       >
                         {[...Array(6)].map((_,i)=>{
                           return <Tooltip title={tilingAlignButtons[i]} key={i}>
-                                    {i === 3 ? <ToggleButton ><Image style={{ margin: '0 auto', width:'22px', height:'22px', filter: 'grayscale(1)' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
+                                    {i == 3 ? <ToggleButton ><Image style={{ margin: '0 auto', width:'22px', height:'22px', filter: 'grayscale(1)' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
                                       :<ToggleButton key={i} ><Image style={{margin: '0 auto', width:'22px', height:'22px'}} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
                                     } 
                                 </Tooltip >
@@ -246,7 +246,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Bonding */}
-                { selectedIndex === 2 && 
+                { selectedIndex == 2 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Bonding</h5></CardContent>
                     <div className="inside">
@@ -293,7 +293,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Shading */}
-                { selectedIndex === 3 && 
+                { selectedIndex == 3 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Shading</h5></CardContent>
                     <div className="inside">
@@ -320,7 +320,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Display */}
-                { selectedIndex === 4 && 
+                { selectedIndex == 4 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Display</h5></CardContent>
                     <div className="inside">
@@ -360,7 +360,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Result */}
-                { selectedIndex === 5 && 
+                { selectedIndex == 5 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Result</h5></CardContent>
                     <div className="inside">
@@ -388,7 +388,7 @@ const Tiling = (props) => {
                 }
 
                 {/* Option */}
-                { selectedIndex === 6 && 
+                { selectedIndex == 6 && 
                   <Card variant="outlined">
                     <CardContent className="pa-1"><h5>Option</h5></CardContent>
                     

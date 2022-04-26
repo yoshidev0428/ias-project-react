@@ -31,9 +31,7 @@ import {
   mdiSortClockAscending,
   mdiCog
  } from '@mdi/js';
- import {useFlagsStore} from "../../components/state";
 export default function FileTab (props) {
-  const dialogFlag = useFlagsStore(store => store.dialogFlag);
   const refresh = () => {
     console.log("click refresh");
   };
@@ -74,31 +72,20 @@ export default function FileTab (props) {
   const showCloudDialog = () =>{
     setcloudDialog(true);
   }
-  const showOpenFileDialog = () =>{
-    // setfileDialog(true);
-    useFlagsStore.setState({ dialogFlag: true });
-  }
-  const showOpenFolderDialog = () =>{
-    // setfolderDialog(true);
-  }
   const showPositionDialog = () =>{
     setpositionDialog(true);
   }
   const handleClose = () => {
     setcloudDialog(false);
-    setfileDialog(false);
-    // setfolderDialog(false);
     setpositionDialog(false);
   }
   return (
     <TabItem title="File/Edit" buttons={true} refresh={refresh} help={help}>
       <SmallCard title="Open">
-        {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog}/>}
-        {cloudDialog && <OpenCloudDialog handleClose={handleClose}/>}
-        <CustomButton icon={mdiEmailNewsletter} label="File" click={showOpenFileDialog}/>
-        {dialogFlag && <OpenFileDialog title="File" handleClose = {handleClose}/>}
-        <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={showOpenFolderDialog}/>
-        {/* {folderDialog && <OpenFolderDialog title="Folder" handleClose = {handleClose}/>} */}
+        {/* {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog}/>}
+        {cloudDialog && <OpenCloudDialog handleClose={handleClose}/>} */}
+        <CustomButton icon={mdiEmailNewsletter} label="File" style={fileDialog && <OpenFileDialog/>}/>
+        <CustomButton icon={mdiFolderOpenOutline} label="Folder" style={folderDialog && <OpenFolderDialog/>}/>
         <CustomButton icon={mdiDotsGrid} label="Position" click={showPositionDialog}/>
         {positionDialog && <OpenPositionDialog title=" " handleClose = {handleClose}/>}
       </SmallCard>

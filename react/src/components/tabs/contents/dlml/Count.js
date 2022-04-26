@@ -18,12 +18,12 @@ export default function Count () {
         console.log("Split")
     }
     return (
-        <>
+        <div className=''>
             <SmallCard title="Count">
                 <CustomButton icon={mdiCalculator} label="Count" onClick={() => onCount()} />
                 <CustomButton icon={mdiReplay} label="Back" onClick={() => onBack()} />  
                 <CustomButton icon={mdiArrowCollapseVertical} label="Split" onClick={() => onSplit()} />                
             </SmallCard>
-        </>
+        </div>
     )
 }

@@ -27,7 +27,7 @@ const auth = (state = initState, action) => {
       break;
     case "auth_loggedIn":
       setLoggedIn(state, action.payload);
-      setUser(state, action.payload.user);
+      setUser(action.payload.user);
       sessionStorage.setItem("authToken", action.payload.token);
       sessionStorage.setItem("authTokenType", action.payload.tokenType);
       console.log("loggedin");
