@@ -1,8 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 import './App.scss';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Auth from './components/auth/auth';
 import MainFrame from './components/MainFrame';
 const mapStateToProps = state => ({

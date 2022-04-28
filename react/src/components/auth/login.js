@@ -94,7 +94,7 @@ const Login = (props) => {
         <div className='login-container'>
             <Container className='inner-container model rules auto-complete label-position'>
                 <Container className="title-container">
-                    <h1 className='title'>{"IAS - Login"}</h1>
+                    <h1 className='title'>{"IAS-Login"}</h1>
                 </Container>
                 <Form onSubmit={handleLogin}>
                     <Form.Group controlId="formLoginEmail">

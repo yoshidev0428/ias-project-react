@@ -1,10 +1,9 @@
 import React from 'react'
 
-import { Row, Col, Container } from 'react-bootstrap';
+// import { Row, Col, Container } from 'react-bootstrap';
 const SmallCard = (props) => {
     return (
-
-        <div className="px-2 py-2 common-border">
+        <div className="px-1 py-1 common-border">
             <h6 style={{ fontWeight: 'normal' }}>
                 {props.title}
             </h6>
@@ -12,9 +11,9 @@ const SmallCard = (props) => {
                 {props.title}
             </h6> */}
             <div>
-                <Row className="mt-1 d-flex justify-content-around">
+                <div className="mt-1 d-flex justify-content-around">
                     {props.children}
-                </Row>
+                </div>
             </div>
         </div>
 

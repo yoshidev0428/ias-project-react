@@ -135,12 +135,8 @@ const MainFrame = () => {
                                     <MenuItem onClick={handleClose}>My account</MenuItem>
                                 </Menu>
 
-                                <IconButton
-                                    size="large"
-                                >
-                                    <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
-                                        JM
-                                    </Avatar>
+                                <IconButton size="large">
+                                    <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}> JM </Avatar>
                                 </IconButton>
 
                                 <IconButton
@@ -162,11 +158,11 @@ const MainFrame = () => {
     return (
         <>
             <HeaderContent />
-            <Container fluid={true} className="pa-0" style={{minHeight:"400px"}}>
+            <Container fluid={true} className="p-0" style={{minHeight:"400px"}}>
                 <Row noGutters>
-                    <Col xs={2} className='p-2 border'> {/* Left Panel */}
+                    <Col xs={2} className='p-2 border-right'> {/* Left Panel */}
                         <div className='card border'>
-                            <div className='card-body'>
+                            <div className='card-body p-2'>
                                 <Tabs
                                     // variant="scrollable"
                                     value={leftTabVal} onChange={handleLeftTabChange}
