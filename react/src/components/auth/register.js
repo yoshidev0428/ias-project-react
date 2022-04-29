@@ -83,7 +83,7 @@ const Register = () => {
         <div className='login-container'>
             <Container className='inner-container model rules auto-complete label-position'>
                 <Container className="title-container">
-                    <h2 className='title'>{"IAS - Register"}</h2>
+                    <h2 className='title'>{"IAS-Register"}</h2>
                 </Container>
                 <Form onSubmit={callSubmit}>
                     <Form.Group controlId="formRegisterFirstname">

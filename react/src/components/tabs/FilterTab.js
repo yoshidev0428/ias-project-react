@@ -5,8 +5,8 @@ import AddSub from "./contents/filter/AddSub";
 import Dec2D from "./contents/filter/Dec2D";
 import Dec3D from "./contents/filter/Dec3D";
 import FocusStack from "./contents/filter/FocusStack";
-import SR from "./contents/filter/SR";
 import Divider from '@mui/material/Divider';
+// import SR from "./contents/filter/SR";
 
 export default function FilterTab() {
     const refresh = () => {

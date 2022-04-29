@@ -78,7 +78,7 @@ export default function WellPlates (props) {
                             {
                                 [...Array(cols + 1)].map((x, i) =>
                                     <div key={'col' + i} style={{ width: radious, fontSize: fontSize }} className="pa-0 ma-0 text-center">
-                                        {i == 0 ? '' : i}
+                                        {i === 0 ? '' : i}
                                     </div>
                                 )
                             }

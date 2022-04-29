@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Container } from 'react-bootstrap';
+// import { Container } from 'react-bootstrap';
 import Divider from '@mui/material/Divider';
 import Vessel from "../viewcontrol/Vessel";
 import Objective from "../viewcontrol/Objective";
 import Channel from "../viewcontrol/Channel";
-
+import RectangleSelect from "../viewcontrol/RectangleSelect"
 export default function SecondPage() {
 
     return (
@@ -12,11 +12,10 @@ export default function SecondPage() {
             <p>Range Setting1</p>
             <div>
                 <Vessel />
-                {/* <Divider /> */}
+                <RectangleSelect />
                 <Objective />
                 <Divider />
                 <Channel />
-                <Divider />
             </div>
         </>
     );
