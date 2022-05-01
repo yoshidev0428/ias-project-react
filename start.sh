@@ -9,4 +9,5 @@ echo ------ Started Backend
 cd react
 echo ------ Starting Frontend
 npm install
+npm install react-md
 npm start
