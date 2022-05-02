@@ -14,7 +14,7 @@ import {
 import Icon from '@mdi/react';
 import { SelectDialog } from '../../../vessels/SelectDialog';
 import { ExpansionDialog } from '../../../vessels/ExpansionDialog';
-import CustomButton from '../../../custom/CustomButton';
+// import CustomButton from '../../../custom/CustomButton';
 
 export default function Vessel(props) {
 
@@ -23,7 +23,7 @@ export default function Vessel(props) {
     const [showSelectDialog, setShowSelectDialog] = useState(false);
     const [showExpansionDialog, setShowExpansionDialog] = useState(false);
 
-    const [ref, { width, height }] = useElementSize();
+    const [ref, { width }] = useElementSize();
 
     useEffect(() => {
         setCurrentVessel(getVesselById(currentVesselId));
@@ -39,13 +39,15 @@ export default function Vessel(props) {
         if (currentVessel) {
             switch (currentVessel.type) {
                 case 'Slide':
-                    return <Slides width={width} count={currentVessel.count} />;
-                case 'WellPlate':
-                    return <WellPlates width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} />;
+                    return <Slides width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} />;
                 case 'Dish':
-                    return <Dishes width={width} size={currentVessel.size} />;
+                    return <Dishes width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} size={currentVessel.size} />;
+                case 'Well':
+                    return <WellPlates width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} />;
                 case 'Wafer':
-                    return <Wafers width={width} size={currentVessel.size} />;
+                    return <Wafers width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} size={currentVessel.size} />;
+                default:
+                    return;
             }
         }
     }
@@ -53,11 +55,11 @@ export default function Vessel(props) {
     return (
         <Card ref={ref}>
             <div>
-                <h5>{currentVessel.title}</h5>
+                <h5>{currentVessel.title}{currentVessel.type}</h5>
             </div>
             {renderVessel()}
             <Row className="mt-1 d-flex justify-content-around common-border">
-                <Button className="btn btn-light btn-sm w-50" onClick={()=>setShowSelectDialog(true)}>
+                <Button className="btn btn-light btn-sm w-50" onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.8}
                         horizontal
                         vertical
@@ -66,7 +68,7 @@ export default function Vessel(props) {
                         path={mdiSyncAlert}>
                     </Icon>
                 </Button>
-                <Button className="btn btn-light btn-sm w-50" onClick={()=>setShowExpansionDialog(true)}>
+                <Button className="btn btn-light btn-sm w-50" onClick={() => setShowExpansionDialog(true)}>
                     <Icon size={0.8}
                         horizontal
                         vertical

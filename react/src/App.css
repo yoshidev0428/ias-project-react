@@ -9,3 +9,20 @@
     min-width: 25% !important;
     width: 30px !important;
 }
+
+.common-tab-button {
+    padding: 0px !important;
+    border: 1px solid rgba(0, 0, 0, .125) !important;
+    width: 30px !important;
+}
+
+.dialog-close-btn {
+    right:20px;
+    top:15px;
+    position:absolute;
+    border:none;
+}
+
+.btn-selected-vessel-color{
+    background-color: #e3e3e3 !important;
+}
