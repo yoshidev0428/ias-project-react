@@ -38,6 +38,7 @@
     "react-dropzone": "^11.2.3",
     "react-fontawesome": "^1.7.1",
     "react-icons": "^3.11.0",
+    "react-md": "^5.1.2",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.0",
