@@ -174,16 +174,15 @@ const MainFrame = () => {
                                         }
                                     }}
                                 >
+                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
                                     <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
                                     <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
                                     <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
-                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
                                 </Tabs>
-                                {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
-                                {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
-                                {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-                                {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
-                                {/* <LinearProgress variant="determinate" value={30} /> */}
+                                {leftTabVal === 0 && <TabContainer><FileTab /></TabContainer>}
+                                {leftTabVal === 1 && <TabContainer ><DLMLTab /></TabContainer>}
+                                {leftTabVal === 2 && <TabContainer><AdjustTab /></TabContainer>}
+                                {leftTabVal === 3 && <TabContainer><FilterTab /></TabContainer>}
                             </div>
                         </div>
                     </Col>
