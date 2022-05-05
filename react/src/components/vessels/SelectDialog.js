@@ -45,10 +45,11 @@ TabPanel.propTypes = {
 export const SelectDialog = (props) => {
 
     const [tab, setTab] = useState(0);
+    const maxDialogWidth = 800;
     const [open, setOpen] = useState(true);
     const [currentVessel, setCurrentVessel] = useState(props.currentVessel);
 
-    const [ref, ] = useElementSize();
+    const [ref, { width, height }] = useElementSize();
     // { width, height }
     useEffect(() => {
         setOpen(props.open);
@@ -69,39 +70,19 @@ export const SelectDialog = (props) => {
         }
     };
 
+    // btn btn-selected-vessel-color d-flex p-0 pr-1
+    // <p className='m-auto'>{vessel.title + vessel.type}</p>
     const renderVesselItem = (vessel) => {
         if (vessel) {
             switch (vessel.type) {
                 case 'Slide':
-                    return (
-                        <div key={vessel.id} className={currentVessel === vessel.id ? 'btn btn-selected-vessel-color d-flex p-0 pr-1' : 'btn btn-light d-flex p-0 pr-1'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }}>
-                            <Slides vessel={vessel} />
-                            <p className='m-auto'>{vessel.title + vessel.type}</p>
-                        </div>
-                    );
-                case 'Dish':
-                    return (
-                        <div key={vessel.id} className={currentVessel === vessel.id ? 'btn btn-selected-vessel-color d-flex p-0 pr-1' : 'btn btn-light d-flex p-0 pr-1'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }}>
-                            <Dishes vessel={vessel} />
-                            <p className='m-auto'>{vessel.title + vessel.type}</p>
-                        </div>
-                    );
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Slides width={maxDialogWidth / 6.3 - 10} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Well':
-                    return (
-                        <div key={vessel.id} className={currentVessel === vessel.id ? 'btn btn-selected-vessel-color p-0 pr-3' : 'btn btn-light p-0 pr-3'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }}>
-                            <WellPlates vessel={vessel} />
-                            {/* rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} */}
-                            <p className='m-auto'>{vessel.title + vessel.type}</p>
-                        </div>
-                    );
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><WellPlates width={maxDialogWidth / 6.3 - 10} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                case 'Dish':
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Dishes width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Wafer':
-                    return (
-                        <div key={vessel.id} className={currentVessel === vessel.id ? 'btn btn-selected-vessel-color p-0 pr-3 d-flex' : 'btn btn-light p-0 pr-3 d-flex'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }}>
-                            <Wafers vessel={vessel} />
-                            {/* <div className={'text-center text-info'}>{vessel.title}</div> */}
-                            <p className='m-auto'>{vessel.title + vessel.type}</p>
-                        </div>
-                    );
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Wafers width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 default:
                     return;
             }
@@ -111,7 +92,7 @@ export const SelectDialog = (props) => {
     const renderVessels = () => {
         if (tab >= VESSELS.length) {
             return (
-                <div className="text-center pt-3" style={{height:"70px"}}>
+                <div className="text-center pt-3" style={{ height: "70px" }}>
                     <p className='text-center'>Unimplemented</p>
                 </div>
             );
@@ -120,7 +101,7 @@ export const SelectDialog = (props) => {
         (VESSELS[tab]).forEach(vessel => {
             vessels.push(renderVesselItem(vessel));
         });
-        return (<div ref={ref} className='d-flex flex-row justify-content-left m-1'>
+        return (<div ref={ref} className='d-flex flex-row justify-content-around m-1'>
             {
                 vessels
             }
@@ -128,12 +109,12 @@ export const SelectDialog = (props) => {
     }
 
     return (
-        <Dialog open={open} onClose={handleClose} maxWidth={'700'} >
+        <Dialog open={open} onClose={handleClose} maxWidth={"800"} >
             <div className="d-flex border-bottom">
                 <DialogTitle>Vessel Select</DialogTitle>
                 <button className="dialog-close-btn" color="primary" size="small" onClick={handleClose}>&times;</button>
             </div>
-            <div style={{ width: 700}} className='border'>
+            <div style={{ width: maxDialogWidth }} className='border'>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={tab} onChange={handleTabChange} className="">
                         <Tab className='common-tab-button' label="SLIDE" />

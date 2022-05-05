@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  } from 'react';
 import Divider from '@mui/material/Divider';
 import TabItem from '../custom/TabItem';
 import BitConversion from "./contents/adjust/BitConversion";
@@ -9,15 +9,16 @@ import Scale from "./contents/adjust/Scale";
 // import FVO from "./contents/adjust/FVO";
 
 export default function AdjustTab(props) {
-    const refresh = () => {
-        console.log("click refresh");
-    };
-    const help = () => {
-        console.log("click help");
-    };
     
+    // const refresh = () => {
+    //     console.log("click refresh");
+    // };
+    // const help = () => {
+    //     console.log("click help");
+    // };
+    // buttons={true} refresh={refresh} help={help}
     return (
-        <TabItem title="Adjust" buttons={true} refresh={refresh} help={help}>
+        <TabItem title="Adjust" >
             <BitConversion />
             <Divider />
             <MergeSplit />

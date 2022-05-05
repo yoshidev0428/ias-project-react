@@ -9,14 +9,15 @@ import Divider from '@mui/material/Divider';
 // import SR from "./contents/filter/SR";
 
 export default function FilterTab() {
-    const refresh = () => {
-        console.log("click refresh");
-    };
-    const help = () => {
-        console.log("click help");
-    };
+    // const refresh = () => {
+    //     console.log("click refresh");
+    // };
+    // const help = () => {
+    //     console.log("click help");
+    // };
+    // buttons={true} refresh={refresh} help={help}
     return (
-        <TabItem title="Filter" buttons={true} refresh={refresh} help={help}>
+        <TabItem title="Filter">
             <Filters />
             <Divider />
             <AddSub />
