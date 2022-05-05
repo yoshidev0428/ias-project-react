@@ -3,12 +3,12 @@ import TabItem from '../custom/TabItem';
 import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
-import OpenCloudDialog from "./contents/file/OpenCloudDialog";
+// import OpenCloudDialog from "./contents/file/OpenCloudDialog";
 import OpenFileDialog from "./contents/file/OpenFileDialog";
 import OpenFolderDialog from "./contents/file/OpenFolderDialog";
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import {
-    mdiCloudDownloadOutline,
+    // mdiCloudDownloadOutline,
     mdiEmailNewsletter,
     mdiFolderOpenOutline,
     mdiDotsGrid,
@@ -33,12 +33,14 @@ import {
 } from '@mdi/js';
 
 export default function FileTab(props) {
-    const refresh = () => {
-        console.log("click refresh");
-    };
-    const help = () => {
-        console.log("click help");
-    };
+
+    // const refresh = () => {
+    //     console.log("click refresh");
+    // };
+    // const help = () => {
+    //     console.log("click help");
+    // };
+    // buttons={true} refresh={refresh} help={help}
     const onSave = () => {
         console.log("click onSave");
     };
@@ -66,22 +68,23 @@ export default function FileTab(props) {
     const onSelect1 = () => {
         console.log("click onSelect1");
     };
-    const [cloudDialog, setcloudDialog] = useState(false);
+    // const [cloudDialog, setcloudDialog] = useState(false);
     const [fileDialog, setfileDialog] = useState(false);
     const [folderDialog, setfolderDialog] = useState(false);
     const [positionDialog, setpositionDialog] = useState(false);
-    const showCloudDialog = () => {
-        setcloudDialog(true);
-    }
+    // const showCloudDialog = () => {
+    //     setcloudDialog(true);
+    // }
     const showPositionDialog = () => {
         setpositionDialog(true);
     }
     const handleClose = () => {
-        setcloudDialog(false);
+        // setcloudDialog(false);
         setpositionDialog(false);
     }
+
     return (
-        <TabItem title="File/Edit" buttons={true} refresh={refresh} help={help}>
+        <TabItem title="File/Edit">
             <SmallCard title="Open">
                 {/* {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog}/>}
         {cloudDialog && <OpenCloudDialog handleClose={handleClose}/>} */}

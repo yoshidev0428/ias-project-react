@@ -50,7 +50,7 @@ TabContainer.propTypes = {
 };
 const MainFrame = () => {
     const [rightTabVal, setRightTabVal] = React.useState(0);
-    const [leftTabVal, setLeftTabVal] = React.useState(0);
+    const [leftTabVal, setLeftTabVal] = React.useState(3);
 
     const handleRightTabChange = (event, newValue) => {
         setRightTabVal(newValue);
@@ -93,9 +93,8 @@ const MainFrame = () => {
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
-                                color="inherit"
-                            >
-                                <MenuIcon />
+                                color="inherit" >
+                            <MenuIcon />
                             </IconButton>
                             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                                 <img
@@ -158,7 +157,7 @@ const MainFrame = () => {
     return (
         <>
             <HeaderContent />
-            <Container fluid={true} className="p-0" style={{minHeight:"400px"}}>
+            <Container fluid={true} className="p-0" style={{ minHeight: "400px" }}>
                 <Row noGutters>
                     <Col xs={2} className='p-2 border-right'> {/* Left Panel */}
                         <div className='card border'>
@@ -169,31 +168,31 @@ const MainFrame = () => {
                                     aria-label="tabs example"
                                     TabIndicatorProps={{
                                         style: {
-                                            flexDirection: "row",
+                                            flexDirection: "row-right",
                                             justifyContent: "flex-start"
                                         }
                                     }}
                                 >
-                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
                                     <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
                                     <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
                                     <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
+                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
                                 </Tabs>
-                                {leftTabVal === 0 && <TabContainer><FileTab /></TabContainer>}
-                                {leftTabVal === 1 && <TabContainer ><DLMLTab /></TabContainer>}
-                                {leftTabVal === 2 && <TabContainer><AdjustTab /></TabContainer>}
-                                {leftTabVal === 3 && <TabContainer><FilterTab /></TabContainer>}
+                                {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
+                                {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
+                                {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
+                                {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                             </div>
                         </div>
                     </Col>
-                    <Col xs={8} style={{backgroundColor: "#ddd", minHeight:"800px", Height:"100%"}}> {/* Central Panel, Viv Image Viewer */}
+                    <Col xs={8} style={{ backgroundColor: "#ddd", minHeight: "800px", Height: "100%" }}> {/* Central Panel, Viv Image Viewer */}
                         <Container >
                             <ImageViewer />
                         </Container>
                     </Col>
                     <Col xs={2} className='border-left p-2'>
                         <div>
-                            <Tabs 
+                            <Tabs
                                 // variant="scrollable"
                                 // scrollButtons
                                 allowScrollButtonsMobile

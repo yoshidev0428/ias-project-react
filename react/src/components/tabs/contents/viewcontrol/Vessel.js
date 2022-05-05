@@ -23,7 +23,7 @@ export default function Vessel(props) {
     const [showSelectDialog, setShowSelectDialog] = useState(false);
     const [showExpansionDialog, setShowExpansionDialog] = useState(false);
 
-    const [ref, { width }] = useElementSize();
+    const [ref, { width, height }] = useElementSize();
 
     useEffect(() => {
         setCurrentVessel(getVesselById(currentVesselId));
@@ -39,13 +39,14 @@ export default function Vessel(props) {
         if (currentVessel) {
             switch (currentVessel.type) {
                 case 'Slide':
-                    return <Slides width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} />;
+                    console.log( width, "------------- width")
+                    return <Slides width={width} count={currentVessel.count} />;
                 case 'Dish':
-                    return <Dishes width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} size={currentVessel.size} />;
+                    return <Dishes width={width} size={currentVessel.size} />;
                 case 'Well':
-                    return <WellPlates width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} />;
+                    return <WellPlates width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} />;
                 case 'Wafer':
-                    return <Wafers width={(width-20).toString() + "px"} height={(width/2).toString()+"px"} vessel={currentVessel} size={currentVessel.size} />;
+                    return <Wafers width={width} size={currentVessel.size} />;
                 default:
                     return;
             }
