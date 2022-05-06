@@ -1,18 +1,23 @@
 import SmallCard from '../../../custom/SmallCard'
-import CustomButton from '../../../custom/CustomButton'
 import {
     mdiFilter,
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { useFlagsStore } from "../../../../components/state";
+import Filter2dDialog from "./dialog/Filter2dDialog";
+import Filter3dDialog from "./dialog/Filter3dDialog";
+
 export default function Filters() {
 
-    const select1 = () => {
-        console.log("Select-1")
+    const DialogFilter2dflag = useFlagsStore(store => store.DialogFilter2dflag);
+    const DialogFilter3dflag = useFlagsStore(store => store.DialogFilter3dflag);
 
+    const select1 = () => {
+        useFlagsStore.setState({ DialogFilter2dflag: true });
     }
+
     const select2 = () => {
-        console.log("Select-2")
+        useFlagsStore.setState({ DialogFilter3dflag: true });
     }
     return (
         <div className=''>
@@ -35,8 +40,8 @@ export default function Filters() {
                         path={mdiFilter}>
                     </Icon>3D
                 </button>
-                {/* <CustomButton icon={mdiNumeric2Box} label="" click={select1}/>
-                <CustomButton icon={mdiNumeric3Box} label="" click={select2}/> */}
+                {DialogFilter2dflag && <Filter2dDialog />}
+                {DialogFilter3dflag && <Filter3dDialog />}
             </SmallCard>
         </div>
     )

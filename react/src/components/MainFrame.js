@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -37,6 +37,8 @@ import MeasureTab from "./tabs/MeasureTab";
 import ReportTab from "./tabs/ReportTab";
 import SettingsTab from "./tabs/SettingsTab";
 import store from "../reducers";
+import { useWindowDimensions } from "./helpers";
+
 function TabContainer(props) {
     return (
         <Typography component="div" style={{ padding: 0 }}>
@@ -48,9 +50,12 @@ function TabContainer(props) {
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
+
 const MainFrame = () => {
-    const [rightTabVal, setRightTabVal] = React.useState(0);
-    const [leftTabVal, setLeftTabVal] = React.useState(3);
+
+    const { height } = useWindowDimensions();
+    const [rightTabVal, setRightTabVal] = useState(0);
+    const [leftTabVal, setLeftTabVal] = useState(3);
 
     const handleRightTabChange = (event, newValue) => {
         setRightTabVal(newValue);
@@ -67,7 +72,7 @@ const MainFrame = () => {
         },
     });
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -84,7 +89,7 @@ const MainFrame = () => {
 
     const HeaderContent = () => {
         return (
-            <Box sx={{ flexGrow: 1 }}>
+            <Box sx={{ flexGrow: 1, height: "65px" }}>
                 <ThemeProvider theme={darkTheme}>
                     <AppBar className="main-header" position="static">
                         <Toolbar>
@@ -94,7 +99,7 @@ const MainFrame = () => {
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
                                 color="inherit" >
-                            <MenuIcon />
+                                <MenuIcon />
                             </IconButton>
                             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                                 <img
@@ -157,44 +162,40 @@ const MainFrame = () => {
     return (
         <>
             <HeaderContent />
-            <Container fluid={true} className="p-0" style={{ minHeight: "400px" }}>
+            <Container fluid={true} className="p-0" style={{ height: (height - 65).toString() + "px" }}>
                 <Row noGutters>
-                    <Col xs={2} className='p-2 border-right'> {/* Left Panel */}
+                    <Col xs={2} className='p-2 border-right' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Left Panel */}
                         <div className='card border'>
-                            <div className='card-body p-2'>
-                                <Tabs
-                                    // variant="scrollable"
-                                    value={leftTabVal} onChange={handleLeftTabChange}
-                                    aria-label="tabs example"
-                                    TabIndicatorProps={{
-                                        style: {
-                                            flexDirection: "row-right",
-                                            justifyContent: "flex-start"
-                                        }
-                                    }}
-                                >
-                                    <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
-                                    <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
-                                    <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
-                                    <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
-                                </Tabs>
-                                {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
-                                {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
-                                {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-                                {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
-                            </div>
+                            <Tabs
+                                // variant="scrollable"
+                                value={leftTabVal} onChange={handleLeftTabChange}
+                                aria-label="tabs example"
+                                TabIndicatorProps={{
+                                    style: {
+                                        flexDirection: "row-right",
+                                        justifyContent: "flex-start"
+                                    }
+                                }}
+                            >
+                                <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
+                                <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
+                                <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
+                                <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
+                            </Tabs>
+                            {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
+                            {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
+                            {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
+                            {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                         </div>
                     </Col>
-                    <Col xs={8} style={{ backgroundColor: "#ddd", minHeight: "800px", Height: "100%" }}> {/* Central Panel, Viv Image Viewer */}
+                    <Col xs={8} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
                         <Container >
                             <ImageViewer />
                         </Container>
                     </Col>
-                    <Col xs={2} className='border-left p-2'>
-                        <div>
+                    <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
+                        <div className='card border'>
                             <Tabs
-                                // variant="scrollable"
-                                // scrollButtons
                                 allowScrollButtonsMobile
                                 value={rightTabVal} onChange={handleRightTabChange}
                                 aria-label="scrollable auto tabs example">

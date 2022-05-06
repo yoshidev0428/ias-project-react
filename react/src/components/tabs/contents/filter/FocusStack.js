@@ -9,6 +9,7 @@ import {
 import FocusDialog from "./dialog/FocusDialog";
 import { useFlagsStore } from "../../../../components/state";
 export default function FocusStack() {
+    
     const Focusflag = useFlagsStore(store => store.Focusflag);
     const select1 = () => {
         console.log("Select-1");

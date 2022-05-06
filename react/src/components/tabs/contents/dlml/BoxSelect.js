@@ -35,13 +35,15 @@ export default function BoxSelect() {
     return (
         <div className=''>
             <SmallCard title="Box &#38; Select">
-                <CustomButton icon={mdiNearMe} onClick={() => select1()} />
-                <CustomButton icon={mdiPencil} onClick={() => select2()} />
-                <CustomButton icon={mdiCheckboxBlankCircleOutline} onClick={() => select3()} />
-                <CustomButton icon={mdiDotsVertical} onClick={() => select4()} />
-                <CustomButton icon={mdiVectorRectangle} onClick={() => select5()} />
-                <CustomButton icon={mdiSquareEditOutline} onClick={() => select6()} />
-                <CustomButton icon={mdiTrashCanOutline} onClick={() => select7()} />
+                <div className='w-100'>
+                    <CustomButton icon={mdiNearMe} onClick={() => select1()} />
+                    <CustomButton icon={mdiPencil} onClick={() => select2()} />
+                    <CustomButton icon={mdiCheckboxBlankCircleOutline} onClick={() => select3()} />
+                    <CustomButton icon={mdiDotsVertical} onClick={() => select4()} />
+                    <CustomButton icon={mdiVectorRectangle} onClick={() => select5()} />
+                    <CustomButton icon={mdiSquareEditOutline} onClick={() => select6()} />
+                    <CustomButton icon={mdiTrashCanOutline} onClick={() => select7()} />
+                </div>
             </SmallCard>
         </div>
     )

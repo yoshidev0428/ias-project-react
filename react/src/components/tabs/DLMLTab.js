@@ -17,7 +17,7 @@ import ObjectSelect2 from "./contents/dlml/ObjectSelect2";
 import Count from "./contents/dlml/Count";
 import ObjectClass2 from "./contents/dlml/ObjectClass2";
 import ClassObjectStatus2 from "./contents/dlml/ClassObjectStatus2";
-import ExpansionPanel from "../custom/ExpansionPanel";
+// import ExpansionPanel from "../custom/ExpansionPanel";
 import { Divider } from 'semantic-ui-react';
 
 export default function DLMLTab() {

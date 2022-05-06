@@ -23,7 +23,7 @@ export default function Vessel(props) {
     const [showSelectDialog, setShowSelectDialog] = useState(false);
     const [showExpansionDialog, setShowExpansionDialog] = useState(false);
 
-    const [ref, { width, height }] = useElementSize();
+    const [ref, { width }] = useElementSize();
 
     useEffect(() => {
         setCurrentVessel(getVesselById(currentVesselId));
@@ -39,7 +39,6 @@ export default function Vessel(props) {
         if (currentVessel) {
             switch (currentVessel.type) {
                 case 'Slide':
-                    console.log( width, "------------- width")
                     return <Slides width={width} count={currentVessel.count} />;
                 case 'Dish':
                     return <Dishes width={width} size={currentVessel.size} />;
