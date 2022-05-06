@@ -143,7 +143,7 @@ export default function Slides(props) {
             }
         </div>);
     } else {
-        return (<div style={{ width: rect.width }} className="d-flex flex-row justify-content-center">
+        return (<div style={{ width: rect.width, height: rect.height }} className="d-flex flex-row justify-content-center">
             {
                 [...Array(count)].map((x, i) =>
                     <div key={'slides' + i} className="d-flex flex-column justify-content-center">

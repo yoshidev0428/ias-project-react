@@ -1,12 +1,11 @@
 import Dialog from '@mui/material/Dialog';
-
-import Box from '@mui/material/Box';
 import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Slides from './Slides';
 import WellPlates from './WellPlates';
@@ -49,7 +48,7 @@ export const SelectDialog = (props) => {
     const [open, setOpen] = useState(true);
     const [currentVessel, setCurrentVessel] = useState(props.currentVessel);
 
-    const [ref, { width, height }] = useElementSize();
+    const [ref] = useElementSize();
     // { width, height }
     useEffect(() => {
         setOpen(props.open);
@@ -76,13 +75,13 @@ export const SelectDialog = (props) => {
         if (vessel) {
             switch (vessel.type) {
                 case 'Slide':
-                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Slides width={maxDialogWidth / 6.3 - 10} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><Slides width={maxDialogWidth / 6.3 - 10} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Well':
-                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><WellPlates width={maxDialogWidth / 6.3 - 10} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><WellPlates width={maxDialogWidth / 6.3 - 10} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Dish':
-                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Dishes width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><Dishes width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Wafer':
-                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary row align-items-center justify-content-center' : 'row align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3, height: maxDialogWidth / 6.3 }}><Wafers width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
+                    return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><Wafers width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 default:
                     return;
             }
