@@ -3,7 +3,7 @@ Image Analysis web application
 
 Backend - FastApi
 
-Frontend - Vue
+Frontend - React
 
 ## Environment Setup
 
