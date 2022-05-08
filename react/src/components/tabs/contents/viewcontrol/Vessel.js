@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Button } from 'react-bootstrap';
 import Card from '@mui/material/Card';
 import { getVesselById } from '../../../../utils/vessel-types';
 import { useElementSize } from 'usehooks-ts';
@@ -54,34 +53,30 @@ export default function Vessel(props) {
 
     return (
         <Card ref={ref}>
-            <div>
-                <h5>{currentVessel.title}{currentVessel.type}</h5>
-            </div>
-            {renderVessel()}
-            <Row className="mt-1 d-flex justify-content-around common-border">
-                <Button className="btn btn-light btn-sm w-50" onClick={() => setShowSelectDialog(true)}>
-                    <Icon size={0.8}
+            <div className="d-flex justify-content-around common-border">
+                <h6 style={{ width: "60%" }}>{currentVessel.title}{currentVessel.type}</h6>
+                <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
+                    <Icon size={0.6}
                         horizontal
                         vertical
                         rotate={180}
                         color="#212529"
                         path={mdiSyncAlert}>
                     </Icon>
-                </Button>
-                <Button className="btn btn-light btn-sm w-50" onClick={() => setShowExpansionDialog(true)}>
-                    <Icon size={0.8}
+                </button>
+                <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowExpansionDialog(true)}>
+                    <Icon size={0.6}
                         horizontal
                         vertical
                         rotate={180}
                         color="#212529"
                         path={mdiImageFilterCenterFocus}>
                     </Icon>
-                </Button>
-                {/* <CustomButton icon={mdiSyncAlert} onClick={() => { setShowSelectDialog(true) }}></CustomButton>
-                <CustomButton icon={mdiImageFilterCenterFocus} onClick={() => { setShowExpansionDialog(true) }}></CustomButton> */}
-            </Row>
+                </button>
+            </div>
+            {renderVessel()}
             <SelectDialog currentVessel={currentVesselId} open={showSelectDialog} closeDialog={() => { setShowSelectDialog(false) }} changeVessel={(id) => { setCurrentVesselId(id); setCurrentVessel(getVesselById(id)); }} />
             <ExpansionDialog currentVessel={currentVesselId} open={showExpansionDialog} closeDialog={() => { setShowExpansionDialog(false) }} />
-        </Card>
+        </Card >
     );
 }

@@ -1,7 +1,4 @@
 import React from 'react';
-import { Image } from 'react-bootstrap';
-import IconButton from '@mui/material/IconButton';
-
 import Icon from '@mdi/react';
 // import { Icon } from 'semantic-ui-react';
 // const styleLink = document.createElement("link");
@@ -16,16 +13,15 @@ import Icon from '@mdi/react';
 // };
 
 const RectangleButton = (props) => {
-    const imageUrl = "../../assets/images/" + props.image + ".png";
     return (
-        <button className="btn btn-light btn-sm w-50" onClick={props.click}>
-            <Icon size={0.8}
+        <button className='btn btn-light btn-sm' style={{ width: props.width ? props.width + "%" : "50%"}} onClick={props.click}>
+            <Icon size={0.6}
                 horizontal
                 vertical
                 rotate={180}
                 color="#212529"
                 path={props.icon}>
-            </Icon>2D
+            </Icon>{props.label}
         </button>
     );
 }

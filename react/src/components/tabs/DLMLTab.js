@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import {
     AccordionSummary,
     Accordion,
-    AccordionDetails
+    AccordionDetails,
+    Typography
 } from '@mui/material';
 import TabItem from '../custom/TabItem';
 import Judge from "./contents/dlml/Judge";
@@ -25,19 +26,15 @@ export default function DLMLTab() {
     const [expanded, setExpanded] = useState(false);
 
     const handleChange = (panel) => (event, isExpanded) => {
-        console.log( panel, isExpanded, expanded, "panel, isExpanded, expanded, ");
+        console.log(panel, isExpanded, expanded, "panel, isExpanded, expanded, ");
         setExpanded(isExpanded ? panel : false);
     };
 
     return (
         <TabItem title="Learning">
-            <Accordion className="mt-3" expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                <AccordionSummary
-                    aria-controls="panel1bh-content"
-                    id="panel1bh-header"
-                    className="border"
-                >
-                    <p>Deep Learning</p>
+            <Accordion className="mt-1" expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                <AccordionSummary aria-controls="panel1bh-content" id="panel1bh-header" className="border">
+                    <Typography>Deep Learning</Typography>
                 </AccordionSummary>
                 <AccordionDetails className='p-0'>
                     <Judge />
@@ -53,13 +50,9 @@ export default function DLMLTab() {
                     <ClassObjectStatus />
                 </AccordionDetails>
             </Accordion>
-            <Accordion className="mt-3" expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                <AccordionSummary
-                    aria-controls="panel2bh-content"
-                    id="panel2bh-header"
-                    className="border"
-                >
-                    <p>Machine Learning</p>
+            <Accordion className="mt-1" expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                <AccordionSummary aria-controls="panel2bh-content" id="panel2bh-header" className="border" >
+                    <Typography>Machine Learning</Typography>
                 </AccordionSummary>
                 <AccordionDetails className='p-0'>
                     <MethodSelect2 />
