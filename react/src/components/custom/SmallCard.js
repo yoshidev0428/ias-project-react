@@ -3,7 +3,7 @@ import React from 'react'
 // import { Row, Col, Container } from 'react-bootstrap';
 const SmallCard = (props) => {
     return (
-        <div className="px-1 py-1 common-border">
+        <div className="common-border" style={{padding: "2px"}}>
             <h6 style={{ fontWeight: 'normal' }}>
                 {props.title}
             </h6>
@@ -11,7 +11,7 @@ const SmallCard = (props) => {
                 {props.title}
             </h6> */}
             <div>
-                <div className="mt-1 d-flex justify-content-around">
+                <div className="d-flex justify-content-around">
                     {props.children}
                 </div>
             </div>

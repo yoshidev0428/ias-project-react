@@ -39,15 +39,15 @@ export default function ZPosition(props) {
 
     return (
         <>
-            <div className="pa-1 common-border">
+            <div className="common-border">
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Z Position</h6>
                     <div>
                         <div className="spacer"></div>
-                        <Button className="pa-1" height="20px" variant="contained" color="primary" size="small" onClick={on3DView}>3-D View</Button>
+                        <Button className="py-0" variant="contained" color="primary" size="small" onClick={on3DView}>3-D View</Button>
                     </div>
                 </div>
-                <Container fluid={true} className="px-0 py-0 mt-3">
+                <Container fluid={true} className="px-0 py-0">
                     <Grid container spacing={1} alignItems="left">
                         <Grid item>
                             <Icon path={mdiSwapVertical} size={1} />
@@ -70,19 +70,12 @@ export default function ZPosition(props) {
                                 onBlur={Blur}
                                 variant="standard"
                                 style={{ BorderNone: true, border: 'none' }}
-                                InputProps={{
-                                    step: 1,
-                                    min: -50,
-                                    max: 50,
-                                    type: 'number',
-                                    'aria-labelledby': 'input-slider',
-                                    disableUnderline: true,
-                                }}
+                                InputProps={{ step: 1, min: -50, max: 50, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
 
                             />
                         </Grid>
                     </Grid>
-                    <div className="d-flex justify-center pa-0 ma-0">
+                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
                         <Col md={4}>
                             <Input
                                 value={props.minV}

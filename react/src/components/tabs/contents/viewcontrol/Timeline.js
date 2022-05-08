@@ -62,7 +62,7 @@ export default function Timeline(props) {
 
     return (
         <>
-            <div className="pa-1 common-border">
+            <div className="common-border">
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Timeline</h6>
                     <div>
@@ -71,7 +71,7 @@ export default function Timeline(props) {
                         <IconButton color="primary" size="small" onClick={onSetting}><Icon path={mdiCog} size={1} /></IconButton>
                     </div>
                 </div>
-                <Container fluid={true} className="px-0 py-0 mt-3">
+                <Container fluid={true} className="px-0 py-0">
                     <Grid container spacing={1} alignItems="left">
                         <Grid item>
                             <Icon path={mdiPlay} size={1} />
@@ -112,7 +112,7 @@ export default function Timeline(props) {
                             />
                         </Grid>
                     </Grid>
-                    <div className="d-flex justify-center pa-0 ma-0">
+                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
                         <Col md={4}>
                             <Input
                                 value={-50}
