@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TabItem from '../custom/TabItem';
 import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
+// import Icon from '@mdi/react';
 // import OpenCloudDialog from "./contents/file/OpenCloudDialog";
-import OpenFileDialog from "./contents/file/OpenFileDialog";
-import OpenFolderDialog from "./contents/file/OpenFolderDialog";
+// import OpenFileDialog from "./contents/file/OpenFileDialog";
+// import OpenFolderDialog from "./contents/file/OpenFolderDialog";
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import {
     // mdiCloudDownloadOutline,
@@ -68,28 +69,49 @@ export default function FileTab(props) {
     const onSelect1 = () => {
         console.log("click onSelect1");
     };
+
     // const [cloudDialog, setcloudDialog] = useState(false);
-    const [fileDialog, setfileDialog] = useState(false);
-    const [folderDialog, setfolderDialog] = useState(false);
+    // const [folderDialog, setfolderDialog] = useState(false);
     const [positionDialog, setpositionDialog] = useState(false);
     // const showCloudDialog = () => {
     //     setcloudDialog(true);
     // }
+
     const showPositionDialog = () => {
         setpositionDialog(true);
     }
+
     const handleClose = () => {
         // setcloudDialog(false);
         setpositionDialog(false);
     }
 
+    const inputFile = useRef(null);
+    const OpenFileDialog = () => {
+        inputFile.current.click();
+    };
+    const onFileChangeCapture = (e) => {
+        console.log(e.target.files, " file information ");
+    };
+
+    const folderInput = useRef(null);
+    const OpenFolderDialog = () => {
+        folderInput.current.click();
+        // inputFile.current.click();
+    };
+    const onFolderChangeCapture = (e) => {
+        console.log(e.target.files, " folder information ");
+    }
+
     return (
         <TabItem title="File/Edit">
+            <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }}/>
+            <input directory="" webkitdirectory="" type="file" ref={folderInput} onChange={onFolderChangeCapture} style={{ display: "none" }}/>
             <SmallCard title="Open">
-                {/* {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog}/>}
-        {cloudDialog && <OpenCloudDialog handleClose={handleClose}/>} */}
-                <CustomButton icon={mdiEmailNewsletter} label="File" style={fileDialog && <OpenFileDialog />} />
-                <CustomButton icon={mdiFolderOpenOutline} label="Folder" style={folderDialog && <OpenFolderDialog />} />
+                {/* {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog} />}
+                {cloudDialog && <OpenCloudDialog handleClose={handleClose} />} */}
+                <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
+                <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={showPositionDialog} />
                 {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} />}
             </SmallCard>
@@ -109,13 +131,15 @@ export default function FileTab(props) {
             </SmallCard>
             <Divider />
             <SmallCard title="Comment">
-                <CustomButton icon={mdiNearMe} click={onSelect1} />
-                <CustomButton icon={mdiPencil} click={onSelect1} />
-                <CustomButton icon={mdiCheckboxBlankCircleOutline} click={onSelect1} />
-                <CustomButton icon={mdiDotsVertical} click={onSelect1} />
-                <CustomButton icon={mdiVectorRectangle} click={onSelect1} />
-                <CustomButton icon={mdiSquareEditOutline} click={onSelect1} />
-                <CustomButton icon={mdiTrashCanOutline} click={onSelect1} />
+                <div>
+                    <CustomButton icon={mdiNearMe} click={onSelect1} />
+                    <CustomButton icon={mdiPencil} click={onSelect1} />
+                    <CustomButton icon={mdiCheckboxBlankCircleOutline} click={onSelect1} />
+                    <CustomButton icon={mdiDotsVertical} click={onSelect1} />
+                    <CustomButton icon={mdiVectorRectangle} click={onSelect1} />
+                    <CustomButton icon={mdiSquareEditOutline} click={onSelect1} />
+                    <CustomButton icon={mdiTrashCanOutline} click={onSelect1} />
+                </div>
             </SmallCard>
             <Divider />
             <SmallCard title="Change Dimension">

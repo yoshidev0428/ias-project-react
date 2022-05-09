@@ -1,15 +1,25 @@
-import React, { useRef } from 'react';
+import React from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+
 const OpenFileDialog = (props) => {
 
-    const inputFile = useRef(null);
-    const onClick = (e) => {
-        inputFile.current.click();
-    };
+    const action = () => {
+
+    }
 
     return (
         <>
-            <input type="file" id="file" ref={inputFile} style={{ display: "none" }} />
-            <button onClick={onClick}>open file browser</button>
+            <Dialog open={true} onClose={props.handleClose} maxWidth={"800"} >
+                <div className="d-flex border-bottom">
+                    <DialogTitle>File Open</DialogTitle>
+                    <button className="dialog-close-btn" color="primary" size="small" onClick={props.handleClose}>&times;</button>
+                </div>
+                <div className='d-flex justify-content-around mx-5 my-2' style={{ width: 800, height: 300 }}>
+                </div>
+            </Dialog>
         </>
     )
 
