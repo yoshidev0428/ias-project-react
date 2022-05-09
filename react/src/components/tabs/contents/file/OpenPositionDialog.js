@@ -463,12 +463,12 @@ const OpenPositionDialog = (props) => {
     return (
         <>
             <div className="d-none">
-                <Dialog maxWidth='md' fullWidth={true} open={true} onClose={props.handleClose}>
+                <Dialog maxWidth={"610"} open={true} onClose={props.handleClose}>
                     <div className="d-flex border-bottom">
                         <DialogTitle>Position Select</DialogTitle>
                         <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseDialog}>&times;</button>
                     </div>
-                    <DialogContent className='p-0'>
+                    <DialogContent className='p-0' style={{width:"610"}}>
                         <Tabs variant="fullWidth" value={selectedTab} onChange={onTabChange} aria-label="scrollable auto tabs example" >
                             <Tab className="common-tab-button primary--text" label="Images" />
                             <Tab className="common-tab-button primary--text" label="Tiling" />
