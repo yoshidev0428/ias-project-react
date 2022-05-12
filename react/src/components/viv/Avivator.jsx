@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-
 import { useViewerStore } from './state';
 import { useImage } from './hooks';
-import SnackBars from './components/Snackbars';
 import Viewer from './components/Viewer';
-import Controller from './components/Controller';
 import DropzoneWrapper from './components/DropzoneWrapper';
+import Controller from './components/Controller';
+import SnackBars from './components/Snackbars';
 import Footer from './components/Footer';
 
 import './index.css';
@@ -18,22 +17,28 @@ import './index.css';
  * @param {Object} args.sources A list of sources for a dropdown menu, like [{ url, description }]
  * */
 export default function Avivator(props) {
-    const { history, source: initSource, isDemoImage } = props;
+
+    const { history, source: source, isDemoImage } = props;
     const isViewerLoading = useViewerStore(store => store.isViewerLoading);
-    const source = useViewerStore(store => store.source);
-    const useLinkedView = useViewerStore(store => store.useLinkedView);
+    // const source = useViewerStore(store => store.source);
+    // const useLinkedView = useViewerStore(store => store.useLinkedView);
     useEffect(() => {
-        useViewerStore.setState({
-            source: initSource,
-            isNoImageUrlSnackbarOn: isDemoImage
-        });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        if (props.source !== null) {
+            console.log(props.source, "Avivator : image file ++ ");
+            useViewerStore.setState({
+                source: source,
+                isNoImageUrlSnackbarOn: isDemoImage
+            });
+        }
+    }, [props]); // eslint-disable-line react-hooks/exhaustive-deps
     useImage(source, history);
     return (
         <>
-            <DropzoneWrapper>{!isViewerLoading && <Viewer />}</DropzoneWrapper>
-            {/* <Controller /> */}
-            {/* <SnackBars /> */}
+            <DropzoneWrapper>
+                {!isViewerLoading && <Viewer />}
+            </DropzoneWrapper>
+            {/* <Controller />
+            <SnackBars /> */}
             {/* {!useLinkedView && <Footer />} */}
         </>
     );

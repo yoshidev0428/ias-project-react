@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import Logout from '@mui/icons-material/Logout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col, Container, Alert } from 'react-bootstrap';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SchoolIcon from '@mui/icons-material/School';
@@ -27,7 +27,8 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import LinearProgress from '@mui/material/LinearProgress';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
-import ImageViewer from './ImageViewer';
+// import ImageViewer from './ImageViewer';
+import RoutedAvivator from './viv'
 import DLMLTab from "./tabs/DLMLTab";
 import AdjustTab from "./tabs/AdjustTab";
 import FilterTab from "./tabs/FilterTab";
@@ -53,10 +54,23 @@ TabContainer.propTypes = {
 
 const MainFrame = () => {
 
+    const imageViewAreaRef = useRef(null);
     const { height } = useWindowDimensions();
+    const handleResize = () => {
+        localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
+        localStorage.setItem("imageViewSizeHeight",imageViewAreaRef.current.offsetHeight);
+        console.log(imageViewAreaRef.current.offsetWidth, imageViewAreaRef.current.offsetHeight,  "MainFrame.js : imageViewAreaRef")
+    };
+    useEffect(() => {
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [imageViewAreaRef]);
+
     const [rightTabVal, setRightTabVal] = useState(0);
     const [leftTabVal, setLeftTabVal] = useState(3);
-
     const handleRightTabChange = (event, newValue) => {
         setRightTabVal(newValue);
     };
@@ -76,16 +90,13 @@ const MainFrame = () => {
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleClose = () => {
         setAnchorEl(null);
     };
-
     const handleLogout = () => {
         console.log("click");
         store.dispatch({ type: "auth_logOut" });
     };
-
 
     const HeaderContent = () => {
         return (
@@ -159,6 +170,29 @@ const MainFrame = () => {
         );
     }
 
+    const [loadImageSource, setLoadImageSource] = useState(null);
+    const changeLoadFile = (files) => {
+        // console.log(files[0], " mainFrame : changeloadfile");
+        let file = files[0];
+        if (file) {
+            let name = "";
+            let size = 0;
+            if (file.name !== undefined) {
+                name = file.name;
+            }
+            if (file.size !== undefined) {
+                size = file.size;
+            }
+            // let objectURL = URL.createObjectURL(file);
+            // console.log(objectURL, " mainFrame : file url1");
+            // let updatedURL = URL.revokeObjectURL(objectURL);
+            // console.log(updatedURL, " mainFrame : file url2");
+            setLoadImageSource({ urlOrFile: URL.createObjectURL(file), description: name, size: size });
+        } else {
+            Alert("Please open correct file again!");
+        }
+    }
+
     return (
         <>
             <HeaderContent />
@@ -185,13 +219,11 @@ const MainFrame = () => {
                             {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
                             {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
                             {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-                            {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
+                            {leftTabVal === 3 && <TabContainer><FileTab changeOpenedFile={(files) => changeLoadFile(files)} /></TabContainer>}
                         </div>
                     </Col>
-                    <Col xs={8} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
-                        <Container >
-                            <ImageViewer />
-                        </Container>
+                    <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
+                        <RoutedAvivator openedImageSource={loadImageSource} />
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
                         <div className='card border'>

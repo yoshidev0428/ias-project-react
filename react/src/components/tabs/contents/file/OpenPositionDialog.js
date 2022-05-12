@@ -274,27 +274,27 @@ const DropzoneNamesFiles = () => {
         requestSearch(searched);
     };
 
-    // Select example string in names&types tab
+    // // Select example string in names&types tab
     // const selectExampleString = () => {
-    //   if (typeof window.getSelection !== "undefined") {
-    //     try {
-    //       let sel = window.getSelection(),
-    //         range = sel.getRangeAt(0);
-    //       let selectionRect = range.getBoundingClientRect(),
-    //         fullRect = $refs.exampleBox.getBoundingClientRect();
+    //     if (typeof window.getSelection !== "undefined") {
+    //         try {
+    //             let sel = window.getSelection(),
+    //                 range = sel.getRangeAt(0);
+    //             let selectionRect = range.getBoundingClientRect(),
+    //                 fullRect = $refs.exampleBox.getBoundingClientRect();
 
-    //       selectionRange.text = range.toString();
+    //             selectionRange.text = range.toString();
 
-    //       selectionRange.startOffset = Math.round(
-    //         ((selectionRect.left - fullRect.left) / selectionRect.width) *
-    //           range.toString().length
-    //       );
-    //       selectionRange.endOffset =
-    //         selectionRange.startOffset + range.toString().length;
-    //     } catch (error) {
-    //       console.log(error);
+    //             selectionRange.startOffset = Math.round(
+    //                 ((selectionRect.left - fullRect.left) / selectionRect.width) *
+    //                 range.toString().length
+    //             );
+    //             selectionRange.endOffset =
+    //                 selectionRange.startOffset + range.toString().length;
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
     //     }
-    //   }
     // };
 
     const [fileName, setFileName] = React.useState(contents[0]);
@@ -308,23 +308,23 @@ const DropzoneNamesFiles = () => {
                     document
                         .getElementById(text)
                         .classList.add(namePatterns[index].color + "--text");
-                    // const patterns = this.namePatterns.filter(n => n.start > -1);
-                    // for (var i = 0; i < patterns.length; i++) {
-                    //   // if (
-                    //   //   isOverlapped(
-                    //   //     [patterns[i].start, patterns[i].end],
-                    //   //     [startOffset, endOffset]
-                    //   //   )
-                    //   // ) {
-                    //   //   break;
-                    //   // }
-                    //   console.log(patterns.length);
-                    //   if (i === patterns.length) {
-                    namePatterns[index].text = text;
-                    // this.namePatterns[index].start = startOffset;
-                    // this.namePatterns[index].end = endOffset;
-                    // }
-                    // }
+                    const patterns = this.namePatterns.filter(n => n.start > -1);
+                    for (var i = 0; i < patterns.length; i++) {
+                        // if (
+                        //     isOverlapped(
+                        //         [patterns[i].start, patterns[i].end],
+                        //         [startOffset, endOffset]
+                        //     )
+                        // ) {
+                        //     break;
+                        // }
+                        console.log(patterns.length);
+                        if (i === patterns.length) {
+                            namePatterns[index].text = text;
+                            this.namePatterns[index].start = startOffset;
+                            this.namePatterns[index].end = endOffset;
+                        }
+                    }
                 }
             }
         }
@@ -356,11 +356,11 @@ const DropzoneNamesFiles = () => {
                             <Row className="align-center justify-center">
                                 <p className="mb-0 mr-8">Example</p>
                                 {/* <div
-                  ref={exampleBox}
-                  className="d-flex example-string"
-                  onMouseUp={selectExampleString}
-                  // v-html="exampleFileName"
-                ></div> */}
+                                    ref={exampleBox}
+                                    className="d-flex example-string"
+                                    onMouseUp={selectExampleString}
+                                    v-html="exampleFileName"
+                                ></div> */}
                                 <NativeSelect value={fileName} onChange={setFileName} className="filenames-list">
                                     {contents.map((c) => (
                                         <option key={c.filename} value={c}>
@@ -463,12 +463,12 @@ const OpenPositionDialog = (props) => {
     return (
         <>
             <div className="d-none">
-                <Dialog maxWidth={"610"} open={true} onClose={props.handleClose}>
+                <Dialog open={true} onClose={props.handleClose}>
                     <div className="d-flex border-bottom">
                         <DialogTitle>Position Select</DialogTitle>
                         <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseDialog}>&times;</button>
                     </div>
-                    <DialogContent className='p-0' style={{width:"610"}}>
+                    <DialogContent className='p-0'>
                         <Tabs variant="fullWidth" value={selectedTab} onChange={onTabChange} aria-label="scrollable auto tabs example" >
                             <Tab className="common-tab-button primary--text" label="Images" />
                             <Tab className="common-tab-button primary--text" label="Tiling" />
