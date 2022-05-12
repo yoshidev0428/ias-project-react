@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
+import React, { useEffect } from 'react';
 import shallow from 'zustand/shallow';
-import React from 'react';
 import debounce from 'lodash/debounce';
 import {
     SideBySideViewer,
@@ -19,11 +19,10 @@ import {
 import { useWindowSize } from '../utils';
 import { DEFAULT_OVERVIEW } from '../constants';
 
-const Viewer = () => {
-    const [useLinkedView, use3d, viewState] = useViewerStore(
-        store => [store.useLinkedView, store.use3d, store.viewState],
-        shallow
-    );
+const Viewer = (props) => {
+
+    const [useLinkedView, use3d, viewState] = useViewerStore( store => [store.useLinkedView, store.use3d, store.viewState], shallow );
+
     const [
         colors,
         contrastLimits,
@@ -38,6 +37,7 @@ const Viewer = () => {
         ],
         shallow
     );
+    
     const loader = useLoader();// <-----here
     const viewSize = useWindowSize();
     const [
@@ -77,7 +77,15 @@ const Viewer = () => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({ pyramidResolution: z });
     };
+
+    useEffect(() => {
+        if (props.source !== null) {
+            console.log( use3d, useLinkedView, viewSize, "use3d, useLinkedView");
+            // console.log( props.source, "use3d, useLinkedView");
+        }
+    }, [props]);
     console.log("xSlice --> " + JSON.stringify(xSlice));
+    
     return use3d ? (
         <VolumeViewer
             loader={loader}

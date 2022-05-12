@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
-// import sources from './source-info';
+import sources from './source-info';
 import Avivator from './Avivator';
-// import {
-//     useLocation,
-// } from 'react-router-dom';
-// import { getNameFromUrl } from './utils';
+import { useLocation } from 'react-router-dom';
+import { getNameFromUrl } from './utils';
 
 const darkTheme = createTheme({
     palette: {
@@ -24,12 +22,18 @@ const darkTheme = createTheme({
 // function getRandomSource() {
 //     return sources[Math.floor(Math.random() * sources.length)];
 // }
-// // https://reactrouter.com/web/example/query-parameters
+// https://reactrouter.com/web/example/query-parameters
 // function useQuery() {
 //     return new URLSearchParams(useLocation().search);
 // }
 
 export default function RoutedAvivator(props) {
+
+    const source = {
+        urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
+        description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
+    }
+    const [urlSource, setUrlSource] = useState(source);
     // const query = useQuery();
     // const url = query.get('image_url');
     // const {
@@ -47,16 +51,19 @@ export default function RoutedAvivator(props) {
     //   );
     // }
     // const source = getRandomSource();
-    // const source ={
-    //   urlOrFile:"https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
-    //   // urlOrFile:"https://viv-demo.storage.googleapis.com/12448_G1HR_Mesh003.ome.tif",
-    //   description:"OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
-    // }
-    const source = '';
     // const history = [];
+
+    useEffect(() => {
+        if (props.openedImageSource !== undefined) {
+            console.log(props.openedImageSource, "viv index : image file");
+            setUrlSource(props.openedImageSource);
+        }
+    }, [props]);
+
+
     return (
         <ThemeProvider theme={darkTheme}>
-            <Avivator source={source} isDemoImage />
+            <Avivator source={urlSource}/>
         </ThemeProvider>
     );
 }

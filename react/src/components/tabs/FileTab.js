@@ -92,6 +92,7 @@ export default function FileTab(props) {
     };
     const onFileChangeCapture = (e) => {
         console.log(e.target.files, " file information ");
+        props.changeOpenedFile(e.target.files);
     };
 
     const folderInput = useRef(null);
