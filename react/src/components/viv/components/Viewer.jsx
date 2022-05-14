@@ -84,7 +84,7 @@ const Viewer = (props) => {
             // console.log( props.source, "use3d, useLinkedView");
         }
     }, [props]);
-    console.log("xSlice --> " + JSON.stringify(xSlice));
+    console.log("xSlice --> " + JSON.stringify(xSlice), viewSize, " viewSize");
     
     return use3d ? (
         <VolumeViewer

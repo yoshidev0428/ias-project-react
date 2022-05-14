@@ -7,9 +7,9 @@ import Vessel from "./contents/viewcontrol/Vessel";
 import Objective from "./contents/viewcontrol/Objective";
 import Channel from "./contents/viewcontrol/Channel";
 import ImageAdjust from "./contents/viewcontrol/ImageAdjust";
-// import ImageSeries from "./contents/viewcontrol/ImageSeries";
 import ZPosition from "./contents/viewcontrol/ZPosition";
 import Timeline from "./contents/viewcontrol/Timeline";
+// import ImageSeries from "./contents/viewcontrol/ImageSeries";
 // import DropzoneButton from "../viv/components/Controller/components/DropzoneButton";
 // import LensSelect from "../viv/components/Controller/components/LensSelect";
 // import Contoller from "../viv/components/Controller/"
