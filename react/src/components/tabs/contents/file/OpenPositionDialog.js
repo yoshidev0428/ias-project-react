@@ -125,7 +125,6 @@ const DropzoneMetaData = () => {
     const onDrop = useCallback(acceptedFiles => {
         setLoading(true);
         setFiles(acceptedFiles);
-
         acceptedFiles.forEach(file => {
             rows.push({
                 id: rows.length + 1,
@@ -162,13 +161,11 @@ const DropzoneMetaData = () => {
     console.log("searchrows=====>" + JSON.stringify(searchrows));
 
     return (
-        <div {...getRootProps()}>
+        <div {...getRootProps()} style={{ minHeight: "200px" }}>
             {/* <input {...getInputProps()} /> */}
             {files.length === 0 ?
-                <div className="d-flex align-center justify-center fill-height">
-                    <p className="text-h4 grey--text text--lighten-2">
-                        {backgroundText}
-                    </p>
+                <div className="d-flex align-center justify-center pt-5">
+                    {backgroundText}
                 </div> :
                 <Card>
                     <CardContent>
@@ -178,7 +175,7 @@ const DropzoneMetaData = () => {
                             onCancelSearch={() => cancelSearch()}
                         />
                     </CardContent>
-                    <div style={{ height: 400, width: '100%' }}>
+                    <div style={{ height: "auto", width: '100%' }}>
                         <DataGrid
                             rows={searchrows}
                             columns={columns}
@@ -239,7 +236,6 @@ const DropzoneNamesFiles = () => {
     const onDrop = useCallback(acceptedFiles => {
         setLoading(true);
         setFiles(acceptedFiles);
-
         acceptedFiles.forEach(file => {
             rows.push({
                 id: rows.length + 1,
@@ -260,7 +256,6 @@ const DropzoneNamesFiles = () => {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-
     // Search Bar
     const [searched, setSearched] = useState("");
     const requestSearch = (searchedVal) => {
@@ -282,9 +277,7 @@ const DropzoneNamesFiles = () => {
     //                 range = sel.getRangeAt(0);
     //             let selectionRect = range.getBoundingClientRect(),
     //                 fullRect = $refs.exampleBox.getBoundingClientRect();
-
     //             selectionRange.text = range.toString();
-
     //             selectionRange.startOffset = Math.round(
     //                 ((selectionRect.left - fullRect.left) / selectionRect.width) *
     //                 range.toString().length
@@ -298,7 +291,6 @@ const DropzoneNamesFiles = () => {
     // };
 
     const [fileName, setFileName] = React.useState(contents[0]);
-
     const clickNamePattern = (index) => {
         const { text, startOffset, endOffset } = selectionRange;
         let selectedText = getSelectionText();
@@ -339,20 +331,15 @@ const DropzoneNamesFiles = () => {
         return text.replaceAll("\n", "");
     };
     return (
-        <div {...getRootProps()}>
+        <div {...getRootProps()} style={{ minHeight: "200px" }}>
             {/* <input {...getInputProps()} /> */}
-            {files.length === 0 ?
-                <div className="d-flex align-center justify-center fill-height">
-                    <p className="text-h4 grey--text text--lighten-2">
-                        {backgroundText}
-                    </p>
+            {files.length !== 0 ?
+                <div className="d-flex align-center justify-center pt-5">
+                    {backgroundText}
                 </div> :
-                <div>
-                    <Row className="justify-center mx-5">
-                        <div
-                            className="d-flex align-center justify-center"
-                        // style={{width: calc(100% - '70px')}}
-                        >
+                <div className='border'>
+                    <Row className="justify-center m-0 border">
+                        <div className="d-flex align-center justify-center">
                             <Row className="align-center justify-center">
                                 <p className="mb-0 mr-8">Example</p>
                                 {/* <div
@@ -361,7 +348,7 @@ const DropzoneNamesFiles = () => {
                                     onMouseUp={selectExampleString}
                                     v-html="exampleFileName"
                                 ></div> */}
-                                <NativeSelect value={fileName} onChange={setFileName} className="filenames-list">
+                                <NativeSelect value={fileName} onChange={setFileName} className="filenames-list" style={{ minWidth: "150px" }}>
                                     {contents.map((c) => (
                                         <option key={c.filename} value={c}>
                                             {c.filename}
@@ -371,19 +358,16 @@ const DropzoneNamesFiles = () => {
                             </Row>
                         </div>
                     </Row>
-                    <Row className="align-center justify-center name-type-input">
+                    <Row className="align-center justify-center name-type-input m-0 border">
                         {namePatterns.map((pattern, idx) => (
                             <div key={idx} className="pattern-section">
                                 <Button className="pattern-item-button"
                                     variant="contained"
                                     // color="#ffffff"
-
                                     // size="small"
                                     onClick={clickNamePattern(idx)}
                                     style={{ backgroundColor: pattern.color, borderRadius: "8px" }}
-                                >
-                                    {pattern.label}
-                                </Button>
+                                >{pattern.label}</Button>
                                 <TextField
                                     value={namePatterns[idx].text}
                                     size="small"
@@ -394,7 +378,7 @@ const DropzoneNamesFiles = () => {
                             </div>
                         ))}
                     </Row>
-                    <Container>
+                    <Container className='pl-1 pr-1 border'>
                         <div className="d-flex">
                             <Button
                                 className="common"
@@ -402,9 +386,7 @@ const DropzoneNamesFiles = () => {
                                 depressed="true"
                                 style={{ backgroundColor: "#1976d2", borderRadius: "8px" }}
                             // onClick={updateNameType}
-                            >
-                                Update
-                            </Button>
+                            >Update</Button>
                             <div className="spacer type-spacer"></div>
                             <Button
                                 className="common"
@@ -412,9 +394,7 @@ const DropzoneNamesFiles = () => {
                                 depressed="true"
                                 style={{ backgroundColor: "#1976d2", borderRadius: "8px" }}
                             // onClick={clearNameType}
-                            >
-                                Clear
-                            </Button>
+                            >Clear </Button>
                             <div className="spacer"></div>
                             <SearchBar
                                 value={searched}
@@ -439,7 +419,21 @@ const DropzoneNamesFiles = () => {
     )
 }
 
+const DropzoneGroup = () => {
+
+    const [loading, setLoading] = useState(false);
+    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
+    return (
+        <div style={{minHeight:"200px"}}>
+            <div className="d-flex align-center justify-center pt-5">
+                {backgroundText}
+            </div>
+        </div>
+    )
+}
+
 const OpenPositionDialog = (props) => {
+    
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
     const [progressBarMaxValue, setProgressBarMaxValue] = useState(0);
@@ -462,54 +456,57 @@ const OpenPositionDialog = (props) => {
     };
     return (
         <>
-            <div className="d-none">
-                <Dialog open={true} onClose={props.handleClose}>
-                    <div className="d-flex border-bottom">
-                        <DialogTitle>Position Select</DialogTitle>
-                        <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseDialog}>&times;</button>
-                    </div>
-                    <DialogContent className='p-0'>
-                        <Tabs variant="fullWidth" value={selectedTab} onChange={onTabChange} aria-label="scrollable auto tabs example" >
-                            <Tab className="common-tab-button primary--text" label="Images" />
-                            <Tab className="common-tab-button primary--text" label="Tiling" />
-                            <Tab className="common-tab-button primary--text" label="Metadata" />
-                            <Tab className="common-tab-button primary--text" label="Names &amp; Files" />
-                            <Tab className="common-tab-button primary--text" label="Groups" />
-                        </Tabs>
-                        {selectedTab === 0 &&
-                            <TabContainer>
-                                {/* <Button className="cloud-btn mt-15 ml-5 ma-2" variant="contained" onClick={showCloudDialog} color="primary" >Cloud</Button> */}
-                                {cloudDialog && <OpenCloudDialog handleClose={handleCloseDialog} />}
-                                <ImageDropzone />
-                            </TabContainer>}
-                        {selectedTab === 1 &&
-                            <TabContainer>
-                                <Tiling
-                                    set-progress-max={setProgressMax}
-                                    set-progress-current={setProgressCurrent}
-                                />
-                            </TabContainer>
-                        }
-                        {selectedTab === 2 &&
-                            <TabContainer>
-                                <DropzoneMetaData />
-                            </TabContainer>
-                        }
-                        {selectedTab === 3 &&
-                            <TabContainer>
-                                <DropzoneNamesFiles />
-                            </TabContainer>
-                        }
-                    </DialogContent>
-                    <Button size="small" onClick={props.handleClose}>Cancel</Button>
-                    <DialogActions>
-                    </DialogActions>
-                </Dialog>
-            </div>
+            <Dialog open={true} onClose={props.handleClose} maxWidth={"1010"} className="m-0" style={{ top: "5%", bottom: "auto" }}>
+                <div className="d-flex border-bottom">
+                    <DialogTitle>Position Select</DialogTitle>
+                    <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseDialog}>&times;</button>
+                </div>
+                <DialogContent className='p-0' style={{ width: "1000px" }}>
+                    <Tabs className="border" variant="fullWidth" value={selectedTab} onChange={onTabChange} aria-label="scrollable auto tabs example" >
+                        <Tab className="common-tab-button font-16 primary--text" label="Images" />
+                        <Tab className="common-tab-button font-16 primary--text" label="Tiling" />
+                        <Tab className="common-tab-button font-16 primary--text" label="Metadata" />
+                        <Tab className="common-tab-button font-16 primary--text" label="Names &amp; Files" />
+                        <Tab className="common-tab-button font-16 primary--text" label="Groups" />
+                    </Tabs>
+                    {selectedTab === 0 &&
+                        <TabContainer>
+                            <ImageDropzone />
+                        </TabContainer>}
+                    {selectedTab === 1 &&
+                        <TabContainer>
+                            <Tiling set-progress-max={setProgressMax} set-progress-current={setProgressCurrent} />
+                        </TabContainer>
+                    }
+                    {selectedTab === 2 &&
+                        <TabContainer>
+                            <DropzoneMetaData />
+                        </TabContainer>
+                    }
+                    {selectedTab === 3 &&
+                        <TabContainer>
+                            <DropzoneNamesFiles />
+                        </TabContainer>
+                    }
+                    {selectedTab === 4 &&
+                        <TabContainer>
+                            <DropzoneGroup />
+                        </TabContainer>
+                    }
+                </DialogContent>
+                <DialogActions style={{ display: "-webkit-box !important" }} className="border">
+                    {
+                        selectedTab === 0 && <div>
+                            <Button className="cloud-btn" variant="contained" onClick={showCloudDialog} color="primary" style={{ marginLeft: "-800px" }}>Cloud</Button>
+                            {cloudDialog && <OpenCloudDialog handleClose={handleCloseDialog} />}
+                        </div>
+                    }
+                    <Button size="medium" color="primary" variant="contained" onClick={props.handleClose}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
-OpenPositionDialog.propTypes = {
-    handleClose: PropTypes.func.isRequired
-};
+
+OpenPositionDialog.propTypes = {handleClose: PropTypes.func.isRequired};
 export default OpenPositionDialog;

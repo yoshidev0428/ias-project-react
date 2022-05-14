@@ -13,5 +13,5 @@ body {
   margin: 15px;
 }
 #deckgl-wrapper{
-  min-height: 1000px;
+  /* min-height: 1000px; */
 }

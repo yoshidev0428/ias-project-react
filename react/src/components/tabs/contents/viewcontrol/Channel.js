@@ -87,9 +87,7 @@ export default function Channel() {
         return (
             channels.map((c, i) =>
                 <div key={i} className="d-flex flex-column channel-box text-center">
-                    <Checkbox
-                        // onChange={toggleIsOn}
-                        // checked={channelsVisible}
+                    <Checkbox // onChange={toggleIsOn} // checked={channelsVisible} 
                         size="small" sx={{ color: c.color, padding: 0, '&.Mui-checked': { color: c.color,}}}/>
                     <span style={{ color: c.color }}>{c.label}</span>
                 </div>

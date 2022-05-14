@@ -10,3 +10,6 @@ cd react
 echo ------ Starting Frontend
 npm install
 npm start
+
+cmd /k
+# PAUSE

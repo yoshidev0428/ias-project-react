@@ -16,6 +16,10 @@
     width: 30px !important;
 }
 
+.font-16 {
+    font-size: 16px !important;
+}
+
 .dialog-close-btn {
     right:20px;
     top:15px;
@@ -30,3 +34,6 @@
     background-color: rgba(0,0,0,.05) !important;
 }
 
+#position-dlg-span span{
+    font-size: 12px !important;
+}
