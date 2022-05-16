@@ -37,3 +37,26 @@
 #position-dlg-span span{
     font-size: 12px !important;
 }
+
+.showOnlyDropDownBtn{
+    width:20px;
+    background-color:white;
+    margin: 0px;
+    padding: 0px !important;
+    margin-left: -15px !important;
+    height: 10px;
+}
+
+.showOnlyDropDownBtn select{
+    color:white !important;
+}
+.showOnlyDropDownBtn option{
+    color:black !important;
+}
+.showFileName{
+    padding: 0px !important;
+    width: 40% !important;
+    margin-right: -10px !important;
+    border: none !important;
+    border-bottom: 1px solid black !important;
+}

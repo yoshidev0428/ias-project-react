@@ -80,7 +80,7 @@ const Viewer = (props) => {
 
     useEffect(() => {
         if (props.source !== null) {
-            console.log( use3d, useLinkedView, viewSize, "use3d, useLinkedView");
+            // console.log( use3d, useLinkedView, viewSize, "use3d, useLinkedView");
             // console.log( props.source, "use3d, useLinkedView");
         }
     }, [props]);

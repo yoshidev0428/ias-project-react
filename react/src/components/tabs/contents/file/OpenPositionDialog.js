@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone'
+import React, { useState, useEffect, useRef } from 'react';
+// import { useDropzone } from 'react-dropzone'
+// import { borderBottom } from '@mui/system';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -9,12 +10,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardActions from '@mui/material/CardActions';
+// import CardHeader from '@mui/material/CardHeader';
+// import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Container } from 'react-bootstrap';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchBar from "material-ui-search-bar";
 import NativeSelect from '@mui/material/NativeSelect';
@@ -23,7 +24,12 @@ import TextField from '@mui/material/TextField';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
 
-const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }, { "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }, { "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }, { "id": 4, "filename": "1EDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }, { "id": 5, "filename": "2GANSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }, { "id": 6, "filename": "3WDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }]
+const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+{ "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+{ "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+{ "id": 4, "filename": "1EDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+{ "id": 5, "filename": "2GANSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+{ "id": 6, "filename": "3WDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }];
 
 const columns = [
     { headerName: 'No', field: 'id', sortable: false },
@@ -50,60 +56,82 @@ TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
+var acceptedFiles = [
+    // { id: 1, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d1.TIF", valid: true },
+    // { id: 2, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d0.TIF", valid: true },
+    // { id: 3, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d1.TIF", valid: true },
+    // { id: 4, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF", valid: true },
+]
+
 // const ImageDropzone = () => {
-//   const [files, setFiles] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const onDrop = useCallback(acceptedFiles => {
-//     console.log(acceptedFiles);
-//     setLoading(true);
-//     setFiles(acceptedFiles)
-//   }, [])
-//   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
-//   const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-//   return (
-//     <div {...getRootProps()}>
-//       {/* <input {...getInputProps()} /> */}
-//       {files.length === 0 ? 
-//         <div className="d-flex align-center justify-center fill-height">
-//           <p className="text-h4 grey--text text--lighten-2">
-//             {backgroundText}
-//           </p>
-//         </div>:
-//         <div>
-//             <Row className="align-center">
-//             {files.map((file, idx) =>              
-//               <Col
-//                 key={idx}
-//                 cols="2"
-//                 className="px-4"
-//               >
-//                 {file.thumbnailData && <img
-//                   id={'images_' + idx}
-//                   src={file.thumbnailData}
-//                   className="mx-auto"
-//                   style={{width:120}}
-//                 />}
-//                 <p className="ma-2 text-center text-caption">
-//                   {file.name }
-//                 </p>
-//                 <FileItem {...file} preview />
-//               </Col>
-//               )}
-//             </Row>          
+//     const [files, setFiles] = useState([]);
+//     const [loading, setLoading] = useState(false);
+//     const updateFiles = (incommingFiles) => {
+//         console.log(incommingFiles, "props.files, files");
+//         setFiles(incommingFiles);
+//         acceptedFiles = incommingFiles;
+//     };
+//     const onDrop = useCallback((acceptedFiles) => {
+//         console.log(acceptedFiles);
+//         setLoading(true);
+//         setFiles(acceptedFiles)
+//     }, []);
+
+//     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
+//     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+//     return (
+//         <div {...getRootProps()}>
+//             {files.length === 0 ?
+//                 <div className="d-flex align-center justify-center fill-height">
+//                     <p className="text-h4 grey--text text--lighten-2">
+//                         {backgroundText}
+//                     </p>
+//                 </div> :
+//                 <div>
+//                     <Row className="align-center">
+//                         {files.map((file, idx) =>
+//                             <Col
+//                                 key={idx}
+//                                 cols="2"
+//                                 className="px-4"
+//                             >
+//                                 {file.thumbnailData && <img
+//                                     id={'images_' + idx}
+//                                     src={file.thumbnailData}
+//                                     className="mx-auto"
+//                                     style={{ width: 120 }}
+//                                 />}
+//                                 <p className="ma-2 text-center text-caption">
+//                                     {file.name}
+//                                 </p>
+//                                 <FileItem {...file} preview />
+//                             </Col>
+//                         )}
+//                     </Row>
+//                 </div>
+//             }
 //         </div>
-//       }
-//     </div>
-//   )
+//     )
 // }
+
 const ImageDropzone = () => {
-    const [files, setFiles] = useState([]);
+
+    const [files, setFiles] = useState(acceptedFiles);
     const updateFiles = (incommingFiles) => {
+        // console.log(incommingFiles, "props.files, files");
         setFiles(incommingFiles);
+        acceptedFiles = incommingFiles;
     };
+    useEffect(() => {
+        if (acceptedFiles !== null && acceptedFiles !== []) {
+            // console.log(acceptedFiles[0].id, "props.files, files");
+            setFiles(acceptedFiles);
+        }
+    }, []);
     return (
         <Dropzone onChange={updateFiles} value={files}>
             {files.map((file) => (
-                <FileItem {...file} info preview />
+                <FileItem {...file} k={file.id.toString()} info preview />
             ))}
         </Dropzone>
     );
@@ -112,40 +140,15 @@ const ImageDropzone = () => {
 const DropzoneMetaData = () => {
 
     // Pagination
-    const [pageSize, setPageSize] = React.useState(5);
+    const [pageSize, setPageSize] = useState(5);
     // Table Rows
     const [contents, setContent] = useState([]);
-    const rows = [];
     // Drag & Drop files
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(acceptedFiles);
     const [loading, setLoading] = useState(false);
     // Search
     const [searchrows, setRows] = useState([]);
-
-    const onDrop = useCallback(acceptedFiles => {
-        setLoading(true);
-        setFiles(acceptedFiles);
-        acceptedFiles.forEach(file => {
-            rows.push({
-                id: rows.length + 1,
-                filename: file.name,
-                series: '',
-                frame: '',
-                c: '',
-                size_c: '',
-                size_t: '',
-                size_x: '',
-                size_y: '',
-                size_z: ''
-            });
-        });
-        setContent(rows);
-        setRows(rows);
-    }, []);
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-    console.log("contents=====>" + JSON.stringify(contents));
+    // console.log("contents=====>" + JSON.stringify(contents));
     // Search Bar
     const [searched, setSearched] = useState("");
     const requestSearch = (searchedVal) => {
@@ -158,10 +161,40 @@ const DropzoneMetaData = () => {
         setSearched("");
         requestSearch(searched);
     };
-    console.log("searchrows=====>" + JSON.stringify(searchrows));
+    // console.log("searchrows=====>" + JSON.stringify(searchrows));
+    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
+    const get_metadata = () => {
+        setLoading(true);
+        let rows = [];
+        for (let i = 0; i < acceptedFiles.length; i++) {
+            let file_content = acceptedFiles[i].file;
+            // console.log(file_content, file_content["name"],"openPositionDlg get_metadata");
+            if (acceptedFiles[i].valid) {
+                rows.push({
+                    id: (i + 1).toString(),
+                    // filename: acceptedFiles[i].name.toString(),
+                    filename: file_content["name"].toString(),
+                    series: '',
+                    frame: '',
+                    c: '',
+                    size_c: '',
+                    size_t: '',
+                    size_x: '',
+                    size_y: '',
+                    size_z: ''
+                });
+            }
+        }
+        setContent(rows);
+        setRows(rows);
+        // console.log(rows, "openPositionDlg get_metadata");
+    }
+    useEffect(() => {
+        get_metadata();
+    }, []);
 
     return (
-        <div {...getRootProps()} style={{ minHeight: "200px" }}>
+        <div style={{ minHeight: "200px" }}>
             {/* <input {...getInputProps()} /> */}
             {files.length === 0 ?
                 <div className="d-flex align-center justify-center pt-5">
@@ -175,8 +208,10 @@ const DropzoneMetaData = () => {
                             onCancelSearch={() => cancelSearch()}
                         />
                     </CardContent>
-                    <div style={{ height: "auto", width: '100%' }}>
+                    <div className="border ml-1 mr-1" style={{ height: "400px", width: "auto" }}>
                         <DataGrid
+                            className='cell--textCenter'
+                            style={{ textAlign: "center", width: "100%" }}
                             rows={searchrows}
                             columns={columns}
                             pageSize={pageSize}
@@ -193,24 +228,8 @@ const DropzoneMetaData = () => {
 
 const DropzoneNamesFiles = () => {
     // Names & Files Tab
-    // curNameIdx: -1,
-    // searchNameType: "",
-    // selectedNameContents: [],
-    // selectedFileName: "",
-    const selectionRange = {
-        text: "",
-        startOffset: -1,
-        endOffset: -1
-    };
-    const namePatterns = [
-        { label: "Series", text: "", start: 0, end: 17, color: "#4caf50" },
-        { label: "Row", text: "", start: 24, end: 25, color: "#1976d2" },
-        { label: "Column", text: "", start: 25, end: 27, color: "#ff5722" },
-        { label: "Field", text: "", start: 27, end: 30, color: "#fb8c00" },
-        { label: "Channel", text: "", start: 30, end: 32, color: "#9c27b0" },
-        { label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b" },
-        { label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252" }
-    ];
+    const exampleBox = useRef(null);
+
     const nameTypeTableHeaders = [
         { headerName: "No", field: "id" },
         { headerName: "FileName", field: "filename" },
@@ -223,104 +242,86 @@ const DropzoneNamesFiles = () => {
         { headerName: "Time Point", field: "timeline" }
     ];
     // Pagination
-    const [pageSize, setPageSize] = React.useState(5);
+    const [pageSize, setPageSize] = useState(5);
     // Table Rows
     const [contents, setContent] = useState([]);
-    const rows = [];
     // Drag & Drop files
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(acceptedFiles);
+
     const [loading, setLoading] = useState(false);
+    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
     // Search
     const [searchrows, setRows] = useState([]);
-
-    const onDrop = useCallback(acceptedFiles => {
-        setLoading(true);
-        setFiles(acceptedFiles);
-        acceptedFiles.forEach(file => {
-            rows.push({
-                id: rows.length + 1,
-                filename: file.name,
-                series: '',
-                frame: '',
-                c: '',
-                size_c: '',
-                size_t: '',
-                size_x: '',
-                size_y: '',
-                size_z: ''
-            });
-        });
-        setContent(rows);
-        setRows(rows);
-    }, []);
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
     // Search Bar
     const [searched, setSearched] = useState("");
+
+    const [fileName, setFileName] = useState("");
+
+    const [selectionRange, setSelectionRange] = useState(null);
+    const namePatternsPrimaryValue = [
+        { label: "Series", text: "", start: 0, end: 17, color: "#4caf50" },
+        { label: "Row", text: "", start: 24, end: 25, color: "#1976d2" },
+        { label: "Column", text: "", start: 25, end: 27, color: "#ff5722" },
+        { label: "Field", text: "", start: 27, end: 30, color: "#fb8c00" },
+        { label: "Channel", text: "", start: 30, end: 32, color: "#9c27b0" },
+        { label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b" },
+        { label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252" }
+    ];
+    const [namePatterns, setNamePatterns] = useState(namePatternsPrimaryValue);
+
     const requestSearch = (searchedVal) => {
         const filteredRows = contents.filter((content) => {
             return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
         });
         setRows(filteredRows);
     };
+    
     const cancelSearch = () => {
         setSearched("");
         requestSearch(searched);
     };
 
-    // // Select example string in names&types tab
-    // const selectExampleString = () => {
-    //     if (typeof window.getSelection !== "undefined") {
-    //         try {
-    //             let sel = window.getSelection(),
-    //                 range = sel.getRangeAt(0);
-    //             let selectionRect = range.getBoundingClientRect(),
-    //                 fullRect = $refs.exampleBox.getBoundingClientRect();
-    //             selectionRange.text = range.toString();
-    //             selectionRange.startOffset = Math.round(
-    //                 ((selectionRect.left - fullRect.left) / selectionRect.width) *
-    //                 range.toString().length
-    //             );
-    //             selectionRange.endOffset =
-    //                 selectionRange.startOffset + range.toString().length;
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // };
+    const selectExampleString = () => {
+        if (typeof window.getSelection !== "undefined") {
+            try {
+                let sel = window.getSelection(), range = sel.getRangeAt(0);
+                let selectionRect = range.getBoundingClientRect(), fullRect = exampleBox.current.getBoundingClientRect();
+                let startOffset = Math.round(((selectionRect.left - fullRect.left) / selectionRect.width) * range.toString().length)
+                let selectionRangeValue = {
+                    text: range.toString(),
+                    startOffset: startOffset,
+                    endOffset: startOffset + range.toString().length
+                }
+                setSelectionRange(selectionRangeValue);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
-    const [fileName, setFileName] = React.useState(contents[0]);
     const clickNamePattern = (index) => {
-        const { text, startOffset, endOffset } = selectionRange;
         let selectedText = getSelectionText();
-        if (text !== "" && selectedText !== "") {
+        if (selectionRange !== null && selectedText !== "") {
+            let text = selectionRange.text;
+            let startOffset = selectionRange.startOffset;
+            let endOffset = selectionRange.endOffset;
             if (text === selectedText) {
                 if (startOffset > -1 && endOffset > -1) {
-                    document
-                        .getElementById(text)
-                        .classList.add(namePatterns[index].color + "--text");
-                    const patterns = this.namePatterns.filter(n => n.start > -1);
-                    for (var i = 0; i < patterns.length; i++) {
-                        // if (
-                        //     isOverlapped(
-                        //         [patterns[i].start, patterns[i].end],
-                        //         [startOffset, endOffset]
-                        //     )
-                        // ) {
-                        //     break;
-                        // }
-                        console.log(patterns.length);
-                        if (i === patterns.length) {
-                            namePatterns[index].text = text;
-                            this.namePatterns[index].start = startOffset;
-                            this.namePatterns[index].end = endOffset;
+                    let namePatternsPrimaryValue = namePatterns;
+                    for (var i = 0; i < namePatternsPrimaryValue.length; i++) {
+                        if (index === i) {
+                            namePatternsPrimaryValue[index].text = text;
+                            namePatternsPrimaryValue[index].start = startOffset;
+                            namePatternsPrimaryValue[index].end = endOffset;
                         }
                     }
+                    // console.log(namePatternsPrimaryValue, selectionRange, "openposition dlg , clickNamePattern   getSelectionText");
+                    setNamePatterns(namePatternsPrimaryValue);
                 }
             }
         }
     };
+
     const getSelectionText = () => {
         var text = "";
         if (window.getSelection) {
@@ -330,53 +331,74 @@ const DropzoneNamesFiles = () => {
         }
         return text.replaceAll("\n", "");
     };
+
+    const get_nametype = () => {
+        let rows = [];
+        for (let i = 0; i < acceptedFiles.length; i++) {
+            let file_content = acceptedFiles[i].file;
+            if (acceptedFiles[i].valid) {
+                rows.push({
+                    id: (i + 1).toString(),
+                    // filename: acceptedFiles[i].name.toString(),
+                    filename: file_content["name"].toString(),
+                    series: '',
+                    frame: '',
+                    c: '',
+                    size_c: '',
+                    size_t: '',
+                    size_x: '',
+                    size_y: '',
+                    size_z: ''
+                });
+            }
+        }
+        setContent(rows);
+        setRows(rows);
+        setFileName(rows[0].filename);
+        setLoading(true);
+    }
+
+    useEffect(() => {
+        get_nametype();
+    }, [namePatterns]);
+
     return (
-        <div {...getRootProps()} style={{ minHeight: "200px" }}>
+        <div style={{ minHeight: "200px" }}>
             {/* <input {...getInputProps()} /> */}
-            {files.length !== 0 ?
+            {files.length === 0 ?
                 <div className="d-flex align-center justify-center pt-5">
                     {backgroundText}
                 </div> :
                 <div className='border'>
-                    <Row className="justify-center m-0 border">
-                        <div className="d-flex align-center justify-center">
-                            <Row className="align-center justify-center">
-                                <p className="mb-0 mr-8">Example</p>
-                                {/* <div
-                                    ref={exampleBox}
-                                    className="d-flex example-string"
-                                    onMouseUp={selectExampleString}
-                                    v-html="exampleFileName"
-                                ></div> */}
-                                <NativeSelect value={fileName} onChange={setFileName} className="filenames-list" style={{ minWidth: "150px" }}>
-                                    {contents.map((c) => (
-                                        <option key={c.filename} value={c}>
-                                            {c.filename}
-                                        </option >
-                                    ))}
-                                </NativeSelect>
-                            </Row>
-                        </div>
+                    <Row className="align-center justify-center m-0 border">
+                        <p className="mb-0 mr-3">Example :</p>
+                        {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
+                        <div className='showFileName form-control shadow-none mb-0 pb-0' ref={exampleBox} onMouseUp={selectExampleString}>{fileName}</div>
+                        <NativeSelect value={fileName} onChange={setFileName} className="mb-0 showOnlyDropDownBtn" disableUnderline>
+                            {contents.map((c) => (
+                                <option key={c.filename} value={c}>
+                                    {c.filename}
+                                </option >
+                            ))}
+                        </NativeSelect>
                     </Row>
                     <Row className="align-center justify-center name-type-input m-0 border">
-                        {namePatterns.map((pattern, idx) => (
-                            <div key={idx} className="pattern-section">
+                        {namePatterns.map((pattern, idx) => {
+                            return (<div key={idx} className="pattern-section border">
                                 <Button className="pattern-item-button"
                                     variant="contained"
-                                    // color="#ffffff"
-                                    // size="small"
-                                    onClick={clickNamePattern(idx)}
+                                    onClick={() => { clickNamePattern(idx) }}
                                     style={{ backgroundColor: pattern.color, borderRadius: "8px" }}
                                 >{pattern.label}</Button>
                                 <TextField
+                                    id={pattern.label}
                                     value={namePatterns[idx].text}
                                     size="small"
                                     variant="standard"
                                     className="pattern-item-button"
-                                // label="Row"
                                 />
-                            </div>
-                        ))}
+                            </div>)
+                        })}
                     </Row>
                     <Container className='pl-1 pr-1 border'>
                         <div className="d-flex">
@@ -424,7 +446,7 @@ const DropzoneGroup = () => {
     const [loading, setLoading] = useState(false);
     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
     return (
-        <div style={{minHeight:"200px"}}>
+        <div style={{ minHeight: "200px" }}>
             <div className="d-flex align-center justify-center pt-5">
                 {backgroundText}
             </div>
@@ -433,16 +455,23 @@ const DropzoneGroup = () => {
 }
 
 const OpenPositionDialog = (props) => {
-    
+
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
     const [progressBarMaxValue, setProgressBarMaxValue] = useState(0);
     const [progressBarValue, setProgressBarValue] = useState(0);
+
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
-    const showCloudDialog = () => { setCloudDialog(true); }
-    const handleCloseDialog = () => { setCloudDialog(false); }
+    const handleCloudDialog = () => {
+        setCloudDialog(!cloudDialog);
+    }
+    const handleCloseOpenDlg = () => {
+        props.handleClose();
+        acceptedFiles = [];
+    }
+
     const handleDrag = (e) => {
         e.preventDefault();
         console.log("e.dataTransfer.items");
@@ -456,10 +485,10 @@ const OpenPositionDialog = (props) => {
     };
     return (
         <>
-            <Dialog open={true} onClose={props.handleClose} maxWidth={"1010"} className="m-0" style={{ top: "5%", bottom: "auto" }}>
+            <Dialog open={true} onClose={handleCloseOpenDlg} maxWidth={"1010"} className="m-0" style={{ top: "5%", bottom: "auto" }}>
                 <div className="d-flex border-bottom">
                     <DialogTitle>Position Select</DialogTitle>
-                    <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseDialog}>&times;</button>
+                    <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseOpenDlg}>&times;</button>
                 </div>
                 <DialogContent className='p-0' style={{ width: "1000px" }}>
                     <Tabs className="border" variant="fullWidth" value={selectedTab} onChange={onTabChange} aria-label="scrollable auto tabs example" >
@@ -497,16 +526,16 @@ const OpenPositionDialog = (props) => {
                 <DialogActions style={{ display: "-webkit-box !important" }} className="border">
                     {
                         selectedTab === 0 && <div>
-                            <Button className="cloud-btn" variant="contained" onClick={showCloudDialog} color="primary" style={{ marginLeft: "-800px" }}>Cloud</Button>
-                            {cloudDialog && <OpenCloudDialog handleClose={handleCloseDialog} />}
+                            <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginLeft: "-800px" }}>Cloud</Button>
+                            {cloudDialog && <OpenCloudDialog handleClose={handleCloudDialog} />}
                         </div>
                     }
-                    <Button size="medium" color="primary" variant="contained" onClick={props.handleClose}>Cancel</Button>
+                    <Button size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                 </DialogActions>
             </Dialog>
         </>
     );
 }
 
-OpenPositionDialog.propTypes = {handleClose: PropTypes.func.isRequired};
+OpenPositionDialog.propTypes = { handleClose: PropTypes.func.isRequired };
 export default OpenPositionDialog;
