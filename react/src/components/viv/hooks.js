@@ -63,10 +63,10 @@ export const useImage = (source) => {
                 nextLoader = newLoader.data;
             }
             if (nextLoader) {
-                console.info(
-                    'Metadata (in JSON-like form) for current file being viewed: ',
-                    nextMeta
-                );
+                // console.info(
+                //     'Metadata (in JSON-like form) for current file being viewed: ',
+                //     nextMeta
+                // );
                 unstable_batchedUpdates(() => {
                     useChannelsStore.setState({ loader: nextLoader });
                     useViewerStore.setState({
