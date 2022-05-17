@@ -21,14 +21,9 @@ import { DEFAULT_OVERVIEW } from '../constants';
 
 const Viewer = (props) => {
 
-    const [useLinkedView, use3d, viewState] = useViewerStore( store => [store.useLinkedView, store.use3d, store.viewState], shallow );
+    const [useLinkedView, use3d, viewState, source] = useViewerStore(store => [store.useLinkedView, store.use3d, store.viewState, store.source], shallow);
 
-    const [
-        colors,
-        contrastLimits,
-        channelsVisible,
-        selections
-    ] = useChannelsStore(
+    const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
         store => [
             store.colors,
             store.contrastLimits,
@@ -37,23 +32,10 @@ const Viewer = (props) => {
         ],
         shallow
     );
-    
+
     const loader = useLoader();// <-----here
     const viewSize = useWindowSize();
-    const [
-        lensSelection,
-        colormap,
-        renderingMode,
-        xSlice,
-        ySlice,
-        zSlice,
-        resolution,
-        lensEnabled,
-        zoomLock,
-        panLock,
-        isOverviewOn,
-        onViewportLoad,
-        useFixedAxis
+    const [lensSelection, colormap, renderingMode, xSlice, ySlice, zSlice, resolution, lensEnabled, zoomLock, panLock, isOverviewOn, onViewportLoad, useFixedAxis
     ] = useImageSettingsStore(
         store => [
             store.lensSelection,
@@ -79,13 +61,13 @@ const Viewer = (props) => {
     };
 
     useEffect(() => {
-        if (props.source !== null) {
-            // console.log( use3d, useLinkedView, viewSize, "use3d, useLinkedView");
-            // console.log( props.source, "use3d, useLinkedView");
+        console.log(use3d, useLinkedView, viewSize, "Viewer.jsx : use3d, useLinkedView");
+        console.log(viewSize, loader,  "viewSize");
+        if (props.source !== null && props.source !== undefined) {
+            // console.log(props.source, "use3d, useLinkedView");
         }
     }, [props]);
-    console.log("xSlice --> " + JSON.stringify(xSlice), viewSize, " viewSize");
-    
+
     return use3d ? (
         <VolumeViewer
             loader={loader}
@@ -101,8 +83,8 @@ const Viewer = (props) => {
             renderingMode={renderingMode}
             // height={viewSize.height}
             // width={viewSize.width - 200}
-            height={1000}
-            width={842}
+            height={viewSize.height}
+            width={viewSize.width}
             onViewportLoad={onViewportLoad}
             useFixedAxis={useFixedAxis}
             viewStates={[viewState]}
@@ -146,17 +128,14 @@ const Viewer = (props) => {
             selections={selections}
             height={viewSize.height}
             width={viewSize.width}
+            // zoomLock={zoomLock}
             overview={DEFAULT_OVERVIEW}
             overviewOn={isOverviewOn}
-            hoverHooks={{
-                handleValue: v => useViewerStore.setState({ pixelValues: v })
-            }}
+            hoverHooks={{ handleValue: v => useViewerStore.setState({ pixelValues: v }) }}
             lensSelection={lensSelection}
             lensEnabled={lensEnabled}
             onViewportLoad={onViewportLoad}
-            extensions={[
-                colormap ? new AdditiveColormapExtension() : new LensExtension()
-            ]}
+            extensions={[ colormap ? new AdditiveColormapExtension() : new LensExtension() ]}
             colormap={colormap || 'viridis'}
             onViewStateChange={onViewStateChange}
         />

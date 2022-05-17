@@ -154,10 +154,7 @@ export const useViewerStore = create(set => ({
 }));
 
 export const useLoader = () => {
-    const [fullLoader, image] = useChannelsStore(store => [
-        store.loader,
-        store.image
-    ]);
+    const [fullLoader, image] = useChannelsStore(store => [store.loader, store.image]);
     return Array.isArray(fullLoader[0]) ? fullLoader[image] : fullLoader;
 };
 

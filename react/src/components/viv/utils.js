@@ -67,11 +67,7 @@ async function getTotalImageCount(src, rootMeta, data) {
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
-export async function createLoader(
-    urlOrFile,
-    handleOffsetsNotFound,
-    handleLoaderError
-) {
+export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
     // If the loader fails to load, handle the error (show an error snackbar).
     // Otherwise load.
     try {
@@ -100,10 +96,7 @@ export async function createLoader(
             return source;
         }
         // Bio-Formats Zarr
-        if (
-            Array.isArray(urlOrFile) &&
-            typeof urlOrFile[0].arrayBuffer !== 'function'
-        ) {
+        if ( Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function' ) {
             throw new UnsupportedBrowserError(
                 'Cannot upload a local Zarr with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
             );
@@ -211,7 +204,7 @@ export function range(length) {
 }
 
 export function useWindowSize(scaleWidth = 1, scaleHeight = 1) {
-    
+
     const { height, width } = useWindowDimensions();
     function getSize() {
         if (localStorage.getItem("imageViewSizeWidth")) {

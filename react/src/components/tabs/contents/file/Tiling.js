@@ -30,7 +30,6 @@ import {
     mdiCropFree,
     mdiClose,
     mdiPencil,
-    mdiCursorDefaultGesture
 } from '@mdi/js';
 import Vessel from "../viewcontrol/Vessel";
 import Objective from "../viewcontrol/Objective";

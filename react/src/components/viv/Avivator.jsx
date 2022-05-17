@@ -19,27 +19,30 @@ import './index.css';
 export default function Avivator(props) {
 
     const { history, source: source, isDemoImage } = props;
-    const isViewerLoading = useViewerStore(store => store.isViewerLoading);
+
     // const source = useViewerStore(store => store.source);
-    // const useLinkedView = useViewerStore(store => store.useLinkedView);
+    const isViewerLoading = useViewerStore(store => store.isViewerLoading);
+    const useLinkedView = useViewerStore(store => store.useLinkedView);
     useEffect(() => {
         if (props.source !== null) {
-            console.log(props.source, "Avivator : image file ++ ");
+            // console.log(props.source, "Avivator : image file ++ ");
             useViewerStore.setState({
                 source: source,
                 isNoImageUrlSnackbarOn: isDemoImage
             });
         }
     }, [props]); // eslint-disable-line react-hooks/exhaustive-deps
-    useImage(source, history);
+    useImage(source);
     return (
         <>
             <DropzoneWrapper>
                 {!isViewerLoading && <Viewer />}
             </DropzoneWrapper>
-            {/* <Controller />
-            <SnackBars /> */}
-            {/* {!useLinkedView && <Footer />} */}
+            {/* <ZoomController /> */}
+            {/* <Controller /> */}
+            {/* <SnackBars /> */}
+            {/* <Footer /> */}            
+            {!useLinkedView && <Footer />}
         </>
     );
 }
