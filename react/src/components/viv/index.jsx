@@ -82,7 +82,7 @@ export default function RoutedAvivator(props) {
 
     return (
         <>
-            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => { setFullScreen(isFullScreen) }} style="bg-light">
+            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => { setFullScreen(isFullScreen) }} className="bg-light">
                 <div className='leaf_control'>
                     <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomIn") }} style={{ borderRadius: "5px 5px 0px 0px" }}>
                         <Icon size={1}
@@ -112,11 +112,11 @@ export default function RoutedAvivator(props) {
                         </Icon>
                     </button>
                 </div>
-                <div className=''>
-                    <Avivator source={urlSource} mouseFlag={mouseFlag} />
+                <div className="bg-light h-100">
+                    <ThemeProvider theme={darkTheme}>
+                        <Avivator source={urlSource} mouseFlag={mouseFlag} />
+                    </ThemeProvider>
                 </div>
-                {/* <ThemeProvider theme={darkTheme}> */}
-                {/* </ThemeProvider> */}
             </FullScreen>
         </>
     );
