@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chiragrupani/fullscreen-react": "^1.1.1",
     "@dropzone-ui/react": "^6.7.1",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
@@ -19,6 +20,7 @@
     "@mui/lab": "^5.0.0-alpha.74",
     "@mui/material": "^5.5.1",
     "@mui/x-data-grid": "^5.7.0",
+    "@ramonak/react-progress-bar": "^4.4.0",
     "@reduxjs/toolkit": "^1.8.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
