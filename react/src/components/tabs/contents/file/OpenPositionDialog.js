@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Card from '@mui/material/Card';
 // import CardHeader from '@mui/material/CardHeader';
 // import CardActions from '@mui/material/CardActions';
+import ProgressBar from "@ramonak/react-progress-bar";
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
@@ -114,22 +115,39 @@ var acceptedFiles = [
 //     )
 // }
 
-const ImageDropzone = () => {
+const ImageDropzone = (props) => {
 
     const [files, setFiles] = useState(acceptedFiles);
     const updateFiles = (incommingFiles) => {
-        // console.log(incommingFiles, "props.files, files");
+        console.log( incommingFiles , "onChange : ", new Date().getTime());
+        if (props !== null) {
+            props.getLoadingProgress(incommingFiles.length)
+        }
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
     };
+
+    const startDrop = (drop) => {
+        props.getLoadingMax(drop.length);
+        // console.log( drop , "onDrop : ", new Date().getTime());
+    }
+    // const updateFilesView = (changeView) => {
+    //     console.log( changeView , "onChangeView : ", new Date().getTime());
+    // }
+    // const updateStart = (changeView) => {
+    //     console.log( changeView , "updateStart : ", new Date().getTime());
+    // }
+    // const updateFinish = (changeView) => {
+    //     console.log( changeView , "updateFinish : ", new Date().getTime());
+    // }
     useEffect(() => {
         if (acceptedFiles !== null && acceptedFiles !== []) {
-            // console.log(acceptedFiles[0].id, "props.files, files");
             setFiles(acceptedFiles);
         }
     }, []);
     return (
-        <Dropzone onChange={updateFiles} value={files}>
+        // onChangeView={updateFilesView} onUploadStart={updateStart} onUploadFinish={updateFinish}
+        <Dropzone onChange={updateFiles} onDrop={startDrop} value={files}>
             {files.map((file) => (
                 <FileItem {...file} k={file.id.toString()} info preview />
             ))}
@@ -258,7 +276,7 @@ const DropzoneNamesFiles = () => {
     const [fileName, setFileName] = useState("");
 
     const [selectionRange, setSelectionRange] = useState(null);
-    const namePatternsPrimaryValue = [
+    const namePatternsPrimary = [
         { label: "Series", text: "", start: 0, end: 17, color: "#4caf50" },
         { label: "Row", text: "", start: 24, end: 25, color: "#1976d2" },
         { label: "Column", text: "", start: 25, end: 27, color: "#ff5722" },
@@ -267,7 +285,15 @@ const DropzoneNamesFiles = () => {
         { label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b" },
         { label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252" }
     ];
-    const [namePatterns, setNamePatterns] = useState(namePatternsPrimaryValue);
+    const [namePatterns, setNamePatterns] = useState(namePatternsPrimary);
+
+    const updateNativeSelect = (event) => {
+        let newFileName = event.target.value;
+        console.log(newFileName, "test");
+        // setFileName(newFileName);
+        setFileName("test");
+        setNamePatterns(namePatternsPrimary);
+    }
 
     const requestSearch = (searchedVal) => {
         const filteredRows = contents.filter((content) => {
@@ -275,7 +301,7 @@ const DropzoneNamesFiles = () => {
         });
         setRows(filteredRows);
     };
-    
+
     const cancelSearch = () => {
         setSearched("");
         requestSearch(searched);
@@ -374,12 +400,13 @@ const DropzoneNamesFiles = () => {
                         <p className="mb-0 mr-3">Example :</p>
                         {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
                         <div className='showFileName form-control shadow-none mb-0 pb-0' ref={exampleBox} onMouseUp={selectExampleString}>{fileName}</div>
-                        <NativeSelect value={fileName} onChange={setFileName} className="mb-0 showOnlyDropDownBtn" disableUnderline>
-                            {contents.map((c) => (
-                                <option key={c.filename} value={c}>
-                                    {c.filename}
-                                </option >
-                            ))}
+                        <NativeSelect value={fileName} onChange={updateNativeSelect} className="mb-0 showOnlyDropDownBtn" disableUnderline>
+                            {contents.map((c) => {
+                                return (
+                                    <option key={c.filename} value={c.filename}>
+                                        {c.filename}
+                                    </option >)
+                            })}
                         </NativeSelect>
                     </Row>
                     <Row className="align-center justify-center name-type-input m-0 border">
@@ -458,31 +485,25 @@ const OpenPositionDialog = (props) => {
 
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
+
     const [progressBarMaxValue, setProgressBarMaxValue] = useState(0);
     const [progressBarValue, setProgressBarValue] = useState(0);
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
+
     const handleCloudDialog = () => {
         setCloudDialog(!cloudDialog);
     }
+
     const handleCloseOpenDlg = () => {
         props.handleClose();
         acceptedFiles = [];
+        setProgressBarMaxValue(0);
+        setProgressBarValue(0);
     }
 
-    const handleDrag = (e) => {
-        e.preventDefault();
-        console.log("e.dataTransfer.items");
-    };
-    const setProgressMax = (maxValue) => {
-        console.log("in setProgressMax: " + maxValue);
-        setProgressBarMaxValue(maxValue);
-    };
-    const setProgressCurrent = (currValue) => {
-        setProgressBarValue(currValue);
-    };
     return (
         <>
             <Dialog open={true} onClose={handleCloseOpenDlg} maxWidth={"1010"} className="m-0" style={{ top: "5%", bottom: "auto" }}>
@@ -500,11 +521,11 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 &&
                         <TabContainer>
-                            <ImageDropzone />
+                            <ImageDropzone getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
-                            <Tiling set-progress-max={setProgressMax} set-progress-current={setProgressCurrent} />
+                            <Tiling set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
                         </TabContainer>
                     }
                     {selectedTab === 2 &&
@@ -525,12 +546,21 @@ const OpenPositionDialog = (props) => {
                 </DialogContent>
                 <DialogActions style={{ display: "-webkit-box !important" }} className="border">
                     {
-                        selectedTab === 0 && <div>
-                            <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginLeft: "-800px" }}>Cloud</Button>
+                        selectedTab === 0 ? <div className='d-flex'>
+                            <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginRight: "150px", marginLeft: "0px" }}>Cloud</Button>
+                            {
+                                progressBarMaxValue === 0 ? <div style={{width:"400px"}}></div> : <ProgressBar
+                                    className="m-auto"
+                                    bgColor="rgb(18 105 191)"
+                                    width="400px"
+                                    completed={progressBarValue.toString()}
+                                    maxCompleted={progressBarMaxValue.toString()}
+                                />
+                            }
+                            <Button style={{ marginLeft: "180px" }} size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                             {cloudDialog && <OpenCloudDialog handleClose={handleCloudDialog} />}
-                        </div>
+                        </div> : <Button size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                     }
-                    <Button size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                 </DialogActions>
             </Dialog>
         </>

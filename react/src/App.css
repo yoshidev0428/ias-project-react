@@ -1,19 +1,18 @@
-
 .common-border {
     border: 2px solid rgba(0, 0, 0, .125);
 }
 
 .tab-button {
-    padding: 0px !important;
-    border: 1px solid rgba(0, 0, 0, .125) !important;
+    padding  : 0px !important;
+    border   : 1px solid rgba(0, 0, 0, .125) !important;
     min-width: 25% !important;
-    width: 30px !important;
+    width    : 30px !important;
 }
 
 .common-tab-button {
     padding: 0px !important;
-    border: 1px solid rgba(0, 0, 0, .125) !important;
-    width: 30px !important;
+    border : 1px solid rgba(0, 0, 0, .125) !important;
+    width  : 30px !important;
 }
 
 .font-16 {
@@ -21,42 +20,63 @@
 }
 
 .dialog-close-btn {
-    right:20px;
-    top:15px;
-    position:absolute;
-    border:none;
+    right   : 20px;
+    top     : 15px;
+    position: absolute;
+    border  : none;
 }
 
-.btn-selected-vessel-color{
+.btn-selected-vessel-color {
     background-color: #e3e3e3 !important;
 }
+
 .filter-dialog-tab-bg {
-    background-color: rgba(0,0,0,.05) !important;
+    background-color: rgba(0, 0, 0, .05) !important;
 }
 
-#position-dlg-span span{
+#position-dlg-span span {
     font-size: 12px !important;
 }
 
-.showOnlyDropDownBtn{
-    width:20px;
-    background-color:white;
-    margin: 0px;
-    padding: 0px !important;
-    margin-left: -15px !important;
-    height: 10px;
+.showOnlyDropDownBtn {
+    width           : 20px;
+    background-color: white;
+    margin          : 0px;
+    padding         : 0px !important;
+    margin-left     : -15px !important;
+    height          : 10px;
 }
 
-.showOnlyDropDownBtn select{
-    color:white !important;
+.showOnlyDropDownBtn select {
+    color: white !important;
 }
-.showOnlyDropDownBtn option{
-    color:black !important;
+
+.showOnlyDropDownBtn option {
+    color: black !important;
 }
-.showFileName{
-    padding: 0px !important;
-    width: 40% !important;
-    margin-right: -10px !important;
-    border: none !important;
+
+.showFileName {
+    padding      : 0px !important;
+    width        : 40% !important;
+    margin-right : -10px !important;
+    border       : none !important;
     border-bottom: 1px solid black !important;
+}
+
+/* leaf_control imageViwer*/
+.leaf_control {
+    border-radius   : 5px;
+    background-color: white;
+    position        : absolute;
+    top             : 1.2%;
+    left            : 0.8%;
+    z-index         : 99;
+    width           : 25px;
+}
+
+.leaf_control_btn {
+    border : none;
+    width  : 100%;
+    padding: 0px !important;
+    margin : 0px !important;
 }

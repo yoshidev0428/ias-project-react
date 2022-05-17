@@ -75,7 +75,6 @@ export const useImage = (source) => {
                 });
                 if (use3d) toggleUse3d();
                 // eslint-disable-next-line no-unused-expressions
-
             }
         }
         if (source) changeLoader();

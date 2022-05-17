@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
-import sources from './source-info';
 import Avivator from './Avivator';
-import { useLocation } from 'react-router-dom';
-import { getNameFromUrl } from './utils';
+import { FullScreen } from '@chiragrupani/fullscreen-react';
+// import sources from './source-info';
+// import { useLocation } from 'react-router-dom';
+// import { getNameFromUrl } from './utils';
+import {
+    mdiFullscreen,
+    mdiMinus,
+    mdiPlus
+} from '@mdi/js';
+import Icon from '@mdi/react';
 
 const darkTheme = createTheme({
     palette: {
@@ -29,11 +36,24 @@ const darkTheme = createTheme({
 
 export default function RoutedAvivator(props) {
 
-    const source = {
-        urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
-        description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
+    // const source = {
+    //     urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
+    //     description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
+    // }
+    const [urlSource, setUrlSource] = useState(null);
+    // ZoomContol + FullScreen
+    let [isFullScreen, setFullScreen] = useState(false);
+    let [mouseFlag, setMouseFlag] = useState(0);
+    const zoomControl = (type) => {
+        if (type === "fullScreen") {
+            setFullScreen(!isFullScreen);
+        } else if (type === "zoomIn") {
+            setMouseFlag(1);
+        } else if (type === "zoomOut") {
+            setMouseFlag(-1);
+        }
+
     }
-    const [urlSource, setUrlSource] = useState(source);
     // const query = useQuery();
     // const url = query.get('image_url');
     // const {
@@ -54,16 +74,50 @@ export default function RoutedAvivator(props) {
     // const history = [];
 
     useEffect(() => {
+        console.log(props, "viv index : image file");
         if (props.openedImageSource !== undefined) {
-            console.log(props.openedImageSource, "viv index : image file");
-            setUrlSource(props.openedImageSource);
+            // setUrlSource(props.openedImageSource);
         }
     }, [props]);
 
-
     return (
-        <ThemeProvider theme={darkTheme}>
-            <Avivator source={urlSource}/>
-        </ThemeProvider>
+        <>
+            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => { setFullScreen(isFullScreen) }} className="bg-light">
+                <div className='leaf_control'>
+                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomIn") }} style={{ borderRadius: "5px 5px 0px 0px" }}>
+                        <Icon size={1}
+                            horizontal
+                            vertical
+                            rotate={180}
+                            color="#212529"
+                            path={mdiPlus}>
+                        </Icon>
+                    </button>
+                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomOut") }} >
+                        <Icon size={1}
+                            horizontal
+                            vertical
+                            rotate={180}
+                            color="#212529"
+                            path={mdiMinus}>
+                        </Icon>
+                    </button>
+                    <button className="leaf_control_btn" onClick={() => { zoomControl("fullScreen") }} style={{ borderRadius: "0px 0px 5px 5px" }}>
+                        <Icon size={1}
+                            horizontal
+                            vertical
+                            rotate={180}
+                            color="#212529"
+                            path={mdiFullscreen}>
+                        </Icon>
+                    </button>
+                </div>
+                <div className="bg-light h-100">
+                    <ThemeProvider theme={darkTheme}>
+                        <Avivator source={urlSource} mouseFlag={mouseFlag} />
+                    </ThemeProvider>
+                </div>
+            </FullScreen>
+        </>
     );
 }
