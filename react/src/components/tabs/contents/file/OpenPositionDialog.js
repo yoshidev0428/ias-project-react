@@ -25,6 +25,13 @@ import TextField from '@mui/material/TextField';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
 
+var acceptedFiles = [
+    // { id: 1, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d1.TIF", valid: true },
+    // { id: 2, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d0.TIF", valid: true },
+    // { id: 3, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d1.TIF", valid: true },
+    // { id: 4, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF", valid: true },
+]
+
 const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
 { "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
 { "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
@@ -45,6 +52,28 @@ const columns = [
     { headerName: 'SizeZ', field: 'size_z', sortable: false }
 ];
 
+const nameTypeTableHeaders = [
+    { headerName: "No", field: "id" },
+    { headerName: "FileName", field: "filename" },
+    { headerName: "Series", field: "series" },
+    { headerName: "Row", field: "row" },
+    { headerName: "Column", field: "col" },
+    { headerName: "Field", field: "field" },
+    { headerName: "Channel", field: "channel" },
+    { headerName: "Z Position", field: "z" },
+    { headerName: "Time Point", field: "timeline" }
+];
+
+const namePatternsPrimary = [
+    { label: "Series", text: "", start: 0, end: 17, color: "#4caf50" },
+    { label: "Row", text: "", start: 24, end: 25, color: "#1976d2" },
+    { label: "Column", text: "", start: 25, end: 27, color: "#ff5722" },
+    { label: "Field", text: "", start: 27, end: 30, color: "#fb8c00" },
+    { label: "Channel", text: "", start: 30, end: 32, color: "#9c27b0" },
+    { label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b" },
+    { label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252" }
+];
+
 const TabContainer = (props) => {
     return (
         <Typography component="div" style={{ padding: 0 }}>
@@ -56,13 +85,6 @@ const TabContainer = (props) => {
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
-
-var acceptedFiles = [
-    // { id: 1, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d1.TIF", valid: true },
-    // { id: 2, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d0.TIF", valid: true },
-    // { id: 3, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d1.TIF", valid: true },
-    // { id: 4, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF", valid: true },
-]
 
 // const ImageDropzone = () => {
 //     const [files, setFiles] = useState([]);
@@ -117,10 +139,10 @@ var acceptedFiles = [
 
 const ImageDropzone = (props) => {
 
-    const [files, setFiles] = useState(acceptedFiles);
+    const [files, setFiles] = useState([]);
     const updateFiles = (incommingFiles) => {
-        console.log( incommingFiles , "onChange : ", new Date().getTime());
-        if (props !== null) {
+        // console.log(incommingFiles, "onChange : ", new Date().getTime());
+        if (props !== null && acceptedFiles.length === 0) {
             props.getLoadingProgress(incommingFiles.length)
         }
         setFiles(incommingFiles);
@@ -141,15 +163,18 @@ const ImageDropzone = (props) => {
     //     console.log( changeView , "updateFinish : ", new Date().getTime());
     // }
     useEffect(() => {
-        if (acceptedFiles !== null && acceptedFiles !== []) {
-            setFiles(acceptedFiles);
+        if (acceptedFiles !== null && acceptedFiles !== [] && acceptedFiles.length > 0) {
+            // props.getLoadingProgress(0)
+            // props.getLoadingMax(0);
+            // setFiles(acceptedFiles);
         }
     }, []);
+
     return (
         // onChangeView={updateFilesView} onUploadStart={updateStart} onUploadFinish={updateFinish}
         <Dropzone onChange={updateFiles} onDrop={startDrop} value={files}>
             {files.map((file) => (
-                <FileItem {...file} k={file.id.toString()} info preview />
+                <FileItem {...file} k={file.id} info preview />
             ))}
         </Dropzone>
     );
@@ -182,11 +207,9 @@ const DropzoneMetaData = () => {
     // console.log("searchrows=====>" + JSON.stringify(searchrows));
     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
     const get_metadata = () => {
-        setLoading(true);
         let rows = [];
         for (let i = 0; i < acceptedFiles.length; i++) {
             let file_content = acceptedFiles[i].file;
-            // console.log(file_content, file_content["name"],"openPositionDlg get_metadata");
             if (acceptedFiles[i].valid) {
                 rows.push({
                     id: (i + 1).toString(),
@@ -205,7 +228,7 @@ const DropzoneMetaData = () => {
         }
         setContent(rows);
         setRows(rows);
-        // console.log(rows, "openPositionDlg get_metadata");
+        setLoading(true);
     }
     useEffect(() => {
         get_metadata();
@@ -226,7 +249,7 @@ const DropzoneMetaData = () => {
                             onCancelSearch={() => cancelSearch()}
                         />
                     </CardContent>
-                    <div className="border ml-1 mr-1" style={{ height: "400px", width: "auto" }}>
+                    <div className="" style={{ height: "400px", width: "100%", border: "2px solid gray" }}>
                         <DataGrid
                             className='cell--textCenter'
                             style={{ textAlign: "center", width: "100%" }}
@@ -245,20 +268,9 @@ const DropzoneMetaData = () => {
 }
 
 const DropzoneNamesFiles = () => {
+
     // Names & Files Tab
     const exampleBox = useRef(null);
-
-    const nameTypeTableHeaders = [
-        { headerName: "No", field: "id" },
-        { headerName: "FileName", field: "filename" },
-        { headerName: "Series", field: "series" },
-        { headerName: "Row", field: "row" },
-        { headerName: "Column", field: "col" },
-        { headerName: "Field", field: "field" },
-        { headerName: "Channel", field: "channel" },
-        { headerName: "Z Position", field: "z" },
-        { headerName: "Time Point", field: "timeline" }
-    ];
     // Pagination
     const [pageSize, setPageSize] = useState(5);
     // Table Rows
@@ -267,7 +279,6 @@ const DropzoneNamesFiles = () => {
     const [files, setFiles] = useState(acceptedFiles);
 
     const [loading, setLoading] = useState(false);
-    const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
     // Search
     const [searchrows, setRows] = useState([]);
     // Search Bar
@@ -276,22 +287,13 @@ const DropzoneNamesFiles = () => {
     const [fileName, setFileName] = useState("");
 
     const [selectionRange, setSelectionRange] = useState(null);
-    const namePatternsPrimary = [
-        { label: "Series", text: "", start: 0, end: 17, color: "#4caf50" },
-        { label: "Row", text: "", start: 24, end: 25, color: "#1976d2" },
-        { label: "Column", text: "", start: 25, end: 27, color: "#ff5722" },
-        { label: "Field", text: "", start: 27, end: 30, color: "#fb8c00" },
-        { label: "Channel", text: "", start: 30, end: 32, color: "#9c27b0" },
-        { label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b" },
-        { label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252" }
-    ];
+
     const [namePatterns, setNamePatterns] = useState(namePatternsPrimary);
 
     const updateNativeSelect = (event) => {
         let newFileName = event.target.value;
-        console.log(newFileName, "test");
-        // setFileName(newFileName);
-        setFileName("test");
+        setFileName(newFileName.split(".")[0]);
+        console.log( "namePatternsPrimary", namePatternsPrimary);
         setNamePatterns(namePatternsPrimary);
     }
 
@@ -312,7 +314,8 @@ const DropzoneNamesFiles = () => {
             try {
                 let sel = window.getSelection(), range = sel.getRangeAt(0);
                 let selectionRect = range.getBoundingClientRect(), fullRect = exampleBox.current.getBoundingClientRect();
-                let startOffset = Math.round(((selectionRect.left - fullRect.left) / selectionRect.width) * range.toString().length)
+                let startOffset = (((selectionRect.left - fullRect.left) / selectionRect.width) * range.toString().length);
+                startOffset = Math.round(startOffset);
                 let selectionRangeValue = {
                     text: range.toString(),
                     startOffset: startOffset,
@@ -327,26 +330,37 @@ const DropzoneNamesFiles = () => {
 
     const clickNamePattern = (index) => {
         let selectedText = getSelectionText();
+        console.log(selectionRange, namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
         if (selectionRange !== null && selectedText !== "") {
             let text = selectionRange.text;
             let startOffset = selectionRange.startOffset;
             let endOffset = selectionRange.endOffset;
             if (text === selectedText) {
                 if (startOffset > -1 && endOffset > -1) {
-                    let namePatternsPrimaryValue = namePatterns;
+                    let namePatternsPrimaryValue = [...namePatterns];
                     for (var i = 0; i < namePatternsPrimaryValue.length; i++) {
                         if (index === i) {
                             namePatternsPrimaryValue[index].text = text;
                             namePatternsPrimaryValue[index].start = startOffset;
                             namePatternsPrimaryValue[index].end = endOffset;
+                            for (let j = startOffset; j < endOffset; j++) {
+                                document.getElementById("filename" + j.toString()).style.color = namePatternsPrimaryValue[index].color;
+                            }
                         }
                     }
-                    // console.log(namePatternsPrimaryValue, selectionRange, "openposition dlg , clickNamePattern   getSelectionText");
+                    // console.log(namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
                     setNamePatterns(namePatternsPrimaryValue);
                 }
             }
         }
     };
+
+    const clearNameType = () => {
+        for (let k = 0; k < fileName.length; k++) {
+            document.getElementById("filename" + k.toString()).style.color = "#000";
+        }
+        // setNamePatterns(namePatternsPrimary);
+    }
 
     const getSelectionText = () => {
         var text = "";
@@ -360,54 +374,60 @@ const DropzoneNamesFiles = () => {
 
     const get_nametype = () => {
         let rows = [];
-        for (let i = 0; i < acceptedFiles.length; i++) {
-            let file_content = acceptedFiles[i].file;
-            if (acceptedFiles[i].valid) {
-                rows.push({
-                    id: (i + 1).toString(),
-                    // filename: acceptedFiles[i].name.toString(),
-                    filename: file_content["name"].toString(),
-                    series: '',
-                    frame: '',
-                    c: '',
-                    size_c: '',
-                    size_t: '',
-                    size_x: '',
-                    size_y: '',
-                    size_z: ''
-                });
+        if (acceptedFiles.length > 0) {
+            for (let i = 0; i < acceptedFiles.length; i++) {
+                let file_content = acceptedFiles[i].file;
+                if (acceptedFiles[i].valid) {
+                    rows.push({
+                        id: (i + 1).toString(),
+                        // filename: acceptedFiles[i].name.toString(),
+                        filename: file_content["name"].toString(),
+                        series: '',
+                        frame: '',
+                        c: '',
+                        size_c: '',
+                        size_t: '',
+                        size_x: '',
+                        size_y: '',
+                        size_z: ''
+                    });
+                }
             }
+            setFileName(rows[0].filename.split(".")[0]);
+            setContent(rows);
+            setRows(rows);
         }
-        setContent(rows);
-        setRows(rows);
-        setFileName(rows[0].filename);
         setLoading(true);
     }
 
     useEffect(() => {
         get_nametype();
-    }, [namePatterns]);
+    }, []);
 
     return (
-        <div style={{ minHeight: "200px" }}>
+        <div style={{ minHeight: "300px" }}>
             {/* <input {...getInputProps()} /> */}
             {files.length === 0 ?
                 <div className="d-flex align-center justify-center pt-5">
-                    {backgroundText}
+                    {loading ? "Drag and drop files or a folder" : "Loading..."}
                 </div> :
                 <div className='border'>
                     <Row className="align-center justify-center m-0 border">
                         <p className="mb-0 mr-3">Example :</p>
                         {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
-                        <div className='showFileName form-control shadow-none mb-0 pb-0' ref={exampleBox} onMouseUp={selectExampleString}>{fileName}</div>
-                        <NativeSelect value={fileName} onChange={updateNativeSelect} className="mb-0 showOnlyDropDownBtn" disableUnderline>
+                        <div className='showFileName shadow-none mb-0 pb-0 d-flex' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
+                            {fileName.split("").map((item, index) => {
+                                return <p id={"filename" + index.toString()} className="mb-0 font-bolder common-space" key={index}><strong><tt>{item}</tt></strong></p>
+                            })}
+                        </div>
+                        <select value={fileName} onChange={(event) => updateNativeSelect(event)} className="mb-0 showOnlyDropDownBtn" style={{ border: "none" }}>
                             {contents.map((c) => {
                                 return (
                                     <option key={c.filename} value={c.filename}>
                                         {c.filename}
                                     </option >)
                             })}
-                        </NativeSelect>
+                        </select>
                     </Row>
                     <Row className="align-center justify-center name-type-input m-0 border">
                         {namePatterns.map((pattern, idx) => {
@@ -419,7 +439,7 @@ const DropzoneNamesFiles = () => {
                                 >{pattern.label}</Button>
                                 <TextField
                                     id={pattern.label}
-                                    value={namePatterns[idx].text}
+                                    value={pattern.text}
                                     size="small"
                                     variant="standard"
                                     className="pattern-item-button"
@@ -442,7 +462,7 @@ const DropzoneNamesFiles = () => {
                                 // disabled={!canClear}
                                 depressed="true"
                                 style={{ backgroundColor: "#1976d2", borderRadius: "8px" }}
-                            // onClick={clearNameType}
+                                onClick={() => clearNameType()}
                             >Clear </Button>
                             <div className="spacer"></div>
                             <SearchBar
@@ -499,10 +519,18 @@ const OpenPositionDialog = (props) => {
 
     const handleCloseOpenDlg = () => {
         props.handleClose();
+        resetPositionDlg();
+    }
+
+    const resetPositionDlg = () => {
         acceptedFiles = [];
         setProgressBarMaxValue(0);
         setProgressBarValue(0);
     }
+
+    useEffect(() => {
+        // resetPositionDlg();
+    }, [])
 
     return (
         <>
@@ -549,7 +577,7 @@ const OpenPositionDialog = (props) => {
                         selectedTab === 0 ? <div className='d-flex'>
                             <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginRight: "150px", marginLeft: "0px" }}>Cloud</Button>
                             {
-                                progressBarMaxValue === 0 ? <div style={{width:"400px"}}></div> : <ProgressBar
+                                progressBarMaxValue === 0 || progressBarMaxValue === "0" ? <div style={{ width: "400px" }}></div> : <ProgressBar
                                     className="m-auto"
                                     bgColor="rgb(18 105 191)"
                                     width="400px"
