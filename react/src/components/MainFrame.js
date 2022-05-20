@@ -59,7 +59,7 @@ const MainFrame = () => {
     const handleResize = () => {
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeHeight",imageViewAreaRef.current.offsetHeight);
-        console.log(imageViewAreaRef.current.offsetWidth, imageViewAreaRef.current.offsetHeight,  "MainFrame.js : imageViewAreaRef")
+        // console.log(imageViewAreaRef.current.offsetWidth, imageViewAreaRef.current.offsetHeight,  "MainFrame.js : imageViewAreaRef");
     };
     useEffect(() => {
         handleResize();

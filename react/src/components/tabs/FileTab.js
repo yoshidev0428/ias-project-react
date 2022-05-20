@@ -72,10 +72,7 @@ export default function FileTab(props) {
 
     // const [cloudDialog, setcloudDialog] = useState(false);
     // const [folderDialog, setfolderDialog] = useState(false);
-    const [positionDialog, setpositionDialog] = useState(false);
-    // const showCloudDialog = () => {
-    //     setcloudDialog(true);
-    // }
+    const [positionDialog, setpositionDialog] = useState(true);
 
     const showPositionDialog = () => {
         setpositionDialog(true);
@@ -113,7 +110,7 @@ export default function FileTab(props) {
                 {cloudDialog && <OpenCloudDialog handleClose={handleClose} />} */}
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
-                <CustomButton icon={mdiDotsGrid} label="Position" click={showPositionDialog} />
+                <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
                 {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} />}
             </SmallCard>
             <Divider />

@@ -22,14 +22,15 @@ import SearchBar from "material-ui-search-bar";
 import NativeSelect from '@mui/material/NativeSelect';
 import TextField from '@mui/material/TextField';
 
+import * as api from "../../../../api/tiles";
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
 
 var acceptedFiles = [
-    // { id: 1, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d1.TIF", valid: true },
-    // { id: 2, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f03d0.TIF", valid: true },
-    // { id: 3, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d1.TIF", valid: true },
-    // { id: 4, errors: [], name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF", valid: true },
+    // { id: 1, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f03d1.TIF"}, valid: true },
+    // { id: 2, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f03d0.TIF"}, valid: true },
+    // { id: 3, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f02d1.TIF"}, valid: true },
+    // { id: 4, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF"}, valid: true },
 ]
 
 const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
@@ -86,64 +87,18 @@ TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-// const ImageDropzone = () => {
-//     const [files, setFiles] = useState([]);
-//     const [loading, setLoading] = useState(false);
-//     const updateFiles = (incommingFiles) => {
-//         console.log(incommingFiles, "props.files, files");
-//         setFiles(incommingFiles);
-//         acceptedFiles = incommingFiles;
-//     };
-//     const onDrop = useCallback((acceptedFiles) => {
-//         console.log(acceptedFiles);
-//         setLoading(true);
-//         setFiles(acceptedFiles)
-//     }, []);
-
-//     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-//     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-//     return (
-//         <div {...getRootProps()}>
-//             {files.length === 0 ?
-//                 <div className="d-flex align-center justify-center fill-height">
-//                     <p className="text-h4 grey--text text--lighten-2">
-//                         {backgroundText}
-//                     </p>
-//                 </div> :
-//                 <div>
-//                     <Row className="align-center">
-//                         {files.map((file, idx) =>
-//                             <Col
-//                                 key={idx}
-//                                 cols="2"
-//                                 className="px-4"
-//                             >
-//                                 {file.thumbnailData && <img
-//                                     id={'images_' + idx}
-//                                     src={file.thumbnailData}
-//                                     className="mx-auto"
-//                                     style={{ width: 120 }}
-//                                 />}
-//                                 <p className="ma-2 text-center text-caption">
-//                                     {file.name}
-//                                 </p>
-//                                 <FileItem {...file} preview />
-//                             </Col>
-//                         )}
-//                     </Row>
-//                 </div>
-//             }
-//         </div>
-//     )
-// }
-
 const ImageDropzone = (props) => {
 
     const [files, setFiles] = useState([]);
-    const updateFiles = (incommingFiles) => {
-        // console.log(incommingFiles, "onChange : ", new Date().getTime());
-        if (props !== null && acceptedFiles.length === 0) {
-            props.getLoadingProgress(incommingFiles.length)
+    const updateFiles = async (incommingFiles) => {
+        console.log(incommingFiles.length, "incommingFiles");
+        for (let i = 0; i < incommingFiles.length; i++) {
+            props.getLoadingProgress(i + 1);
+            await api.uploadImageTiles([incommingFiles[i].file]);
+        }
+        if ( incommingFiles.length === 0 ) {
+            props.getLoadingMax(0);
+            props.getLoadingProgress(0);
         }
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
@@ -172,7 +127,7 @@ const ImageDropzone = (props) => {
 
     return (
         // onChangeView={updateFilesView} onUploadStart={updateStart} onUploadFinish={updateFinish}
-        <Dropzone onChange={updateFiles} onDrop={startDrop} value={files}>
+        <Dropzone onChange={(incommingFiles) => updateFiles(incommingFiles)} onDrop={startDrop} value={files}>
             {files.map((file) => (
                 <FileItem {...file} k={file.id} info preview />
             ))}
@@ -293,7 +248,7 @@ const DropzoneNamesFiles = () => {
     const updateNativeSelect = (event) => {
         let newFileName = event.target.value;
         setFileName(newFileName.split(".")[0]);
-        console.log( "namePatternsPrimary", namePatternsPrimary);
+        console.log("namePatternsPrimary", namePatternsPrimary);
         setNamePatterns(namePatternsPrimary);
     }
 
