@@ -74,7 +74,7 @@ export default function RoutedAvivator(props) {
     // const history = [];
 
     useEffect(() => {
-        console.log(props, "viv index : image file");
+        // console.log(props, "viv index : image file");
         if (props.openedImageSource !== undefined) {
             // setUrlSource(props.openedImageSource);
         }

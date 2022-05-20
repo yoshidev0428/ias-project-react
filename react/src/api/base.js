@@ -1,8 +1,8 @@
 import axios from "axios";
 import store from '../reducers'
 const state = store.getState();
-// export const BASE_API_URL = "http://localhost:8000/";
-export const BASE_API_URL = "http://20.89.99.224:8000/";
+export const BASE_API_URL = "http://localhost:8000/";
+// export const BASE_API_URL = "http://20.89.99.224:8000/";
 // export const BASE_API_URL = "api:8000/apis/";
 // export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
 
@@ -23,8 +23,7 @@ api.interceptors.request.use(request => {
     console.log("111", state.auth);
     /* add auth headers */
     if (state.auth.token) {
-        request.headers["Authorization"] =
-            state.auth.tokenType + " " + state.auth.token;
+        request.headers["Authorization"] = state.auth.tokenType + " " + state.auth.token;
         request.headers["Content-Type"] = "application/json";
     }
     // if (sessionStorage.getItem("authToken")) {
@@ -34,7 +33,6 @@ api.interceptors.request.use(request => {
     //     sessionStorage.getItem("authToken");
     //   request.headers["Content-Type"] = "application/json";
     // }
-
     return request;
 });
 
@@ -46,10 +44,10 @@ api.interceptors.response.use(
     },
     error => {
         console.log("[API ERROR]", error);
-        store.dispatch({ type: 'auth_logOut' });
-        if (error?.response?.status === 401) {
-            store.dispatch({ type: 'auth_logOut' });
-        }
+        // store.dispatch({ type: 'auth_logOut' });
+        // if (error?.response?.status === 401) {
+        //     store.dispatch({ type: 'auth_logOut' });
+        // }
         return Promise.reject(error);
     }
 );
