@@ -72,14 +72,13 @@ export default function FileTab(props) {
 
     // const [cloudDialog, setcloudDialog] = useState(false);
     // const [folderDialog, setfolderDialog] = useState(false);
-    const [positionDialog, setpositionDialog] = useState(true);
+    const [positionDialog, setpositionDialog] = useState(false);
 
     const showPositionDialog = () => {
         setpositionDialog(true);
     }
 
     const handleClose = () => {
-        // setcloudDialog(false);
         setpositionDialog(false);
     }
 

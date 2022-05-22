@@ -19,6 +19,10 @@
     font-size: 16px !important;
 }
 
+.font-20{
+    font-size: 20px !important;
+}
+
 .dialog-close-btn {
     right   : 20px;
     top     : 15px;
