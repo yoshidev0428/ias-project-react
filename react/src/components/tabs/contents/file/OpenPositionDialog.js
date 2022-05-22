@@ -248,7 +248,7 @@ const DropzoneNamesFiles = () => {
     const updateNativeSelect = (event) => {
         let newFileName = event.target.value;
         setFileName(newFileName.split(".")[0]);
-        console.log("namePatternsPrimary", namePatternsPrimary);
+        // console.log("namePatternsPrimary", namePatternsPrimary);
         setNamePatterns(namePatternsPrimary);
     }
 
@@ -314,7 +314,7 @@ const DropzoneNamesFiles = () => {
         for (let k = 0; k < fileName.length; k++) {
             document.getElementById("filename" + k.toString()).style.color = "#000";
         }
-        // setNamePatterns(namePatternsPrimary);
+        setNamePatterns(namePatternsPrimary);
     }
 
     const getSelectionText = () => {
@@ -372,7 +372,7 @@ const DropzoneNamesFiles = () => {
                         {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
                         <div className='showFileName shadow-none mb-0 pb-0 d-flex' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
                             {fileName.split("").map((item, index) => {
-                                return <p id={"filename" + index.toString()} className="mb-0 font-bolder common-space" key={index}><strong><tt>{item}</tt></strong></p>
+                                return <tt><strong><p id={"filename" + index.toString()} className="mb-0 font-bolder font-20" key={index}>{item}</p></strong></tt>
                             })}
                         </div>
                         <select value={fileName} onChange={(event) => updateNativeSelect(event)} className="mb-0 showOnlyDropDownBtn" style={{ border: "none" }}>
