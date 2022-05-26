@@ -18,8 +18,8 @@ import Button from '@mui/material/Button';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
 import { Row, Container } from 'react-bootstrap';
 import { DataGrid } from '@mui/x-data-grid';
+// import DataGrid from 'react-data-grid';
 import SearchBar from "material-ui-search-bar";
-import NativeSelect from '@mui/material/NativeSelect';
 import TextField from '@mui/material/TextField';
 
 import * as api from "../../../../api/tiles";
@@ -33,19 +33,18 @@ var acceptedFiles = [
     // { id: 4, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF"}, valid: true },
 ]
 
-const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-{ "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-{ "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-{ "id": 4, "filename": "1EDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-{ "id": 5, "filename": "2GANSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-{ "id": 6, "filename": "3WDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }];
+// const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+// { "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+// { "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+// { "id": 4, "filename": "1EDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+// { "id": 5, "filename": "2GANSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
+// { "id": 6, "filename": "3WDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }];
 
 const columns = [
     { headerName: 'No', field: 'id', sortable: false },
     { headerName: 'FileName', field: 'filename', sortable: false },
     { headerName: 'Series', field: 'series', sortable: false },
     { headerName: 'Frame', field: 'frame', sortable: false },
-    { headerName: 'C', field: 'c', sortable: false },
     { headerName: 'SizeC', field: 'size_c', sortable: false },
     { headerName: 'SizeT', field: 'size_t', sortable: false },
     { headerName: 'SizeX', field: 'size_x', sortable: false },
@@ -62,7 +61,7 @@ const nameTypeTableHeaders = [
     { headerName: "Field", field: "field" },
     { headerName: "Channel", field: "channel" },
     { headerName: "Z Position", field: "z" },
-    { headerName: "Time Point", field: "timeline" }
+    { headerName: "Time Point", field: "timeline" },
 ];
 
 const namePatternsPrimary = [
@@ -96,7 +95,7 @@ const ImageDropzone = (props) => {
             props.getLoadingProgress(i + 1);
             await api.uploadImageTiles([incommingFiles[i].file]);
         }
-        if ( incommingFiles.length === 0 ) {
+        if (incommingFiles.length === 0) {
             props.getLoadingMax(0);
             props.getLoadingProgress(0);
         }
@@ -226,14 +225,14 @@ const DropzoneNamesFiles = () => {
 
     // Names & Files Tab
     const exampleBox = useRef(null);
-    // Pagination
-    const [pageSize, setPageSize] = useState(5);
-    // Table Rows
-    const [contents, setContent] = useState([]);
     // Drag & Drop files
     const [files, setFiles] = useState(acceptedFiles);
 
     const [loading, setLoading] = useState(false);
+    // Pagination
+    const [pageSize, setPageSize] = useState(5);
+    // Table Rows
+    const [contents, setContent] = useState([]);
     // Search
     const [searchrows, setRows] = useState([]);
     // Search Bar
@@ -243,15 +242,9 @@ const DropzoneNamesFiles = () => {
 
     const [selectionRange, setSelectionRange] = useState(null);
 
-    const [namePatterns, setNamePatterns] = useState(namePatternsPrimary);
+    const [namePatterns, setNamePatterns] = useState([]);
 
-    const updateNativeSelect = (event) => {
-        let newFileName = event.target.value;
-        setFileName(newFileName.split(".")[0]);
-        // console.log("namePatternsPrimary", namePatternsPrimary);
-        setNamePatterns(namePatternsPrimary);
-    }
-
+    //  Search Part
     const requestSearch = (searchedVal) => {
         const filteredRows = contents.filter((content) => {
             return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
@@ -263,7 +256,7 @@ const DropzoneNamesFiles = () => {
         setSearched("");
         requestSearch(searched);
     };
-
+    // Select update each fields -> namepattern
     const selectExampleString = () => {
         if (typeof window.getSelection !== "undefined") {
             try {
@@ -283,9 +276,19 @@ const DropzoneNamesFiles = () => {
         }
     }
 
+    const getSelectionText = () => {
+        var text = "";
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type !== "Control") {
+            text = document.selection.createRange().text;
+        }
+        return text.replaceAll("\n", "");
+    };
+
     const clickNamePattern = (index) => {
         let selectedText = getSelectionText();
-        console.log(selectionRange, namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
+        // console.log(selectionRange, namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
         if (selectionRange !== null && selectedText !== "") {
             let text = selectionRange.text;
             let startOffset = selectionRange.startOffset;
@@ -309,24 +312,77 @@ const DropzoneNamesFiles = () => {
             }
         }
     };
+    // update button function
+    const getNamePatternPerFile = (objectPerFile) => {
+        for (let i = 0; i < namePatterns.length; i++) {
+            var key = null;
+            switch (i) {
+                case 0:
+                    key = "series";
+                    break;
+                case 1:
+                    key = "row";
+                    break;
+                case 2:
+                    key = "col";
+                    break;
+                case 3:
+                    key = "field";
+                    break;
+                case 4:
+                    key = "channel";
+                    break;
+                case 5:
+                    key = "z";
+                    break;
+                case 6:
+                    key = "time";
+                    break;
+            }
+            if (key && objectPerFile !== null) {
+                objectPerFile[key] = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
+            }
+        }
+        return objectPerFile;
+    }
+
+    const updateNameType = () => {
+        let MAX_BATCH_SIZE = 10;
+        if (!files) {
+            console.log("allFiles error: " + files);
+            return "";
+        }
+        // progressBarValue = 0;
+        // progressBarMaxValue = files.length;
+        let new_content = [...contents];
+        for (let i = 0; i < new_content.length; i++) {
+            let each_namepattern = getNamePatternPerFile(new_content[i]);
+            console.log(each_namepattern, new_content[i], "new_content[i]");
+        }
+    }
+    // clear button + change file name
+    const reset_namePatterns = () => {
+        let namePatternsPrimaryValue = [...namePatterns];
+        for (let i = 0; i < namePatternsPrimaryValue.length; i++) {
+            namePatternsPrimaryValue[i].text = "";
+            namePatternsPrimaryValue[i].start = 0;
+            namePatternsPrimaryValue[i].end = 0;
+        }
+        setNamePatterns(namePatternsPrimaryValue);
+    }
 
     const clearNameType = () => {
         for (let k = 0; k < fileName.length; k++) {
             document.getElementById("filename" + k.toString()).style.color = "#000";
         }
-        setNamePatterns(namePatternsPrimary);
+        reset_namePatterns();
     }
 
-    const getSelectionText = () => {
-        var text = "";
-        if (window.getSelection) {
-            text = window.getSelection().toString();
-        } else if (document.selection && document.selection.type !== "Control") {
-            text = document.selection.createRange().text;
-        }
-        return text.replaceAll("\n", "");
-    };
-
+    const updateNativeSelect = (event) => {
+        setFileName(event.target.value.toString().split(".")[0]);
+        reset_namePatterns();
+    }
+    // initial setup -> namepattern
     const get_nametype = () => {
         let rows = [];
         if (acceptedFiles.length > 0) {
@@ -338,13 +394,12 @@ const DropzoneNamesFiles = () => {
                         // filename: acceptedFiles[i].name.toString(),
                         filename: file_content["name"].toString(),
                         series: '',
-                        frame: '',
-                        c: '',
-                        size_c: '',
-                        size_t: '',
-                        size_x: '',
-                        size_y: '',
-                        size_z: ''
+                        row: '',
+                        col: '',
+                        field: '',
+                        channel: '',
+                        z: '',
+                        time: ''
                     });
                 }
             }
@@ -356,6 +411,7 @@ const DropzoneNamesFiles = () => {
     }
 
     useEffect(() => {
+        setNamePatterns(namePatternsPrimary);
         get_nametype();
     }, []);
 
@@ -403,24 +459,14 @@ const DropzoneNamesFiles = () => {
                         })}
                     </Row>
                     <Container className='pl-1 pr-1 border'>
-                        <div className="d-flex">
-                            <Button
-                                className="common"
-                                // disabled={!canUpdate}
-                                depressed="true"
-                                style={{ backgroundColor: "#1976d2", borderRadius: "8px" }}
-                            // onClick={updateNameType}
-                            >Update</Button>
+                        <div className="d-flex" style={{ height: "40px" }}>
+                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => updateNameType()}>Update</Button>
                             <div className="spacer type-spacer"></div>
-                            <Button
-                                className="common"
-                                // disabled={!canClear}
-                                depressed="true"
-                                style={{ backgroundColor: "#1976d2", borderRadius: "8px" }}
-                                onClick={() => clearNameType()}
-                            >Clear </Button>
+                            <div className="spacer type-spacer"></div>
+                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => clearNameType()}>Clear</Button>
                             <div className="spacer"></div>
                             <SearchBar
+                                className='w-50 h-100'
                                 value={searched}
                                 onChange={(searchVal) => requestSearch(searchVal)}
                                 onCancelSearch={() => cancelSearch()}
@@ -428,9 +474,11 @@ const DropzoneNamesFiles = () => {
                         </div>
                         <div style={{ height: 400, width: '100%' }}>
                             <DataGrid
+                                style={{margin:"auto"}}
                                 rows={searchrows}
                                 columns={nameTypeTableHeaders}
                                 pageSize={pageSize}
+                                disableExtendRowFullWidth={false}
                                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                 rowsPerPageOptions={[5, 10, 20]}
                                 pagination
