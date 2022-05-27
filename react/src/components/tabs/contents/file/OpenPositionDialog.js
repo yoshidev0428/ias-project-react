@@ -127,8 +127,8 @@ const ImageDropzone = (props) => {
     return (
         // onChangeView={updateFilesView} onUploadStart={updateStart} onUploadFinish={updateFinish}
         <Dropzone onChange={(incommingFiles) => updateFiles(incommingFiles)} onDrop={startDrop} value={files}>
-            {files.map((file) => (
-                <FileItem {...file} k={file.id} info preview />
+            {files.map((file, index) => (
+                <FileItem key={index} {...file} k={file.id} info preview />
             ))}
         </Dropzone>
     );
@@ -270,6 +270,7 @@ const DropzoneNamesFiles = () => {
                     endOffset: startOffset + range.toString().length
                 }
                 setSelectionRange(selectionRangeValue);
+                
             } catch (error) {
                 console.log(error);
             }
@@ -288,7 +289,7 @@ const DropzoneNamesFiles = () => {
 
     const clickNamePattern = (index) => {
         let selectedText = getSelectionText();
-        // console.log(selectionRange, namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
+        console.log(selectedText, index, selectionRange, "openposition dlg , clickNamePattern   getSelectionText");
         if (selectionRange !== null && selectedText !== "") {
             let text = selectionRange.text;
             let startOffset = selectionRange.startOffset;
@@ -306,7 +307,7 @@ const DropzoneNamesFiles = () => {
                             }
                         }
                     }
-                    // console.log(namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
+                    console.log(namePatternsPrimary, "openposition dlg , clickNamePattern   getSelectionText");
                     setNamePatterns(namePatternsPrimaryValue);
                 }
             }
@@ -354,11 +355,14 @@ const DropzoneNamesFiles = () => {
         }
         // progressBarValue = 0;
         // progressBarMaxValue = files.length;
-        let new_content = [...contents];
-        for (let i = 0; i < new_content.length; i++) {
-            let each_namepattern = getNamePatternPerFile(new_content[i]);
-            console.log(each_namepattern, new_content[i], "new_content[i]");
+        let new_content = [];
+        let old_content = [...contents];
+        for (let i = 0; i < old_content.length; i++) {
+            let each_namepattern = getNamePatternPerFile(old_content[i]);
+            new_content.push(each_namepattern);
         }
+        setContent(new_content);
+        setRows(new_content);
     }
     // clear button + change file name
     const reset_namePatterns = () => {
@@ -426,12 +430,12 @@ const DropzoneNamesFiles = () => {
                     <Row className="align-center justify-center m-0 border">
                         <p className="mb-0 mr-3">Example :</p>
                         {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
-                        <div className='showFileName shadow-none mb-0 pb-0 d-flex' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
+                        <div className='showFileName shadow-none mb-0 pb-0 d-flex mr-1' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
                             {fileName.split("").map((item, index) => {
-                                return <tt><strong><p id={"filename" + index.toString()} className="mb-0 font-bolder font-20" key={index}>{item}</p></strong></tt>
+                                return <tt key={index}><strong><p id={"filename" + index.toString()} className="mb-0 font-bolder font-20" key={index}>{item}</p></strong></tt>
                             })}
                         </div>
-                        <select value={fileName} onChange={(event) => updateNativeSelect(event)} className="mb-0 showOnlyDropDownBtn" style={{ border: "none" }}>
+                        <select className="border-none ml-1 mb-0 showOnlyDropDownBtn" value={fileName} onChange={(event) => updateNativeSelect(event)} style={{ border: "none" }}>
                             {contents.map((c) => {
                                 return (
                                     <option key={c.filename} value={c.filename}>
@@ -460,10 +464,10 @@ const DropzoneNamesFiles = () => {
                     </Row>
                     <Container className='pl-1 pr-1 border'>
                         <div className="d-flex" style={{ height: "40px" }}>
-                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => updateNameType()}>Update</Button>
+                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => updateNameType()} style={{ backgroundColor: "#1565c0" }}>Update</Button>
                             <div className="spacer type-spacer"></div>
                             <div className="spacer type-spacer"></div>
-                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => clearNameType()}>Clear</Button>
+                            <Button size="medium" color="primary" variant="contained" depressed="true" onClick={() => clearNameType()} style={{ backgroundColor: "#1565c0" }}>Clear</Button>
                             <div className="spacer"></div>
                             <SearchBar
                                 className='w-50 h-100'
@@ -474,7 +478,7 @@ const DropzoneNamesFiles = () => {
                         </div>
                         <div style={{ height: 400, width: '100%' }}>
                             <DataGrid
-                                style={{margin:"auto"}}
+                                style={{ margin: "auto" }}
                                 rows={searchrows}
                                 columns={nameTypeTableHeaders}
                                 pageSize={pageSize}

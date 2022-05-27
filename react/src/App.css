@@ -19,7 +19,7 @@
     font-size: 16px !important;
 }
 
-.font-20{
+.font-20 {
     font-size: 20px !important;
 }
 
@@ -59,10 +59,11 @@
 }
 
 .showFileName {
-    padding      : 0px !important;
+    font-family     : monospace;
+    padding         : 0px !important;
     /* width        : 40% !important; */
-    border       : none !important;
-    border-bottom: 1px solid black !important;
+    border          : none !important;
+    border-bottom   : 1px solid black !important;
 }
 
 /* leaf_control imageViwer*/
