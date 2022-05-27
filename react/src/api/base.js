@@ -39,15 +39,14 @@ api.interceptors.request.use(request => {
 api.interceptors.response.use(
     response => {
         console.log("[API Response]", response);
-        // return response.data;
         return response;
     },
     error => {
         console.log("[API ERROR]", error);
-        // store.dispatch({ type: 'auth_logOut' });
-        // if (error?.response?.status === 401) {
-        //     store.dispatch({ type: 'auth_logOut' });
-        // }
+        store.dispatch({ type: 'auth_logOut' });
+        if (error?.response?.status === 401) {
+            store.dispatch({ type: 'auth_logOut' });
+        }
         return Promise.reject(error);
     }
 );
