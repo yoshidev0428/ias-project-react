@@ -4,12 +4,12 @@ import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
 // import Icon from '@mdi/react';
-// import OpenCloudDialog from "./contents/file/OpenCloudDialog";
+import OpenCloudDialog from "./contents/file/OpenCloudDialog";
 // import OpenFileDialog from "./contents/file/OpenFileDialog";
 // import OpenFolderDialog from "./contents/file/OpenFolderDialog";
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import {
-    // mdiCloudDownloadOutline,
+    mdiCloudDownloadOutline,
     mdiEmailNewsletter,
     mdiFolderOpenOutline,
     mdiDotsGrid,
@@ -70,8 +70,8 @@ export default function FileTab(props) {
         console.log("click onSelect1");
     };
 
-    // const [cloudDialog, setcloudDialog] = useState(false);
-    // const [folderDialog, setfolderDialog] = useState(false);
+    const [cloudDialog, setcloudDialog] = useState(false);
+    const [folderDialog, setfolderDialog] = useState(false);
     const [positionDialog, setpositionDialog] = useState(false);
 
     const showPositionDialog = () => {
@@ -105,8 +105,8 @@ export default function FileTab(props) {
             <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }}/>
             <input directory="" webkitdirectory="" type="file" ref={folderInput} onChange={onFolderChangeCapture} style={{ display: "none" }}/>
             <SmallCard title="Open">
-                {/* {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={showCloudDialog} />}
-                {cloudDialog && <OpenCloudDialog handleClose={handleClose} />} */}
+                {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" /*click={showCloudDialog}*/ />}
+                {cloudDialog && <OpenCloudDialog handleClose={handleClose} />}
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
@@ -128,7 +128,7 @@ export default function FileTab(props) {
             </SmallCard>
             <Divider />
             <SmallCard title="Comment">
-                <div>
+                <div className='d-flex justify-content-around' style={{width:'100%'}}>
                     <CustomButton icon={mdiNearMe} click={onSelect1} />
                     <CustomButton icon={mdiPencil} click={onSelect1} />
                     <CustomButton icon={mdiCheckboxBlankCircleOutline} click={onSelect1} />

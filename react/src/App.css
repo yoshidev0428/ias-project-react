@@ -83,3 +83,11 @@
     padding: 0px !important;
     margin : 0px !important;
 }
+
+.custom-button {
+    cursor: pointer;
+}
+
+.custom-button:hover {
+    background-color: rgba(15, 150, 136, .1);
+}

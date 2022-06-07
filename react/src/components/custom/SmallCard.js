@@ -3,13 +3,10 @@ import React from 'react'
 // import { Row, Col, Container } from 'react-bootstrap';
 const SmallCard = (props) => {
     return (
-        <div className="common-border" style={{padding: "2px"}}>
-            <h6 style={{ fontWeight: 'normal' }}>
+        <div className="pt-2 pl-1" style={{padding: "2px"}}>
+            <div className={'mb-2'} style={{ fontWeight: 'bold', fontSize:'14px' }}>
                 {props.title}
-            </h6>
-            {/* <h6 style={props.child ? { fontWeight: 'normal' } : { fontWeight: 'bold' }}>
-                {props.title}
-            </h6> */}
+            </div>
             <div>
                 <div className="d-flex justify-content-around">
                     {props.children}
