@@ -19,6 +19,11 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     apt-get install -y netcat
 
+# Install dependencies to solve dependency bug: openslide
+RUN apt-get install -y openslide-tools && \
+    apt install -y build-essential && \
+    pip install openslide-python
+
 RUN pip install histomicstk --find-links https://girder.github.io/large_image_wheels
 
 WORKDIR /app
