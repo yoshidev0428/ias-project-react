@@ -54,7 +54,7 @@ export default function Vessel(props) {
     return (
         <Card ref={ref}>
             <div className="d-flex justify-content-around common-border">
-                <h6 style={{ width: "60%" }}>{currentVessel.title} - {currentVessel.type}</h6>
+                <h6 style={{ width: "60%" }}> {currentVessel.title} - {currentVessel.type}</h6>
                 <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.6}
                         horizontal
