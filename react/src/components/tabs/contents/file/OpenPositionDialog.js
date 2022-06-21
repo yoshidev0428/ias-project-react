@@ -415,6 +415,7 @@ const DropzoneNamesFiles = () => {
     }
 
     useEffect(() => {
+        console.log("FILES NAMES: ", acceptedFiles);
         setNamePatterns(namePatternsPrimary);
         get_nametype();
     }, []);
