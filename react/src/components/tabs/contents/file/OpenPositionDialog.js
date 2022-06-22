@@ -61,7 +61,7 @@ const nameTypeTableHeaders = [
     { headerName: "Field", field: "field" },
     { headerName: "Channel", field: "channel" },
     { headerName: "Z Position", field: "z" },
-    { headerName: "Time Point", field: "timeline" },
+    { headerName: "Time Point", field: "time" },
 ];
 
 const namePatternsPrimary = [
@@ -355,12 +355,15 @@ const DropzoneNamesFiles = () => {
         }
         // progressBarValue = 0;
         // progressBarMaxValue = files.length;
+        console.log("Contents: ", contents);
+
         let new_content = [];
         let old_content = [...contents];
         for (let i = 0; i < old_content.length; i++) {
             let each_namepattern = getNamePatternPerFile(old_content[i]);
             new_content.push(each_namepattern);
         }
+        console.log("New Contents: ", new_content);
         setContent(new_content);
         setRows(new_content);
     }
