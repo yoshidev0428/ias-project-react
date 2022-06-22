@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {connect} from 'react-redux';
 import Card from '@mui/material/Card';
 import { getVesselById } from '../../../../utils/vessel-types';
 import { useElementSize } from 'usehooks-ts';
@@ -15,7 +16,11 @@ import { SelectDialog } from '../../../vessels/SelectDialog';
 import { ExpansionDialog } from '../../../vessels/ExpansionDialog';
 // import CustomButton from '../../../custom/CustomButton';
 
-export default function Vessel(props) {
+const mapStateToProps = (state) => ({
+    content: state.files.content
+})
+
+const Vessel = (props) => {
 
     const [currentVesselId, setCurrentVesselId] = useState(1);
     const [currentVessel, setCurrentVessel] = useState(getVesselById(1));
@@ -26,7 +31,22 @@ export default function Vessel(props) {
 
     useEffect(() => {
         setCurrentVessel(getVesselById(currentVesselId));
+        console.log("Current Vessel: ", currentVessel);
     }, [currentVesselId]);
+
+    useEffect(() => {
+        console.log("VESSEL: NEW CONTENT, ", props.content);
+        if(props.content){
+            setCurrentVessel( {
+                id: 11,
+                type: "Well",
+                rows: 8,
+                cols: 12,
+                title: "96",
+                showName: true
+            });
+        }
+    },[props.content])
 
     if (currentVessel == null) {
         return (
@@ -54,7 +74,7 @@ export default function Vessel(props) {
     return (
         <Card ref={ref}>
             <div className="d-flex justify-content-around common-border">
-                <h6 style={{ width: "60%" }}> {currentVessel.title} - {currentVessel.type}</h6>
+                <h6 style={{ width: "60%" }}> {currentVessel.title} -- {currentVessel.type}</h6>
                 <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.6}
                         horizontal
@@ -80,3 +100,5 @@ export default function Vessel(props) {
         </Card >
     );
 }
+
+export default connect(mapStateToProps)(Vessel);

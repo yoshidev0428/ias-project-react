@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {connect} from 'react-redux';
+import store from "../../../../reducers";
 // import { useDropzone } from 'react-dropzone'
 // import { borderBottom } from '@mui/system';
 import PropTypes from 'prop-types';
@@ -355,7 +357,7 @@ const DropzoneNamesFiles = () => {
         }
         // progressBarValue = 0;
         // progressBarMaxValue = files.length;
-        console.log("Contents: ", contents);
+        // console.log("Contents: ", contents);
 
         let new_content = [];
         let old_content = [...contents];
@@ -364,6 +366,10 @@ const DropzoneNamesFiles = () => {
             new_content.push(each_namepattern);
         }
         console.log("New Contents: ", new_content);
+        store.dispatch({
+            type: "content_addContent", 
+            content: new_content
+        })
         setContent(new_content);
         setRows(new_content);
     }
@@ -512,6 +518,10 @@ const DropzoneGroup = () => {
     )
 }
 
+const mapStateToProps = state => ({
+    currentVesselType: state.vessel.currentVesselType,
+})
+
 const OpenPositionDialog = (props) => {
 
     const [selectedTab, setSelectedTab] = useState(0);
@@ -607,4 +617,4 @@ const OpenPositionDialog = (props) => {
 }
 
 OpenPositionDialog.propTypes = { handleClose: PropTypes.func.isRequired };
-export default OpenPositionDialog;
+export default connect(mapStateToProps)(OpenPositionDialog);

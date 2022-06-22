@@ -1,6 +1,8 @@
 const DEFAULT_PARAMS = {
   isFilesAvailable: false,
+  isContentAvailable: false,
   files: null,
+  content: null,
 };
 
 const initState = {
@@ -10,6 +12,10 @@ const initState = {
 //action redux
 const files = (state = initState, action)  =>{
   switch (action.type) {
+    case "content_addContent":
+      state.content = action.content;
+      state.isContentAvailable = true;
+      break;
     case "files_addFiles":
       state.files = action.files;
       state.isFilesAvailable = true;
