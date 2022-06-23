@@ -44,7 +44,7 @@ const Vessel = (props) => {
                 cols: 12,
                 title: "96",
                 showName: true, 
-                showNumber: true,
+                showNumber: false,
             });
         }
     },[props.content])

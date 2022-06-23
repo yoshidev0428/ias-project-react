@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { VESSEL_WELLPLATE_RATIO, VESSEL_WELLPLATE_MAX_HEIGHT, VESSEL_WELLPLATE_MAX_FONTSIZE } from '../../utils/constants';
+import classnames from 'classnames';
 
 export default function WellPlates(props) {
 
@@ -28,6 +29,8 @@ export default function WellPlates(props) {
         radiusCalculated / 2 > VESSEL_WELLPLATE_MAX_FONTSIZE
             ? VESSEL_WELLPLATE_MAX_FONTSIZE
             : radiusCalculated / 2)
+    
+    const [holeClicked, setHoleClicked] = useState(-1);
 
     useEffect(() => {
         if (width !== props.width || rows !== props.rows || cols !== props.cols || showName !== props.showName) {
@@ -64,6 +67,12 @@ export default function WellPlates(props) {
         r = r + 1;
         return (r - 1) * cols + c;
     }
+
+    const handleVesselClick = (e, holeNumber, row, col) => {
+        console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
+        setHoleClicked(holeNumber);
+    }
+
     const renderWellPlates = () => {
         return (
             <div style={{ width: rect.width, height: rect.height }} className="d-flex flex-column">
@@ -93,7 +102,13 @@ export default function WellPlates(props) {
                                 }
                                 {
                                     [...Array(cols)].map((x, c) =>
-                                        <div key={"circle" + holeNumber(r, c)} style={{ width: radious, height: radious }} className="d-flex justify-content-center align-items-center border border-dark rounded-circle">
+                                        <div onClick={e => handleVesselClick(e.preventDefault(), holeNumber(r, c), r, c)} 
+                                        key={"circle" + holeNumber(r, c)} 
+                                        style={{ width: radious, height: radious }} 
+                                        className={classnames({
+                                            "d-flex justify-content-center align-items-center border border-dark rounded-circle cursor-pointer": true,
+                                            "hole-blue": holeNumber(r, c) <= 33,
+                                            "hole-purple": holeNumber(r, c) === holeClicked})}>
                                             <span className='primary--text'>{showNumber ? holeNumber(r, c) : ''}</span>
                                         </div>
                                     )
