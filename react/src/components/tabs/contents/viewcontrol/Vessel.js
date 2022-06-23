@@ -39,11 +39,12 @@ const Vessel = (props) => {
         if(props.content){
             setCurrentVessel( {
                 id: 11,
-                type: "Well",
+                type: "WellPlate",
                 rows: 8,
                 cols: 12,
                 title: "96",
-                showName: true
+                showName: true, 
+                showNumber: true,
             });
         }
     },[props.content])
@@ -61,8 +62,8 @@ const Vessel = (props) => {
                     return <Slides width={width} count={currentVessel.count} />;
                 case 'Dish':
                     return <Dishes width={width} size={currentVessel.size} />;
-                case 'Well':
-                    return <WellPlates width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} />;
+                case 'WellPlate':
+                    return <WellPlates width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} showNumber={currentVessel.showNumber}/>;
                 case 'Wafer':
                     return <Wafers width={width} size={currentVessel.size} />;
                 default:
@@ -73,8 +74,8 @@ const Vessel = (props) => {
 
     return (
         <Card ref={ref}>
-            <div className="d-flex justify-content-around common-border">
-                <h6 style={{ width: "60%" }}> {currentVessel.title} -- {currentVessel.type}</h6>
+            <div className="d-flex justify-content-around align-items-center common-border">
+                <h6 style={{ width: "60%", align: "center"}}> {currentVessel.title} - {currentVessel.type}</h6>
                 <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.6}
                         horizontal

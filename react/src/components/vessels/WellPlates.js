@@ -58,6 +58,8 @@ export default function WellPlates(props) {
         }
     }, [props]);
 
+
+
     const holeNumber = (r, c) => {
         r = r + 1;
         return (r - 1) * cols + c;

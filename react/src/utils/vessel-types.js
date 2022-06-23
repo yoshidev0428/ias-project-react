@@ -12,13 +12,13 @@ export const VESSELS = [
         { id: 6, type: "Dish", size: 100, title: "100" }
     ],
     [
-        { id: 7, type: "Well", rows: 2, cols: 3, title: "6", showName: false },
-        { id: 8, type: "Well", rows: 3, cols: 4, title: "12", showName: true },
-        { id: 9, type: "Well", rows: 4, cols: 6, title: "24", showName: true },
-        { id: 10, type: "Well", rows: 6, cols: 8, title: "48", showName: true },
+        { id: 7, type: "WellPlate", rows: 2, cols: 3, title: "6", showName: false },
+        { id: 8, type: "WellPlate", rows: 3, cols: 4, title: "12", showName: true },
+        { id: 9, type: "WellPlate", rows: 4, cols: 6, title: "24", showName: true },
+        { id: 10, type: "WellPlate", rows: 6, cols: 8, title: "48", showName: true },
         {
             id: 11,
-            type: "Well",
+            type: "WellPlate",
             rows: 8,
             cols: 12,
             title: "96",
@@ -26,7 +26,7 @@ export const VESSELS = [
         },
         {
             id: 12,
-            type: "Well",
+            type: "WellPlate",
             rows: 16,
             cols: 24,
             title: "384",

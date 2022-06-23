@@ -76,7 +76,7 @@ export const SelectDialog = (props) => {
             switch (vessel.type) {
                 case 'Slide':
                     return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><Slides width={maxDialogWidth / 6.3 - 10} count={vessel.count} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
-                case 'Well':
+                case 'WellPlate':
                     return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><WellPlates width={maxDialogWidth / 6.3 - 10} rows={vessel.rows} cols={vessel.cols} showName={vessel.showName} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
                 case 'Dish':
                     return <div key={vessel.id} className={currentVessel === vessel.id ? 'border border-primary align-items-center justify-content-center' : 'align-items-center justify-content-center'} role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth / 6.3 }}><Dishes width={maxDialogWidth / 6.3 - 10} size={vessel.size} /><div className={'text-center text-info'}>{vessel.title}</div></div>;
