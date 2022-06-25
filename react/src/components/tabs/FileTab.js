@@ -126,17 +126,17 @@ const FileTab = (props) => {
             }
         }
 
-        console.log("File Tab: DATA IDS, ", dataIds);
-        console.log("File Tab: FILES DATA, ", filesData);
+        // console.log("File Tab: DATA IDS, ", dataIds);
+        // console.log("File Tab: FILES DATA, ", filesData);
         
         var imageData = [];
         for(let j=0; j < dataIds.length; j++){
-            console.log("Data ", dataIds[j]-1, filesData[dataIds[j]-1]);
+            // console.log("Data ", dataIds[j]-1, filesData[dataIds[j]-1]);
             var imageOne = filesData[dataIds[j]-1];
             imageData.push(imageOne);
         }
 
-        console.log("File Tab: IMAGE DATA, ", imageData);
+        // console.log("File Tab: IMAGE DATA, ", imageData);
         return imageData;
     }
 

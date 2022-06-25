@@ -76,9 +76,9 @@ const WellPlates = (props) => {
         // setContent(props.content);
         if(props.content){
             let _content = setHoleNumberInArray(props.content);
-            console.log("New Contents for HOLE: ", _content);
+            // console.log("New Contents for HOLE: ", _content);
             let new_array_content = sortArrayBasedOnHoleNumber(_content);
-            console.log("SORTED New Contents for HOLE: ", new_array_content);
+            // console.log("SORTED New Contents for HOLE: ", new_array_content);
             setContent(new_array_content);
         }
     },[props.content])
@@ -93,10 +93,10 @@ const WellPlates = (props) => {
     const sortArrayBasedOnHoleNumber = (content) => {
         let new_array_content = [];
         let old_content = [...content];
-        console.log("Active Holes: ", activeHolesNumbers);
+        // console.log("Active Holes: ", activeHolesNumbers);
         
         let maxIterate = Math.max(...activeHolesNumbers) + 1;
-        console.log("Max Holes: ", maxIterate);
+        // console.log("Max Holes: ", maxIterate);
 
         for(let i = 0; i < maxIterate; i++) {
             let data = {};
@@ -145,7 +145,7 @@ const WellPlates = (props) => {
 
         let uniqueHoles = getUniqueSortedNumber(holes);
         activeHolesNumbers = uniqueHoles;
-        console.log("Unique Holes sorted: ", uniqueHoles);
+        // console.log("Unique Holes sorted: ", uniqueHoles);
         setActiveHoles(uniqueHoles);
         return old_content;
     }
@@ -199,7 +199,7 @@ const WellPlates = (props) => {
 
 
     const handleVesselClick = (e, holeNumber, row, col) => {
-        console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
+        // console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
         setHoleClicked(holeNumber);
         if(activeHoles.includes(holeNumber)){
             let dataHoleChosen = content[holeNumber]

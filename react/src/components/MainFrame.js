@@ -158,7 +158,7 @@ const MainFrame = (props) => {
 
 
     useEffect(() => {
-        console.log("PROPS.FILES ON FILE MAIN FRAME: ", props.files);
+        // console.log("PROPS.FILES ON FILE MAIN FRAME: ", props.files);
         if(props.files){
             
             setFiles(files);
@@ -248,10 +248,12 @@ const MainFrame = (props) => {
         UTIF.decodeImage(e.target.response, ifds[0])
         var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
         const firstPageOfTif = ifds[0];
-        console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-        console.log("MAIN FRAME: rgba: ", rgba);
-        const imageWidth = firstPageOfTif.width;
-        const imageHeight = firstPageOfTif.height;
+        // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+        // console.log("MAIN FRAME: rgba: ", rgba);
+        // const imageWidth = firstPageOfTif.width;
+        // const imageHeight = firstPageOfTif.height;
+        const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
+        const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
 
         const cnv = document.createElement("canvas");
         cnv.width = imageWidth;
