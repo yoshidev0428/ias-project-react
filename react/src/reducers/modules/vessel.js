@@ -1,5 +1,6 @@
 const DEFAULT_PARAMS = {
   currentVesselType: "Well",
+  viewConfigsObj: {},
 };
 
 const initState = {
@@ -10,8 +11,11 @@ const initState = {
 const vessel = (state = initState, action)  =>{
   switch (action.type) {
     case "vessel_setCurrentVesselType":
-      state.currentVesselType = action.payload;
+      state.currentVesselType = action.data;
       break;
+    case "vessel_setViewConfigsObj":
+        state.viewConfigsObj = action.data;
+        break;
     default:
       break;
   }

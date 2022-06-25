@@ -74,12 +74,13 @@ const WellPlates = (props) => {
 
     useEffect(() => {
         // setContent(props.content);
-
-        let _content = setHoleNumberInArray(props.content);
-        console.log("New Contents for HOLE: ", _content);
-        let new_array_content = sortArrayBasedOnHoleNumber(_content);
-        console.log("SORTED New Contents for HOLE: ", new_array_content);
-        setContent(new_array_content);
+        if(props.content){
+            let _content = setHoleNumberInArray(props.content);
+            console.log("New Contents for HOLE: ", _content);
+            let new_array_content = sortArrayBasedOnHoleNumber(_content);
+            console.log("SORTED New Contents for HOLE: ", new_array_content);
+            setContent(new_array_content);
+        }
     },[props.content])
 
 
@@ -119,7 +120,7 @@ const WellPlates = (props) => {
 
     // let getUniqueHolesNumber = a => [...new Set(a)].sort();
 
-    const getUniqueHolesNumber = (arr) => {
+    const getUniqueSortedNumber = (arr) => {
         if (arr.length === 0) return arr;
         arr = arr.sort(function (a, b) { return a*1 - b*1; });
         var ret = [arr[0]];
@@ -142,7 +143,7 @@ const WellPlates = (props) => {
             holes.push(holeNumber(row, col));
         }
 
-        let uniqueHoles = getUniqueHolesNumber(holes);
+        let uniqueHoles = getUniqueSortedNumber(holes);
         activeHolesNumbers = uniqueHoles;
         console.log("Unique Holes sorted: ", uniqueHoles);
         setActiveHoles(uniqueHoles);
@@ -154,21 +155,73 @@ const WellPlates = (props) => {
         return (r - 1) * cols + c;
     }
 
+
+    const getViewConfigs = (dataHoleChosen) => {
+        console.log("WELL PLATES: getViewConfigs", dataHoleChosen);
+
+        let viewConfigsInObj = getViewConfigsObjects(dataHoleChosen.data);
+
+        return viewConfigsInObj;
+    }
+
+    const getViewConfigsObjects = (dataHoleChosen) => {
+        let old_content = [...dataHoleChosen];
+        let zPosS = [];
+        let timePointS = [];
+        for(let i=0; i < old_content.length; i++){
+            let zPos = old_content[i].z;
+            let timePoint = old_content[i].time;
+            zPosS.push(zPos);
+            timePointS.push(timePoint);
+        }
+
+        let maxZPos = Math.max(...zPosS);
+        let minZPos = Math.min(...zPosS);
+        let maxTimePoint = Math.max(...timePointS);
+        let minTimePoint = Math.min(...timePointS);
+
+        let zPosObj = {};
+        zPosObj['max'] = maxZPos;
+        zPosObj['min'] = minZPos;
+        zPosObj['array'] = getUniqueSortedNumber(zPosS);
+
+        let timePointObj = {};
+        timePointObj['max'] = maxTimePoint;
+        timePointObj['min'] = minTimePoint;
+        timePointObj['array'] = getUniqueSortedNumber(timePointS);
+
+        let viewConfigsObj = {}; 
+        viewConfigsObj['z'] = zPosObj;
+        viewConfigsObj['time'] = timePointObj;
+
+        return viewConfigsObj;
+    }
+
+
     const handleVesselClick = (e, holeNumber, row, col) => {
         console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
         setHoleClicked(holeNumber);
         if(activeHoles.includes(holeNumber)){
-        let dataHoleChosen = content[holeNumber]
-        console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
+            let dataHoleChosen = content[holeNumber]
+            console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
+            
+            let viewConfigs = getViewConfigs(dataHoleChosen);
+            console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
+            store.dispatch({
+                type: "files_addFilesChosen", data: dataHoleChosen.data
+            })
 
-        store.dispatch({
-            type: "files_addFilesChosen", data: dataHoleChosen.data
-        })
+            store.dispatch({
+                type: "vessel_setViewConfigsObj", data: viewConfigs
+            })
+
         }
         else{
             console.log("NO DATA Content Hole number ", holeNumber);
         }
     }
+
+
 
     const renderWellPlates = () => {
         return (
