@@ -124,7 +124,7 @@ const Timeline = (props) => {
                                 variant="standard"
                                 style={{ BorderNone: true, border: 'none' }}
                                 InputProps={{
-                                    step: 1,
+                                    step: minSlider,
                                     min: minSlider,
                                     max: maxSlider,
                                     type: 'number',

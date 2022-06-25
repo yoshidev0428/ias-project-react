@@ -93,7 +93,7 @@ const ZPosition = (props) => {
                                 onBlur={Blur}
                                 variant="standard"
                                 style={{ BorderNone: true, border: 'none' }}
-                                InputProps={{ step: 1, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
+                                InputProps={{ step: minSlider, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
 
                             />
                         </Grid>
