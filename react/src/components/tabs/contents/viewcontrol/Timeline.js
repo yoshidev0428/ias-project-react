@@ -79,6 +79,7 @@ const Timeline = (props) => {
         if(timeConfig){
             setMinSlider(timeConfig.min);
             setMaxSlider(timeConfig.max);
+            setValue(timeConfig.min);
         }
     },[timeConfig])
 

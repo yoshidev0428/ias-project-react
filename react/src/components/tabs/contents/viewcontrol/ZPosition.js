@@ -56,6 +56,7 @@ const ZPosition = (props) => {
         if(zPosConfig){
             setMinSlider(zPosConfig.min);
             setMaxSlider(zPosConfig.max);
+            setValue(zPosConfig.min);
         }
     },[zPosConfig])
 
