@@ -172,7 +172,7 @@ const MainFrame = () => {
 
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
-        // console.log(files[0], " mainFrame : changeloadfile");
+        console.log(files[0], " mainFrame : changeloadfile");
         let file = files[0];
         if (file) {
             let name = "";
