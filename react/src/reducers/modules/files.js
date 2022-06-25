@@ -2,6 +2,8 @@ const DEFAULT_PARAMS = {
   isFilesAvailable: false,
   isContentAvailable: false,
   files: null,
+  filesChosen: null,
+  isFilesChosenAvailable: false,
   content: null,
 };
 
@@ -23,6 +25,10 @@ const files = (state = initState, action)  =>{
     case "files_removeAllFiles":
       state.files = null;
       state.isFilesAvailable = false; 
+    case "files_addFilesChosen":
+      state.filesChosen = action.data;
+      state.isFilesAvailable = true;
+      break
     default:
       break;
   }

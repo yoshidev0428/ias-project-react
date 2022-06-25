@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { VESSEL_WELLPLATE_RATIO, VESSEL_WELLPLATE_MAX_HEIGHT, VESSEL_WELLPLATE_MAX_FONTSIZE } from '../../utils/constants';
 import classnames from 'classnames';
+import {connect} from 'react-redux';
+import store from "../../reducers";
 
-export default function WellPlates(props) {
+
+const mapStateToProps = state => ({
+    isFilesAvailable: state.files.isFilesAvailable,
+})
+
+const WellPlates = (props) => {
 
     var calculateDRect = {};
     if (props.width * VESSEL_WELLPLATE_RATIO > VESSEL_WELLPLATE_MAX_HEIGHT) {
@@ -31,6 +38,10 @@ export default function WellPlates(props) {
             : radiusCalculated / 2)
     
     const [holeClicked, setHoleClicked] = useState(-1);
+    const [content, setContent] = useState(props.content);
+    const [activeHoles, setActiveHoles] = useState([]);
+
+    var activeHolesNumbers = []
 
     useEffect(() => {
         if (width !== props.width || rows !== props.rows || cols !== props.cols || showName !== props.showName) {
@@ -61,7 +72,82 @@ export default function WellPlates(props) {
         }
     }, [props]);
 
+    useEffect(() => {
+        // setContent(props.content);
 
+        let _content = setHoleNumberInArray(props.content);
+        console.log("New Contents for HOLE: ", _content);
+        let new_array_content = sortArrayBasedOnHoleNumber(_content);
+        console.log("SORTED New Contents for HOLE: ", new_array_content);
+        setContent(new_array_content);
+    },[props.content])
+
+
+    useEffect(() => {
+
+    },[content]);
+
+
+
+    const sortArrayBasedOnHoleNumber = (content) => {
+        let new_array_content = [];
+        let old_content = [...content];
+        console.log("Active Holes: ", activeHolesNumbers);
+        
+        let maxIterate = Math.max(...activeHolesNumbers) + 1;
+        console.log("Max Holes: ", maxIterate);
+
+        for(let i = 0; i < maxIterate; i++) {
+            let data = {};
+            let one_array = [];
+            for(let j = 0; j < old_content.length; j++){
+                if( i === old_content[j].hole){
+                    one_array.push(old_content[j]);
+                    old_content.slice(j);
+                }else{
+                    continue;
+                }
+            }
+           
+            data['data'] = one_array;
+           new_array_content.push(data);
+           
+        }
+
+        return new_array_content;
+    }
+
+    // let getUniqueHolesNumber = a => [...new Set(a)].sort();
+
+    const getUniqueHolesNumber = (arr) => {
+        if (arr.length === 0) return arr;
+        arr = arr.sort(function (a, b) { return a*1 - b*1; });
+        var ret = [arr[0]];
+        for (var i = 1; i < arr.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
+          if (arr[i-1] !== arr[i]) {
+            ret.push(arr[i]);
+          }
+        }
+        return ret;
+      }
+
+    const setHoleNumberInArray = (content) => {
+        let old_content = [...content];
+        let holes = [];
+        for(let i=0; i < old_content.length; i++){
+            let row = old_content[i].row;
+            let col = old_content[i].col - 1;
+            old_content[i].col = col;
+            old_content[i].hole = holeNumber(row, col);
+            holes.push(holeNumber(row, col));
+        }
+
+        let uniqueHoles = getUniqueHolesNumber(holes);
+        activeHolesNumbers = uniqueHoles;
+        console.log("Unique Holes sorted: ", uniqueHoles);
+        setActiveHoles(uniqueHoles);
+        return old_content;
+    }
 
     const holeNumber = (r, c) => {
         r = r + 1;
@@ -71,6 +157,17 @@ export default function WellPlates(props) {
     const handleVesselClick = (e, holeNumber, row, col) => {
         console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
         setHoleClicked(holeNumber);
+        if(activeHoles.includes(holeNumber)){
+        let dataHoleChosen = content[holeNumber]
+        console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
+
+        store.dispatch({
+            type: "files_addFilesChosen", data: dataHoleChosen.data
+        })
+        }
+        else{
+            console.log("NO DATA Content Hole number ", holeNumber);
+        }
     }
 
     const renderWellPlates = () => {
@@ -107,8 +204,8 @@ export default function WellPlates(props) {
                                         style={{ width: radious, height: radious }} 
                                         className={classnames({
                                             "d-flex justify-content-center align-items-center border border-dark rounded-circle cursor-pointer": true,
-                                            "hole-blue": holeNumber(r, c) <= 33,
-                                            "hole-purple": holeNumber(r, c) === holeClicked})}>
+                                            "hole-blue": activeHoles.includes(holeNumber(r, c)),
+                                            "hole-purple": holeNumber(r, c) === holeClicked && activeHoles.includes(holeNumber(r, c))})}>
                                             <span className='primary--text'>{showNumber ? holeNumber(r, c) : ''}</span>
                                         </div>
                                     )
@@ -127,3 +224,5 @@ export default function WellPlates(props) {
         </div>
     );
 }
+
+export default connect(mapStateToProps)(WellPlates);

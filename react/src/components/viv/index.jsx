@@ -36,10 +36,10 @@ const darkTheme = createTheme({
 
 export default function RoutedAvivator(props) {
 
-    // const source = {
-    //     urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
-    //     description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
-    // }
+    const source = {
+        urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
+        description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
+    }
     const [urlSource, setUrlSource] = useState(null);
     // ZoomContol + FullScreen
     let [isFullScreen, setFullScreen] = useState(false);
@@ -74,11 +74,12 @@ export default function RoutedAvivator(props) {
     // const history = [];
 
     useEffect(() => {
-        // console.log(props, "viv index : image file");
+        console.log(props.openedImageSource, "viv index : image file");
         if (props.openedImageSource !== undefined) {
-            // setUrlSource(props.openedImageSource);
+            console.log(props.openedImageSource, "2 viv index : image file");
+            setUrlSource(props.openedImageSource);
         }
-    }, [props]);
+    }, [props.openedImageSource]);
 
     return (
         <>

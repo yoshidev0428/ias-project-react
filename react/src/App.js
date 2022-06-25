@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import './App.scss';
 import './App.css';
@@ -11,6 +11,21 @@ const mapStateToProps = state => ({
     isLoggedIn: !state.auth.isLoggedIn
 })
 const App = (props) => {
+
+
+    useEffect(() => {
+        const script = document.createElement('script');
+      
+        script.src = "https://cdn.jsdelivr.net/npm/plotty";
+        script.async = true;
+      
+        document.body.appendChild(script);
+      
+        return () => {
+          document.body.removeChild(script);
+        }
+      }, []);
+
     return (
         // Router Code
         // <BrowserRouter>
