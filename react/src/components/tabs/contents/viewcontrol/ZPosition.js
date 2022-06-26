@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import { Row, Col, Container } from 'react-bootstrap';
 import Slider from '@mui/material/Slider';
@@ -9,13 +9,22 @@ import Icon from '@mdi/react';
 import {
     mdiSwapVertical
 } from '@mdi/js';
+import store from "../../../../reducers";
+import {connect} from 'react-redux';
 
 const Input = styled(TextField)`
   width: 50px;
 `;
 
-export default function ZPosition(props) {
+const mapStateToProps = state => ({
+    viewConfigsObj: state.vessel.viewConfigsObj,
+})
+
+const ZPosition = (props) => {
     const [value, setValue] = React.useState(1);
+    const [zPosConfig, setZPosConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.z: {});
+    const [minSlider, setMinSlider] = useState(-50);
+    const [maxSlider, setMaxSlider] = useState(50);
     const SliderChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -37,6 +46,20 @@ export default function ZPosition(props) {
         console.log("onlyNumber clicked")
     }
 
+    useEffect(() => {
+        if(props.viewConfigsObj){
+            setZPosConfig(props.viewConfigsObj.z);
+        }
+    },[props.viewConfigsObj])
+
+    useEffect(() => {
+        if(zPosConfig){
+            setMinSlider(zPosConfig.min);
+            setMaxSlider(zPosConfig.max);
+            setValue(zPosConfig.min);
+        }
+    },[zPosConfig])
+
     return (
         <>
             <div className="common-border">
@@ -57,8 +80,8 @@ export default function ZPosition(props) {
                                 value={typeof value === 'number' ? value : 0}
                                 onChange={SliderChange}
                                 aria-labelledby="input-slider"
-                                min={-50}
-                                max={50}
+                                min={minSlider}
+                                max={maxSlider}
                                 size="small"
                             />
                         </Grid>
@@ -70,7 +93,7 @@ export default function ZPosition(props) {
                                 onBlur={Blur}
                                 variant="standard"
                                 style={{ BorderNone: true, border: 'none' }}
-                                InputProps={{ step: 1, min: -50, max: 50, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
+                                InputProps={{ step: minSlider, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
 
                             />
                         </Grid>
@@ -78,7 +101,7 @@ export default function ZPosition(props) {
                     <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
                         <Col md={4}>
                             <Input
-                                value={props.minV}
+                                value={minSlider}
                                 size="small"
                                 onChange={InputChange}
                                 onBlur={Blur}
@@ -87,17 +110,17 @@ export default function ZPosition(props) {
                                 onKeyDown={onlyNumber}
                                 variant="standard"
                                 InputProps={{
-                                    min: -50,
+                                    min: minSlider,
                                     type: 'number',
                                     'aria-labelledby': 'input-slider',
                                     disableUnderline: true,
-                                    value: -50,
+                                    value: minSlider,
                                 }}
                             />
                         </Col>
                         <Col md={4}>
                             <Input
-                                value={props.maxV}
+                                value={maxSlider}
                                 size="small"
                                 onChange={InputChange}
                                 onBlur={Blur}
@@ -106,7 +129,7 @@ export default function ZPosition(props) {
                                 variant="standard"
                                 onKeyDown={onlyNumber}
                                 InputProps={{
-                                    value: 50,
+                                    value: maxSlider,
                                     type: 'number',
                                     'aria-labelledby': 'input-slider',
                                     disableUnderline: true,
@@ -119,3 +142,5 @@ export default function ZPosition(props) {
         </>
     );
 };
+
+export default connect(mapStateToProps)(ZPosition);

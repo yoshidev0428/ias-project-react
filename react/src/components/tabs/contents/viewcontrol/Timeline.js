@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Col, Container } from 'react-bootstrap';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
@@ -14,14 +14,22 @@ import {
     // mdiRewind,
     // mdiFastForward
 } from '@mdi/js';
+import {connect} from 'react-redux';
 
 const Input = styled(TextField)`
   width: 50px;
   border
 `;
 
-export default function Timeline(props) {
+const mapStateToProps = state => ({
+    viewConfigsObj: state.vessel.viewConfigsObj,
+})
+
+const Timeline = (props) => {
     const [value, setValue] = React.useState(1);
+    const [timeConfig, setTimeConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.time: {});
+    const [minSlider, setMinSlider] = useState(-50);
+    const [maxSlider, setMaxSlider] = useState(50);
     const SliderChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -60,6 +68,20 @@ export default function Timeline(props) {
         }
     };
 
+    useEffect(() => {
+        if(props.viewConfigsObj){
+            setTimeConfig(props.viewConfigsObj.time);
+        }
+    },[props.viewConfigsObj])
+
+    useEffect(() => {
+        if(timeConfig){
+            setMinSlider(timeConfig.min);
+            setMaxSlider(timeConfig.max);
+            setValue(timeConfig.min);
+        }
+    },[timeConfig])
+
     return (
         <>
             <div className="common-border">
@@ -87,8 +109,8 @@ export default function Timeline(props) {
                                 value={typeof value === 'number' ? value : 0}
                                 onChange={SliderChange}
                                 aria-labelledby="input-slider"
-                                min={-50}
-                                max={50}
+                                min={minSlider}
+                                max={maxSlider}
                                 size="small"
                             />
                         </Grid>
@@ -101,9 +123,9 @@ export default function Timeline(props) {
                                 variant="standard"
                                 style={{ BorderNone: true, border: 'none' }}
                                 InputProps={{
-                                    step: 1,
-                                    min: -50,
-                                    max: 50,
+                                    step: minSlider,
+                                    min: minSlider,
+                                    max: maxSlider,
                                     type: 'number',
                                     'aria-labelledby': 'input-slider',
                                     disableUnderline: true,
@@ -115,14 +137,14 @@ export default function Timeline(props) {
                     <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
                         <Col md={4}>
                             <Input
-                                value={-50}
+                                value={minSlider}
                                 size="small"
                                 className="pa-0 ma-0 no-underline"
                                 style={{ BorderNone: true }}
                                 onKeyDown={onlyNumber}
                                 variant="standard"
                                 InputProps={{
-                                    min: -50,
+                                    min: minSlider,
                                     type: 'number',
                                     'aria-labelledby': 'input-slider',
                                     disableUnderline: true,
@@ -131,7 +153,7 @@ export default function Timeline(props) {
                         </Col>
                         <Col md={4}>
                             <Input
-                                value={50}
+                                value={maxSlider}
                                 size="small"
                                 className="pa-0 ma-0 no-underline"
                                 variant="standard"
@@ -150,3 +172,5 @@ export default function Timeline(props) {
         </>
     );
 };
+
+export default connect(mapStateToProps)(Timeline);
