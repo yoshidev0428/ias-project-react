@@ -14,7 +14,6 @@ import {
     // mdiRewind,
     // mdiFastForward
 } from '@mdi/js';
-import store from "../../reducers";
 import {connect} from 'react-redux';
 
 const Input = styled(TextField)`

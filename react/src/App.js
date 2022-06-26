@@ -16,7 +16,7 @@ const App = (props) => {
     useEffect(() => {
         const script = document.createElement('script');
       
-        script.src = "https://cdn.jsdelivr.net/npm/plott";
+        script.src = "https://cdn.jsdelivr.net/npm/plotty";
         script.async = true;
       
         document.body.appendChild(script);

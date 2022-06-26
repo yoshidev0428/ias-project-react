@@ -9,7 +9,7 @@ import Icon from '@mdi/react';
 import {
     mdiSwapVertical
 } from '@mdi/js';
-import store from "../../reducers";
+import store from "../../../../reducers";
 import {connect} from 'react-redux';
 
 const Input = styled(TextField)`
@@ -101,7 +101,7 @@ const ZPosition = (props) => {
                     <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
                         <Col md={4}>
                             <Input
-                                value={props.minV}
+                                value={minSlider}
                                 size="small"
                                 onChange={InputChange}
                                 onBlur={Blur}
@@ -120,7 +120,7 @@ const ZPosition = (props) => {
                         </Col>
                         <Col md={4}>
                             <Input
-                                value={props.maxV}
+                                value={maxSlider}
                                 size="small"
                                 onChange={InputChange}
                                 onBlur={Blur}
