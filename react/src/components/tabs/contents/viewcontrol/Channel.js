@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 // import { Container } from 'react-bootstrap';
@@ -16,7 +16,14 @@ import {
 
 import { guessRgb, getSingleSelectionStats } from '../../../viv/utils';
 import SmallCard from '../../../custom/SmallCard';
-export default function Channel() {
+
+import {connect} from 'react-redux';
+
+const mapStateToProps = state => ({
+    viewConfigsObj: state.vessel.viewConfigsObj,
+})
+
+const Channel = (props) => {
 
     let channels = [
         { id: 0, label: "S", color: "black", disabled: false },
@@ -83,17 +90,39 @@ export default function Channel() {
     const metadata = useMetadata();
     const isRgb = metadata && guessRgb(metadata);
     const { shape, labels } = loader[0];
+
+
+
+    const [channelConfig, setChannelConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.channel: {});
+    const [channelsArray, setChannelsArray] = useState([]);
+
+    useEffect(() => {
+        if(props.viewConfigsObj){
+            setChannelConfig(props.viewConfigsObj.channel);
+        }
+    },[props.viewConfigsObj])
+
+    useEffect(() => {
+        if(channelConfig){
+            setChannelsArray(channelConfig.array);
+        }
+    },[channelConfig])
+
     const renderItems = (channels) => {
         return (
             channels.map((c, i) =>
                 <div key={i} className="d-flex flex-column channel-box text-center">
                     <Checkbox // onChange={toggleIsOn} // checked={channelsVisible} 
-                        size="small" sx={{ color: c.color, padding: 0, '&.Mui-checked': { color: c.color,}}}/>
+                        size="small" 
+                        // checked={channelsArray.lenght > 0 ? channelsArray.includes(i) : false}
+                        sx={{ color: c.color, padding: 0, '&.Mui-checked': { color: c.color,}}}/>
                     <span style={{ color: c.color }}>{c.label}</span>
                 </div>
             )
         )
     }
+
+
 
 
     const channelControllers = ids.map((id, i) => {
@@ -175,3 +204,5 @@ export default function Channel() {
         </>
     );
 };
+
+export default connect(mapStateToProps)(Channel);
