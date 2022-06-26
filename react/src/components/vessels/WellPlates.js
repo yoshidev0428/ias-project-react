@@ -168,11 +168,14 @@ const WellPlates = (props) => {
         let old_content = [...dataHoleChosen];
         let zPosS = [];
         let timePointS = [];
+        let channels = [];
         for(let i=0; i < old_content.length; i++){
             let zPos = old_content[i].z;
             let timePoint = old_content[i].time;
+            let channel = old_content[i].channel;
             zPosS.push(zPos);
             timePointS.push(timePoint);
+            channels.push(channel);
         }
 
         let maxZPos = Math.max(...zPosS);
@@ -190,9 +193,13 @@ const WellPlates = (props) => {
         timePointObj['min'] = minTimePoint;
         timePointObj['array'] = getUniqueSortedNumber(timePointS);
 
+        let channelObj = {};
+        channelObj['array'] = getUniqueSortedNumber(channels);
+
         let viewConfigsObj = {}; 
         viewConfigsObj['z'] = zPosObj;
         viewConfigsObj['time'] = timePointObj;
+        viewConfigsObj['channel'] = channelObj;
 
         return viewConfigsObj;
     }
