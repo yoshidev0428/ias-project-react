@@ -272,7 +272,10 @@ const MainFrame = (props) => {
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
         console.log(files[0], " mainFrame : changeloadfile");
+<<<<<<< HEAD
         // console.log("ARRAY BUFFER FILE[0]:", files[0].arrayBuffer(), " mainFrame : changeloadfile");
+=======
+>>>>>>> 410f7d4860788b24d1abacf983d51a6e5856e4cd
         let file = files[0];
         if (file) {
             let name = "";
