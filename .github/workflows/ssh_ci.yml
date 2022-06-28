@@ -31,7 +31,7 @@ jobs:
                   export NVM_DIR=~/.nvm && 
                   source ~/.nvm/nvm.sh && 
                   cd react && npm -v
-                  npm i && npm install -g npm@8.13.1 && npm run build && 
+                  npm i && npm install buffer && npm run build && 
                   rm -R /var/www/html/* && 
                   mv ./build/* /var/www/html/ && 
                   cd .. && 
