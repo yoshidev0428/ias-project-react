@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -19,10 +19,10 @@ import {
 import { useWindowSize } from '../utils';
 import { DEFAULT_OVERVIEW } from '../constants';
 
+
 const Viewer = (props) => {
 
     const [useLinkedView, use3d, viewState, source] = useViewerStore(store => [store.useLinkedView, store.use3d, store.viewState, store.source], shallow);
-
     const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
         store => [
             store.colors,
@@ -32,9 +32,6 @@ const Viewer = (props) => {
         ],
         shallow
     );
-
-    const loader = useLoader();// <-----here
-    const viewSize = useWindowSize();
     const [lensSelection, colormap, renderingMode, xSlice, ySlice, zSlice, resolution, lensEnabled, zoomLock, panLock, isOverviewOn, onViewportLoad, useFixedAxis
     ] = useImageSettingsStore(
         store => [
@@ -59,14 +56,23 @@ const Viewer = (props) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({ pyramidResolution: z });
     };
-
+    const loader = useLoader();// <-----here
+    const viewSize = useWindowSize(props.isFullScreen, 1, 1);
+    // const pictureInPictureViewerRef = React.forwardRef(null);
+    const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
+    
     useEffect(() => {
-        console.log(use3d, useLinkedView, viewSize, "Viewer.jsx : use3d, useLinkedView");
-        console.log(viewSize, loader,  "viewSize");
+        // console.log(use3d, useLinkedView, viewSize, "Viewer.jsx : use3d, useLinkedView");
         if (props.source !== null && props.source !== undefined) {
             // console.log(props.source, "use3d, useLinkedView");
         }
-    }, [props]);
+        if (props.mouseFlag !== null && props.mouseFlag !== undefined) {
+            console.log(mouseFlag, props.mouseFlag, "mouseFlag != props.mouseFlag");
+            if (mouseFlag !== props.mouseFlag) {
+                setMouseFlag(props.mouseFlag);
+            }
+        }
+    }, [props, mouseFlag]);
 
     return use3d ? (
         <VolumeViewer
@@ -121,6 +127,7 @@ const Viewer = (props) => {
         />
     ) : (
         <PictureInPictureViewer
+            // ref={pictureInPictureViewerRef}
             loader={loader}
             contrastLimits={contrastLimits}
             colors={colors}
@@ -135,7 +142,7 @@ const Viewer = (props) => {
             lensSelection={lensSelection}
             lensEnabled={lensEnabled}
             onViewportLoad={onViewportLoad}
-            extensions={[ colormap ? new AdditiveColormapExtension() : new LensExtension() ]}
+            extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
             colormap={colormap || 'viridis'}
             onViewStateChange={onViewStateChange}
         />

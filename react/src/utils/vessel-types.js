@@ -49,5 +49,5 @@ export const getVesselById = id => {
         }
     }
 
-    return new Object();
+    return {};
 };

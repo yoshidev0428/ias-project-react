@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fromBlob, fromUrl } from 'geotiff'; // eslint-disable-line import/no-extraneous-dependencies
 import { Matrix4 } from '@math.gl/core';
-import { useWindowDimensions } from "../helpers";
+import { getWindowDimensions } from "../helpers";
 import {
     loadOmeTiff,
     loadBioformatsZarr,
@@ -203,21 +203,26 @@ export function range(length) {
     return [...Array(length).keys()];
 }
 
-export function useWindowSize(scaleWidth = 1, scaleHeight = 1) {
+export function useWindowSize(isFull, scaleWidth, scaleHeight) {
 
-    const { height, width } = useWindowDimensions();
+    const { height, width } = getWindowDimensions();
     function getSize() {
-        if (localStorage.getItem("imageViewSizeWidth")) {
+        // console.log( height, width, isFull, scaleWidth, scaleHeight, "useWindowSize -----");
+        if (isFull) {
+            return {
+                width: width * scaleWidth,
+                height: height * scaleHeight
+            };
+        } else {
             return {
                 width: localStorage.getItem("imageViewSizeWidth") * scaleWidth,
                 height: localStorage.getItem("imageViewSizeHeight") * scaleHeight
             };
-        } else {
-            return {
-                width: width * 0.74 * scaleWidth,
-                height: (height - 65) * scaleHeight
-            };
         }
+        // return {
+        //     width: width * scaleWidth,
+        //     height: height * scaleHeight
+        // };
     }
     const [windowSize, setWindowSize] = useState(getSize());
     useEffect(() => {
@@ -229,7 +234,7 @@ export function useWindowSize(scaleWidth = 1, scaleHeight = 1) {
             window.removeEventListener('resize', handleResize);
         };
     });
-    return windowSize;
+    return getSize();
 }
 
 export async function getSingleSelectionStats2D({ loader, selection }) {
