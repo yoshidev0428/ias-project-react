@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -37,6 +37,8 @@ import Channel from "../viewcontrol/Channel";
 import ImageAdjust from "../viewcontrol/ImageAdjust";
 import ZPosition from "../viewcontrol/ZPosition";
 import Timeline from "../viewcontrol/Timeline";
+import {connect} from 'react-redux';
+import store from "../../../../reducers";
 
 const tilingMenus = [
     "Edit",
@@ -57,7 +59,7 @@ const tilingAlignButtons = [
 ];
 
 const Tiling = (props) => {
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
     // Change text fields
     const inputTilingRows = (event) => {
         console.log("ok");
@@ -76,20 +78,20 @@ const Tiling = (props) => {
         console.log("ok")
     };
 
-    const [selectedIndex, setSelectedIndex] = React.useState(0);
-
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
         console.log(index)
     };
 
-    const [alignment, setAlignment] = React.useState('left');
+    const [alignment, setAlignment] = useState('left');
 
     const handleAlignment = (event, newAlignment) => {
         setAlignment(newAlignment);
     };
 
-    const [checked, setChecked] = React.useState(true);
+    const [checked, setChecked] = useState(true);
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
@@ -122,12 +124,27 @@ const Tiling = (props) => {
     const exportTiledImage = () => {
         console.log("clicked!!!!!");
     };
-    const [scale, setScale] = React.useState('');
+    const [scale, setScale] = useState('');
 
     const handleScaleChange = (event) => {
         setScale(event.target.value);
     };
     const canvasElement = useRef(null);
+
+    const [fileNames, setFileNames] = useState(props.files);
+
+    useEffect(() => {
+        if(props.content){
+            console.log("TILING > useEffect: ", props.content)
+            setFileNames(props.content);
+        }
+    },[props.content])
+
+    const handleListContentItemClick = (event, index) => {
+        // setSelectedIndex(index);
+        console.log(index)
+    };
+
     return (
         <>
             <Row no-gutters="true" className='m-0 drop pa-5' style={{ maxWidth: "100%", height: "520px" }}>
@@ -148,7 +165,13 @@ const Tiling = (props) => {
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
                                 <div className="inside">
-                                    <List className="overflow-y-auto"></List>
+                                    <List className="overflow-auto">
+                                    {fileNames !== undefined && fileNames.map((content, idx) => {
+                                        return <ListItemButton style={{ fontSize: "12px !important" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                            <ListItemText primary={content.filename} />
+                                        </ListItemButton>
+                                    })}
+                                    </List>
                                 </div>
                             </Card>
                         }
@@ -439,4 +462,8 @@ const Tiling = (props) => {
 
 }
 
-export default Tiling;
+const mapStateToProps = state => ({
+    content: state.files.content,
+})
+
+export default connect(mapStateToProps)(Tiling);

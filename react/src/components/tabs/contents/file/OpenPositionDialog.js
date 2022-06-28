@@ -652,7 +652,7 @@ const OpenPositionDialog = (props) => {
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
-                            <Tiling set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
+                            <Tiling files={filesUploaded} set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
                         </TabContainer>
                     }
                     {selectedTab === 2 &&
