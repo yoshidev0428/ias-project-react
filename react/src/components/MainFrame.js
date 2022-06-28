@@ -75,14 +75,13 @@ const MainFrame = (props) => {
     const handleResize = () => {
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeHeight",imageViewAreaRef.current.offsetHeight);
-        // console.log(imageViewAreaRef.current.offsetWidth, imageViewAreaRef.current.offsetHeight,  "MainFrame.js : imageViewAreaRef");
     };
     useEffect(() => {
         handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
+        // window.addEventListener('resize', handleResize);
+        // return () => {
+        //     window.removeEventListener('resize', handleResize);
+        // };
     }, [imageViewAreaRef]);
 
     const [rightTabVal, setRightTabVal] = useState(0);
