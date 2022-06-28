@@ -27,11 +27,11 @@ jobs:
       - name: executing remote ssh commands using password
         uses: garygrossgarten/github-action-ssh@release
         with:
-         command: cd ias-project-react && git reset --hard && git pull https://oauth2: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@github.com/daisukekubota0823/ias-project-react.git && 
+         command: cd ias-project-react && git pull https://oauth2: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@github.com/daisukekubota0823/ias-project-react.git && 
                   export NVM_DIR=~/.nvm && 
                   source ~/.nvm/nvm.sh && 
                   cd react && npm -v
-                  npm i && npm run build && 
+                  npm i && npm install -g npm@8.13.1 && npm run build && 
                   rm -R /var/www/html/* && 
                   mv ./build/* /var/www/html/ && 
                   cd .. && 
