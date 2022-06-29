@@ -242,33 +242,40 @@ const MainFrame = (props) => {
         );
     }
 
+    function imgLoadedFromFile(fileDisplay) {
+        fileDisplay.arrayBuffer().then((fileBuffer) => {
+            var ifds = UTIF.decode(fileBuffer);
 
-    function imgLoaded(e) {
-        var ifds = UTIF.decode(e.target.response);
-        UTIF.decodeImage(e.target.response, ifds[0])
-        var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-        const firstPageOfTif = ifds[0];
-        // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-        // console.log("MAIN FRAME: rgba: ", rgba);
-        // const imageWidth = firstPageOfTif.width;
-        // const imageHeight = firstPageOfTif.height;
-        const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
-        const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
+            console.log("Main Frame: THEN imgLoadedFromFile: ", fileBuffer);
 
-        const cnv = document.createElement("canvas");
-        cnv.width = imageWidth;
-        cnv.height = imageHeight;
+            UTIF.decodeImage(fileBuffer, ifds[0])
+            var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+            const firstPageOfTif = ifds[0];
+            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+            // console.log("MAIN FRAME: rgba: ", rgba);
+            // const imageWidth = firstPageOfTif.width;
+            // const imageHeight = firstPageOfTif.height;
+            const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
+            const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
 
-        const ctx = cnv.getContext("2d");
-        const imageData = ctx.createImageData(imageWidth, imageHeight);
-        console.log("MAIN FRAME: imagedata: ", imageData);
-        for (let i = 0; i < rgba.length; i++) {
-            imageData.data[i] = rgba[i];
-        }
-        ctx.putImageData(imageData, 0, 0);
-        console.log("MAIN FRAME: cnv: ", cnv);
-        setLoadImageSource(cnv);
+            const cnv = document.createElement("canvas");
+            cnv.width = imageWidth;
+            cnv.height = imageHeight;
+
+            const ctx = cnv.getContext("2d");
+            const imageData = ctx.createImageData(imageWidth, imageHeight);
+            console.log("MAIN FRAME: imagedata: ", imageData);
+            for (let i = 0; i < rgba.length; i++) {
+                imageData.data[i] = rgba[i];
+            }
+            ctx.putImageData(imageData, 0, 0);
+            console.log("MAIN FRAME: cnv: ", cnv);
+            setLoadImageSource(cnv);
+        })
+        
     }
+
+
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
         console.log(files[0], " mainFrame : changeloadfile");
@@ -320,10 +327,13 @@ const MainFrame = (props) => {
             
             console.log("MAIN FRAME FILE NAME: ", imageUrl);
             
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", imageUrl);
-            xhr.responseType = "arraybuffer";
-            xhr.onload = imgLoaded;   xhr.send();
+            // var xhr = new XMLHttpRequest();
+            // xhr.open("GET", imageUrl);
+            // xhr.responseType = "arraybuffer";
+            // xhr.onload = imgLoaded;   xhr.send();
+
+
+            imgLoadedFromFile(file.file);
 
 
             const ifds = UTIF.decode(file.file.arrayBuffer());
