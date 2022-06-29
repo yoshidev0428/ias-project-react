@@ -50,6 +50,22 @@ const Vessel = (props) => {
         }
     },[props.content])
 
+    useEffect(()=>{
+        console.log("VESSEL: NEW CONTENT [], ", props.content);
+        if(props.content){
+            setContent(props.content);
+            setCurrentVessel( {
+                id: 11,
+                type: "WellPlate",
+                rows: 8,
+                cols: 12,
+                title: "96",
+                showName: true, 
+                showNumber: false,
+            });
+        }
+    },[])
+
     if (currentVessel == null) {
         return (
             <></>

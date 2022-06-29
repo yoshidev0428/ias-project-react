@@ -432,8 +432,11 @@ const DropzoneNamesFiles = () => {
             intField = stringData.charCodeAt(0) - 65;
         }else{
             newField = stringData.replace(/\D/g,'');
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
             intField = parseInt(newField, 10);
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
         }
+        // console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
         return intField;
     }
 

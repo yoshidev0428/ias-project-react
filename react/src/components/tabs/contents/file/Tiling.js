@@ -148,7 +148,7 @@ const Tiling = (props) => {
     return (
         <>
             <Row no-gutters="true" className='m-0 drop pa-5' style={{ maxWidth: "100%", height: "520px" }}>
-                <Col xs={2} className="border p-0">
+                <Col xs={1} className="border p-0">
                     <List className='border p-0' id="position-dlg-span">
                         {tilingMenus.map((menuTitle, idx) => {
                             return <ListItemButton style={{ fontSize: "12px !important" }} className="border" key={idx} onClick={(event) => handleListItemClick(event, idx)}>
@@ -157,18 +157,18 @@ const Tiling = (props) => {
                         })}
                     </List>
                 </Col>
-                <Col xs={4} className="p-0 h-100">
+                <Col xs={5} className="p-0 h-100">
                     {/* Tiling Control Panel  */}
                     <div className="control-panel h-100">
                         {/* Editing */}
                         {selectedIndex === 0 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
-                                <div className="">
-                                    <List className="overflow-auto" style={{height:'auto', maxWidth: '100%', overflow: 'auto'}}>
+                                <div className="inside">
+                                    <List className="overflow-auto" style={{maxHeight:'80%', overflow: 'auto'}}>
                                     {fileNames !== undefined && fileNames.map((content, idx) => {
-                                        return <ListItemButton style={{ fontSize: "10px !important" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                            <ListItemText primary={content.filename} />
+                                        return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                            <ListItemText primary={content.filename}/>
                                         </ListItemButton>
                                     })}
                                     </List>
@@ -448,7 +448,7 @@ const Tiling = (props) => {
                         </div>
                     </div>
                 </Col>
-                {/* <Col xs={3} className="p-0 border" style={{ height: "100%", position: "relative", overflowY: "scroll" }}>
+                {/* <Col  md="auto" className="p-0 border" style={{ height: "100%", position: "relative", overflowY: "scroll" }}>
                     <Vessel />
                     <Objective />
                     <Channel />
