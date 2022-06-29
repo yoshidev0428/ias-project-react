@@ -41,6 +41,7 @@ import store from "../reducers";
 import {connect} from 'react-redux';
 import { useWindowDimensions } from "./helpers";
 import Buffer from "buffer";
+import AvivatorViewer from "./AvivatorViewer";
 // import Tiff from "tiff.js";
 // import AvivatorViewer from './AvivatorViewer';
 
@@ -391,14 +392,14 @@ const MainFrame = (props) => {
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
                         {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
-                        {/* <AvivatorViewer source={loadImageSource}/> */}
+                        <AvivatorViewer image={loadImageSource} width={window.innerWidth} height={window.innerHeight}/>
                         {/* <img id="tiffImage" src={loadImageSource}/> */}
                         {/* <img id="tiffImage" src={loadImageSource}/> */}
-                        <Stage width={window.innerWidth} height={window.innerHeight}>
+                        {/* <Stage width={window.innerWidth} height={window.innerHeight}>
                             <Layer>
                             <Image image={loadImageSource} />
                             </Layer>
-                        </Stage>
+                        </Stage> */}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
                         <div className='card border'>
