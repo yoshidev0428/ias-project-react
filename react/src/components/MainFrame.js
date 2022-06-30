@@ -40,12 +40,7 @@ import SettingsTab from "./tabs/SettingsTab";
 import store from "../reducers";
 import {connect} from 'react-redux';
 import { useWindowDimensions } from "./helpers";
-import Buffer from "buffer";
-import AvivatorViewer from "./AvivatorViewer";
-
 import UTIF from "utif";
-
-import { Stage, Layer, Image } from "react-konva";
 
 function TabContainer(props) {
     return (
