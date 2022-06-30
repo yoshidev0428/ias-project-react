@@ -42,8 +42,6 @@ import {connect} from 'react-redux';
 import { useWindowDimensions } from "./helpers";
 import Buffer from "buffer";
 import AvivatorViewer from "./AvivatorViewer";
-// import Tiff from "tiff.js";
-// import AvivatorViewer from './AvivatorViewer';
 
 import UTIF from "utif";
 
@@ -117,6 +115,9 @@ const MainFrame = (props) => {
     const [filesChosen, setFilesChosen] = useState(props.filesChosen);
     const [filesDisplayed, setFilesDisplayed] = useState([]);
     const [files, setFiles] = useState(props.files);
+
+    const [widthImage, setWidthImage] = useState(window.innerWidth);
+    const [heightImage, setHeightImage] = useState(window.innerHeight);
 
     const getFilesDisplayed = (filesData, filesChosen) => {
         let dataIds = [];
@@ -242,7 +243,7 @@ const MainFrame = (props) => {
         );
     }
 
-    function imgLoadedFromFile(fileDisplay) {
+    function imgLoadedFromFile(fileDisplay, name, size) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
             var ifds = UTIF.decode(fileBuffer);
 
@@ -257,6 +258,11 @@ const MainFrame = (props) => {
             // const imageHeight = firstPageOfTif.height;
             const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
             const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
+            setWidthImage(imageWidth);
+            setHeightImage(imageHeight);
+            // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
+            // console.log("imgLoadedFromFile: ", imgSource);
+            // setLoadImageSource(imgSource);
 
             const cnv = document.createElement("canvas");
             cnv.width = imageWidth;
@@ -333,30 +339,30 @@ const MainFrame = (props) => {
             // xhr.onload = imgLoaded;   xhr.send();
 
 
-            imgLoadedFromFile(file.file);
+            imgLoadedFromFile(file.file, name, size);
 
 
-            const ifds = UTIF.decode(file.file.arrayBuffer());
-            console.log("MAIN FRAME: ifds: ", ifds, file.file.arrayBuffer());
-            const firstPageOfTif = ifds[0];
-            UTIF.decodeImage(file.file.arrayBuffer(), ifds);
-            const rgba = UTIF.toRGBA8(firstPageOfTif);
-            console.log("MAIN FRAME: rgba: ", rgba);
-            const imageWidth = firstPageOfTif.width;
-            const imageHeight = firstPageOfTif.height;
+            // const ifds = UTIF.decode(file.file.arrayBuffer());
+            // console.log("MAIN FRAME: ifds: ", ifds, file.file.arrayBuffer());
+            // const firstPageOfTif = ifds[0];
+            // UTIF.decodeImage(file.file.arrayBuffer(), ifds);
+            // const rgba = UTIF.toRGBA8(firstPageOfTif);
+            // console.log("MAIN FRAME: rgba: ", rgba);
+            // const imageWidth = firstPageOfTif.width;
+            // const imageHeight = firstPageOfTif.height;
 
-            const cnv = document.createElement("canvas");
-            cnv.width = 640;
-            cnv.height = 480;
+            // const cnv = document.createElement("canvas");
+            // cnv.width = 640;
+            // cnv.height = 480;
 
-            const ctx = cnv.getContext("2d");
-            const imageData = ctx.createImageData(640, 480);
-            console.log("MAIN FRAME: imagedata: ", imageData);
-            for (let i = 0; i < rgba.length; i++) {
-                imageData.data[i] = rgba[i];
-            }
-            ctx.putImageData(imageData, 0, 0);
-            console.log("MAIN FRAME: cnv: ", cnv);
+            // const ctx = cnv.getContext("2d");
+            // const imageData = ctx.createImageData(640, 480);
+            // console.log("MAIN FRAME: imagedata: ", imageData);
+            // for (let i = 0; i < rgba.length; i++) {
+            //     imageData.data[i] = rgba[i];
+            // }
+            // ctx.putImageData(imageData, 0, 0);
+            // console.log("MAIN FRAME: cnv: ", cnv);
             // setLoadImageSource(cnv);
 
         } else {
@@ -402,14 +408,7 @@ const MainFrame = (props) => {
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
                         {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
-                        <AvivatorViewer image={loadImageSource} width={window.innerWidth} height={window.innerHeight}/>
-                        {/* <img id="tiffImage" src={loadImageSource}/> */}
-                        {/* <img id="tiffImage" src={loadImageSource}/> */}
-                        {/* <Stage width={window.innerWidth} height={window.innerHeight}>
-                            <Layer>
-                            <Image image={loadImageSource} />
-                            </Layer>
-                        </Stage> */}
+                        <AvivatorViewer image={loadImageSource} width={widthImage} height={heightImage}/>
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
                         <div className='card border'>

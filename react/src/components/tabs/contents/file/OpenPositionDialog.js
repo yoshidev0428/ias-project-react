@@ -233,6 +233,8 @@ const DropzoneNamesFiles = () => {
     // Drag & Drop files
     const [files, setFiles] = useState(acceptedFiles);
 
+    const [allFilesLength, setAllFilesLength] = useState(acceptedFiles.length);
+
     const [loading, setLoading] = useState(false);
     // Pagination
     const [pageSize, setPageSize] = useState(5);
@@ -493,6 +495,7 @@ const DropzoneNamesFiles = () => {
 
     useEffect(() => {
         console.log("FILES NAMES: ", acceptedFiles);
+        setAllFilesLength(acceptedFiles.length);
         setNamePatterns(namePatternsPrimary);
         get_nametype();
     }, []);
@@ -561,8 +564,15 @@ const DropzoneNamesFiles = () => {
                                 columns={nameTypeTableHeaders}
                                 pageSize={pageSize}
                                 disableExtendRowFullWidth={false}
-                                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                                rowsPerPageOptions={[5, 10, 20]}
+                                onPageSizeChange={(newPageSize) => { 
+                                    console.log("OnPageSizeChange: newPageSize", newPageSize, allFilesLength);
+                                    if(isNaN(newPageSize)){
+                                        setPageSize(allFilesLength);
+                                    }else{
+                                    setPageSize(newPageSize); 
+                                    }
+                                }}
+                                rowsPerPageOptions={[5, 10, 20, "All"]}
                                 pagination
                             />
                         </div>
