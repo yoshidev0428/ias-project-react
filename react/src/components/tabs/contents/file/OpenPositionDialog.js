@@ -212,7 +212,7 @@ const DropzoneMetaData = () => {
                         <DataGrid
                             className='cell--textCenter'
                             style={{ textAlign: "center", width: "100%" }}
-                            rows={searchrows}
+                            {...searchrows}
                             columns={columns}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
