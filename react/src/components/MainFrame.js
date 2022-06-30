@@ -407,8 +407,7 @@ const MainFrame = (props) => {
                         </div>
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
-                        {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
-                        <AvivatorViewer image={loadImageSource} width={widthImage} height={heightImage}/>
+                        <RoutedAvivator openedImageSource={loadImageSource} />
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
                         <div className='card border'>
