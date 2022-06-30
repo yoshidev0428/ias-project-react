@@ -26,7 +26,7 @@ const Vessel = (props) => {
     const [currentVessel, setCurrentVessel] = useState(getVesselById(1));
     const [showSelectDialog, setShowSelectDialog] = useState(false);
     const [showExpansionDialog, setShowExpansionDialog] = useState(false);
-
+    const [content, setContent] = useState(props.content);
     const [ref, { width }] = useElementSize();
 
     useEffect(() => {
@@ -37,6 +37,7 @@ const Vessel = (props) => {
     useEffect(() => {
         console.log("VESSEL: NEW CONTENT, ", props.content);
         if(props.content){
+            setContent(props.content);
             setCurrentVessel( {
                 id: 11,
                 type: "WellPlate",
@@ -49,11 +50,29 @@ const Vessel = (props) => {
         }
     },[props.content])
 
+    useEffect(()=>{
+        console.log("VESSEL: NEW CONTENT [], ", props.content);
+        if(props.content){
+            setContent(props.content);
+            setCurrentVessel( {
+                id: 11,
+                type: "WellPlate",
+                rows: 8,
+                cols: 12,
+                title: "96",
+                showName: true, 
+                showNumber: false,
+            });
+        }
+    },[])
+
     if (currentVessel == null) {
         return (
             <></>
         );
     }
+
+    
 
     const renderVessel = () => {
         if (currentVessel) {
@@ -63,7 +82,7 @@ const Vessel = (props) => {
                 case 'Dish':
                     return <Dishes width={width} size={currentVessel.size} />;
                 case 'WellPlate':
-                    return <WellPlates width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} showNumber={currentVessel.showNumber}/>;
+                    return <WellPlates content={content} width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} showNumber={currentVessel.showNumber}/>;
                 case 'Wafer':
                     return <Wafers width={width} size={currentVessel.size} />;
                 default:

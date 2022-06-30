@@ -103,6 +103,9 @@ const ImageDropzone = (props) => {
         }
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
+        if(acceptedFiles.length > 0){
+            props.setFiles(acceptedFiles);
+        }
     };
 
     const startDrop = (drop) => {
@@ -209,7 +212,7 @@ const DropzoneMetaData = () => {
                         <DataGrid
                             className='cell--textCenter'
                             style={{ textAlign: "center", width: "100%" }}
-                            rows={searchrows}
+                            {...searchrows}
                             columns={columns}
                             pageSize={pageSize}
                             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -229,6 +232,8 @@ const DropzoneNamesFiles = () => {
     const exampleBox = useRef(null);
     // Drag & Drop files
     const [files, setFiles] = useState(acceptedFiles);
+
+    const [allFilesLength, setAllFilesLength] = useState(acceptedFiles.length);
 
     const [loading, setLoading] = useState(false);
     // Pagination
@@ -349,6 +354,46 @@ const DropzoneNamesFiles = () => {
         return objectPerFile;
     }
 
+    const getNamePatternPerFileForProcessing = (objectPerFile) => {
+        for (let i = 0; i < namePatterns.length; i++) {
+            var key = null;
+            switch (i) {
+                case 0:
+                    key = "series";
+                    break;
+                case 1:
+                    key = "row";
+                    break;
+                case 2:
+                    key = "col";
+                    break;
+                case 3:
+                    key = "field";
+                    break;
+                case 4:
+                    key = "channel";
+                    break;
+                case 5:
+                    key = "z";
+                    break;
+                case 6:
+                    key = "time";
+                    break;
+            }
+            if (key && objectPerFile !== null) {
+                let tempString = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
+                if(key === "series" || key === "filename"){
+                    objectPerFile[key] = tempString;
+                }
+                else{
+                    objectPerFile[key] = convertContentStringToInteger(key, tempString);
+                }
+                
+            }
+        }
+        return objectPerFile;
+    }
+
     const updateNameType = () => {
         let MAX_BATCH_SIZE = 10;
         if (!files) {
@@ -360,19 +405,43 @@ const DropzoneNamesFiles = () => {
         // console.log("Contents: ", contents);
 
         let new_content = [];
+        let new_content_processing = [];
         let old_content = [...contents];
+        let old_content_p =JSON.parse(JSON.stringify(old_content));
         for (let i = 0; i < old_content.length; i++) {
             let each_namepattern = getNamePatternPerFile(old_content[i]);
+            let each_namepattern_processing = getNamePatternPerFileForProcessing(old_content_p[i]);
             new_content.push(each_namepattern);
+            new_content_processing.push(each_namepattern_processing);
         }
+        old_content_p = [];
+        old_content = [];
         console.log("New Contents: ", new_content);
+        console.log("new Contents For Processing: ", new_content_processing);
         store.dispatch({
             type: "content_addContent", 
-            content: new_content
+            content: new_content_processing
         })
         setContent(new_content);
         setRows(new_content);
     }
+
+    // Convert string to integer of some fields: row, col, field, channel, z, time
+    const convertContentStringToInteger = (field, stringData) =>{
+        let newField = "";
+        let intField = -1;
+        if (field === "row"){
+            intField = stringData.charCodeAt(0) - 65;
+        }else{
+            newField = stringData.replace(/\D/g,'');
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
+            intField = parseInt(newField, 10);
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
+        }
+        // console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
+        return intField;
+    }
+
     // clear button + change file name
     const reset_namePatterns = () => {
         let namePatternsPrimaryValue = [...namePatterns];
@@ -412,7 +481,8 @@ const DropzoneNamesFiles = () => {
                         field: '',
                         channel: '',
                         z: '',
-                        time: ''
+                        time: '',
+                        hole: -1
                     });
                 }
             }
@@ -425,6 +495,7 @@ const DropzoneNamesFiles = () => {
 
     useEffect(() => {
         console.log("FILES NAMES: ", acceptedFiles);
+        setAllFilesLength(acceptedFiles.length);
         setNamePatterns(namePatternsPrimary);
         get_nametype();
     }, []);
@@ -493,8 +564,15 @@ const DropzoneNamesFiles = () => {
                                 columns={nameTypeTableHeaders}
                                 pageSize={pageSize}
                                 disableExtendRowFullWidth={false}
-                                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                                rowsPerPageOptions={[5, 10, 20]}
+                                onPageSizeChange={(newPageSize) => { 
+                                    console.log("OnPageSizeChange: newPageSize", newPageSize, allFilesLength);
+                                    if(isNaN(newPageSize)){
+                                        setPageSize(allFilesLength);
+                                    }else{
+                                    setPageSize(newPageSize); 
+                                    }
+                                }}
+                                rowsPerPageOptions={[5, 10, 20, "All"]}
                                 pagination
                             />
                         </div>
@@ -519,7 +597,8 @@ const DropzoneGroup = () => {
 }
 
 const mapStateToProps = state => ({
-    currentVesselType: state.vessel.currentVesselType,
+    files: state.files.files,
+    filesChosen: state.files.filesChosen,
 })
 
 const OpenPositionDialog = (props) => {
@@ -529,6 +608,18 @@ const OpenPositionDialog = (props) => {
 
     const [progressBarMaxValue, setProgressBarMaxValue] = useState(0);
     const [progressBarValue, setProgressBarValue] = useState(0);
+    const [filesUploaded, setFilesUploaded] = useState([]);
+
+    useEffect(() => {
+        console.log("Files Uploaded,", filesUploaded);
+        if(filesUploaded.length > 0){
+            props.handleFilesUploaded(filesUploaded);
+            console.log("Files Uploaded2 ,", filesUploaded);
+            store.dispatch({
+                type: "files_addFiles", data: filesUploaded
+            })
+        }
+    },[filesUploaded])
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -570,11 +661,11 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 &&
                         <TabContainer>
-                            <ImageDropzone getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
+                            <ImageDropzone setFiles={(filesUploaded) => {setFilesUploaded(filesUploaded)}} getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
-                            <Tiling set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
+                            <Tiling files={filesUploaded} set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
                         </TabContainer>
                     }
                     {selectedTab === 2 &&
