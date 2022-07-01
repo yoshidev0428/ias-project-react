@@ -109,11 +109,14 @@ const FileTab = (props) => {
     };
     const onFolderChangeCapture = (e) => {
         console.log(e.target.files, " folder information ");
+        if(e.target.files){
+            props.changeOpenedFile(e.target.files);
+        }
     }
 
     const handleFilesUploaded = (filesUpload) => {
         if(filesUpload){
-        setFilesUploaded(filesUpload);
+            setFilesUploaded(filesUpload);
         }
     }
 

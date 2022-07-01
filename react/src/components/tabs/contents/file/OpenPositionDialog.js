@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import store from "../../../../reducers";
 // import { useDropzone } from 'react-dropzone'
 // import { borderBottom } from '@mui/system';
@@ -103,7 +103,7 @@ const ImageDropzone = (props) => {
         }
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
-        if(acceptedFiles.length > 0){
+        if (acceptedFiles.length > 0) {
             props.setFiles(acceptedFiles);
         }
     };
@@ -208,7 +208,7 @@ const DropzoneMetaData = () => {
                             onCancelSearch={() => cancelSearch()}
                         />
                     </CardContent>
-                    <div className="" style={{ height: "400px", width: "100%", border: "2px solid gray" }}>
+                    <div className="" style={{ height: "380px", width: "100%", border: "2px solid gray" }}>
                         <DataGrid
                             className='cell--textCenter'
                             style={{ textAlign: "center", width: "100%" }}
@@ -277,7 +277,7 @@ const DropzoneNamesFiles = () => {
                     endOffset: startOffset + range.toString().length
                 }
                 setSelectionRange(selectionRangeValue);
-                
+
             } catch (error) {
                 console.log(error);
             }
@@ -382,13 +382,13 @@ const DropzoneNamesFiles = () => {
             }
             if (key && objectPerFile !== null) {
                 let tempString = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
-                if(key === "series" || key === "filename"){
+                if (key === "series" || key === "filename") {
                     objectPerFile[key] = tempString;
                 }
-                else{
+                else {
                     objectPerFile[key] = convertContentStringToInteger(key, tempString);
                 }
-                
+
             }
         }
         return objectPerFile;
@@ -407,7 +407,7 @@ const DropzoneNamesFiles = () => {
         let new_content = [];
         let new_content_processing = [];
         let old_content = [...contents];
-        let old_content_p =JSON.parse(JSON.stringify(old_content));
+        let old_content_p = JSON.parse(JSON.stringify(old_content));
         for (let i = 0; i < old_content.length; i++) {
             let each_namepattern = getNamePatternPerFile(old_content[i]);
             let each_namepattern_processing = getNamePatternPerFileForProcessing(old_content_p[i]);
@@ -419,7 +419,7 @@ const DropzoneNamesFiles = () => {
         console.log("New Contents: ", new_content);
         console.log("new Contents For Processing: ", new_content_processing);
         store.dispatch({
-            type: "content_addContent", 
+            type: "content_addContent",
             content: new_content_processing
         })
         setContent(new_content);
@@ -427,13 +427,13 @@ const DropzoneNamesFiles = () => {
     }
 
     // Convert string to integer of some fields: row, col, field, channel, z, time
-    const convertContentStringToInteger = (field, stringData) =>{
+    const convertContentStringToInteger = (field, stringData) => {
         let newField = "";
         let intField = -1;
-        if (field === "row"){
+        if (field === "row") {
             intField = stringData.charCodeAt(0) - 65;
-        }else{
-            newField = stringData.replace(/\D/g,'');
+        } else {
+            newField = stringData.replace(/\D/g, '');
             // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
             intField = parseInt(newField, 10);
             // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
@@ -557,19 +557,19 @@ const DropzoneNamesFiles = () => {
                                 onCancelSearch={() => cancelSearch()}
                             />
                         </div>
-                        <div style={{ height: 400, width: '100%' }}>
+                        <div style={{ height: "380px", width: '100%' }}>
                             <DataGrid
                                 style={{ margin: "auto" }}
                                 rows={searchrows}
                                 columns={nameTypeTableHeaders}
                                 pageSize={pageSize}
                                 disableExtendRowFullWidth={false}
-                                onPageSizeChange={(newPageSize) => { 
+                                onPageSizeChange={(newPageSize) => {
                                     console.log("OnPageSizeChange: newPageSize", newPageSize, allFilesLength);
-                                    if(isNaN(newPageSize)){
+                                    if (isNaN(newPageSize)) {
                                         setPageSize(allFilesLength);
-                                    }else{
-                                    setPageSize(newPageSize); 
+                                    } else {
+                                        setPageSize(newPageSize);
                                     }
                                 }}
                                 rowsPerPageOptions={[5, 10, 20, "All"]}
@@ -612,14 +612,14 @@ const OpenPositionDialog = (props) => {
 
     useEffect(() => {
         console.log("Files Uploaded,", filesUploaded);
-        if(filesUploaded.length > 0){
+        if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
             console.log("Files Uploaded2 ,", filesUploaded);
             store.dispatch({
                 type: "files_addFiles", data: filesUploaded
             })
         }
-    },[filesUploaded])
+    }, [filesUploaded])
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -646,7 +646,7 @@ const OpenPositionDialog = (props) => {
 
     return (
         <>
-            <Dialog open={true} onClose={handleCloseOpenDlg} maxWidth={"1010"} className="m-0" style={{ top: "5%", bottom: "auto" }}>
+            <Dialog open={true} onClose={handleCloseOpenDlg} maxWidth={"1010"} className="m-0" style={{ top: "0%", bottom: "auto" }}>
                 <div className="d-flex border-bottom">
                     <DialogTitle>Position Select</DialogTitle>
                     <button className="dialog-close-btn" color="primary" size="small" onClick={handleCloseOpenDlg}>&times;</button>
@@ -661,7 +661,7 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 &&
                         <TabContainer>
-                            <ImageDropzone setFiles={(filesUploaded) => {setFilesUploaded(filesUploaded)}} getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
+                            <ImageDropzone setFiles={(filesUploaded) => { setFilesUploaded(filesUploaded) }} getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
@@ -689,12 +689,12 @@ const OpenPositionDialog = (props) => {
                         selectedTab === 0 ? <div className='d-flex'>
                             <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginRight: "150px", marginLeft: "0px" }}>Cloud</Button>
                             {
-                                progressBarMaxValue === 0 || progressBarMaxValue === "0" ? <div style={{ width: "400px" }}></div> : <ProgressBar
+                                (progressBarMaxValue === 0 || progressBarMaxValue === "0") && filesUploaded.length === 0 ? <div style={{ width: "400px" }}></div> : <ProgressBar
                                     className="m-auto"
                                     bgColor="rgb(18 105 191)"
                                     width="400px"
                                     completed={progressBarValue.toString()}
-                                    maxCompleted={progressBarMaxValue.toString()}
+                                    maxCompleted={progressBarMaxValue}
                                 />
                             }
                             <Button style={{ marginLeft: "180px" }} size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>

@@ -78,7 +78,7 @@ export default function ImageAdjust() {
                 <Container fluid={true} className="px-0 py-0">
                     {/* Brightness */}
                     <Col className="pa-0" xs={12}>
-                        <Grid container spacing={1} alignItems="left"  style={{marginTop:"-10px"}}>
+                        <Grid container spacing={1} alignItems="left" style={{ marginTop: "-10px" }}>
                             <Grid item>
                                 <Icon path={mdiBrightness5} size={0.7} />
                             </Grid>
@@ -100,14 +100,14 @@ export default function ImageAdjust() {
                                     onBlur={BrightBlur}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
+                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
                                 />
                             </Grid>
                         </Grid>
                     </Col>
                     {/* Contrast */}
                     <Col className="pa-0" xs={12}>
-                        <Grid container spacing={1} alignItems="left" style={{marginTop:"-20px"}}>
+                        <Grid container spacing={1} alignItems="left" style={{ marginTop: "-20px" }}>
                             <Grid item>
                                 <Icon path={mdiCircleHalfFull} size={0.7} />
                             </Grid>
@@ -135,7 +135,7 @@ export default function ImageAdjust() {
                     </Col>
                     {/* Gamma */}
                     <Col className="pa-0" xs={12}>
-                        <Grid container spacing={1} alignItems="left" style={{marginTop:"-20px", marginBottom:"-12px"}} >
+                        <Grid container spacing={1} alignItems="left" style={{ marginTop: "-20px", marginBottom: "-12px" }} >
                             <Grid item>
                                 <Icon path={mdiWeatherSunny} size={0.7} />
                             </Grid>
@@ -157,7 +157,7 @@ export default function ImageAdjust() {
                                     onBlur={GammaBlur}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true}}
+                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
                                 />
                             </Grid>
                         </Grid>
