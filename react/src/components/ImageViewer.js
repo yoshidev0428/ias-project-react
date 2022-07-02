@@ -12,6 +12,7 @@ import {
 } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Stage, Layer, Image } from "react-konva";
+import UTIF from "utif";
 
 const darkTheme = createTheme({
     palette: {
@@ -34,7 +35,7 @@ const darkTheme = createTheme({
 //     return new URLSearchParams(useLocation().search);
 // }
 
-export default function AvivatorViewer(props) {
+export default function ImageViewer(props) {
 
     const source = {
         urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
@@ -83,46 +84,15 @@ export default function AvivatorViewer(props) {
 
     return (
         <>
-            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => { setFullScreen(isFullScreen) }} className="bg-light">
-                <div className='leaf_control'>
-                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomIn") }} style={{ borderRadius: "5px 5px 0px 0px" }}>
-                        <Icon size={1}
-                            horizontal
-                            vertical
-                            rotate={180}
-                            color="#212529"
-                            path={mdiPlus}>
-                        </Icon>
-                    </button>
-                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomOut") }} >
-                        <Icon size={1}
-                            horizontal
-                            vertical
-                            rotate={180}
-                            color="#212529"
-                            path={mdiMinus}>
-                        </Icon>
-                    </button>
-                    <button className="leaf_control_btn" onClick={() => { zoomControl("fullScreen") }} style={{ borderRadius: "0px 0px 5px 5px" }}>
-                        <Icon size={1}
-                            horizontal
-                            vertical
-                            rotate={180}
-                            color="#212529"
-                            path={mdiFullscreen}>
-                        </Icon>
-                    </button>
-                </div>
-                <div className="bg-light h-100">
-                    <ThemeProvider theme={darkTheme}>
-                      <Stage width={props.width} height={props.height}>
-                              <Layer>
-                                <Image image={props.image} />
-                              </Layer>
-                          </Stage>
-                    </ThemeProvider>
-                </div>
-            </FullScreen>
+            <div className="bg-light h-100">
+                <ThemeProvider theme={darkTheme}>
+                    <Stage width={props.width} height={props.height}>
+                            <Layer>
+                                <Image image={props.openedImageSource} />
+                            </Layer>
+                        </Stage>
+                </ThemeProvider>
+            </div>
         </>
     );
 }
