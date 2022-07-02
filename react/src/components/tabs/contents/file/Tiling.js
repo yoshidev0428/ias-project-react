@@ -164,7 +164,7 @@ const Tiling = (props) => {
                         {selectedIndex === 0 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <List className="overflow-auto" style={{maxHeight:'80%', overflow: 'auto'}}>
                                     {fileNames !== undefined && fileNames.map((content, idx) => {
                                         return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
@@ -179,7 +179,7 @@ const Tiling = (props) => {
                         {selectedIndex === 1 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Alignment</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <ToggleButtonGroup
                                         value={alignment}
                                         exclusive
@@ -274,7 +274,7 @@ const Tiling = (props) => {
                         {selectedIndex === 2 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Bonding</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <FormGroup>
                                         <FormControlLabel control={<Checkbox onChange={handleChange} />} label="None" />
                                         <FormControlLabel control={<Checkbox onChange={handleChange} />} label="Snap To Edge" />
@@ -320,7 +320,7 @@ const Tiling = (props) => {
                         {selectedIndex === 3 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Shading</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Button
@@ -346,7 +346,7 @@ const Tiling = (props) => {
                         {selectedIndex === 4 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Display</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Icon color="yellow" path={mdiWeatherSunny} size={1} />
@@ -385,7 +385,7 @@ const Tiling = (props) => {
                         {selectedIndex === 5 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Result</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <ToggleButtonGroup color="primary">
