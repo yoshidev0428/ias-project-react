@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Image } from 'react-bootstrap';
+import { Image, Alert } from 'react-bootstrap';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -39,6 +39,8 @@ import ZPosition from "../viewcontrol/ZPosition";
 import Timeline from "../viewcontrol/Timeline";
 import {connect} from 'react-redux';
 import store from "../../../../reducers";
+
+import UTIF from "utif";
 
 const tilingMenus = [
     "Edit",
@@ -131,7 +133,11 @@ const Tiling = (props) => {
     };
     const canvasElement = useRef(null);
 
-    const [fileNames, setFileNames] = useState(props.files);
+    const [fileNames, setFileNames] = useState(props.content);
+    const [fileObjs, setFileObjs] = useState(props.files);
+    const [fileImageChosen, setFileImageChosen] = useState({});
+    const [widthImage, setWidthImage] = useState(window.innerWidth);
+    const [heightImage, setHeightImage] = useState(window.innerHeight);
 
     useEffect(() => {
         if(props.content){
@@ -140,10 +146,89 @@ const Tiling = (props) => {
         }
     },[props.content])
 
+
+    useEffect(() => {
+        if(props.files){
+            console.log("TILING > props.files useEffect: ", props.files)
+            setFileObjs(props.files);
+        }
+    },[props.files])
+
     const handleListContentItemClick = (event, index) => {
+        let dataChosen = fileNames[index];
+        let fileObjChosen = fileObjs[index];
+        console.log("Tiling, handleListContentItemClick: ", dataChosen,fileObjChosen);
+        setFileImageChosen(fileObjChosen);
         // setSelectedIndex(index);
         console.log(index)
     };
+
+
+    useEffect(()=>{
+        let file = fileImageChosen[0];
+        if(file){
+
+            console.log(file, " mainFrame : changeloadfile");
+            // let file = file;
+            if (file) {
+                let name = "";
+                let size = 0;
+                if (file.file.name !== undefined) {
+                    name = file.file.name;
+                }
+                if (file.size !== undefined) {
+                    size = file.file.size;
+                }
+              
+                imgLoadedFromFile(file.file, name, size);
+            } else {
+                Alert("Please open correct file again!");
+            }
+
+
+        }
+    },[fileImageChosen])
+
+    const [loadImageSource, setLoadImageSource] = useState(null);
+
+    function imgLoadedFromFile(fileDisplay, name, size) {
+        fileDisplay.arrayBuffer().then((fileBuffer) => {
+            var ifds = UTIF.decode(fileBuffer);
+
+            console.log("TILING: THEN imgLoadedFromFile: ", fileBuffer);
+
+            UTIF.decodeImage(fileBuffer, ifds[0])
+            var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+            const firstPageOfTif = ifds[0];
+            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+            // console.log("MAIN FRAME: rgba: ", rgba);
+            const imageWidth = window.innerWidth !== undefined ? window.innerWidth : firstPageOfTif.width;
+            const imageHeight = window.innerHeight !== undefined ? window.innerHeight : firstPageOfTif.height;
+            // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
+            // const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
+            setWidthImage(imageWidth);
+            setHeightImage(imageHeight);
+            // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
+            // console.log("imgLoadedFromFile: ", imgSource);
+            // setLoadImageSource(imgSource);
+
+            const cnv = document.createElement("canvas");
+            cnv.width = imageWidth;
+            cnv.height = imageHeight;
+
+            const ctx = cnv.getContext("2d");
+            const imageData = ctx.createImageData(imageWidth, imageHeight);
+            console.log("MAIN FRAME: imagedata: ", imageData);
+            for (let i = 0; i < rgba.length; i++) {
+                imageData.data[i] = rgba[i];
+            }
+            ctx.putImageData(imageData, 0, 0);
+            console.log("MAIN FRAME: cnv: ", cnv);
+            setLoadImageSource(cnv);
+        })
+        
+    }
+
 
     return (
         <>
@@ -164,7 +249,7 @@ const Tiling = (props) => {
                         {selectedIndex === 0 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <List className="overflow-auto" style={{maxHeight:'80%', overflow: 'auto'}}>
                                     {fileNames !== undefined && fileNames.map((content, idx) => {
                                         return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
@@ -179,7 +264,7 @@ const Tiling = (props) => {
                         {selectedIndex === 1 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Alignment</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <ToggleButtonGroup
                                         value={alignment}
                                         exclusive
@@ -274,7 +359,7 @@ const Tiling = (props) => {
                         {selectedIndex === 2 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Bonding</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <FormGroup>
                                         <FormControlLabel control={<Checkbox onChange={handleChange} />} label="None" />
                                         <FormControlLabel control={<Checkbox onChange={handleChange} />} label="Snap To Edge" />
@@ -320,7 +405,7 @@ const Tiling = (props) => {
                         {selectedIndex === 3 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Shading</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Button
@@ -346,7 +431,7 @@ const Tiling = (props) => {
                         {selectedIndex === 4 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Display</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Icon color="yellow" path={mdiWeatherSunny} size={1} />
@@ -385,7 +470,7 @@ const Tiling = (props) => {
                         {selectedIndex === 5 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Result</h5></CardContent>
-                                <div className="inside">
+                                <div className="inside p-3">
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <ToggleButtonGroup color="primary">
