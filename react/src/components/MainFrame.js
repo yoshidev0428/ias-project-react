@@ -280,7 +280,6 @@ const MainFrame = (props) => {
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
         console.log(files[0], " mainFrame : changeloadfile");
-        // console.log("ARRAY BUFFER FILE[0]:", files[0].arrayBuffer(), " mainFrame : changeloadfile");
         let file = files[0];
         if (file) {
             let name = "";
@@ -325,18 +324,12 @@ const MainFrame = (props) => {
             if(name !== ""){
                 imageUrl = "http://localhost:8000/"+name;
             }
-            
             console.log("MAIN FRAME FILE NAME: ", imageUrl);
-            
             // var xhr = new XMLHttpRequest();
             // xhr.open("GET", imageUrl);
             // xhr.responseType = "arraybuffer";
             // xhr.onload = imgLoaded;   xhr.send();
-
-
             imgLoadedFromFile(file.file, name, size);
-
-
             // const ifds = UTIF.decode(file.file.arrayBuffer());
             // console.log("MAIN FRAME: ifds: ", ifds, file.file.arrayBuffer());
             // const firstPageOfTif = ifds[0];
@@ -359,7 +352,6 @@ const MainFrame = (props) => {
             // ctx.putImageData(imageData, 0, 0);
             // console.log("MAIN FRAME: cnv: ", cnv);
             // setLoadImageSource(cnv);
-
         } else {
             Alert("Please open correct file again!");
         }
