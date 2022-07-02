@@ -506,6 +506,7 @@ const Tiling = (props) => {
                     <div className="">
                         <div className="row m-0">
                             <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} />
+                            {/* <ImageViewer openedImageSource={loadImageSource} width={window.innerWidth} height={window.innerHeight}/> */}
                         </div>
                         <div className="row m-0">
                             <div className="col p-0">
