@@ -23,7 +23,7 @@ const mapStateToProps = state => ({
 const ZPosition = (props) => {
     const [value, setValue] = React.useState(1);
     const [zPosConfig, setZPosConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.z: {});
-    const [minSlider, setMinSlider] = useState(-50);
+    const [minSlider, setMinSlider] = useState(1);
     const [maxSlider, setMaxSlider] = useState(50);
     const SliderChange = (event, newValue) => {
         setValue(newValue);
