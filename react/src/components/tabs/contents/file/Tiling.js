@@ -40,7 +40,6 @@ import Timeline from "../viewcontrol/Timeline";
 import {connect} from 'react-redux';
 import store from "../../../../reducers";
 
-import ImageViewer from '../../../ImageViewer';
 import UTIF from "utif";
 
 const tilingMenus = [
