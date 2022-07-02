@@ -146,8 +146,8 @@ const FileTab = (props) => {
     useEffect(() =>{
         if(props.filesChosen){
             // setFilesChosen(props.filesChosen);
-            console.log("File Tab: FILES CHOSEN, ", props.filesChosen);
-            console.log("File Tab: FILES, ", filesUploaded);
+            // console.log("File Tab: FILES CHOSEN, ", props.filesChosen);
+            // console.log("File Tab: FILES, ", filesUploaded);
             let dataFilesChosenDisplayed = getFilesDisplayed(filesUploaded, props.filesChosen);
             console.log("File Tab: FILES CHOSEN DISPLAYED, ", dataFilesChosenDisplayed);
             // changeLoadFile(dataFilesChosenDisplayed);
