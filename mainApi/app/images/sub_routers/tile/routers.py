@@ -34,90 +34,83 @@ router = APIRouter(
     prefix="/tile",
     tags=["tile"],
 )
-
-@router.post("/upload_image_tiles",
-             response_description="Upload Image Tiles",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[TileModelDB])
+@router.post("/upload_image_tiles", 
+        response_description="Upload Image Tiles",
+        status_code=status.HTTP_201_CREATED,
+        response_model = List[TileModelDB])
 async def upload_image_tiles(files: List[UploadFile] = File(...),
-                             clear_previous: bool = Form(False),
-                             current_user: UserModelDB = Depends(
-                                 get_current_user),
-                             db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                    clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     file_path = STATIC_PATH.joinpath(files[0].filename)
     for f in os.listdir(STATIC_PATH):
         os.remove(os.path.join(STATIC_PATH, f))
+        
     async with aiofiles.open(file_path, 'wb') as f:
         content = await files[0].read()
         await f.write(content)
-    # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
-    result = {"Flag_3d": True, "N_images": 10,
-              "path_images": [files[0].filename]}
+    # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db) 
+    result = {"Flag_3d": True,
+                "N_images": 10,
+                "path_images": [files[0].filename]}
     return JSONResponse(result)
 
-
-@router.post("/deconvol2D",
-             response_description="Convolution about 2D image",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[TileModelDB])
+@router.post("/deconvol2D", 
+        response_description="Convolution about 2D image",
+        status_code=status.HTTP_201_CREATED,
+        response_model = List[TileModelDB])
 async def upload_image_name(files_name: str = Form(''),
-                            effectiveness: int = Form(1),
+                            effectiveness: int= Form(1),
                             isroi: bool = Form(False),
                             roiPoints: object = Form(...),
-                            current_user: UserModelDB = Depends(
-                                get_current_user),
-                            db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     files_name = files_name.split("/")[-1]
     dictRoiPts = jsons.loads(roiPoints)
-    abs_path = Deconv.SupervisedColorDeconvolution(
-        files_name, effectiveness, isroi, dictRoiPts)
+    abs_path = Deconv.SupervisedColorDeconvolution(files_name, effectiveness, isroi, dictRoiPts)
     abs_path = abs_path.split("/")[-1]
     path = []
     path.append(abs_path)
     result = {"Flag_3d": False,
-              "N_images": 1,
-              "path_images": path}
+                "N_images": 1,
+                "path_images":path}
     return JSONResponse(result)
-
 
 @router.post("/deconvol3D",
-             response_description="Deconvolution about 3D image",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[TileModelDB])
+        response_description="Deconvolution about 3D image",
+        status_code=status.HTTP_201_CREATED,
+        response_model = List[TileModelDB])
 async def deconvol3D(gamma: float = Form(1.0),
-                     file_name: str = '',
-                     effectiveness: int = Form(1),
-                     isroi: bool = Form(False),
-                     roiPoints: object = Form(...),
-                     current_user: UserModelDB = Depends(get_current_user),
-                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
-    dictRoiPts = jsons.loads(roiPoints)
-    file_path = Deconv.RechardDeconvolution3d(
-        file_name, effectiveness, isroi, dictRoiPts, gamma)
-    cal = await add_image_tiles(path=file_path, files=File(...), clear_previous=Form(False), current_user=current_user, db=db)
+                    file_name: str = '',
+                    effectiveness: int= Form(1),
+                    isroi: bool = Form(False),
+                    roiPoints: object = Form(...),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    dictRoiPts = jsons.loads(roiPoints)             
+    file_path = Deconv.RechardDeconvolution3d(file_name, effectiveness, isroi, dictRoiPts, gamma)
+    cal = await add_image_tiles(path = file_path, files=File(...), clear_previous=Form(False), current_user=current_user, db=db) 
     result = {"Flag_3d": cal[0],
-              "N_images": cal[1],
-              "path_images": cal[2]}
+                "N_images": cal[1],
+                "path_images": cal[2]}
     return JSONResponse(result)
 
-
 @router.post("/SuperRes",
-             response_description="image super resolution",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[TileModelDB])
+        response_description="image super resolution",
+        status_code=status.HTTP_201_CREATED,
+        response_model = List[TileModelDB])
 async def SuperRes(file_name: str = Form(''),
-                   current_user: UserModelDB = Depends(get_current_user),
-                   db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     abs_path = SuperRes_Func.EDSuperResolution(file_name)
     abs_path = abs_path.split("/")[-1]
     path = []
     path.append(abs_path)
 
     result = {"Flag_3d": False,
-              "N_images": 1,
-              "path_images": path}
+                "N_images": 1,
+                "path_images": path}
     return JSONResponse(result)
-
 
 @router.get("/list",
             response_description="Upload Image Tiles",
@@ -127,7 +120,6 @@ async def get_tile_list(current_user: UserModelDB = Depends(get_current_user),
                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
-
 
 @router.post("/update",
              response_description="Update Image Tiles",
@@ -189,8 +181,7 @@ async def _align_tiles_naive(request: AlignNaiveRequest,
 
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
-        # await result
-        aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)
+        aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)  # await result
 
         return aligned_tiles
 
