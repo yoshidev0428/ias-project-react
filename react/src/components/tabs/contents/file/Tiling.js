@@ -252,7 +252,7 @@ const Tiling = (props) => {
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
                                 <div className="inside p-3">
                                     <List className="overflow-auto" style={{maxHeight:'80%', overflow: 'auto'}}>
-                                    {fileNames !== undefined && fileNames.map((content, idx) => {
+                                    {fileNames && fileNames.map((content, idx) => {
                                         return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
                                             <ListItemText primary={content.filename}/>
                                         </ListItemButton>
