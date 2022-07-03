@@ -92,11 +92,13 @@ const ImageDropzone = (props) => {
 
     const [files, setFiles] = useState([]);
     const updateFiles = async (incommingFiles) => {
-        console.log(incommingFiles.length, "incommingFiles");
+        console.log(incommingFiles.length, incommingFiles[0], "incommingFiles");
+        let files = []
         for (let i = 0; i < incommingFiles.length; i++) {
+            files.push(incommingFiles[i].file);
             props.getLoadingProgress(i + 1);
-            await api.uploadImageTiles([incommingFiles[i].file]);
         }
+        await api.uploadImageTiles(files);
         if (incommingFiles.length === 0) {
             props.getLoadingMax(0);
             props.getLoadingProgress(0);
