@@ -92,10 +92,42 @@
     background-color: rgba(15, 150, 136, .1);
 }
 
-.hole-blue{
-    background-color: rgba(0,220,244,1) !important;
+.hole-blue {
+    background-color: rgba(0, 220, 244, 1) !important;
 }
-  
-.hole-purple{
+
+.hole-purple {
     background-color: rgba(250, 39, 250, 1) !important;
+}
+
+/* progress bar  */
+@keyframes moveToRight {
+    from {
+        left: 0;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+
+.progress {
+    width        : 100%;
+    background   : #ddd;
+    position     : relative;
+    border-radius: 8px !important;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    background: rgb(18 105 191);
+    height    : 100%;
+    position  : absolute;
+    left      : 0;
+}
+
+.progress .progress-bar {
+    width        : 40%;
+    animation    : moveToRight 2s infinite linear;
+    border-radius: 8px;
 }

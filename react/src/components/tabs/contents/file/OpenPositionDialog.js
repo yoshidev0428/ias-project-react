@@ -14,7 +14,6 @@ import DialogContent from '@mui/material/DialogContent';
 import Card from '@mui/material/Card';
 // import CardHeader from '@mui/material/CardHeader';
 // import CardActions from '@mui/material/CardActions';
-import ProgressBar from "@ramonak/react-progress-bar";
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
@@ -93,25 +92,21 @@ const ImageDropzone = (props) => {
     const [files, setFiles] = useState([]);
     const updateFiles = async (incommingFiles) => {
         console.log(incommingFiles.length, incommingFiles[0], "incommingFiles");
-        let files = []
+        let files = [];
+        props.setLoading(true);
         for (let i = 0; i < incommingFiles.length; i++) {
             files.push(incommingFiles[i].file);
-            props.getLoadingProgress(i + 1);
+            // props.getLoadingProgress(i + 1);
         }
         await api.uploadImageTiles(files);
-        if (incommingFiles.length === 0) {
-            props.getLoadingMax(0);
-            props.getLoadingProgress(0);
-        }
+        props.setFiles(files.length);
+        props.setLoading(false);
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
-        if (acceptedFiles.length > 0) {
-            props.setFiles(acceptedFiles);
-        }
     };
 
     const startDrop = (drop) => {
-        props.getLoadingMax(drop.length);
+        // props.getLoadingMax(drop.length);
         // console.log( drop , "onDrop : ", new Date().getTime());
     }
     // const updateFilesView = (changeView) => {
@@ -605,23 +600,10 @@ const mapStateToProps = state => ({
 
 const OpenPositionDialog = (props) => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
-
-    const [progressBarMaxValue, setProgressBarMaxValue] = useState(0);
-    const [progressBarValue, setProgressBarValue] = useState(0);
     const [filesUploaded, setFilesUploaded] = useState([]);
-
-    useEffect(() => {
-        console.log("Files Uploaded,", filesUploaded);
-        if (filesUploaded.length > 0) {
-            props.handleFilesUploaded(filesUploaded);
-            console.log("Files Uploaded2 ,", filesUploaded);
-            store.dispatch({
-                type: "files_addFiles", data: filesUploaded
-            })
-        }
-    }, [filesUploaded])
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -638,12 +620,21 @@ const OpenPositionDialog = (props) => {
 
     const resetPositionDlg = () => {
         acceptedFiles = [];
-        setProgressBarMaxValue(0);
-        setProgressBarValue(0);
     }
 
     useEffect(() => {
-        // resetPositionDlg();
+        console.log("Files Uploaded,", filesUploaded);
+        if (filesUploaded.length > 0) {
+            props.handleFilesUploaded(filesUploaded);
+            console.log("Files Uploaded2 ,", filesUploaded);
+            store.dispatch({
+                type: "files_addFiles", data: filesUploaded
+            })
+        }
+    }, [filesUploaded])
+
+    useEffect(() => {
+
     }, [])
 
     return (
@@ -663,11 +654,11 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 &&
                         <TabContainer>
-                            <ImageDropzone setFiles={(filesUploaded) => { setFilesUploaded(filesUploaded) }} getLoadingMax={(max) => { setProgressBarMaxValue(max) }} getLoadingProgress={(current) => { setProgressBarValue(current) }} />
+                            <ImageDropzone setFiles={(filesUploaded) => { setFilesUploaded(filesUploaded) }} setLoading={(loading) => setIsLoading(loading)}/>
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
-                            <Tiling files={filesUploaded} set-progress-max={(max) => setProgressBarMaxValue(max)} set-progress-current={(current) => setProgressBarValue(current)} />
+                            <Tiling files={filesUploaded} />
                         </TabContainer>
                     }
                     {selectedTab === 2 &&
@@ -691,13 +682,9 @@ const OpenPositionDialog = (props) => {
                         selectedTab === 0 ? <div className='d-flex'>
                             <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginRight: "150px", marginLeft: "0px" }}>Cloud</Button>
                             {
-                                (progressBarMaxValue === 0 || progressBarMaxValue === "0") && filesUploaded.length === 0 ? <div style={{ width: "400px" }}></div> : <ProgressBar
-                                    className="m-auto"
-                                    bgColor="rgb(18 105 191)"
-                                    width="400px"
-                                    completed={progressBarValue.toString()}
-                                    maxCompleted={progressBarMaxValue}
-                                />
+                                isLoading ? <div className="progress" style={{ width: "400px" }}>
+                                        <div className="progress-bar"></div>
+                                    </div> : <div style={{ width: "400px" }}></div>
                             }
                             <Button style={{ marginLeft: "180px" }} size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                             {cloudDialog && <OpenCloudDialog handleClose={handleCloudDialog} />}
