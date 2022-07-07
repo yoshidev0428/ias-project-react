@@ -38,7 +38,6 @@ jobs:
                   sudo docker-compose up -d
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
-         # password: ${{ secrets.PASSWORD }}
-         password: u^ea~g$/~9BcvXUZ
+         password: ${{ secrets.PASSWORD }}
          port: ${{ secrets.PORT }}
          script: whoami
