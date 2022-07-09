@@ -37,7 +37,7 @@ import Channel from "../viewcontrol/Channel";
 import ImageAdjust from "../viewcontrol/ImageAdjust";
 import ZPosition from "../viewcontrol/ZPosition";
 import Timeline from "../viewcontrol/Timeline";
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import store from "../../../../reducers";
 
 import UTIF from "utif";
@@ -81,7 +81,7 @@ const Tiling = (props) => {
     };
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    
+
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
         console.log(index)
@@ -140,33 +140,33 @@ const Tiling = (props) => {
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
     useEffect(() => {
-        if(props.content){
+        if (props.content) {
             console.log("TILING > useEffect: ", props.content)
             setFileNames(props.content);
         }
-    },[props.content])
+    }, [props.content])
 
 
     useEffect(() => {
-        if(props.files){
+        if (props.files) {
             console.log("TILING > props.files useEffect: ", props.files)
             setFileObjs(props.files);
         }
-    },[props.files])
+    }, [props.files])
 
     const handleListContentItemClick = (event, index) => {
         let dataChosen = fileNames[index];
         let fileObjChosen = fileObjs[index];
-        console.log("Tiling, handleListContentItemClick: ", dataChosen,fileObjChosen);
+        console.log("Tiling, handleListContentItemClick: ", dataChosen, fileObjChosen);
         setFileImageChosen(fileObjChosen);
         // setSelectedIndex(index);
         console.log(index)
     };
 
 
-    useEffect(()=>{
+    useEffect(() => {
         let file = fileImageChosen[0];
-        if(file){
+        if (file) {
 
             console.log(file, " mainFrame : changeloadfile");
             // let file = file;
@@ -179,15 +179,12 @@ const Tiling = (props) => {
                 if (file.size !== undefined) {
                     size = file.file.size;
                 }
-              
                 imgLoadedFromFile(file.file, name, size);
             } else {
                 Alert("Please open correct file again!");
             }
-
-
         }
-    },[fileImageChosen])
+    }, [fileImageChosen])
 
     const [loadImageSource, setLoadImageSource] = useState(null);
 
@@ -198,10 +195,10 @@ const Tiling = (props) => {
             console.log("TILING: THEN imgLoadedFromFile: ", fileBuffer);
 
             UTIF.decodeImage(fileBuffer, ifds[0])
-            var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+            var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
             const firstPageOfTif = ifds[0];
-            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-            // console.log("MAIN FRAME: rgba: ", rgba);
+            console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+            console.log("MAIN FRAME: rgba: ", rgba);
             const imageWidth = window.innerWidth !== undefined ? window.innerWidth : firstPageOfTif.width;
             const imageHeight = window.innerHeight !== undefined ? window.innerHeight : firstPageOfTif.height;
             // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
@@ -226,7 +223,7 @@ const Tiling = (props) => {
             console.log("MAIN FRAME: cnv: ", cnv);
             setLoadImageSource(cnv);
         })
-        
+
     }
 
 
@@ -250,12 +247,12 @@ const Tiling = (props) => {
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
                                 <div className="inside p-3">
-                                    <List className="overflow-auto" style={{maxHeight:'80%', overflow: 'auto'}}>
-                                    {fileNames && fileNames.map((content, idx) => {
-                                        return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                            <ListItemText primary={content.filename}/>
-                                        </ListItemButton>
-                                    })}
+                                    <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
+                                        {fileNames !== undefined && fileNames.map((content, idx) => {
+                                            return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                <ListItemText primary={content.filename} />
+                                            </ListItemButton>
+                                        })}
                                     </List>
                                 </div>
                             </Card>
