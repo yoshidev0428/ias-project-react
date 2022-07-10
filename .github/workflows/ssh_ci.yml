@@ -31,7 +31,7 @@ jobs:
                   export NVM_DIR=~/.nvm && 
                   source ~/.nvm/nvm.sh && 
                   cd react && npm -v
-                  npm i && npm install tiff && npm run build &&
+                  npm i && npm install geotiff --save && npm run build &&
                   rm -R /var/www/html/* && 
                   mv ./build/* /var/www/html/ && 
                   cd .. && docker-compose up -d
