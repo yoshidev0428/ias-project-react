@@ -99,7 +99,7 @@ const ImageDropzone = (props) => {
             // props.getLoadingProgress(i + 1);
         }
         await api.uploadImageTiles(files);
-        props.setFiles(files.length);
+        props.setFiles(files);
         props.setLoading(false);
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;

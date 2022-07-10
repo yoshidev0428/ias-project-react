@@ -31,15 +31,17 @@ import {
     mdiClose,
     mdiPencil,
 } from '@mdi/js';
-import Vessel from "../viewcontrol/Vessel";
-import Objective from "../viewcontrol/Objective";
-import Channel from "../viewcontrol/Channel";
-import ImageAdjust from "../viewcontrol/ImageAdjust";
-import ZPosition from "../viewcontrol/ZPosition";
-import Timeline from "../viewcontrol/Timeline";
+// import Vessel from "../viewcontrol/Vessel";
+// import Objective from "../viewcontrol/Objective";
+// import Channel from "../viewcontrol/Channel";
+// import ImageAdjust from "../viewcontrol/ImageAdjust";
+// import ZPosition from "../viewcontrol/ZPosition";
+// import Timeline from "../viewcontrol/Timeline";
 import { connect } from 'react-redux';
 import store from "../../../../reducers";
 
+import * as api from "../../../../api/tiles";
+import * as Tiff from "tiff";
 import UTIF from "utif";
 
 const tilingMenus = [
@@ -131,21 +133,27 @@ const Tiling = (props) => {
     const handleScaleChange = (event) => {
         setScale(event.target.value);
     };
-    const canvasElement = useRef(null);
+    // const canvasElement = useRef(null);
 
-    const [fileNames, setFileNames] = useState(props.content);
     const [fileObjs, setFileObjs] = useState(props.files);
     const [fileImageChosen, setFileImageChosen] = useState({});
     const [widthImage, setWidthImage] = useState(window.innerWidth);
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
-    useEffect(() => {
-        if (props.content) {
-            console.log("TILING > useEffect: ", props.content)
-            setFileNames(props.content);
+    const display_tiff = (file) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = "arraybuffer";
+        xhr.open('GET', file);
+        xhr.onload = function (e) {
+            let arrayBuffer = this.response;
+            // Tiff.initialize({
+            //     TOTAL_MEMORY: 16777216 * 10
+            // });
+            let tiff = new Tiff({ buffer: arrayBuffer });
+            let dataURL = tiff.toDataURL();
+            document.getElementById("canvas").src = dataURL;
         }
-    }, [props.content])
-
+    }
 
     useEffect(() => {
         if (props.files) {
@@ -154,13 +162,14 @@ const Tiling = (props) => {
         }
     }, [props.files])
 
+
     const handleListContentItemClick = (event, index) => {
-        let dataChosen = fileNames[index];
+
         let fileObjChosen = fileObjs[index];
-        console.log("Tiling, handleListContentItemClick: ", dataChosen, fileObjChosen);
+        console.log("Tiling, handleListContentItemClick: ", fileObjChosen);
         setFileImageChosen(fileObjChosen);
+        display_tiff(fileImageChosen);
         // setSelectedIndex(index);
-        console.log(index)
     };
 
 
@@ -246,14 +255,17 @@ const Tiling = (props) => {
                         {selectedIndex === 0 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
-                                <div className="inside p-3">
-                                    <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
-                                        {fileNames !== undefined && fileNames.map((content, idx) => {
-                                            return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                <ListItemText primary={content.filename} />
-                                            </ListItemButton>
-                                        })}
-                                    </List>
+                                <div className="inside p-3">{
+                                    fileObjs !== undefined && fileObjs !== null ? <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
+                                        {
+                                            fileObjs.map((content, idx) => {
+                                                console.log(content, "cotent");
+                                                return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                    <ListItemText primary={content.name} />
+                                                </ListItemButton>
+                                            })}
+                                    </List> : <></>
+                                }
                                 </div>
                             </Card>
                         }
@@ -502,7 +514,8 @@ const Tiling = (props) => {
                     {/*  Tiling Preview  */}
                     <div className="">
                         <div className="row m-0">
-                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} />
+                            <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
+                            {/* <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} /> */}
                             {/* <ImageViewer openedImageSource={loadImageSource} width={window.innerWidth} height={window.innerHeight}/> */}
                         </div>
                         <div className="row m-0">
