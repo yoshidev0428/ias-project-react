@@ -39,9 +39,8 @@ import {
 // import Timeline from "../viewcontrol/Timeline";
 import { connect } from 'react-redux';
 import store from "../../../../reducers";
-
 import * as api from "../../../../api/tiles";
-import * as Tiff from "tiff";
+import { decode, isMultiPage, pageCount } from "tiff";
 import UTIF from "utif";
 
 const tilingMenus = [
@@ -63,7 +62,20 @@ const tilingAlignButtons = [
 ];
 
 const Tiling = (props) => {
+
     const [value, setValue] = useState(0);
+    const [fileObjs, setFileObjs] = useState(props.files);
+    const [fileImageChosen, setFileImageChosen] = useState();
+    const [widthImage, setWidthImage] = useState(window.innerWidth);
+    const [heightImage, setHeightImage] = useState(window.innerHeight);
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [alignment, setAlignment] = useState('left');
+    const [checked, setChecked] = useState(true);
+    const tiling_bonding_patternMatch = false;
+
+    const [scale, setScale] = useState('');
+    const [loadImageSource, setLoadImageSource] = useState(null);
     // Change text fields
     const inputTilingRows = (event) => {
         console.log("ok");
@@ -82,20 +94,15 @@ const Tiling = (props) => {
         console.log("ok")
     };
 
-    const [selectedIndex, setSelectedIndex] = useState(0);
-
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
         console.log(index)
     };
 
-    const [alignment, setAlignment] = useState('left');
-
     const handleAlignment = (event, newAlignment) => {
         setAlignment(newAlignment);
     };
 
-    const [checked, setChecked] = useState(true);
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
@@ -103,7 +110,7 @@ const Tiling = (props) => {
     const alignButtonImage = (index) => {
         return `../../../assets/images/pos_align_${index}.png`;
     };
-    const tiling_bonding_patternMatch = false;
+
     const autoPatternMathing = () => {
         console.log("clicked!!!!!");
     };
@@ -128,74 +135,46 @@ const Tiling = (props) => {
     const exportTiledImage = () => {
         console.log("clicked!!!!!");
     };
-    const [scale, setScale] = useState('');
 
     const handleScaleChange = (event) => {
         setScale(event.target.value);
     };
-    // const canvasElement = useRef(null);
-
-    const [fileObjs, setFileObjs] = useState(props.files);
-    const [fileImageChosen, setFileImageChosen] = useState({});
-    const [widthImage, setWidthImage] = useState(window.innerWidth);
-    const [heightImage, setHeightImage] = useState(window.innerHeight);
-
-    const display_tiff = (file) => {
-        let xhr = new XMLHttpRequest();
-        xhr.responseType = "arraybuffer";
-        xhr.open('GET', file);
-        xhr.onload = function (e) {
-            let arrayBuffer = this.response;
-            // Tiff.initialize({
-            //     TOTAL_MEMORY: 16777216 * 10
-            // });
-            let tiff = new Tiff({ buffer: arrayBuffer });
-            let dataURL = tiff.toDataURL();
-            document.getElementById("canvas").src = dataURL;
-        }
-    }
+    // const canvasElement = useRef(null);   
 
     useEffect(() => {
         if (props.files) {
-            console.log("TILING > props.files useEffect: ", props.files)
+            // console.log("TILING > props.files useEffect: ", props.files);
             setFileObjs(props.files);
         }
     }, [props.files])
 
+    const display_tiff = (file) => {
+        let result = decode(file);
+        if (result.length === 1) {
+            console.log((result[0]), "getImageFromIFD(result[0])");
+        }
+        // let xhr = new XMLHttpRequest();
+        // xhr.responseType = "arraybuffer";
+        // xhr.open('GET', file);
+        // xhr.onload = function (e) {
+        //     let arrayBuffer = this.response;
+        //     // Tiff.initialize({
+        //     //     TOTAL_MEMORY: 16777216 * 10
+        //     // });
+        //     let tiff = new Tiff({ buffer: arrayBuffer });
+        //     let dataURL = tiff.toDataURL();
+        //     document.getElementById("canvas").src = dataURL;
+        // }
+    }
 
     const handleListContentItemClick = (event, index) => {
-
         let fileObjChosen = fileObjs[index];
         console.log("Tiling, handleListContentItemClick: ", fileObjChosen);
         setFileImageChosen(fileObjChosen);
-        display_tiff(fileImageChosen);
-        // setSelectedIndex(index);
+        // Implement tiff file type 1
+        display_tiff(fileObjChosen);
+        setSelectedIndex(index);
     };
-
-
-    useEffect(() => {
-        let file = fileImageChosen[0];
-        if (file) {
-
-            console.log(file, " mainFrame : changeloadfile");
-            // let file = file;
-            if (file) {
-                let name = "";
-                let size = 0;
-                if (file.file.name !== undefined) {
-                    name = file.file.name;
-                }
-                if (file.size !== undefined) {
-                    size = file.file.size;
-                }
-                imgLoadedFromFile(file.file, name, size);
-            } else {
-                Alert("Please open correct file again!");
-            }
-        }
-    }, [fileImageChosen])
-
-    const [loadImageSource, setLoadImageSource] = useState(null);
 
     function imgLoadedFromFile(fileDisplay, name, size) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
@@ -235,6 +214,26 @@ const Tiling = (props) => {
 
     }
 
+    useEffect(() => {
+        let file = fileImageChosen;
+        if (file) {
+            console.log(file, " mainFrame : changeloadfile");
+            // let file = file;
+            if (file) {
+                let name = "";
+                let size = 0;
+                if (file.file.name !== undefined) {
+                    name = file.file.name;
+                }
+                if (file.size !== undefined) {
+                    size = file.file.size;
+                }
+                imgLoadedFromFile(file.file, name, size);
+            } else {
+                Alert("Please open correct file again!");
+            }
+        }
+    }, [fileImageChosen])
 
     return (
         <>
@@ -259,10 +258,15 @@ const Tiling = (props) => {
                                     fileObjs !== undefined && fileObjs !== null ? <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
                                         {
                                             fileObjs.map((content, idx) => {
-                                                console.log(content, "cotent");
-                                                return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                    <ListItemText primary={content.name} />
-                                                </ListItemButton>
+                                                // if (idx === fileObjs.indexof(fileImageChosen)) {
+                                                //     return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "lightblue" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                //         <ListItemText primary={content.name} />
+                                                //     </ListItemButton>
+                                                // } else {
+                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                        <ListItemText primary={content.name} />
+                                                    </ListItemButton>
+                                                // }
                                             })}
                                     </List> : <></>
                                 }
@@ -516,7 +520,7 @@ const Tiling = (props) => {
                         <div className="row m-0">
                             <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
                             {/* <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} /> */}
-                            {/* <ImageViewer openedImageSource={loadImageSource} width={window.innerWidth} height={window.innerHeight}/> */}
+                            {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
                         </div>
                         <div className="row m-0">
                             <div className="col p-0">
