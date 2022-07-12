@@ -626,7 +626,6 @@ const OpenPositionDialog = (props) => {
         console.log("Files Uploaded,", filesUploaded);
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
-            console.log("Files Uploaded2 ,", filesUploaded);
             store.dispatch({
                 type: "files_addFiles", data: filesUploaded
             })

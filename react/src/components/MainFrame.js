@@ -27,7 +27,6 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import LinearProgress from '@mui/material/LinearProgress';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
-// import ImageViewer from './ImageViewer';
 import RoutedAvivator from './viv'
 import DLMLTab from "./tabs/DLMLTab";
 import AdjustTab from "./tabs/AdjustTab";
