@@ -139,7 +139,7 @@ const Tiling = (props) => {
     const handleScaleChange = (event) => {
         setScale(event.target.value);
     };
-    // const canvasElement = useRef(null);   
+    const canvasElement = useRef(null);
 
     useEffect(() => {
         if (props.files) {
@@ -149,10 +149,11 @@ const Tiling = (props) => {
     }, [props.files])
 
     const display_tiff = (file) => {
-        let result = decode(file);
-        if (result.length === 1) {
-            console.log((result[0]), "getImageFromIFD(result[0])");
-        }
+        console.log(file, "display_tiff");
+        // let result = decode(file);
+        // if (result.length === 1) {
+        //     console.log((result[0]), "getImageFromIFD(result[0])");
+        // }
         // let xhr = new XMLHttpRequest();
         // xhr.responseType = "arraybuffer";
         // xhr.open('GET', file);
@@ -173,20 +174,17 @@ const Tiling = (props) => {
         setFileImageChosen(fileObjChosen);
         // Implement tiff file type 1
         display_tiff(fileObjChosen);
-        setSelectedIndex(index);
     };
 
     function imgLoadedFromFile(fileDisplay, name, size) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
             var ifds = UTIF.decode(fileBuffer);
-
-            console.log("TILING: THEN imgLoadedFromFile: ", fileBuffer);
-
+            // console.log("TILING: THEN imgLoadedFromFile: ", fileBuffer);
             UTIF.decodeImage(fileBuffer, ifds[0])
             var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
             const firstPageOfTif = ifds[0];
-            console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-            console.log("MAIN FRAME: rgba: ", rgba);
+            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+            // console.log("MAIN FRAME: rgba: ", rgba);
             const imageWidth = window.innerWidth !== undefined ? window.innerWidth : firstPageOfTif.width;
             const imageHeight = window.innerHeight !== undefined ? window.innerHeight : firstPageOfTif.height;
             // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
@@ -203,12 +201,12 @@ const Tiling = (props) => {
 
             const ctx = cnv.getContext("2d");
             const imageData = ctx.createImageData(imageWidth, imageHeight);
-            console.log("MAIN FRAME: imagedata: ", imageData);
+            // console.log("MAIN FRAME: imagedata: ", imageData);
             for (let i = 0; i < rgba.length; i++) {
                 imageData.data[i] = rgba[i];
             }
             ctx.putImageData(imageData, 0, 0);
-            console.log("MAIN FRAME: cnv: ", cnv);
+            // console.log("MAIN FRAME: cnv: ", cnv);
             setLoadImageSource(cnv);
         })
 
@@ -222,13 +220,13 @@ const Tiling = (props) => {
             if (file) {
                 let name = "";
                 let size = 0;
-                if (file.file.name !== undefined) {
-                    name = file.file.name;
+                if (file.name !== undefined) {
+                    name = file.name;
                 }
                 if (file.size !== undefined) {
-                    size = file.file.size;
+                    size = file.size;
                 }
-                imgLoadedFromFile(file.file, name, size);
+                imgLoadedFromFile(file, name, size);
             } else {
                 Alert("Please open correct file again!");
             }
@@ -263,9 +261,9 @@ const Tiling = (props) => {
                                                 //         <ListItemText primary={content.name} />
                                                 //     </ListItemButton>
                                                 // } else {
-                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                        <ListItemText primary={content.name} />
-                                                    </ListItemButton>
+                                                return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                    <ListItemText primary={content.name} />
+                                                </ListItemButton>
                                                 // }
                                             })}
                                     </List> : <></>
@@ -518,8 +516,8 @@ const Tiling = (props) => {
                     {/*  Tiling Preview  */}
                     <div className="">
                         <div className="row m-0">
-                            <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
-                            {/* <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} /> */}
+                            {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} /> */}
+                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} />
                             {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
                         </div>
                         <div className="row m-0">
