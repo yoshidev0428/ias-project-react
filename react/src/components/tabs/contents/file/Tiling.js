@@ -149,26 +149,26 @@ const Tiling = (props) => {
     }, [props.files])
 
     const display_tiff = (file) => {
-        console.log(file, "display_tiff");
-        try {
-            let result = decode(file);
-            if (result.length === 1) {
-                console.log((result[0]), "getImageFromIFD(result[0])");
-            }
-            let xhr = new XMLHttpRequest();
-            xhr.responseType = "arraybuffer";
-            xhr.open('GET', file);
-            xhr.onload = function (e) {
-                let arrayBuffer = this.response;
-                // Tiff.initialize({
-                //     TOTAL_MEMORY: 16777216 * 10
-                // });
-                let tiff = new Tiff({ buffer: arrayBuffer });
-                let dataURL = tiff.toDataURL();
-                document.getElementById("canvas").src = dataURL;
-            }
-        }
-        catch { }
+        // console.log(file, "display_tiff");
+        // try {
+        //     let result = decode(file);
+        //     if (result.length === 1) {
+        //         console.log((result[0]), "getImageFromIFD(result[0])");
+        //     }
+        //     let xhr = new XMLHttpRequest();
+        //     xhr.responseType = "arraybuffer";
+        //     xhr.open('GET', file);
+        //     xhr.onload = function (e) {
+        //         let arrayBuffer = this.response;
+        //         // Tiff.initialize({
+        //         //     TOTAL_MEMORY: 16777216 * 10
+        //         // });
+        //         let tiff = new Tiff({ buffer: arrayBuffer });
+        //         let dataURL = tiff.toDataURL();
+        //         document.getElementById("canvas").src = dataURL;
+        //     }
+        // }
+        // catch { }
     }
 
     const handleListContentItemClick = (event, index) => {
