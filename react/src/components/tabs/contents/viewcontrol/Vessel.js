@@ -31,11 +31,11 @@ const Vessel = (props) => {
 
     useEffect(() => {
         setCurrentVessel(getVesselById(currentVesselId));
-        console.log("Current Vessel: ", currentVessel);
+        // console.log("Current Vessel: ", currentVessel);
     }, [currentVesselId]);
 
     useEffect(() => {
-        console.log("VESSEL: NEW CONTENT, ", props.content);
+        // console.log("VESSEL: NEW CONTENT, ", props.content);
         if(props.content){
             setContent(props.content);
             setCurrentVessel( {
@@ -51,7 +51,7 @@ const Vessel = (props) => {
     },[props.content])
 
     useEffect(()=>{
-        console.log("VESSEL: NEW CONTENT [], ", props.content);
+        // console.log("VESSEL: NEW CONTENT [], ", props.content);
         if(props.content){
             setContent(props.content);
             setCurrentVessel( {

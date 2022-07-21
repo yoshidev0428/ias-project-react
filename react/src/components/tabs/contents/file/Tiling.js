@@ -40,13 +40,12 @@ import {
 import { connect } from 'react-redux';
 import store from "../../../../reducers";
 import * as api from "../../../../api/tiles";
-import { decode, isMultiPage, pageCount } from "tiff";
 import UTIF from "utif";
 
 const tilingMenus = [
     "Edit",
     "Alignment",
-    // "Bonding",
+    "Bonding",
     "Shading",
     "Display",
     "Result",
@@ -61,21 +60,29 @@ const tilingAlignButtons = [
     "By Rows"
 ];
 
+let TAG = "Tiling : ";
+let stylingTiling = {
+    ToggleButtonGroup: { margin: '0 auto', width: '22px', height: '22px' }
+}
+
 const Tiling = (props) => {
 
     const [value, setValue] = useState(0);
-    const [fileObjs, setFileObjs] = useState(props.files);
-    const [fileImageChosen, setFileImageChosen] = useState();
+    const [fileObjs, setFileObjs] = useState([]);
+    const [selectedImageFile, setSelectedImageFile] = useState();
     const [widthImage, setWidthImage] = useState(window.innerWidth);
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [alignment, setAlignment] = useState('left');
+    const [alignment, setAlignment] = useState(0);
     const [checked, setChecked] = useState(true);
-    const tiling_bonding_patternMatch = false;
-
     const [scale, setScale] = useState('');
     const [loadImageSource, setLoadImageSource] = useState(null);
+
+    const tiling_bonding_patternMatch = false;
+    const alignButtonImage = (index) => { return `../../../assets/images/pos_align_${index}.png`; };
+    const canvasElement = useRef(null);
+
     // Change text fields
     const inputTilingRows = (event) => {
         console.log("ok");
@@ -99,21 +106,34 @@ const Tiling = (props) => {
         console.log(index)
     };
 
-    const handleAlignment = (event, newAlignment) => {
-        setAlignment(newAlignment);
+    const handleAlignment = (event) => {
+        console.log(" handleAlignment", fileObjs.length, event.target.value);
+        api.alignTilesApi(fileObjs.length, event.target.value, handleAlignTilesApi);
+        if ( fileObjs.length > 0 ) {
+            let method = event.target.value;
+            if ( tilingAlignButtons.includes(method) ) {
+                api.alignTilesApi(fileObjs.length, method, handleAlignTilesApi);
+            }
+        }
+        // setAlignment(newAlignment);
     };
+
+    const handleAlignTilesApi = (response, status) => {
+        if ( status ) {
+            console.log("handleAlignTilesApi : response :", response);
+        } else {
+            console.log("handleAlignTilesApi : error :", response);
+        }
+    }
 
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
 
-    const alignButtonImage = (index) => {
-        return `../../../assets/images/pos_align_${index}.png`;
-    };
-
     const autoPatternMathing = () => {
         console.log("clicked!!!!!");
     };
+
     const normalizeImgLuminance = () => {
         console.log("clicked!!!!!");
     };
@@ -139,102 +159,58 @@ const Tiling = (props) => {
     const handleScaleChange = (event) => {
         setScale(event.target.value);
     };
-    const canvasElement = useRef(null);
 
-    useEffect(() => {
-        if (props.files) {
-            // console.log("TILING > props.files useEffect: ", props.files);
-            setFileObjs(props.files);
+    const displayImage = async (file) => {
+        // console.log("displayImage : ", file);
+        try {
+            displayTiff(file, file.name, file.size);
         }
-    }, [props.files])
-
-    const display_tiff = (file) => {
-        // console.log(file, "display_tiff");
-        // try {
-        //     let result = decode(file);
-        //     if (result.length === 1) {
-        //         console.log((result[0]), "getImageFromIFD(result[0])");
-        //     }
-        //     let xhr = new XMLHttpRequest();
-        //     xhr.responseType = "arraybuffer";
-        //     xhr.open('GET', file);
-        //     xhr.onload = function (e) {
-        //         let arrayBuffer = this.response;
-        //         // Tiff.initialize({
-        //         //     TOTAL_MEMORY: 16777216 * 10
-        //         // });
-        //         let tiff = new Tiff({ buffer: arrayBuffer });
-        //         let dataURL = tiff.toDataURL();
-        //         document.getElementById("canvas").src = dataURL;
-        //     }
-        // }
-        // catch { }
+        catch (err) {
+            console.log(" error : Tiling.js useEffect : ", err);
+        }
     }
 
     const handleListContentItemClick = (event, index) => {
-        let fileObjChosen = fileObjs[index];
-        console.log("Tiling, handleListContentItemClick: ", fileObjChosen);
-        setFileImageChosen(fileObjChosen);
-        // Implement tiff file type 1
-        display_tiff(fileObjChosen);
+        console.log(" Selected Image : ", index);
+        if (fileObjs.length > 0) {
+            setSelectedImageFile(fileObjs[index]);
+            displayImage(fileObjs[index]);
+        }
     };
 
-    function imgLoadedFromFile(fileDisplay, name, size) {
+    function displayTiff(fileDisplay, name, size) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
             var ifds = UTIF.decode(fileBuffer);
-            // console.log("TILING: THEN imgLoadedFromFile: ", fileBuffer);
             UTIF.decodeImage(fileBuffer, ifds[0])
             var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
             const firstPageOfTif = ifds[0];
-            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-            // console.log("MAIN FRAME: rgba: ", rgba);
-            const imageWidth = window.innerWidth !== undefined ? window.innerWidth : firstPageOfTif.width;
-            const imageHeight = window.innerHeight !== undefined ? window.innerHeight : firstPageOfTif.height;
+            const imageWidth = firstPageOfTif.width;
+            const imageHeight = firstPageOfTif.height;
             // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
             // const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
             setWidthImage(imageWidth);
             setHeightImage(imageHeight);
-            // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
-            // console.log("imgLoadedFromFile: ", imgSource);
-            // setLoadImageSource(imgSource);
-
-            const cnv = document.createElement("canvas");
+            const cnv = document.getElementById("canvas");
             cnv.width = imageWidth;
             cnv.height = imageHeight;
-
             const ctx = cnv.getContext("2d");
             const imageData = ctx.createImageData(imageWidth, imageHeight);
-            // console.log("MAIN FRAME: imagedata: ", imageData);
             for (let i = 0; i < rgba.length; i++) {
                 imageData.data[i] = rgba[i];
             }
             ctx.putImageData(imageData, 0, 0);
-            // console.log("MAIN FRAME: cnv: ", cnv);
-            setLoadImageSource(cnv);
         })
-
     }
 
     useEffect(() => {
-        let file = fileImageChosen;
-        if (file) {
-            console.log(file, " mainFrame : changeloadfile");
-            // let file = file;
-            if (file) {
-                let name = "";
-                let size = 0;
-                if (file.name !== undefined) {
-                    name = file.name;
-                }
-                if (file.size !== undefined) {
-                    size = file.size;
-                }
-                imgLoadedFromFile(file, name, size);
-            } else {
-                Alert("Please open correct file again!");
-            }
+        // console.log(" Tiling UseEffect : ");
+        if (props.files.length > 0) {
+            console.log("props.files.length : ", props.files);
+            setFileObjs(props.files);
+            setSelectedImageFile(props.files[0]);
+            displayImage(props.files[0]);
         }
-    }, [fileImageChosen])
+    }, [props.files])
 
     return (
         <>
@@ -259,7 +235,7 @@ const Tiling = (props) => {
                                     fileObjs !== undefined && fileObjs !== null ? <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
                                         {
                                             fileObjs.map((content, idx) => {
-                                                // if (idx === fileObjs.indexof(fileImageChosen)) {
+                                                // if (idx === fileObjs.indexof(selectedImageFile)) {
                                                 //     return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "lightblue" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
                                                 //         <ListItemText primary={content.name} />
                                                 //     </ListItemButton>
@@ -282,19 +258,14 @@ const Tiling = (props) => {
                                     <ToggleButtonGroup
                                         value={alignment}
                                         exclusive
-                                        onChange={handleAlignment}
+                                        onChange={(e) => { handleAlignment(e) }}
                                         aria-label="text alignment"
                                     >
                                         {[...Array(6)].map((_, i) => {
-                                            return <div>
-                                                <Tooltip title={tilingAlignButtons[i]} key={i}>
-                                                    {i === 3 ? <ToggleButton ><Image style={{ margin: '0 auto', width: '22px', height: '22px', filter: 'grayscale(1)' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
-                                                        : <ToggleButton key={i} ><Image style={{ margin: '0 auto', width: '22px', height: '22px' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
-                                                    }
+                                            return <Tooltip title={tilingAlignButtons[i]} key={i}>
+                                                    <ToggleButton key={i.toString() + "ToggleButton"} value={i}><Image value={tilingAlignButtons[i]} style={{ ...stylingTiling.ToggleButtonGroup, filter: i === 3 ? 'grayscale(1)' : '' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
                                                 </Tooltip >
-                                            </div>
                                         })}
-
                                     </ToggleButtonGroup>
                                     <FormGroup>
                                         <FormControlLabel control={<Checkbox onChange={handleChange} />} label="Left-Right" />

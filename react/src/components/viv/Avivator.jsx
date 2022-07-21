@@ -26,7 +26,6 @@ import { getWindowDimensions } from "../helpers";
 export default function Avivator(props) {
 
     const { history, source: source, isDemoImage } = props;
-
     // const source = useViewerStore(store => store.source);
     const isViewerLoading = useViewerStore(store => store.isViewerLoading);
     const useLinkedView = useViewerStore(store => store.useLinkedView);
@@ -44,7 +43,7 @@ export default function Avivator(props) {
     }
 
     useEffect(() => {
-        console.log(props, "Avivator : image file ++ -------- ");
+        // console.log(props, "Avivator : image file -------- ");
         if (props.source !== null) {
             // console.log(props.source, "Avivator : image file ++ ");
             useViewerStore.setState({
