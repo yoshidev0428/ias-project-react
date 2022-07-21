@@ -13,7 +13,7 @@ export const listTiles = (success, failed) => {
         });
 };
 
-export const alignTiles = (rows, method, success, fail) => {
+export const alignTilesApi = (rows, method, callback) => {
 
     const formData = new FormData();
     formData.append("method", method);
@@ -27,14 +27,14 @@ export const alignTiles = (rows, method, success, fail) => {
         })
         .then(function (response) {
             console.log("align success callback");
-            if (success) {
-                success(response);
+            if (callback) {
+                callback(response, true);
             }
         })
         .catch(function (error) {
             console.log("align failed callback");
-            if (fail) {
-                fail(error);
+            if (callback) {
+                callback(error, false);
             }
         });
 };
