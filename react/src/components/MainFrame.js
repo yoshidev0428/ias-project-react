@@ -37,7 +37,7 @@ import MeasureTab from "./tabs/MeasureTab";
 import ReportTab from "./tabs/ReportTab";
 import SettingsTab from "./tabs/SettingsTab";
 import store from "../reducers";
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { useWindowDimensions } from "./helpers";
 import UTIF from "utif";
 
@@ -61,22 +61,23 @@ const mapStateToProps = state => ({
 
 })
 
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#1976d2',
+        },
+    },
+});
+
 const MainFrame = (props) => {
 
     const imageViewAreaRef = useRef(null);
     const { height } = useWindowDimensions();
     const handleResize = () => {
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
-        localStorage.setItem("imageViewSizeHeight",imageViewAreaRef.current.offsetHeight);
+        localStorage.setItem("imageViewSizeHeight", imageViewAreaRef.current.offsetHeight);
     };
-    useEffect(() => {
-        handleResize();
-        // window.addEventListener('resize', handleResize);
-        // return () => {
-        //     window.removeEventListener('resize', handleResize);
-        // };
-    }, [imageViewAreaRef]);
-
     const [rightTabVal, setRightTabVal] = useState(0);
     const [leftTabVal, setLeftTabVal] = useState(3);
     const handleRightTabChange = (event, newValue) => {
@@ -85,14 +86,6 @@ const MainFrame = (props) => {
     const handleLeftTabChange = (event, newValue) => {
         setLeftTabVal(newValue);
     };
-    const darkTheme = createTheme({
-        palette: {
-            mode: 'dark',
-            primary: {
-                main: '#1976d2',
-            },
-        },
-    });
 
     const [anchorEl, setAnchorEl] = useState(null);
     const handleMenu = (event) => {
@@ -102,68 +95,24 @@ const MainFrame = (props) => {
         setAnchorEl(null);
     };
     const handleLogout = () => {
-        console.log("click");
         store.dispatch({ type: "auth_logOut" });
     };
 
     const [filesChosen, setFilesChosen] = useState(props.filesChosen);
     const [filesDisplayed, setFilesDisplayed] = useState([]);
     const [files, setFiles] = useState(props.files);
-
     const [widthImage, setWidthImage] = useState(window.innerWidth);
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
-    const getFilesDisplayed = (filesData, filesChosen) => {
-        let dataIds = [];
-        if(filesChosen.length > 0){
-            for(let i = 0; i < filesChosen.length; i++){
-                let id = parseInt(filesChosen[i].id);
-                dataIds.push(id);
-            }
-        }
-
-        console.log("Main Frame: DATA IDS, ", dataIds);
-        console.log("Main Frame: FILES DATA, ", filesData);
-        
-        let imageData = [];
-        for(let i=0; i < dataIds.length; i++){
-            let imageOne = filesData[dataIds[i]-1];
-            imageData.push(imageOne);
-        }
-
-        console.log("Main Frame: IMAGE DATA, ", imageData);
-        return imageData;
-    }
-
-    // useEffect(() =>{
-    //     if(props.filesChosen){
-    //         setFilesChosen(props.filesChosen);
-    //         console.log("Main Frame: FILES CHOSEN, ", props.filesChosen);
-    //         console.log("Main Frame: FILES, ", props.files);
-    //         let dataFilesChosenDisplayed = getFilesDisplayed(props.files, props.filesChosen);
-    //         console.log("Main Frame: FILES CHOSEN DISPLAYED, ", dataFilesChosenDisplayed);
-    //         changeLoadFile(dataFilesChosenDisplayed);
-    //         setFilesDisplayed(dataFilesChosenDisplayed);
-    //     }
-    // },[props.filesChosen])
-
-    const showTiffFile = () => {
-
-    }
-
+    useEffect(() => {
+        handleResize();
+    }, [imageViewAreaRef]);
 
     useEffect(() => {
-        // console.log("PROPS.FILES ON FILE MAIN FRAME: ", props.files);
-        if(props.files){
-            
+        if (props.files) {
             setFiles(files);
         }
-    },[props.files])
-
-    useEffect(() => {
-        console.log("FILES ON FILE MAIN FRAME: ", files);
-    },[files])
-    
+    }, [props.files])
 
     const HeaderContent = () => {
         return (
@@ -216,7 +165,6 @@ const MainFrame = (props) => {
                                     <MenuItem onClick={handleClose}>Profile</MenuItem>
                                     <MenuItem onClick={handleClose}>My account</MenuItem>
                                 </Menu>
-
                                 <IconButton size="large">
                                     <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}> JM </Avatar>
                                 </IconButton>
@@ -237,48 +185,44 @@ const MainFrame = (props) => {
         );
     }
 
-    function imgLoadedFromFile(fileDisplay, name, size) {
-        fileDisplay.arrayBuffer().then((fileBuffer) => {
-            var ifds = UTIF.decode(fileBuffer);
+    // function imgLoadedFromFile(fileDisplay, name, size) {
+    //     fileDisplay.arrayBuffer().then((fileBuffer) => {
+    //         var ifds = UTIF.decode(fileBuffer);
+    //         UTIF.decodeImage(fileBuffer, ifds[0])
+    //         var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+    //         const firstPageOfTif = ifds[0];
+    //         // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
+    //         // console.log("MAIN FRAME: rgba: ", rgba);
+    //         // const imageWidth = firstPageOfTif.width;
+    //         // const imageHeight = firstPageOfTif.height;
+    //         const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
+    //         const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
+    //         setWidthImage(imageWidth);
+    //         setHeightImage(imageHeight);
+    //         // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
+    //         // console.log("imgLoadedFromFile: ", imgSource);
+    //         // setLoadImageSource(imgSource);
 
-            console.log("Main Frame: THEN imgLoadedFromFile: ", fileBuffer);
+    //         const cnv = document.createElement("canvas");
+    //         cnv.width = imageWidth;
+    //         cnv.height = imageHeight;
 
-            UTIF.decodeImage(fileBuffer, ifds[0])
-            var rgba  = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-            const firstPageOfTif = ifds[0];
-            // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-            // console.log("MAIN FRAME: rgba: ", rgba);
-            // const imageWidth = firstPageOfTif.width;
-            // const imageHeight = firstPageOfTif.height;
-            const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
-            const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
-            setWidthImage(imageWidth);
-            setHeightImage(imageHeight);
-            // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
-            // console.log("imgLoadedFromFile: ", imgSource);
-            // setLoadImageSource(imgSource);
-
-            const cnv = document.createElement("canvas");
-            cnv.width = imageWidth;
-            cnv.height = imageHeight;
-
-            const ctx = cnv.getContext("2d");
-            const imageData = ctx.createImageData(imageWidth, imageHeight);
-            console.log("MAIN FRAME: imagedata: ", imageData);
-            for (let i = 0; i < rgba.length; i++) {
-                imageData.data[i] = rgba[i];
-            }
-            ctx.putImageData(imageData, 0, 0);
-            console.log("MAIN FRAME: cnv: ", cnv);
-            setLoadImageSource(cnv);
-        })
-        
-    }
+    //         const ctx = cnv.getContext("2d");
+    //         const imageData = ctx.createImageData(imageWidth, imageHeight);
+    //         console.log("MAIN FRAME: imagedata: ", imageData);
+    //         for (let i = 0; i < rgba.length; i++) {
+    //             imageData.data[i] = rgba[i];
+    //         }
+    //         ctx.putImageData(imageData, 0, 0);
+    //         console.log("MAIN FRAME: cnv: ", cnv);
+    //         setLoadImageSource(cnv);
+    //     })
+    // }
 
 
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
-        console.log(files[0], " mainFrame : changeloadfile");
+        // console.log(files[0], " mainFrame : changeloadfile");
         let file = files[0];
         if (file) {
             let name = "";
@@ -297,9 +241,8 @@ const MainFrame = (props) => {
             // var fileBuffer = Buffer.from(file)
             // window.Buffer = window.Buffer || require("buffer").Buffer;
             binaryData.push(file.file);
-
             // var blob = new Blob(file.file, {type: "image/tiff"}); 
-            console.log(URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})), " BLOB mainFrame : file url2");
+            // console.log(URL.createObjectURL(new Blob([binaryData], { type: "image/tiff" })), " BLOB mainFrame : file url2");
             // var dataObj = URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"}));
             // var dataObj = file.file;
             // toBase64(dataObj).then((result)=>{
@@ -308,7 +251,7 @@ const MainFrame = (props) => {
             //     console.log("BASE 64: ", textbase64);
             //     setLoadImageSource(textbase64);
             // })
-            
+
             // Tiff.initialize({TOTAL_MEMORY: 16777216 * 10});
             // var tiff = new Tiff({
             //     buffer: fileBuffer
@@ -320,15 +263,15 @@ const MainFrame = (props) => {
             // setLoadImageSource({ urlOrFile: URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})), description: name, size: size });
             // setLoadImageSource(URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})));
             var imageUrl = "my_image.tif";
-            if(name !== ""){
-                imageUrl = "http://localhost:8000/"+name;
+            if (name !== "") {
+                imageUrl = "http://localhost:8000/" + name;
             }
-            console.log("MAIN FRAME FILE NAME: ", imageUrl);
+            // console.log("MAIN FRAME FILE NAME: ", imageUrl);
             // var xhr = new XMLHttpRequest();
             // xhr.open("GET", imageUrl);
             // xhr.responseType = "arraybuffer";
             // xhr.onload = imgLoaded;   xhr.send();
-            imgLoadedFromFile(file.file, name, size);
+            // imgLoadedFromFile(file.file, name, size);
             // const ifds = UTIF.decode(file.file.arrayBuffer());
             // console.log("MAIN FRAME: ifds: ", ifds, file.file.arrayBuffer());
             // const firstPageOfTif = ifds[0];
@@ -356,12 +299,12 @@ const MainFrame = (props) => {
         }
     }
 
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
+    // const toBase64 = file => new Promise((resolve, reject) => {
+    //     const reader = new FileReader();
+    //     reader.readAsDataURL(file);
+    //     reader.onload = () => resolve(reader.result);
+    //     reader.onerror = error => reject(error);
+    // });
 
     return (
         <>

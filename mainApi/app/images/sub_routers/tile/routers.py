@@ -42,17 +42,16 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
                     clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
-    file_path = STATIC_PATH.joinpath(files[0].filename)
+
     for f in os.listdir(STATIC_PATH):
         os.remove(os.path.join(STATIC_PATH, f))
-        
-    async with aiofiles.open(file_path, 'wb') as f:
-        content = await files[0].read()
-        await f.write(content)
+    for each_file in files:
+        file_path = STATIC_PATH.joinpath(each_file.filename)
+        async with aiofiles.open(file_path, 'wb') as f:        
+            content = await each_file.read()
+            await f.write(content)
     # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db) 
-    result = {"Flag_3d": True,
-                "N_images": 10,
-                "path_images": [files[0].filename]}
+    result = {"Flag_3d": True, "N_images": 10, "path_images": [files[0].filename]}
     return JSONResponse(result)
 
 @router.post("/deconvol2D", 
@@ -116,8 +115,7 @@ async def SuperRes(file_name: str = Form(''),
             response_description="Upload Image Tiles",
             response_model=List[TileModelDB],
             status_code=status.HTTP_200_OK)
-async def get_tile_list(current_user: UserModelDB = Depends(get_current_user),
-                        db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
@@ -170,19 +168,17 @@ async def delete_tiles(tiles: List[TileModelDB],
             response_description="Align Tiles",
             response_model=List[AlignedTiledModel],
             status_code=status.HTTP_200_OK)
-async def _align_tiles_naive(request: AlignNaiveRequest,
-                             tiles: List[TileModelDB] = Depends(get_tile_list)) -> List[AlignedTiledModel]:
+async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB] = Depends(get_tile_list)) -> List[AlignedTiledModel]:
     """
         performs a naive aligning of the tiles simply based on the given rows and method.
         does not perform any advanced stitching or pixel checking
 
         Called using concurrent.futures to make it async
     """
-
+    print(tiles, " : align_tiles_naive : ")
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)  # await result
-
         return aligned_tiles
 
 
@@ -200,9 +196,7 @@ async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list))
 
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
-        aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles,
-                                                   "img_r{row:03}_c{col:03}.tif")  # await result
-
+        aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles, "img_r{row:03}_c{col:03}.tif")  # await result
         return aligned_tiles
 
 

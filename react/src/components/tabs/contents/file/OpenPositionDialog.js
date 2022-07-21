@@ -91,15 +91,16 @@ const ImageDropzone = (props) => {
 
     const [files, setFiles] = useState([]);
     const updateFiles = async (incommingFiles) => {
-        console.log(incommingFiles.length, incommingFiles[0], "incommingFiles");
-        let files = [];
+        // console.log(incommingFiles.length, incommingFiles[0], "incommingFiles");
         props.setLoading(true);
+        let files = [];
         for (let i = 0; i < incommingFiles.length; i++) {
             files.push(incommingFiles[i].file);
-            // props.getLoadingProgress(i + 1);
         }
-        await api.uploadImageTiles(files);
         props.setFiles(files);
+        if (files.length > 0) {
+            await api.uploadImageTiles(files);
+        }
         props.setLoading(false);
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
@@ -623,7 +624,7 @@ const OpenPositionDialog = (props) => {
     }
 
     useEffect(() => {
-        console.log("Files Uploaded,", filesUploaded);
+        // console.log("Files Uploaded,", filesUploaded);
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
             store.dispatch({
@@ -653,7 +654,7 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 &&
                         <TabContainer>
-                            <ImageDropzone setFiles={(filesUploaded) => { setFilesUploaded(filesUploaded) }} setLoading={(loading) => setIsLoading(loading)}/>
+                            <ImageDropzone setFiles={(filesUploaded) => { setFilesUploaded(filesUploaded) }} setLoading={(loading) => setIsLoading(loading)} />
                         </TabContainer>}
                     {selectedTab === 1 &&
                         <TabContainer>
@@ -682,8 +683,8 @@ const OpenPositionDialog = (props) => {
                             <Button className="cloud-btn" variant="contained" onClick={handleCloudDialog} color="primary" style={{ marginRight: "150px", marginLeft: "0px" }}>Cloud</Button>
                             {
                                 isLoading ? <div className="progress" style={{ width: "400px" }}>
-                                        <div className="progress-bar"></div>
-                                    </div> : <div style={{ width: "400px" }}></div>
+                                    <div className="progress-bar"></div>
+                                </div> : <div style={{ width: "400px" }}></div>
                             }
                             <Button style={{ marginLeft: "180px" }} size="medium" color="primary" variant="contained" onClick={handleCloseOpenDlg}>Cancel</Button>
                             {cloudDialog && <OpenCloudDialog handleClose={handleCloudDialog} />}
