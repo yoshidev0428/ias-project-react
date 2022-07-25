@@ -2,7 +2,7 @@ import { api, BASE_API_URL } from "./base";
 import store from '../reducers';
 import axios from "axios";
 
-export const listTiles = (success, failed) => {
+export const listTiles = (callback) => {
     api
         .get("image/tile/list")
         .then(function (response) {
