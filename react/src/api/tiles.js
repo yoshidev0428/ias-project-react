@@ -6,10 +6,10 @@ export const listTiles = (success, failed) => {
     api
         .get("image/tile/list")
         .then(function (response) {
-            success(response);
+            callback(response, true);
         })
         .catch(function (error) {
-            failed(error);
+            callback(error, false);
         });
 };
 

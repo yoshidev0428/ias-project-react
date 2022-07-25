@@ -3,7 +3,6 @@ import store from '../reducers'
 const state = store.getState();
 // export const BASE_API_URL = "http://localhost:8000/";
 export const BASE_API_URL = "http://20.210.126.209:8000/";
-// export const BASE_API_URL = "api:8000/apis/";
 // export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
 
 export const api = axios.create({

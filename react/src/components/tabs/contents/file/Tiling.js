@@ -108,19 +108,19 @@ const Tiling = (props) => {
 
     const handleAlignment = (event) => {
         console.log(" handleAlignment", fileObjs.length, event.target.value);
-        api.alignTilesApi(fileObjs.length, event.target.value, handleAlignTilesApi);
-        if ( fileObjs.length > 0 ) {
+        if (fileObjs.length > 0) {
             let method = event.target.value;
-            if ( tilingAlignButtons.includes(method) ) {
-                api.alignTilesApi(fileObjs.length, method, handleAlignTilesApi);
+            if (tilingAlignButtons.includes(method)) {
+                api.alignTilesApi(fileObjs.length, method, handleApi);
             }
         }
         // setAlignment(newAlignment);
     };
 
-    const handleAlignTilesApi = (response, status) => {
-        if ( status ) {
+    const handleApi = (response, status) => {
+        if (status) {
             console.log("handleAlignTilesApi : response :", response);
+            displayResponse(response);
         } else {
             console.log("handleAlignTilesApi : error :", response);
         }
@@ -128,6 +128,9 @@ const Tiling = (props) => {
 
     const handleChange = (event) => {
         setChecked(event.target.checked);
+        if (fileObjs.length > 0) {
+            api.listTiles(handleApi);
+        }
     };
 
     const autoPatternMathing = () => {
@@ -160,22 +163,52 @@ const Tiling = (props) => {
         setScale(event.target.value);
     };
 
-    const displayImage = async (file) => {
-        // console.log("displayImage : ", file);
+    const handleListContentItemClick = (event, index) => {
+        console.log(" Selected Image : ", index);
+        if (fileObjs.length > 0) {
+            setSelectedImageFile(fileObjs[index]);
+            displayImage(fileObjs[index], "tiff");
+        }
+    };
+
+    const displayImage = async (file, type) => {
         try {
-            displayTiff(file, file.name, file.size);
+            if (type === "tiff") {
+                displayTiff(file, file.name, file.size);
+            }
         }
         catch (err) {
             console.log(" error : Tiling.js useEffect : ", err);
         }
     }
 
-    const handleListContentItemClick = (event, index) => {
-        console.log(" Selected Image : ", index);
-        if (fileObjs.length > 0) {
-            setSelectedImageFile(fileObjs[index]);
-            displayImage(fileObjs[index]);
+    const displayResponse = async (response) => {
+        try {
+            displayAlignment(response);
         }
+        catch (err) {
+            console.log(" error : Tiling.js useEffect : ", err);
+        }
+    }
+
+    function displayAlignment(response) {
+        var rgba = UTIF.toRGBA8(response[0]);  // Uint8Array with RGBA pixels
+        const firstPageOfTif = response[0];
+        const imageWidth = firstPageOfTif.width;
+        const imageHeight = firstPageOfTif.height;
+        // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
+        // const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
+        setWidthImage(imageWidth);
+        setHeightImage(imageHeight);
+        const cnv = document.getElementById("canvas");
+        cnv.width = imageWidth;
+        cnv.height = imageHeight;
+        const ctx = cnv.getContext("2d");
+        const imageData = ctx.createImageData(imageWidth, imageHeight);
+        for (let i = 0; i < rgba.length; i++) {
+            imageData.data[i] = rgba[i];
+        }
+        ctx.putImageData(imageData, 0, 0);
     };
 
     function displayTiff(fileDisplay, name, size) {
@@ -208,7 +241,9 @@ const Tiling = (props) => {
             console.log("props.files.length : ", props.files);
             setFileObjs(props.files);
             setSelectedImageFile(props.files[0]);
-            displayImage(props.files[0]);
+            if (props.files[0].name.includes(".tiff")) {
+                displayImage(props.files[0], "tiff");
+            }
         }
     }, [props.files])
 
@@ -263,8 +298,8 @@ const Tiling = (props) => {
                                     >
                                         {[...Array(6)].map((_, i) => {
                                             return <Tooltip title={tilingAlignButtons[i]} key={i}>
-                                                    <ToggleButton key={i.toString() + "ToggleButton"} value={i}><Image value={tilingAlignButtons[i]} style={{ ...stylingTiling.ToggleButtonGroup, filter: i === 3 ? 'grayscale(1)' : '' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
-                                                </Tooltip >
+                                                <ToggleButton key={i.toString() + "ToggleButton"} value={i}><Image value={tilingAlignButtons[i]} style={{ ...stylingTiling.ToggleButtonGroup, filter: i === 3 ? 'grayscale(1)' : '' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
+                                            </Tooltip >
                                         })}
                                     </ToggleButtonGroup>
                                     <FormGroup>
