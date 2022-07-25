@@ -34,13 +34,6 @@ var acceptedFiles = [
     // { id: 4, errors: [], file:{name: "LiveDead2_Plate_R_p00_0_H12f02d0.TIF"}, valid: true },
 ]
 
-// const rows1 = [{ "id": 1, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-// { "id": 2, "filename": "0.jpg", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-// { "id": 3, "filename": "0input.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-// { "id": 4, "filename": "1EDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-// { "id": 5, "filename": "2GANSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" },
-// { "id": 6, "filename": "3WDSR.png", "series": "", "frame": "", "c": "", "size_c": "", "size_t": "", "size_x": "", "size_y": "", "size_z": "" }];
-
 const columns = [
     { headerName: 'No', field: 'id', sortable: false },
     { headerName: 'FileName', field: 'filename', sortable: false },
@@ -509,7 +502,7 @@ const DropzoneNamesFiles = () => {
                     <Row className="align-center justify-center m-0 border">
                         <p className="mb-0 mr-3">Example :</p>
                         {/* <input className='mb-0 showFileName form-control shadow-none' ref={exampleBox} onMouseUp={selectExampleString} value={fileName} defaultValue={fileName} /> */}
-                        <div className='showFileName shadow-none mb-0 pb-0 d-flex mr-1' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
+                        <div className='showFileName shadow-none mb-0 pb-0 d-flex' ref={exampleBox} onMouseUp={() => selectExampleString()} style={{ height: "auto !important" }}>
                             {fileName.split("").map((item, index) => {
                                 return <tt key={index}><strong><p id={"filename" + index.toString()} className="mb-0 font-bolder font-20" key={index}>{item}</p></strong></tt>
                             })}
