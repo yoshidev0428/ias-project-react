@@ -68,7 +68,7 @@ const Tiling = (props) => {
 
     const [value, setValue] = useState(0);
     const [fileObjs, setFileObjs] = useState([]);
-    const [selectedImageFile, setSelectedImageFile] = useState();
+    const [selectedImageFileIndex, setSelectedImageFileIndex] = useState(0);
     const [widthImage, setWidthImage] = useState(window.innerWidth);
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
@@ -165,7 +165,7 @@ const Tiling = (props) => {
     const handleListContentItemClick = (event, index) => {
         console.log(" Selected Image : ", index);
         if (fileObjs.length > 0) {
-            setSelectedImageFile(fileObjs[index]);
+            setSelectedImageFileIndex(index);
             displayImage(fileObjs[index], "tiff");
         }
     };
@@ -212,12 +212,12 @@ const Tiling = (props) => {
 
     function displayTiff(fileDisplay, name, size) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
-            var ifds = UTIF.decode(fileBuffer);
+            let ifds = UTIF.decode(fileBuffer);
             UTIF.decodeImage(fileBuffer, ifds[0])
             var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-            const firstPageOfTif = ifds[0];
-            const imageWidth = firstPageOfTif.width;
-            const imageHeight = firstPageOfTif.height;
+            let firstPageOfTif = ifds[0];
+            let imageWidth = firstPageOfTif.width;
+            let imageHeight = firstPageOfTif.height;
             // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
             // const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
             setWidthImage(imageWidth);
@@ -226,7 +226,7 @@ const Tiling = (props) => {
             cnv.width = imageWidth;
             cnv.height = imageHeight;
             const ctx = cnv.getContext("2d");
-            const imageData = ctx.createImageData(imageWidth, imageHeight);
+            let imageData = ctx.createImageData(imageWidth, imageHeight);
             for (let i = 0; i < rgba.length; i++) {
                 imageData.data[i] = rgba[i];
             }
@@ -239,8 +239,8 @@ const Tiling = (props) => {
         if (props.files.length > 0) {
             console.log("props.files.length : ", props.files);
             setFileObjs(props.files);
-            setSelectedImageFile(props.files[0]);
-            if (props.files[0].name.includes(".tiff")) {
+            setSelectedImageFileIndex(0);
+            if (props.files[0].type.includes("image/tiff")) {
                 displayImage(props.files[0], "tiff");
             }
         }
@@ -269,15 +269,15 @@ const Tiling = (props) => {
                                     fileObjs !== undefined && fileObjs !== null ? <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
                                         {
                                             fileObjs.map((content, idx) => {
-                                                // if (idx === fileObjs.indexof(selectedImageFile)) {
-                                                //     return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "lightblue" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                //         <ListItemText primary={content.name} />
-                                                //     </ListItemButton>
-                                                // } else {
-                                                return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                    <ListItemText primary={content.name} />
-                                                </ListItemButton>
-                                                // }
+                                                if (idx === selectedImageFileIndex) {
+                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "lightblue" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                        <ListItemText primary={content.name} />
+                                                    </ListItemButton>
+                                                } else {
+                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                        <ListItemText primary={content.name} />
+                                                    </ListItemButton>
+                                                }
                                             })}
                                     </List> : <></>
                                 }
