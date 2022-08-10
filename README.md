@@ -60,3 +60,10 @@ Default:
 Apache License 2.0
 
 ---
+
+### Explanation about backend
+- The backend was configurated as docker container
+1. mainApi is fastAPI framework backend to provider api to the frontend ( ias-project-react-mainapi)
+2. Database docker container ( mongo )
+3. Backend database server container ( mongo-express ) 
+4. Others are image processing module working as docker container.

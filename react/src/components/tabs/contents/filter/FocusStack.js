@@ -7,7 +7,7 @@ import {
 } from '@mdi/js'
 
 import FocusDialog from "./dialog/FocusDialog";
-import { useFlagsStore } from "../../../../components/state";
+import { useFlagsStore } from "../../../state";
 export default function FocusStack() {
     
     const Focusflag = useFlagsStore(store => store.Focusflag);

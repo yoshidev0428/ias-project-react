@@ -262,10 +262,6 @@ const MainFrame = (props) => {
             // setLoadImageSource({ urlOrFile: URL.createObjectURL(files), description: name, size: size });
             // setLoadImageSource({ urlOrFile: URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})), description: name, size: size });
             // setLoadImageSource(URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})));
-            var imageUrl = "my_image.tif";
-            if (name !== "") {
-                imageUrl = "http://localhost:8000/" + name;
-            }
             // console.log("MAIN FRAME FILE NAME: ", imageUrl);
             // var xhr = new XMLHttpRequest();
             // xhr.open("GET", imageUrl);

@@ -6,7 +6,7 @@ import {
 } from '@mdi/js'
 import Icon from '@mdi/react';
 import Dec3dDialog from "./dialog/Dec3dDialog";
-import { useFlagsStore } from "../../../../components/state";
+import { useFlagsStore } from "../../../state";
 
 
 export default function Dec3D() {
