@@ -3,7 +3,7 @@ import {
     mdiFilter,
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import { useFlagsStore } from "../../../../components/state";
+import { useFlagsStore } from "../../../state";
 import Filter2dDialog from "./dialog/Filter2dDialog";
 import Filter3dDialog from "./dialog/Filter3dDialog";
 

@@ -55,7 +55,7 @@ async def create_user(user: CreateUserModel, db: AsyncIOMotorDatabase) -> Create
     # create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(user_id=str(new_user.id), expires_delta=access_token_expires)
-      
+
     created_user_reply = CreateUserReplyModel(user=created_user,
                                               otp_secret=otp_secret,
                                               otp_uri=otp_uri,
@@ -179,11 +179,12 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
 
         TODO find way to modify swagger to let me add otp separately, no login2 needed
     """
-    password = form_data.password[:-6]  # exclude the last 6 digits
-    otp = form_data.password[-6:]  # include only the last 6 digits
-    
+    print(form_data.username, form_data.password)
+    password = form_data.password#[:-6]  # exclude the last 6 digits
+    otp = form_data.password#[-6:]  # include only the last 6 digits
+
     user: UserModelDB = await get_user_by_email(form_data.username, db)  # username is email
-    is_user_auth = authenticate_user(user, password=password, otp=otp)    
+    is_user_auth = authenticate_user(user, password=password, otp=otp)
     if not is_user_auth:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -217,7 +218,6 @@ async def login(form_data: OAuth2PasswordRequestForm, otp: str, db: AsyncIOMotor
         Prettier than the /token function since the requirement of otp is made clear
         """
     form_data.password += otp  # adds the otp to the end of the password to fit the login method
-    print(form_data.password)
     return await login_swagger(form_data=form_data, db=db)
 
 
@@ -244,7 +244,7 @@ def authenticate_email_password(user: UserModelDB or None, password) -> bool:
 
 
 def authenticate_user(user: UserModelDB or None, password, otp: str) -> bool:
-    
+
     email_password_authenticated = authenticate_email_password(user, password)
     if email_password_authenticated is False:
         return False

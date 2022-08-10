@@ -6,7 +6,7 @@ import Slider from '@mui/material/Slider';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
-import { useFlagsStore } from "../../../../../components/state";
+import { useFlagsStore } from "../../../../state";
 
 const Dec3dDialog = () => {
 

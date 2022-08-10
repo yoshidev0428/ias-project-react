@@ -3,7 +3,7 @@ import SimpleDialog from "../../../../custom/SimpleDialog";
 import { Col } from 'react-bootstrap';
 import Button from '@mui/material/Button';
 
-import {useFlagsStore} from "../../../../../components/state";
+import {useFlagsStore} from "../../../../state";
 
 const FocusDialog = () => {
     
