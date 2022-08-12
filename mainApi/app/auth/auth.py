@@ -180,8 +180,8 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
         TODO find way to modify swagger to let me add otp separately, no login2 needed
     """
     print(form_data.username, form_data.password)
-    password = form_data.password#[:-6]  # exclude the last 6 digits
-    otp = form_data.password#[-6:]  # include only the last 6 digits
+    password = form_data.password[:-6]  # exclude the last 6 digits
+    otp = form_data.password[-6:]  # include only the last 6 digits
 
     user: UserModelDB = await get_user_by_email(form_data.username, db)  # username is email
     is_user_auth = authenticate_user(user, password=password, otp=otp)
@@ -194,7 +194,6 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
     # create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(user_id=str(user.id), expires_delta=access_token_expires)
-
     # update db with last_login time and set the user to is_active=True
     await db["users"].update_one({"email": form_data.username}, {"$set": {
         "lastLogin": datetime.now().strftime("%m/%d/%y %H:%M:%S"),
@@ -206,7 +205,6 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
         access_token=access_token,
         token_type="Bearer"
     )
-
     return reply
 
 
