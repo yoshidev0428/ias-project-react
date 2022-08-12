@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {Container, Col, Row} from "react-bootstrap";
+import {Container, Col } from "react-bootstrap";
 import {connect} from "react-redux";
 import {Button} from "@mui/material";
 import store from "../../reducers";

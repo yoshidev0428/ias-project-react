@@ -1,12 +1,9 @@
 import axios from 'axios';
 import store from '../reducers';
 const state = store.getState();
-// export const BASE_API_URL = 'http://localhost:8000/';
-export const BASE_API_URL = "http://20.210.126.209:8000/";
-// export const BASE_API_URL = "http://docker.for.mac.localhost:8000/apis/";
 
 export const api = axios.create({
-    baseURL: BASE_API_URL,
+    baseURL: process.env.REACT_APP_BASE_API_URL,
     headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
