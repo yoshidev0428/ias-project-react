@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router';
 import { Form, Button, Alert, Container } from 'react-bootstrap';
 import * as authApi from "../../api/auth";
 import store from '../../reducers';
@@ -22,7 +21,6 @@ const Register = () => {
     const callSubmit = async (e) => {
         // Prevents page reload on wrongs creds
         e.preventDefault();
-        const OTP_QR_PAGE = "otpQRPage";
         const registerForm = {
             fullName: firstName + ' ' + lastName,
             email: email,
@@ -62,7 +60,7 @@ const Register = () => {
                         }
                     });
                     /* then we show the QR code so that the user may save it */
-                    store.dispatch({ type: "auth_setAuthPage", page: OTP_QR_PAGE });
+                    store.dispatch({ type: "auth_setAuthPage", page: process.env.REACT_APP_OTP_QR_PAGE });
                 }
             })
             .catch(e => {

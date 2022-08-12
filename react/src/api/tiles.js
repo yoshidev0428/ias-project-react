@@ -1,10 +1,8 @@
-import { api, BASE_API_URL } from "./base";
+import { api } from "./base";
 import store from '../reducers';
-import axios from "axios";
 
 export const listTiles = (callback) => {
-    api
-        .get("image/tile/list")
+    api.get("image/tile/list")
         .then(function (response) {
             callback(response, true);
         })
@@ -54,28 +52,25 @@ export const uploadImageTiles = (files) => {
             "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
             "Content-Type": "multipart/form-data",
             "Authorization": state.auth.tokenType + " " + state.auth.token,
-            "Content-Type": "application/json"
         }
     });
 };
 
 export const exportTiles = (success, fail) => {
-    // axios({
-    //   url: BASE_API_URL + "tiles/export/",
-    //   method: "GET",
-    //   responseType: "blob",
-    //   headers: {
-    //     Authorization: "Token " + sessionStorage.getItem("authToken")
-    //   }
-    // })
-    //   .then(response => {
-    //     success(response);
-    //   })
-    //   .catch(function(error) {
-    //     console.log("export failed callback");
-    //     console.log(error);
-    //     if (fail) {
-    //       fail(error);
-    //     }
-    //   });
+    api
+        .get("tiles/export/", { responseType: "blob" },
+            {
+                headers: {
+                    Authorization: "Token " + sessionStorage.getItem("authToken")
+                }
+            })
+        .then(response => {
+            success(response);
+        })
+        .catch(function (error) {
+            console.log(" -- export failed callback", error);
+            if (fail) {
+                fail(error);
+            }
+        });
 };

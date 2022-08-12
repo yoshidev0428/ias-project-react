@@ -116,7 +116,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-.env.*
+# .env.*
 !.env.sample
 
 # virtualenv
