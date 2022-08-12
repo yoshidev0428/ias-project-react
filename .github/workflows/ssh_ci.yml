@@ -23,7 +23,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v3
-
       - name: executing remote ssh commands using password
         uses: garygrossgarten/github-action-ssh@release
         with:
