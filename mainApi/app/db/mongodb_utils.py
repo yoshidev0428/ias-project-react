@@ -9,8 +9,8 @@ from mainApi.config import MONGO_DB_NAME
 async def connect_to_mongo():
     # logging.info("Connect to mongo...")
     db.client = AsyncIOMotorClient(MONGODB_URL)
-    #print(MONGODB_URL);
-    #print(MONGO_DB_NAME);
+    # print(MONGODB_URL);
+    # print(MONGO_DB_NAME);
     # logging.info("Connected to mongo")
 
 

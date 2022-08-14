@@ -43,8 +43,6 @@ router = APIRouter(
              response_description="Add new user",
              response_model=CreateUserReplyModel,
              status_code=status.HTTP_201_CREATED)
-
-
 async def register(user: CreateUserModel, db: AsyncIOMotorDatabase = Depends(get_database)) -> CreateUserReplyModel:
     print("Here is token cheking process!")
     return await create_user(user, db)
@@ -95,8 +93,10 @@ async def _auth_email_password(form_data: OAuth2PasswordRequestForm = Depends(),
     with the otp.
     """
 
-    user: UserModelDB = await get_user_by_email(form_data.username, db)  # username is email
-    is_user_auth = authenticate_email_password(user, password=form_data.password)
+    # username is email
+    user: UserModelDB = await get_user_by_email(form_data.username, db)
+    is_user_auth = authenticate_email_password(
+        user, password=form_data.password)
     if not is_user_auth:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -107,7 +107,8 @@ async def _auth_email_password(form_data: OAuth2PasswordRequestForm = Depends(),
 
 @router.get("/current", response_description="Current User", response_model=ShowUserModel)
 async def current_user(current_user: UserModelDB = Depends(get_current_user)):
-    return ShowUserModel.parse_obj(current_user.dict())  # we do not return the full UserModel, only the ShowUserModel
+    # we do not return the full UserModel, only the ShowUserModel
+    return ShowUserModel.parse_obj(current_user.dict())
 
 
 @router.get("/renew_token",
@@ -116,7 +117,8 @@ async def current_user(current_user: UserModelDB = Depends(get_current_user)):
 async def renew_token(current_user: UserModelDB = Depends(get_current_user)) -> LoginUserReplyModel:
     # create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(user_id=str(current_user.id), expires_delta=access_token_expires)
+    access_token = create_access_token(user_id=str(
+        current_user.id), expires_delta=access_token_expires)
 
     reply = LoginUserReplyModel(
         user=ShowUserModel.parse_obj(current_user),
@@ -129,7 +131,8 @@ async def renew_token(current_user: UserModelDB = Depends(get_current_user)) -> 
 
 @router.put("/update_current_user", response_description="Update Current User", response_model=ShowUserModel)
 async def _update_current_user(update_data: UpdateUserModel,
-                               current_user: UserModelDB = Depends(get_current_user),
+                               current_user: UserModelDB = Depends(
+                                   get_current_user),
                                db: AsyncIOMotorDatabase = Depends(get_database)):
     result: UserModelDB = await update_current_user(update_data, current_user, db)
 
@@ -138,7 +141,8 @@ async def _update_current_user(update_data: UpdateUserModel,
 
 @router.put("/change_password", response_description="Change User Password", response_model=ShowUserModel)
 async def _change_password(data: ChangeUserPasswordModel,
-                           current_user: UserModelDB = Depends(get_current_user),
+                           current_user: UserModelDB = Depends(
+                               get_current_user),
                            db: AsyncIOMotorDatabase = Depends(get_database)):
     user: UserModelDB = await update_user_password(old_password=data.old_password,
                                                    otp=data.otp,
@@ -167,14 +171,17 @@ async def list_users(max_entries: int = None,
 @router.put("/admin/{user_id}", response_description="Update a user", response_model=ShowUserModel)
 async def update_user(user_id: str,
                       update_data: UpdateUserAdminModel,
-                      admin_user: UserModelDB = Depends(get_current_admin_user),
+                      admin_user: UserModelDB = Depends(
+                          get_current_admin_user),
                       db: AsyncIOMotorDatabase = Depends(get_database)) -> ShowUserModel:
     # we must filter out the non set optional items in the update data
     # the key is also converted into lowerCamelCase
-    update_data = {to_camel(k): v for (k, v) in update_data.dict().items() if k in update_data.__fields_set__}
+    update_data = {to_camel(k): v for (k, v) in update_data.dict(
+    ).items() if k in update_data.__fields_set__}
 
     if len(update_data) < 1:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not update data")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Not update data")
 
     result: UserModelDB = await db["users"].find_one_and_update(
         {'_id': ObjectId(user_id)},
@@ -183,14 +190,16 @@ async def update_user(user_id: str,
     )
 
     if result is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user_id} not found")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=f"User {user_id} not found")
     else:
         return ShowUserModel.parse_obj(result)
 
 
 @router.delete("/admin/{user_id}", response_description="Delete a user")
 async def delete_user(user_id: str,
-                      admin_user: UserModelDB = Depends(get_current_admin_user),
+                      admin_user: UserModelDB = Depends(
+                          get_current_admin_user),
                       db: AsyncIOMotorDatabase = Depends(get_database)):
     delete_result = await db["users"].delete_one({"_id": user_id})
 
