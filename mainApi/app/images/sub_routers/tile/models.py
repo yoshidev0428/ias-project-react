@@ -14,7 +14,8 @@ class AlignMethodEnum(str, Enum):
 
 class TileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    user_id: PyObjectId = Field(default_factory=PyObjectId)  # reference to the user who uploaded the tile
+    # reference to the user who uploaded the tile
+    user_id: PyObjectId = Field(default_factory=PyObjectId)
     absolute_path: str
     file_name: str
     content_type: str  # MIME type

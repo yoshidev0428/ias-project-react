@@ -26,13 +26,16 @@ async def create_user(user: CreateUserModel, db: AsyncIOMotorDatabase) -> Create
     # check if another with the same email already exist
     existing_email = await db["users"].find_one({"email": user.email})
     if existing_email is not None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
 
     # turn user into a dictionary so that we can add keys
     new_user_dict = user.dict()
     new_user_dict['created_at'] = datetime.now().strftime("%m/%d/%y %H:%M:%S")
-    new_user_dict['last_login'] = new_user_dict['created_at']  # last login same as created_at
-    new_user_dict['hashed_password'] = get_password_hash(user.password)  # changing plain text password to hash
+    # last login same as created_at
+    new_user_dict['last_login'] = new_user_dict['created_at']
+    new_user_dict['hashed_password'] = get_password_hash(
+        user.password)  # changing plain text password to hash
     otp_secret = pyotp.random_base32()  # generate secret to be shared with user
     new_user_dict['otp_secret'] = otp_secret
     new_user_dict['is_admin'] = True
@@ -48,18 +51,21 @@ async def create_user(user: CreateUserModel, db: AsyncIOMotorDatabase) -> Create
 
     created_user = ShowUserModel.parse_obj(new_user)
 
-    otp_uri = pyotp.totp.TOTP(otp_secret).provisioning_uri(name=user.email, issuer_name='IAS App')
+    otp_uri = pyotp.totp.TOTP(otp_secret).provisioning_uri(
+        name=user.email, issuer_name='IAS App')
 
     otp_qr_svg = generate_qr_code_svg(otp_uri)
 
     # create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(user_id=str(new_user.id), expires_delta=access_token_expires)
+    access_token = create_access_token(user_id=str(
+        new_user.id), expires_delta=access_token_expires)
 
     created_user_reply = CreateUserReplyModel(user=created_user,
                                               otp_secret=otp_secret,
                                               otp_uri=otp_uri,
-                                              otp_qr_svg=jsonable_encoder(otp_qr_svg),
+                                              otp_qr_svg=jsonable_encoder(
+                                                  otp_qr_svg),
                                               access_token=access_token,
                                               token_type="Bearer")
 
@@ -96,14 +102,16 @@ async def get_current_active_user(current_user: UserModelDB = Depends(get_curren
     if current_user.is_active:
         return current_user
     else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
 
 
 async def get_current_admin_user(current_user: UserModelDB = Depends(get_current_user)) -> UserModelDB:
     if current_user.is_admin:
         return current_user
     else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not admin")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not admin")
 
 
 async def update_current_user(update_data: UpdateUserModel,
@@ -112,7 +120,8 @@ async def update_current_user(update_data: UpdateUserModel,
 
     # we must filter out the non set optional items in the update data
     # the key is also converted into lowerCamelCase
-    update_data = {to_camel(k): v for (k, v) in update_data.dict().items() if k in update_data.__fields_set__}
+    update_data = {to_camel(k): v for (k, v) in update_data.dict(
+    ).items() if k in update_data.__fields_set__}
 
     result = await db["users"].find_one_and_update(
         {'_id': current_user.id},
@@ -129,7 +138,8 @@ async def update_user_password(old_password,
                                db: AsyncIOMotorClient,
                                current_user: UserModelDB) -> UserModelDB:
     # check that the old password and otp is correct
-    is_user_auth = authenticate_user(current_user, password=old_password, otp=otp)
+    is_user_auth = authenticate_user(
+        current_user, password=old_password, otp=otp)
     if not is_user_auth:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -137,7 +147,8 @@ async def update_user_password(old_password,
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    new_password_hash = get_password_hash(new_password)  # changing plain text password to hash
+    # changing plain text password to hash
+    new_password_hash = get_password_hash(new_password)
 
     updated_user = await db["users"].find_one_and_update(
         {'_id': current_user.id},
@@ -183,7 +194,8 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
     password = form_data.password[:-6]  # exclude the last 6 digits
     otp = form_data.password[-6:]  # include only the last 6 digits
 
-    user: UserModelDB = await get_user_by_email(form_data.username, db)  # username is email
+    # username is email
+    user: UserModelDB = await get_user_by_email(form_data.username, db)
     is_user_auth = authenticate_user(user, password=password, otp=otp)
     if not is_user_auth:
         raise HTTPException(
@@ -193,7 +205,8 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
         )
     # create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(user_id=str(user.id), expires_delta=access_token_expires)
+    access_token = create_access_token(user_id=str(
+        user.id), expires_delta=access_token_expires)
     # update db with last_login time and set the user to is_active=True
     await db["users"].update_one({"email": form_data.username}, {"$set": {
         "lastLogin": datetime.now().strftime("%m/%d/%y %H:%M:%S"),
