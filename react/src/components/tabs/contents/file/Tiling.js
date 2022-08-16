@@ -7,19 +7,15 @@ import Tooltip from '@mui/material/Tooltip'
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Image, Alert } from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import ScrollArea from 'react-scrollbar';
 import DialogPM from "./DialogPM";
@@ -30,14 +26,7 @@ import {
     mdiClose,
     mdiPencil,
 } from '@mdi/js';
-// import Vessel from "../viewcontrol/Vessel";
-// import Objective from "../viewcontrol/Objective";
-// import Channel from "../viewcontrol/Channel";
-// import ImageAdjust from "../viewcontrol/ImageAdjust";
-// import ZPosition from "../viewcontrol/ZPosition";
-// import Timeline from "../viewcontrol/Timeline";
 import { connect } from 'react-redux';
-import store from "../../../../reducers";
 import * as api from "../../../../api/tiles";
 import UTIF from "utif";
 
@@ -106,14 +95,13 @@ const Tiling = (props) => {
     };
 
     const handleAlignment = (event) => {
-        console.log(" handleAlignment", fileObjs.length, event.target.value);
+        // console.log(" handleAlignment", fileObjs.length, event.target.value);
         if (fileObjs.length > 0) {
             let method = event.target.value;
             if (tilingAlignButtons.includes(method)) {
                 api.alignTilesApi(fileObjs.length, method, handleApi);
             }
         }
-        // setAlignment(newAlignment);
     };
 
     const handleApi = (response, status) => {
@@ -218,8 +206,6 @@ const Tiling = (props) => {
             let firstPageOfTif = ifds[0];
             let imageWidth = firstPageOfTif.width;
             let imageHeight = firstPageOfTif.height;
-            // const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
-            // const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
             setWidthImage(imageWidth);
             setHeightImage(imageHeight);
             const cnv = document.getElementById("canvas");
@@ -235,7 +221,6 @@ const Tiling = (props) => {
     }
 
     useEffect(() => {
-        // console.log(" Tiling UseEffect : ");
         if (props.files.length > 0) {
             console.log("props.files.length : ", props.files);
             setFileObjs(props.files);

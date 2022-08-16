@@ -31,6 +31,7 @@ export default function RoutedAvivator(props) {
 
     // const source = {
     //     urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
+    //     // urlOrFile: "http://localhost:8000/static/LiveDead2_Plate_R_p00_0_D03f00d3.TIF",
     //     description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
     // }
     const [urlSource, setUrlSource] = useState(null);
