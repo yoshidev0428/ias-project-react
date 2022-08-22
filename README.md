@@ -18,7 +18,7 @@ Please run the reset.sh script and once that has finished running you can run st
   # If this is the first time running this command it will take some time while the docker images are downloaded.
   # Future uses will be very fast.
   $ docker compose up
-  ```
+  ``` ( *** On ubuntu - use : docker-compose build, docker-compse up -d)
 - To start a development version of the front end, please input the following commands.
   ```sh
   $ cd react
