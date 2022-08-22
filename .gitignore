@@ -147,4 +147,4 @@ media/
 /vue/.nvmrc
 /datasets/
 /_tmp/
-*.sh
+#*.sh
