@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React from "react";
 import {Container, Col } from "react-bootstrap";
 import {connect} from "react-redux";
 import {Button} from "@mui/material";
-import store from "../../reducers";
+import store from "../reducers";
 const mapStateToPros = state => ({
     otpSecrets: state.auth.otpSecrets
   })
@@ -41,7 +41,7 @@ const RegisterOtpQr = (props) => {
                 type="primary"
                 size="large"
                 onClick={handleContinue}
-                style={{width: '100%', height: '50px', marginBottom: '30px', background: 'lightblue', borderRadius: '2px'}}
+                style={{width: "100%", height: "50px", marginBottom: "30px", background: "lightblue", borderRadius: "2px"}}
                 >
                 Continue
                 </Button>
