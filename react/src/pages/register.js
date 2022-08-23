@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Form, Button, Alert, Container } from 'react-bootstrap';
-import * as authApi from "../../api/auth";
-import store from '../../reducers';
+import React, { useState } from "react";
+import { Form, Button, Alert, Container } from "react-bootstrap";
+import * as authApi from "../api/auth";
+import store from "../reducers";
 
 
 const Register = () => {
 
     // User information hook
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const [error, setError] = useState('');
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [error, setError] = useState("");
 
     const showLogin = async (e) => {
         store.dispatch({ type: "auth_setAuthPage", page: "loginPage" });
@@ -22,7 +22,7 @@ const Register = () => {
         // Prevents page reload on wrongs creds
         e.preventDefault();
         const registerForm = {
-            fullName: firstName + ' ' + lastName,
+            fullName: firstName + " " + lastName,
             email: email,
             password: password,
             password_repeat: passwordConfirmation
@@ -78,10 +78,10 @@ const Register = () => {
     };
 
     return (
-        <div className='login-container'>
-            <Container className='inner-container model rules auto-complete label-position'>
+        <div className="login-container">
+            <Container className="inner-container model rules auto-complete label-position">
                 <Container className="title-container">
-                    <h2 className='title'>{"IAS-Register"}</h2>
+                    <h2 className="title">{"IAS-Register"}</h2>
                 </Container>
                 <Form onSubmit={callSubmit}>
                     <Form.Group controlId="formRegisterFirstname">
@@ -104,10 +104,10 @@ const Register = () => {
                         {/* <Form.Label>Confirm Password</Form.Label> */}
                         <Form.Control type="password" placeholder="Confirm password" value={passwordConfirmation} onChange={(p) => setPasswordConfirmation(p.currentTarget.value)} />
                     </Form.Group>
-                    <Alert variant='danger' style={error !== '' ? { display: "block" } : { display: "none" }}>
+                    <Alert variant="danger" style={error !== "" ? { display: "block" } : { display: "none" }}>
                         {error}
                     </Alert>
-                    <Button variant="primary" type="submit" block style={{ width: '100%', height: '40px', color: 'white', marginBottom: '5px', marginTop: "5px", background: '#007bff', borderRadius: '2px' }}>
+                    <Button variant="primary" type="submit" block style={{ width: "100%", height: "40px", color: "white", marginBottom: "5px", marginTop: "5px", background: "#007bff", borderRadius: "2px" }}>
                         Register
                     </Button>
                     <Button type="button" className="link-button" onClick={showLogin}>Switch to Login</Button>

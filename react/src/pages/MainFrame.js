@@ -27,19 +27,18 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import LinearProgress from '@mui/material/LinearProgress';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
-import RoutedAvivator from './viv'
-import DLMLTab from "./tabs/DLMLTab";
-import AdjustTab from "./tabs/AdjustTab";
-import FilterTab from "./tabs/FilterTab";
-import FileTab from "./tabs/FileTab";
-import ViewTab from "./tabs/ViewTab";
-import MeasureTab from "./tabs/MeasureTab";
-import ReportTab from "./tabs/ReportTab";
-import SettingsTab from "./tabs/SettingsTab";
+import RoutedAvivator from "../components/viv";
+import DLMLTab from "../components/tabs/DLMLTab";
+import AdjustTab from "../components/tabs/AdjustTab";
+import FilterTab from "../components/tabs/FilterTab";
+import FileTab from "../components/tabs/FileTab";
+import ViewTab from "../components/tabs/ViewTab";
+import MeasureTab from "../components/tabs/MeasureTab";
+import ReportTab from "../components/tabs/ReportTab";
+import SettingsTab from "../components/tabs/SettingsTab";
 import store from "../reducers";
-import { connect } from 'react-redux';
-import { useWindowDimensions } from "./helpers";
-import UTIF from "utif";
+import { connect } from "react-redux";
+import { getWindowDimensions } from "../components/helpers";
 
 function TabContainer(props) {
     return (
@@ -73,7 +72,7 @@ const darkTheme = createTheme({
 const MainFrame = (props) => {
 
     const imageViewAreaRef = useRef(null);
-    const { height } = useWindowDimensions();
+    const { height } = getWindowDimensions();
     const handleResize = () => {
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeHeight", imageViewAreaRef.current.offsetHeight);
@@ -185,41 +184,6 @@ const MainFrame = (props) => {
         );
     }
 
-    // function imgLoadedFromFile(fileDisplay, name, size) {
-    //     fileDisplay.arrayBuffer().then((fileBuffer) => {
-    //         var ifds = UTIF.decode(fileBuffer);
-    //         UTIF.decodeImage(fileBuffer, ifds[0])
-    //         var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-    //         const firstPageOfTif = ifds[0];
-    //         // console.log("IMG LOADED: ", ifds[0].width, ifds[0].height, ifds[0]);
-    //         // console.log("MAIN FRAME: rgba: ", rgba);
-    //         // const imageWidth = firstPageOfTif.width;
-    //         // const imageHeight = firstPageOfTif.height;
-    //         const imageWidth = localStorage.getItem("imageViewSizeWidth") !== undefined ? localStorage.getItem("imageViewSizeWidth") : firstPageOfTif.width;
-    //         const imageHeight = localStorage.getItem("imageViewSizeHeight") !== undefined ? localStorage.getItem("imageViewSizeHeight") : firstPageOfTif.height;
-    //         setWidthImage(imageWidth);
-    //         setHeightImage(imageHeight);
-    //         // let imgSource = { urlOrFile: URL.createObjectURL(new Blob([fileBuffer])), description: name, size: size };
-    //         // console.log("imgLoadedFromFile: ", imgSource);
-    //         // setLoadImageSource(imgSource);
-
-    //         const cnv = document.createElement("canvas");
-    //         cnv.width = imageWidth;
-    //         cnv.height = imageHeight;
-
-    //         const ctx = cnv.getContext("2d");
-    //         const imageData = ctx.createImageData(imageWidth, imageHeight);
-    //         console.log("MAIN FRAME: imagedata: ", imageData);
-    //         for (let i = 0; i < rgba.length; i++) {
-    //             imageData.data[i] = rgba[i];
-    //         }
-    //         ctx.putImageData(imageData, 0, 0);
-    //         console.log("MAIN FRAME: cnv: ", cnv);
-    //         setLoadImageSource(cnv);
-    //     })
-    // }
-
-
     const [loadImageSource, setLoadImageSource] = useState(null);
     const changeLoadFile = (files) => {
         // console.log(files[0], " mainFrame : changeloadfile");
@@ -251,45 +215,6 @@ const MainFrame = (props) => {
             //     console.log("BASE 64: ", textbase64);
             //     setLoadImageSource(textbase64);
             // })
-
-            // Tiff.initialize({TOTAL_MEMORY: 16777216 * 10});
-            // var tiff = new Tiff({
-            //     buffer: fileBuffer
-            // });
-            // var dataUrl = tiff.toDataURL();
-            // document.getElementById("tiffImage").src = URL.createObjectURL(new Blob([binaryData]));
-            // setLoadImageSource({ urlOrFile: URL.createObjectURL(blob), description: name, size: size });
-            // setLoadImageSource({ urlOrFile: URL.createObjectURL(files), description: name, size: size });
-            // setLoadImageSource({ urlOrFile: URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})), description: name, size: size });
-            // setLoadImageSource(URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"})));
-            // console.log("MAIN FRAME FILE NAME: ", imageUrl);
-            // var xhr = new XMLHttpRequest();
-            // xhr.open("GET", imageUrl);
-            // xhr.responseType = "arraybuffer";
-            // xhr.onload = imgLoaded;   xhr.send();
-            // imgLoadedFromFile(file.file, name, size);
-            // const ifds = UTIF.decode(file.file.arrayBuffer());
-            // console.log("MAIN FRAME: ifds: ", ifds, file.file.arrayBuffer());
-            // const firstPageOfTif = ifds[0];
-            // UTIF.decodeImage(file.file.arrayBuffer(), ifds);
-            // const rgba = UTIF.toRGBA8(firstPageOfTif);
-            // console.log("MAIN FRAME: rgba: ", rgba);
-            // const imageWidth = firstPageOfTif.width;
-            // const imageHeight = firstPageOfTif.height;
-
-            // const cnv = document.createElement("canvas");
-            // cnv.width = 640;
-            // cnv.height = 480;
-
-            // const ctx = cnv.getContext("2d");
-            // const imageData = ctx.createImageData(640, 480);
-            // console.log("MAIN FRAME: imagedata: ", imageData);
-            // for (let i = 0; i < rgba.length; i++) {
-            //     imageData.data[i] = rgba[i];
-            // }
-            // ctx.putImageData(imageData, 0, 0);
-            // console.log("MAIN FRAME: cnv: ", cnv);
-            // setLoadImageSource(cnv);
         } else {
             Alert("Please open correct file again!");
         }

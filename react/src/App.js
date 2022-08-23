@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import './App.scss';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Auth from './components/auth/auth';
-import MainFrame from './components/MainFrame';
+import Auth from './pages/auth';
+import MainFrame from './pages/MainFrame';
 const mapStateToProps = state => ({
     isShowAuthPage: state.auth.authPage !== null,
-    // isShowAuthPage: false,
     isLoggedIn: !state.auth.isLoggedIn
 })
 const App = (props) => {
@@ -23,17 +22,6 @@ const App = (props) => {
     }, []);
 
     return (
-        // Router Code
-        // <BrowserRouter>
-        //   <div  className="App container-fluid noPadding">
-        //     <ProtectedRoute 
-        //         path='/'
-        //         exact 
-        //         strict
-        //         component = {MainFrame}
-        //       />
-        //   </div>      
-        // </BrowserRouter>
         <>
             {props.isShowAuthPage ? <Auth /> : <MainFrame />}
         </>
