@@ -1,5 +1,4 @@
 import os
-
 # rabbitMQ_user = os.environ.get("RABBITMQ_USER")
 # rabbitMQ_password = os.environ.get("RABBITMQ_PWD")
 # rabbitMQ_port = os.environ.get("RABBITMQ_PORT")
