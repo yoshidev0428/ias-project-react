@@ -36,9 +36,9 @@ COPY ./stitching/requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt
 
 ## Copy shared utils
-COPY ./shared_utils /app/shared_utils/
+COPY ./docker_compose_libs/shared_utils /app/shared_utils/
 
-COPY ./celery_tasks/ /app/celery_tasks/
+COPY ./docker_compose_libs/celery_tasks/ /app/celery_tasks/
 COPY ./stitching /app
 
 #ENTRYPOINT celery -A stitching.main worker --concurrency=4 --loglevel=info -n stitching_worker.%h

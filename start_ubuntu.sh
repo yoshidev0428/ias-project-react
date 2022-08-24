@@ -1,10 +1,11 @@
 #!/bin/bash -e
 cd "$(dirname "$0")"
-echo ------ Starting Backend
+git reset --hard
 git pull
-docker compose build
+echo ------ Starting Backend
+docker-compose build
 echo ------ Docker Build Complete
-docker compose up -d
+docker-compose up -d
 echo ------ Started Backend
 cd react
 echo ------ Starting Frontend

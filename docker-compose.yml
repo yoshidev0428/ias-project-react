@@ -17,8 +17,8 @@ services:
             - image-storage:/image-storage
             - cache-storage:/cache-storage
             - ./mainApi:/app/mainApi:rm
-            - ./shared_utils:/app/shared_utils:rm
-            - ./celery_tasks:/app/celery_tasks:rm
+            - ./docker_compose_libs/shared_utils:/app/shared_utils:rm
+            - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rm
         command: [ "sh", "./mainApi/start.sh" ]
     # nginx:
     #   depends_on: 
@@ -93,8 +93,8 @@ services:
             - image-storage:/image-storage
             - cache-storage:/cache-storage
             # - ./stitching:/app
-            # - ./shared_utils:/app/shared_utils:ro
-            # - ./celery_tasks:/app/celery_tasks:ro
+            # - ./docker_compose_libs/shared_utils:/app/shared_utils:ro
+            # - ./docker-compose-libs/celery_tasks:/app/celery_tasks:ro
         depends_on:
             - rabbitmq
 volumes:

@@ -6,7 +6,6 @@ import json
 from celery_tasks.tasks import StitchingCeleryTask
 from celery_tasks.utils import create_worker_from
 
-
 from ashlar import filepattern
 from ashlar import reg
 
@@ -25,7 +24,6 @@ def ashlar_stitch(tiles, pattern):
 
     reader = filepattern.FilePatternReader(path=str(tile_folder),
                                            pattern=pattern, overlap=0.2)
-
     start = time.perf_counter()
     # perform actual alignment
     aligner = reg.EdgeAligner(reader, channel=0, filter_sigma=10, max_shift=500, verbose=True,
