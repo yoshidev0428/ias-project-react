@@ -91,10 +91,8 @@ export default function Avivator(props) {
                     {/* <DropzoneWrapper>
                         {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} />}
                     </DropzoneWrapper> */}
-                    {/* <ZoomController /> */}
                     {/* <Controller /> */}
                     {/* <SnackBars /> */}
-                    {/* <Footer /> */}
                     {!useLinkedView && <Footer />}
                 </div>
             </FullScreen>

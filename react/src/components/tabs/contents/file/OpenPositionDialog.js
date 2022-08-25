@@ -53,12 +53,12 @@ const nameTypeTableHeaders = [
 
 const namePatternsPrimary = [
     { label: 'Series', text: '', start: 0, end: 17, color: '#4caf50' },
-    { label: 'Row', text: '', start: 24, end: 25, color: '#1976d2' },
-    { label: 'Column', text: '', start: 25, end: 27, color: '#ff5722' },
-    { label: 'Field', text: '', start: 27, end: 30, color: '#fb8c00' },
-    { label: 'Channel', text: '', start: 30, end: 32, color: '#9c27b0' },
-    { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
-    { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
+    { label: 'Row', text: '', start: 18, end: 21, color: '#1976d2' },
+    { label: 'Column', text: '', start: 22, end: 23, color: '#ff5722' },
+    { label: 'Field', text: '', start: 24, end: 25, color: '#fb8c00' },
+    { label: 'Channel', text: '', start: 25, end: 26, color: '#9c27b0' },
+    { label: 'Z Position', text: '', start: 27, end: 30, color: '#607d8b' },
+    { label: 'Time Point', text: '', start: 31, end: 32, color: '#ff5252' },
 ];
 
 const TabContainer = (props) => {
@@ -74,9 +74,8 @@ TabContainer.propTypes = {
 };
 
 const ImageDropzone = (props) => {
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState(acceptedFiles);
     const updateFiles = async (incommingFiles) => {
-        // console.log(incommingFiles.length, incommingFiles[0], "incommingFiles");
         props.setLoading(true);
         let files = [];
         for (let i = 0; i < incommingFiles.length; i++) {
@@ -110,16 +109,13 @@ const ImageDropzone = (props) => {
             acceptedFiles !== [] &&
             acceptedFiles.length > 0
         ) {
-            // props.getLoadingProgress(0)
-            // props.getLoadingMax(0);
-            // setFiles(acceptedFiles);
         }
     }, []);
 
     return (
-        // onChangeView={updateFilesView} onUploadStart={updateStart} onUploadFinish={updateFinish}
         <Dropzone
             onChange={(incommingFiles) => updateFiles(incommingFiles)}
+            onReset={() => { setFiles([]) }}
             onDrop={startDrop}
             value={files}>
             {files.map((file, index) => (
@@ -225,7 +221,6 @@ const DropzoneMetaData = ({ contents, setContent }) => {
 
 const DropzoneNamesFiles = ({ contents, setContent }) => {
     // Names & Files Tab
-    console.log(contents);
     const exampleBox = useRef(null);
     // Drag & Drop files
     const [files, setFiles] = useState(acceptedFiles);
@@ -294,16 +289,11 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
 
     const clickNamePattern = (index) => {
         let selectedText = getSelectionText();
-        console.log(
-            selectedText,
-            index,
-            selectionRange,
-            'openposition dlg , clickNamePattern   getSelectionText'
-        );
+        // console.log( selectedText, index, selectionRange, 'openposition dlg , clickNamePattern   getSelectionText' );
         if (selectionRange !== null && selectedText !== '') {
             let text = selectionRange.text;
-            let startOffset = selectionRange.startOffset + 1;
-            let endOffset = selectionRange.endOffset + 1;
+            let startOffset = selectionRange.startOffset;
+            let endOffset = selectionRange.endOffset;
             if (text === selectedText) {
                 if (startOffset > -1 && endOffset > -1) {
                     let namePatternsPrimaryValue = [...namePatterns];
@@ -318,10 +308,7 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
                             }
                         }
                     }
-                    console.log(
-                        namePatternsPrimary,
-                        'openposition dlg , clickNamePattern   getSelectionText'
-                    );
+                    // console.log( namePatternsPrimary, 'openposition dlg , clickNamePattern   getSelectionText' );
                     setNamePatterns(namePatternsPrimaryValue);
                 }
             }
@@ -415,10 +402,6 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
             console.log('allFiles error: ' + files);
             return '';
         }
-        // progressBarValue = 0;
-        // progressBarMaxValue = files.length;
-        // console.log("Contents: ", contents);
-
         let new_content = [];
         let new_content_processing = [];
         let old_content = [...contents];
@@ -628,11 +611,6 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
                                 pageSize={pageSize}
                                 disableExtendRowFullWidth={false}
                                 onPageSizeChange={(newPageSize) => {
-                                    console.log(
-                                        'OnPageSizeChange: newPageSize',
-                                        newPageSize,
-                                        allFilesLength
-                                    );
                                     if (isNaN(newPageSize)) {
                                         setPageSize(allFilesLength);
                                     } else {
@@ -695,7 +673,6 @@ const OpenPositionDialog = (props) => {
     };
 
     useEffect(() => {
-        // console.log("Files Uploaded,", filesUploaded);
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
             store.dispatch({
