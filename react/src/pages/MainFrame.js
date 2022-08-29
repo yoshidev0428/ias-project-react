@@ -184,49 +184,6 @@ const MainFrame = (props) => {
         );
     }
 
-    const [loadImageSource, setLoadImageSource] = useState(null);
-    const changeLoadFile = (files) => {
-        // console.log(files[0], " mainFrame : changeloadfile");
-        let file = files[0];
-        if (file) {
-            let name = "";
-            let size = 0;
-            if (file.file.name !== undefined) {
-                name = file.file.name;
-            }
-            if (file.file.size !== undefined) {
-                size = file.file.size;
-            }
-            // let objectURL = URL.createObjectURL(file);
-            // console.log(objectURL, " mainFrame : file url1");
-            // let updatedURL = URL.revokeObjectURL(objectURL);
-            // console.log(updatedURL, " mainFrame : file url2");
-            var binaryData = [];
-            // var fileBuffer = Buffer.from(file)
-            // window.Buffer = window.Buffer || require("buffer").Buffer;
-            binaryData.push(file.file);
-            // var blob = new Blob(file.file, {type: "image/tiff"}); 
-            // console.log(URL.createObjectURL(new Blob([binaryData], { type: "image/tiff" })), " BLOB mainFrame : file url2");
-            // var dataObj = URL.createObjectURL(new Blob([binaryData], {type: "image/tiff"}));
-            // var dataObj = file.file;
-            // toBase64(dataObj).then((result)=>{
-            //     console.log("BASE 64: ", result);
-            //     let textbase64 = result;
-            //     console.log("BASE 64: ", textbase64);
-            //     setLoadImageSource(textbase64);
-            // })
-        } else {
-            Alert("Please open correct file again!");
-        }
-    }
-
-    // const toBase64 = file => new Promise((resolve, reject) => {
-    //     const reader = new FileReader();
-    //     reader.readAsDataURL(file);
-    //     reader.onload = () => resolve(reader.result);
-    //     reader.onerror = error => reject(error);
-    // });
-
     return (
         <>
             <HeaderContent />
@@ -253,11 +210,11 @@ const MainFrame = (props) => {
                             {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
                             {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
                             {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-                            {leftTabVal === 3 && <TabContainer><FileTab changeOpenedFile={(files) => changeLoadFile(files)} /></TabContainer>}
+                            {leftTabVal === 3 && <TabContainer><FileTab/></TabContainer>}
                         </div>
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
-                        <RoutedAvivator openedImageSource={loadImageSource} />
+                        <RoutedAvivator />
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
                         <div className='card border'>

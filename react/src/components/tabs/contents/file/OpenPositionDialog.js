@@ -53,12 +53,12 @@ const nameTypeTableHeaders = [
 
 const namePatternsPrimary = [
     { label: 'Series', text: '', start: 0, end: 17, color: '#4caf50' },
-    { label: 'Row', text: '', start: 18, end: 21, color: '#1976d2' },
-    { label: 'Column', text: '', start: 22, end: 23, color: '#ff5722' },
-    { label: 'Field', text: '', start: 24, end: 25, color: '#fb8c00' },
-    { label: 'Channel', text: '', start: 25, end: 26, color: '#9c27b0' },
-    { label: 'Z Position', text: '', start: 27, end: 30, color: '#607d8b' },
-    { label: 'Time Point', text: '', start: 31, end: 32, color: '#ff5252' },
+    { label: 'Row', text: '', start: 24, end: 25, color: '#1976d2' },
+    { label: 'Column', text: '', start: 25, end: 27, color: '#ff5722' },
+    { label: 'Field', text: '', start: 27, end: 30, color: '#fb8c00' },
+    { label: 'Channel', text: '', start: 30, end: 32, color: '#9c27b0' },
+    { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
+    { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
 ];
 
 const TabContainer = (props) => {
@@ -91,6 +91,7 @@ const ImageDropzone = (props) => {
     };
 
     const startDrop = (drop) => {
+        store.dispatch({ type: 'files_removeAllFiles', content: [] });
         // props.getLoadingMax(drop.length);
         // console.log( drop , "onDrop : ", new Date().getTime());
     };
@@ -116,7 +117,7 @@ const ImageDropzone = (props) => {
         <Dropzone
             onChange={(incommingFiles) => updateFiles(incommingFiles)}
             onReset={() => { setFiles([]) }}
-            onDrop={startDrop}
+            onDrop={() => { startDrop() }}
             value={files}>
             {files.map((file, index) => (
                 <FileItem key={index} {...file} k={file.id} info preview />
@@ -418,10 +419,7 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
         old_content = [];
         console.log('New Contents: ', new_content);
         console.log('new Contents For Processing: ', new_content_processing);
-        store.dispatch({
-            type: 'content_addContent',
-            content: new_content_processing,
-        });
+        store.dispatch({ type: 'content_addContent', content: new_content_processing });
         setContent(new_content);
         setRows(new_content);
     };
@@ -675,10 +673,7 @@ const OpenPositionDialog = (props) => {
     useEffect(() => {
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
-            store.dispatch({
-                type: 'files_addFiles',
-                data: filesUploaded,
-            });
+            store.dispatch({ type: 'files_addFiles', content: filesUploaded});
         }
     }, [filesUploaded]);
 
