@@ -40,10 +40,10 @@ api.interceptors.response.use(
     },
     (error) => {
         console.log('[API ERROR]', error);
-        // store.dispatch({ type: 'auth_logOut' });
-        // if (error?.response?.status === 401) {
-        //     store.dispatch({ type: 'auth_logOut' });
-        // }
+        store.dispatch({ type: 'auth_logOut' });
+        if (error?.response?.status === 401) {
+            store.dispatch({ type: 'auth_logOut' });
+        }
         return Promise.reject(error);
     }
 );

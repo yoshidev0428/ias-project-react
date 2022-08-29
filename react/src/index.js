@@ -7,13 +7,6 @@ import App from './App';
 import store from './reducers'
 import { createRoot } from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-// import authReducer from './reducers/modules/authReducer';
-// import counterReducer from './reducers/modules/counterReducer';
-// const rootStore = combineReducers({
-//     authReducer,
-//     counterReducer
-// })
-
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 // root.render(
 //     <Provider store={store}>
