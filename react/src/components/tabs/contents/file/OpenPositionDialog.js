@@ -426,17 +426,18 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
 
     // Convert string to integer of some fields: row, col, field, channel, z, time
     const convertContentStringToInteger = (field, stringData) => {
+        console.log(field, stringData, "field, stringData");
         let newField = '';
         let intField = -1;
         if (field === 'row') {
             intField = stringData.charCodeAt(0) - 65;
         } else {
             newField = stringData.replace(/\D/g, '');
-            // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
+            console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
             intField = parseInt(newField, 10);
-            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
+            console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
         }
-        // console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
+        console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
         return intField;
     };
 

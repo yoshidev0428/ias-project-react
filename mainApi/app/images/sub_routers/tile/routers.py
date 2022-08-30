@@ -48,14 +48,16 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
 
     for f in os.listdir(STATIC_PATH):
         os.remove(os.path.join(STATIC_PATH, f))
+    filenames = []
     for each_file in files:
         file_path = STATIC_PATH.joinpath(each_file.filename)
         async with aiofiles.open(file_path, 'wb') as f:
             content = await each_file.read()
             await f.write(content)
+        filenames.append(each_file.filename)
     # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
-    result = {"Flag_3d": True, "N_images": 10,
-              "path_images": [files[0].filename]}
+    result = {"Flag_3d": True, "N_images": len(filenames),
+              "path_images": filenames}
     return JSONResponse(result)
 
 

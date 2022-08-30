@@ -13,7 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import Logout from '@mui/icons-material/Logout';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
-import { Row, Col, Container, Alert } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SchoolIcon from '@mui/icons-material/School';
@@ -57,7 +57,6 @@ const mapStateToProps = state => ({
     isFilesAvailable: state.files.isFilesAvailable,
     filesChosen: state.files.filesChosen,
     isFilesChosenAvailable: state.files.isFilesChosenAvailable,
-
 })
 
 const darkTheme = createTheme({
@@ -79,10 +78,10 @@ const MainFrame = (props) => {
     };
     const [rightTabVal, setRightTabVal] = useState(0);
     const [leftTabVal, setLeftTabVal] = useState(3);
-    const handleRightTabChange = (event, newValue) => {
+    const handleRightTabChange = (newValue) => {
         setRightTabVal(newValue);
     };
-    const handleLeftTabChange = (event, newValue) => {
+    const handleLeftTabChange = (newValue) => {
         setLeftTabVal(newValue);
     };
 
@@ -97,11 +96,7 @@ const MainFrame = (props) => {
         store.dispatch({ type: "auth_logOut" });
     };
 
-    const [filesChosen, setFilesChosen] = useState(props.filesChosen);
-    const [filesDisplayed, setFilesDisplayed] = useState([]);
     const [files, setFiles] = useState(props.files);
-    const [widthImage, setWidthImage] = useState(window.innerWidth);
-    const [heightImage, setHeightImage] = useState(window.innerHeight);
 
     useEffect(() => {
         handleResize();
@@ -167,7 +162,6 @@ const MainFrame = (props) => {
                                 <IconButton size="large">
                                     <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}> JM </Avatar>
                                 </IconButton>
-
                                 <IconButton
                                     size="large"
                                     onClick={handleLogout}
