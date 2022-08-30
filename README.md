@@ -77,6 +77,7 @@ The gole is Viv viewer to display every images on frontend by using backend that
 
 *** This project structure is configured as perfectly and as well for image processing and viv viewer.
 
+### About Azure
 Use Azure for server and link subscription to Microsoft Azure Sponsorship.
 https://portal.azure.com/#home
 ID: daisukekubota@outlook.jp
