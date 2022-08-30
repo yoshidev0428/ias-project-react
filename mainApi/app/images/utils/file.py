@@ -39,10 +39,10 @@ def normalize_2Dim_uint8(im):
     return im.astype(np.uint8)
 
 async def add_image_tiles(path: Path,
-                            files: List[UploadFile],
-                          clear_previous: bool,
-                          current_user: UserModelDB or ShowUserModel,
-                          db: AsyncIOMotorDatabase) -> List[TileModelDB]:
+                        files: List[UploadFile],
+                        clear_previous: bool,
+                        current_user: UserModelDB or ShowUserModel,
+                        db: AsyncIOMotorDatabase) -> List[TileModelDB]:
     """
     Saves the uploaded tiles to the cache-storage folder/volume under the user_id of the current_user
 
