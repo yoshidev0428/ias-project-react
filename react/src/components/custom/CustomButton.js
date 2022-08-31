@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image} from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
 import IconButton from '@mui/material/IconButton';
 import Icon from '@mdi/react';
 import { COLORS } from '../../utils/constants';
@@ -16,7 +16,7 @@ import { COLORS } from '../../utils/constants';
 // };
 
 const CustomButton = (props) => {
-    const imageUrl = "../../assets/images/" + props.image + ".png";
+    const imageUrl = "../../../assets/images/" + props.image + ".png";
     return (
         // <IconButton className="mb-1"
         //     // style = {{minWidth:"16px", height:props.label ? '38px' : '28px', color:'#009688'}}
@@ -44,17 +44,17 @@ const CustomButton = (props) => {
         //         <div className="label-text">{props.label}</div>
         //     </div>
         // </IconButton>
-        <div className='custom-button' onClick={props.click} 
-            style = {{minWidth:"25px", height:props.label ? '36px' : '22px', color:`${COLORS.LIGHT_CYAN}`}}
+        <div className='custom-button' onClick={props.click}
+            style={{ minWidth: "25px", height: props.label ? '36px' : '22px', color: `${COLORS.LIGHT_CYAN}` }}
         >
             {
                 props.image &&
-                <Image style={{margin: '0 auto', width:'11px', height:'11px'}} src={imageUrl} alt='no image' />
+                <Image style={{ margin: '0 auto', width: '11px', height: '11px' }} src={imageUrl} alt='no image' />
             }
             {
                 props.icon &&
-                <div className='d-flex m-auto' style={{justifyContent:'center'}}>
-                    <Icon path={props.icon} size={0.8} color={COLORS.LIGHT_CYAN}/>
+                <div className='d-flex m-auto' style={{ justifyContent: 'center' }}>
+                    <Icon path={props.icon} size={0.8} color={COLORS.LIGHT_CYAN} />
                 </div>
             }
             <div className="label-text text-center">{props.label}</div>

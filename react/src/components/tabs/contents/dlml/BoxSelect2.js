@@ -35,7 +35,7 @@ export default function BoxSelect() {
     return (
         <div className=''>
             <SmallCard title="Box Select">
-                <div className="w-100">
+                <div className="d-flex flex-row justify-content-around w-100">
                     <CustomButton icon={mdiNearMe} onClick={() => select1()} />
                     <CustomButton icon={mdiPencil} onClick={() => select2()} />
                     <CustomButton icon={mdiCheckboxBlankCircleOutline} onClick={() => select3()} />
