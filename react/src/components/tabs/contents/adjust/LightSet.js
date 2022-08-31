@@ -29,7 +29,7 @@ export default function LightSet() {
                     size="large"
                 >
                     <div className="">
-                        <Image style={{ margin: '0 auto', width: '15px', height: '15px' }} src={require("../../../assets/images/auto.png")} alt='no image' />
+                        <Image style={{ margin: '0 auto', width: '15px', height: '15px' }} src={require("../../../../assets/images/auto.png")} alt='no image' />
                     </div>
                 </IconButton>
                 <IconButton className="mb-1"
@@ -39,7 +39,7 @@ export default function LightSet() {
                     size="large"
                 >
                     <div className="">
-                        <Image style={{ margin: '0 auto', width: '15px', height: '15px' }} src={require("../../../assets/images/average.png")} alt='no image' />
+                        <Image style={{ margin: '0 auto', width: '15px', height: '15px' }} src={require("../../../../assets/images/average.png")} alt='no image' />
                     </div>
                 </IconButton>
                 <CustomButton icon={mdiHdr} label="" click={select3} />

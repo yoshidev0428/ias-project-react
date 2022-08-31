@@ -409,9 +409,7 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
         let old_content_p = JSON.parse(JSON.stringify(old_content));
         for (let i = 0; i < old_content.length; i++) {
             let each_namepattern = getNamePatternPerFile(old_content[i]);
-            let each_namepattern_processing = getNamePatternPerFileForProcessing(
-                old_content_p[i]
-            );
+            let each_namepattern_processing = getNamePatternPerFileForProcessing(old_content_p[i]);
             new_content.push(each_namepattern);
             new_content_processing.push(each_namepattern_processing);
         }

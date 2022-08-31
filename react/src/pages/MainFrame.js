@@ -39,7 +39,7 @@ import SettingsTab from "../components/tabs/SettingsTab";
 import store from "../reducers";
 import { connect } from "react-redux";
 import { getWindowDimensions } from "../components/helpers";
-
+import logo75 from "../assets/images/logo75.png";
 function TabContainer(props) {
     return (
         <Typography component="div" style={{ padding: 0 }}>
@@ -82,6 +82,7 @@ const MainFrame = (props) => {
         setRightTabVal(newValue);
     };
     const handleLeftTabChange = (newValue) => {
+        console.log(newValue, " ____");
         setLeftTabVal(newValue);
     };
 
@@ -126,7 +127,7 @@ const MainFrame = (props) => {
                                 <img
                                     width="116"
                                     height="48"
-                                    src='./assets/images/logo75.png'
+                                    src={logo75}
                                     alt="Logo"
                                 />
                             </Typography>
@@ -187,7 +188,7 @@ const MainFrame = (props) => {
                         <div className='card border'>
                             <Tabs
                                 // variant="scrollable"
-                                value={leftTabVal} onChange={handleLeftTabChange}
+                                value={leftTabVal}
                                 aria-label="tabs example"
                                 TabIndicatorProps={{
                                     style: {
@@ -196,15 +197,15 @@ const MainFrame = (props) => {
                                     }
                                 }}
                             >
-                                <Tab className='tab-button' icon={<SchoolIcon />} aria-label="school" />
-                                <Tab className='tab-button' icon={<TuneIcon />} aria-label="tune" />
-                                <Tab className='tab-button' icon={<FilterAltIcon />} aria-label="filter" />
-                                <Tab className='tab-button' icon={<InsertDriveFileIcon />} aria-label="file" />
+                                <Tab className='tab-button' key={0} icon={<SchoolIcon />} aria-label="school" value={0} onFocus={() => handleLeftTabChange(0)} />
+                                <Tab className='tab-button' key={1} icon={<TuneIcon />} aria-label="tune" value={1} onFocus={() => handleLeftTabChange(1)} />
+                                <Tab className='tab-button' key={2} icon={<FilterAltIcon />} aria-label="filter" value={2} onFocus={() => handleLeftTabChange(2)} />
+                                <Tab className='tab-button' key={3} icon={<InsertDriveFileIcon />} aria-label="file" value={3} onFocus={() => handleLeftTabChange(3)} />
                             </Tabs>
                             {leftTabVal === 0 && <TabContainer ><DLMLTab /></TabContainer>}
                             {leftTabVal === 1 && <TabContainer><AdjustTab /></TabContainer>}
                             {leftTabVal === 2 && <TabContainer><FilterTab /></TabContainer>}
-                            {leftTabVal === 3 && <TabContainer><FileTab/></TabContainer>}
+                            {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                         </div>
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
@@ -214,12 +215,12 @@ const MainFrame = (props) => {
                         <div className='card border'>
                             <Tabs
                                 allowScrollButtonsMobile
-                                value={rightTabVal} onChange={handleRightTabChange}
+                                value={rightTabVal}
                                 aria-label="scrollable auto tabs example">
-                                <Tab className='tab-button' variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" />
-                                <Tab className='tab-button' variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" />
-                                <Tab className='tab-button' variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" />
-                                <Tab className='tab-button' variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" />
+                                <Tab className='tab-button' variant="fullWidth" icon={<BiotechIcon />} aria-label="BiotechIcon" onFocus={() => handleRightTabChange(0)} />
+                                <Tab className='tab-button' variant="fullWidth" icon={<EditOffIcon />} aria-label="EditOffIcon" onFocus={() => handleRightTabChange(1)} />
+                                <Tab className='tab-button' variant="fullWidth" icon={<PollIcon />} aria-label="PollIcon" onFocus={() => handleRightTabChange(2)} />
+                                <Tab className='tab-button' variant="fullWidth" icon={<EngineeringIcon />} aria-label="EngineeringIcon" onFocus={() => handleRightTabChange(3)} />
                             </Tabs>
                             {rightTabVal === 0 && <TabContainer><ViewTab /></TabContainer>}
                             {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
