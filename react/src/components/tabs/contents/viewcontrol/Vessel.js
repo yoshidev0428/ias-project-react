@@ -16,9 +16,6 @@ import { SelectDialog } from '../../../vessels/SelectDialog';
 import { ExpansionDialog } from '../../../vessels/ExpansionDialog';
 // import CustomButton from '../../../custom/CustomButton';
 
-const mapStateToProps = (state) => ({
-    content: state.files.content
-})
 
 const Vessel = (props) => {
 
@@ -35,7 +32,7 @@ const Vessel = (props) => {
     }, [currentVesselId]);
 
     useEffect(() => {
-        // console.log("VESSEL: NEW CONTENT, ", props.content);
+        console.log("VESSEL: NEW CONTENT, ", props.content);
         if(props.content){
             setContent(props.content);
             setCurrentVessel( {
@@ -50,29 +47,11 @@ const Vessel = (props) => {
         }
     },[props.content])
 
-    useEffect(()=>{
-        // console.log("VESSEL: NEW CONTENT [], ", props.content);
-        if(props.content){
-            setContent(props.content);
-            setCurrentVessel( {
-                id: 11,
-                type: "WellPlate",
-                rows: 8,
-                cols: 12,
-                title: "96",
-                showName: true, 
-                showNumber: false,
-            });
-        }
-    },[])
-
     if (currentVessel == null) {
         return (
             <></>
         );
     }
-
-    
 
     const renderVessel = () => {
         if (currentVessel) {
@@ -121,4 +100,7 @@ const Vessel = (props) => {
     );
 }
 
+const mapStateToProps = (state) => ({
+    content: state.content
+})
 export default connect(mapStateToProps)(Vessel);
