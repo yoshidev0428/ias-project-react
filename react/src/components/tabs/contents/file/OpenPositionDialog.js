@@ -431,11 +431,11 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
             intField = stringData.charCodeAt(0) - 65;
         } else {
             newField = stringData.replace(/\D/g, '');
-            console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
             intField = parseInt(newField, 10);
-            console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
         }
-        console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
+        // console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
         return intField;
     };
 
@@ -639,11 +639,6 @@ const DropzoneGroup = () => {
     );
 };
 
-const mapStateToProps = (state) => ({
-    files: state.files.files,
-    filesChosen: state.files.filesChosen,
-});
-
 const OpenPositionDialog = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
@@ -672,7 +667,7 @@ const OpenPositionDialog = (props) => {
     useEffect(() => {
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
-            store.dispatch({ type: 'files_addFiles', content: filesUploaded});
+            store.dispatch({ type: 'files_addFiles', content: filesUploaded });
         }
     }, [filesUploaded]);
 
@@ -801,6 +796,11 @@ const OpenPositionDialog = (props) => {
         </>
     );
 };
+
+const mapStateToProps = (state) => ({
+    files: state.files,
+    filesChosen: state.filesChosen,
+});
 
 OpenPositionDialog.propTypes = { handleClose: PropTypes.func.isRequired };
 export default connect(mapStateToProps)(OpenPositionDialog);

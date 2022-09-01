@@ -16,7 +16,7 @@ import { COLORS } from '../../utils/constants';
 // };
 
 const CustomButton = (props) => {
-    const imageUrl = "../../../assets/images/" + props.image + ".png";
+    // "../../assets/images/" + props.image + ".png";
     return (
         // <IconButton className="mb-1"
         //     // style = {{minWidth:"16px", height:props.label ? '38px' : '28px', color:'#009688'}}
@@ -49,7 +49,7 @@ const CustomButton = (props) => {
         >
             {
                 props.image &&
-                <Image style={{ margin: '0 auto', width: '11px', height: '11px' }} src={imageUrl} alt='no image' />
+                <Image style={{ margin: '0 auto', width: '11px', height: '11px' }} src={require("../../assets/images/" + props.image + ".png")} alt='no image' />
             }
             {
                 props.icon &&
