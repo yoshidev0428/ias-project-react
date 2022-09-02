@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image } from 'react-bootstrap';
-import IconButton from '@mui/material/IconButton';
 import Icon from '@mdi/react';
 import { COLORS } from '../../utils/constants';
+// import IconButton from '@mui/material/IconButton';
 // import { Icon } from 'semantic-ui-react';
 // const styleLink = document.createElement("link");
 // styleLink.rel = "stylesheet";

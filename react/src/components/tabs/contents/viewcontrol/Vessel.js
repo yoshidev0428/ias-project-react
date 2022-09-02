@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Card from '@mui/material/Card';
 import { getVesselById } from '../../../../utils/vessel-types';
 import { useElementSize } from 'usehooks-ts';
@@ -16,6 +16,9 @@ import { SelectDialog } from '../../../vessels/SelectDialog';
 import { ExpansionDialog } from '../../../vessels/ExpansionDialog';
 // import CustomButton from '../../../custom/CustomButton';
 
+const mapStateToProps = (state) => ({
+    content: state.files.content
+})
 
 const Vessel = (props) => {
 
@@ -23,7 +26,7 @@ const Vessel = (props) => {
     const [currentVessel, setCurrentVessel] = useState(getVesselById(1));
     const [showSelectDialog, setShowSelectDialog] = useState(false);
     const [showExpansionDialog, setShowExpansionDialog] = useState(false);
-    const [content, setContent] = useState(props.content);
+    const [contents, setContents] = useState(props.content);
     const [ref, { width }] = useElementSize();
 
     useEffect(() => {
@@ -33,19 +36,16 @@ const Vessel = (props) => {
 
     useEffect(() => {
         console.log("VESSEL: NEW CONTENT, ", props.content);
-        if(props.content){
-            setContent(props.content);
-            setCurrentVessel( {
-                id: 11,
-                type: "WellPlate",
-                rows: 8,
-                cols: 12,
-                title: "96",
-                showName: true, 
-                showNumber: false,
-            });
+        if (props.content) {
+            setContents(props.content);
+            let current_vessel = { id: 1, type: "WellPlate", rows: 8, cols: 12, title: "96", showName: true, showNumber: false };
+            let current_content = props.content[0];
+            if (current_content.series.includes("Plate")) {
+                current_vessel.type = "WellPlate";
+            }
+            setCurrentVessel(current_vessel);
         }
-    },[props.content])
+    }, [props.content])
 
     if (currentVessel == null) {
         return (
@@ -61,7 +61,7 @@ const Vessel = (props) => {
                 case 'Dish':
                     return <Dishes width={width} size={currentVessel.size} />;
                 case 'WellPlate':
-                    return <WellPlates content={content} width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} showNumber={currentVessel.showNumber}/>;
+                    return <WellPlates content={contents} width={width} rows={currentVessel.rows} cols={currentVessel.cols} showName={currentVessel.showName} showNumber={currentVessel.showNumber} />;
                 case 'Wafer':
                     return <Wafers width={width} size={currentVessel.size} />;
                 default:
@@ -73,7 +73,7 @@ const Vessel = (props) => {
     return (
         <Card ref={ref}>
             <div className="d-flex justify-content-around align-items-center common-border">
-                <h6 style={{ width: "60%", align: "center"}}> {currentVessel.title} - {currentVessel.type}</h6>
+                <h6 style={{ width: "60%", align: "center" }}> {currentVessel.title} - {currentVessel.type}</h6>
                 <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.6}
                         horizontal
@@ -100,7 +100,4 @@ const Vessel = (props) => {
     );
 }
 
-const mapStateToProps = (state) => ({
-    content: state.content
-})
 export default connect(mapStateToProps)(Vessel);

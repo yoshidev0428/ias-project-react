@@ -25,7 +25,12 @@ import * as api from '../../../../api/tiles';
 import OpenCloudDialog from './OpenCloudDialog';
 import Tiling from './Tiling';
 
-var acceptedFiles = [];
+var acceptedFiles = [
+    // { id: 1, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d0.TIF", type: "image/tiff", size: 910882 }, valid: true },
+    // { id: 2, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d1.TIF", type: "image/tiff", size: 1192406 }, valid: true },
+    // { id: 3, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d3.TIF", type: "image/tiff", size: 1192406 }, valid: true },
+    // { id: 4, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f01d0.TIF", type: "image/tiff", size: 1192406 }, valid: true },
+];
 
 const columns = [
     { headerName: 'No', field: 'id', sortable: false },
@@ -60,6 +65,16 @@ const namePatternsPrimary = [
     { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
     { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
 ];
+// --------- Developer manual define
+// const namePatternsPrimary = [
+//     { label: 'Series', text: 'LiveDead2_Plate_R', start: 0, end: 17, color: '#4caf50' },
+//     { label: 'Row', text: 'A', start: 24, end: 25, color: '#1976d2' },
+//     { label: 'Column', text: '01', start: 25, end: 27, color: '#ff5722' },
+//     { label: 'Field', text: 'f00', start: 27, end: 30, color: '#fb8c00' },
+//     { label: 'Channel', text: 'd0', start: 30, end: 32, color: '#9c27b0' },
+//     { label: 'Z Position', text: '0', start: 22, end: 23, color: '#607d8b' },
+//     { label: 'Time Point', text: 'p00', start: 18, end: 21, color: '#ff5252' },
+// ];
 
 const TabContainer = (props) => {
     return (
@@ -76,42 +91,27 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const [files, setFiles] = useState(acceptedFiles);
     const updateFiles = async (incommingFiles) => {
+        console.log(" OpenPositionDialog.js ImageDropzon updateFiles : incommingFiles : ", incommingFiles);
         props.setLoading(true);
         let files = [];
         for (let i = 0; i < incommingFiles.length; i++) {
             files.push(incommingFiles[i].file);
         }
-        props.setFiles(files);
         if (files.length > 0) {
             await api.uploadImageTiles(files);
         }
+        props.setFiles(files);
         props.setLoading(false);
         setFiles(incommingFiles);
         acceptedFiles = incommingFiles;
+        store.dispatch({ type: 'files_addFiles', content: incommingFiles });
     };
 
     const startDrop = (drop) => {
         store.dispatch({ type: 'files_removeAllFiles', content: [] });
-        // props.getLoadingMax(drop.length);
-        // console.log( drop , "onDrop : ", new Date().getTime());
+        setFiles([]);
+        acceptedFiles = [];
     };
-    // const updateFilesView = (changeView) => {
-    //     console.log( changeView , "onChangeView : ", new Date().getTime());
-    // }
-    // const updateStart = (changeView) => {
-    //     console.log( changeView , "updateStart : ", new Date().getTime());
-    // }
-    // const updateFinish = (changeView) => {
-    //     console.log( changeView , "updateFinish : ", new Date().getTime());
-    // }
-    useEffect(() => {
-        if (
-            acceptedFiles !== null &&
-            acceptedFiles !== [] &&
-            acceptedFiles.length > 0
-        ) {
-        }
-    }, []);
 
     return (
         <Dropzone
@@ -126,64 +126,43 @@ const ImageDropzone = (props) => {
     );
 };
 
-const DropzoneMetaData = ({ contents, setContent }) => {
+const DropzoneMetaData = (props) => {
     // Pagination
     const [pageSize, setPageSize] = useState(5);
     // Table Rows
-    // Drag & Drop files
-    const [files, setFiles] = useState(acceptedFiles);
     const [loading, setLoading] = useState(false);
     // Search
-    const [searchrows, setRows] = useState([]);
-    // console.log("contents=====>" + JSON.stringify(contents));
+    const [searchrows, setSearchRows] = useState([]);
     // Search Bar
     const [searched, setSearched] = useState('');
     const requestSearch = (searchedVal) => {
-        const filteredRows = contents.filter((content) => {
-            return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
-        });
-        setRows(filteredRows);
+        // const filteredRows = contents.filter((content) => {
+        //     return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
+        // });
+        // setRows(filteredRows);
     };
     const cancelSearch = () => {
         setSearched('');
         requestSearch(searched);
     };
     // console.log("searchrows=====>" + JSON.stringify(searchrows));
-    const backgroundText = loading
-        ? 'Loading...'
-        : 'Drag and drop files or a folder';
-    const get_metadata = () => {
-        let rows = [];
+    const backgroundText = loading ? 'Loading...' : 'Drag and drop files or a folder';
+
+    useEffect(() => {
         for (let i = 0; i < acceptedFiles.length; i++) {
-            let file_content = acceptedFiles[i].file;
             if (acceptedFiles[i].valid) {
-                rows.push({
-                    id: (i + 1).toString(),
-                    // filename: acceptedFiles[i].name.toString(),
-                    filename: file_content['name'].toString(),
-                    series: '',
-                    frame: '',
-                    c: '',
-                    size_c: '',
-                    size_t: '',
-                    size_x: '',
-                    size_y: '',
-                    size_z: '',
-                });
+                // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
+                let current_file = { id: acceptedFiles[i].id.toString(), filename: acceptedFiles[i].file['name'].toString(), series: '', frame: '', c: '', size_c: '', size_t: '', size_x: '', size_y: '', size_z: '', };
+                setSearchRows(rows => [...rows, current_file]);
             }
         }
-        setContent(rows);
-        setRows(rows);
         setLoading(true);
-    };
-    useEffect(() => {
-        get_metadata();
     }, []);
 
     return (
         <div style={{ minHeight: '200px' }}>
             {/* <input {...getInputProps()} /> */}
-            {files.length === 0 ? (
+            {acceptedFiles.length === 0 ? (
                 <div className='d-flex align-center justify-center pt-5'>
                     {backgroundText}
                 </div>
@@ -220,34 +199,31 @@ const DropzoneMetaData = ({ contents, setContent }) => {
     );
 };
 
-const DropzoneNamesFiles = ({ contents, setContent }) => {
+const DropzoneNamesFiles = (props) => {
     // Names & Files Tab
     const exampleBox = useRef(null);
-    // Drag & Drop files
-    const [files, setFiles] = useState(acceptedFiles);
-
-    const [allFilesLength, setAllFilesLength] = useState(acceptedFiles.length);
 
     const [loading, setLoading] = useState(false);
     // Pagination
     const [pageSize, setPageSize] = useState(5);
     // Search
-    const [searchrows, setRows] = useState([]);
+    const [contents, setContents] = useState([]);
+    const [searchrows, setSearchRows] = useState([]);
     // Search Bar
     const [searched, setSearched] = useState('');
 
-    const [fileName, setFileName] = useState('');
+    const [selectedFileName, setSelectedFileName] = useState('');
 
     const [selectionRange, setSelectionRange] = useState(null);
 
-    const [namePatterns, setNamePatterns] = useState([]);
+    const [namePatterns, setNamePatterns] = useState(namePatternsPrimary);
 
     //  Search Part
     const requestSearch = (searchedVal) => {
         const filteredRows = contents.filter((content) => {
             return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
         });
-        setRows(filteredRows);
+        setSearchRows(filteredRows);
     };
 
     const cancelSearch = () => {
@@ -315,128 +291,70 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
             }
         }
     };
+
     // update button function
+    // Convert string to integer of some fields: row, col, field, channel, z, time
+    const convertContentStringToInteger = (field, stringData) => {
+        // console.log("OpenPositionDialog > convertContentStringToInteger, field, stringData :", field, stringData);
+        let newField = '';
+        let intField = -5;
+        if (field === 'row') {
+            intField = stringData.charCodeAt(0) - 65;
+        } else {
+            newField = stringData.replace(/\D/g, '');
+            intField = parseInt(newField);
+            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
+        }
+        // console.log("OpenPositionDialog > convertContentStringToInteger, ", field, newField, intField);
+        return intField;
+    };
+
     const getNamePatternPerFile = (objectPerFile) => {
-        for (let i = 0; i < namePatterns.length; i++) {
-            var key = null;
-            switch (i) {
-                case 0:
-                    key = 'series';
-                    break;
-                case 1:
-                    key = 'row';
-                    break;
-                case 2:
-                    key = 'col';
-                    break;
-                case 3:
-                    key = 'field';
-                    break;
-                case 4:
-                    key = 'channel';
-                    break;
-                case 5:
-                    key = 'z';
-                    break;
-                case 6:
-                    key = 'time';
-                    break;
-                default:
-                    break;
-            }
+        for (let i = 0; i < Object.keys(objectPerFile).length - 3; i++) {
+            let key = Object.keys(objectPerFile)[i + 2];
             if (key && objectPerFile !== null) {
-                objectPerFile[key] = objectPerFile.filename.substring(
-                    namePatterns[i].start,
-                    namePatterns[i].end
-                );
+                objectPerFile[key] = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
             }
         }
         return objectPerFile;
     };
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
-        for (let i = 0; i < namePatterns.length; i++) {
-            var key = null;
-            switch (i) {
-                case 0:
-                    key = 'series';
-                    break;
-                case 1:
-                    key = 'row';
-                    break;
-                case 2:
-                    key = 'col';
-                    break;
-                case 3:
-                    key = 'field';
-                    break;
-                case 4:
-                    key = 'channel';
-                    break;
-                case 5:
-                    key = 'z';
-                    break;
-                case 6:
-                    key = 'time';
-                    break;
-                default:
-                    break;
-            }
+        var result = {};
+        // console.log(" getNamePatternPerFileForProcessing  objectPerFile : ", Object.keys(objectPerFile));
+        for (let i = 0; i < Object.keys(objectPerFile).length - 3; i++) {
+            let key = Object.keys(objectPerFile)[i + 2];
             if (key && objectPerFile !== null) {
-                let tempString = objectPerFile.filename.substring(
-                    namePatterns[i].start,
-                    namePatterns[i].end
-                );
+                let tempString = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
                 if (key === 'series' || key === 'filename') {
-                    objectPerFile[key] = tempString;
+                    result[key] = tempString;
                 } else {
-                    objectPerFile[key] = convertContentStringToInteger(key, tempString);
+                    result[key] = convertContentStringToInteger(key, tempString);
                 }
             }
         }
-        return objectPerFile;
+        return result;
     };
 
     const updateNameType = () => {
-        // let MAX_BATCH_SIZE = 10;
-        if (!files) {
-            console.log('allFiles error: ' + files);
+        if (acceptedFiles === null || acceptedFiles === undefined) {
+            console.log('acceptedFiles error : ', acceptedFiles);
             return '';
         }
         let new_content = [];
         let new_content_processing = [];
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
+        console.log(old_content_p);
         for (let i = 0; i < old_content.length; i++) {
-            let each_namepattern = getNamePatternPerFile(old_content[i]);
-            let each_namepattern_processing = getNamePatternPerFileForProcessing(old_content_p[i]);
-            new_content.push(each_namepattern);
-            new_content_processing.push(each_namepattern_processing);
+            new_content.push(JSON.parse(JSON.stringify(getNamePatternPerFile(old_content[i]))));
+            new_content_processing.push(JSON.parse(JSON.stringify(getNamePatternPerFileForProcessing(old_content_p[i]))));
         }
         old_content_p = [];
         old_content = [];
-        console.log('New Contents: ', new_content);
-        console.log('new Contents For Processing: ', new_content_processing);
-        store.dispatch({ type: 'content_addContent', content: new_content_processing });
-        setContent(new_content);
-        setRows(new_content);
-    };
-
-    // Convert string to integer of some fields: row, col, field, channel, z, time
-    const convertContentStringToInteger = (field, stringData) => {
-        console.log(field, stringData, "field, stringData");
-        let newField = '';
-        let intField = -1;
-        if (field === 'row') {
-            intField = stringData.charCodeAt(0) - 65;
-        } else {
-            newField = stringData.replace(/\D/g, '');
-            // console.log("OpenPositionDialog > convertContentStringToInteger, ", newField);
-            intField = parseInt(newField, 10);
-            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
-        }
-        // console.log("OpenPositionDialog > convertContentStringToInteger, intField", intField);
-        return intField;
+        console.log('new Contents For Processing: ', JSON.parse(JSON.stringify(new_content_processing)));
+        store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(new_content_processing)) });
+        setSearchRows(new_content);
     };
 
     // clear button + change file name
@@ -451,56 +369,41 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
     };
 
     const clearNameType = () => {
-        for (let k = 0; k < fileName.length; k++) {
+        for (let k = 0; k < selectedFileName.length; k++) {
             document.getElementById('filename' + k.toString()).style.color = '#000';
         }
         reset_namePatterns();
     };
 
     const updateNativeSelect = (event) => {
-        setFileName(event.target.value.toString().split('.')[0]);
+        setSelectedFileName(event.target.value.toString().split('.')[0]);
         reset_namePatterns();
-    };
-    // initial setup -> namepattern
-    const get_nametype = () => {
-        let rows = [];
-        if (acceptedFiles.length > 0) {
-            for (let i = 0; i < acceptedFiles.length; i++) {
-                let file_content = acceptedFiles[i].file;
-                if (acceptedFiles[i].valid) {
-                    rows.push({
-                        id: (i + 1).toString(),
-                        // filename: acceptedFiles[i].name.toString(),
-                        filename: file_content['name'].toString(),
-                        series: '',
-                        row: '',
-                        col: '',
-                        field: '',
-                        channel: '',
-                        z: '',
-                        time: '',
-                        hole: -1,
-                    });
-                }
-            }
-            setFileName(rows[0].filename.split('.')[0]);
-            setContent(rows);
-            setRows(rows);
-        }
-        setLoading(true);
     };
 
     useEffect(() => {
-        console.log('FILES NAMES: ', acceptedFiles);
-        setAllFilesLength(acceptedFiles.length);
-        setNamePatterns(namePatternsPrimary);
-        get_nametype();
+        setContents([]);
+        setSearchRows([]);
+        console.log('==========================================');
+        console.log(acceptedFiles);
+        for (let i = 0; i < acceptedFiles.length; i++) {
+            if (acceptedFiles[i].valid) {
+                // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
+                let current_file = { id: acceptedFiles[i].id.toString(), filename: acceptedFiles[i].file['name'].toString(), series: '', row: '', col: '', field: '', channel: '', z: '', time: '', hole: -1, };
+                setContents(contents => [...contents, current_file]);
+                setSearchRows(rows => [...rows, current_file]);
+            }
+        }
+        if (acceptedFiles.length > 0) {
+            // filename: acceptedFiles[i].file['name'].toString()
+            setSelectedFileName(acceptedFiles[0].file['name'].toString().split(".")[0]);
+        }
+        setLoading(true);
     }, []);
 
     return (
         <div style={{ minHeight: '300px' }}>
             {/* <input {...getInputProps()} /> */}
-            {files.length === 0 ? (
+            {acceptedFiles.length === 0 ? (
                 <div className='d-flex align-center justify-center pt-5'>
                     {loading ? 'Drag and drop files or a folder' : 'Loading...'}
                 </div>
@@ -514,7 +417,7 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
                             ref={exampleBox}
                             onMouseUp={() => selectExampleString()}
                             style={{ height: 'auto !important' }}>
-                            {fileName.split('').map((item, index) => {
+                            {selectedFileName.split('').map((item, index) => {
                                 return (
                                     <tt key={index}>
                                         <strong>
@@ -531,7 +434,7 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
                         </div>
                         <select
                             className='border-none ml-1 mb-0 showOnlyDropDownBtn'
-                            value={fileName}
+                            value={selectedFileName}
                             onChange={(event) => updateNativeSelect(event)}
                             style={{ border: 'none' }}>
                             {contents.map((c) => {
@@ -609,12 +512,12 @@ const DropzoneNamesFiles = ({ contents, setContent }) => {
                                 disableExtendRowFullWidth={false}
                                 onPageSizeChange={(newPageSize) => {
                                     if (isNaN(newPageSize)) {
-                                        setPageSize(allFilesLength);
+                                        setPageSize(acceptedFiles.length);
                                     } else {
                                         setPageSize(newPageSize);
                                     }
                                 }}
-                                rowsPerPageOptions={[5, 10, 20, 'All']}
+                                rowsPerPageOptions={[5, 10, 20]}
                                 pagination
                             />
                         </div>
@@ -644,8 +547,6 @@ const OpenPositionDialog = (props) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState([]);
-    // Table Rows
-    const [contents, setContent] = useState([]);
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -736,12 +637,12 @@ const OpenPositionDialog = (props) => {
                     )}
                     {selectedTab === 2 && (
                         <TabContainer>
-                            <DropzoneMetaData contents={contents} setContent={setContent} />
+                            <DropzoneMetaData />
                         </TabContainer>
                     )}
                     {selectedTab === 3 && (
                         <TabContainer>
-                            <DropzoneNamesFiles contents={contents} setContent={setContent} />
+                            <DropzoneNamesFiles />
                         </TabContainer>
                     )}
                     {selectedTab === 4 && (
@@ -798,8 +699,8 @@ const OpenPositionDialog = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-    files: state.files,
-    filesChosen: state.filesChosen,
+    files: state.files.file,
+    filesChosen: state.files.filesChosen,
 });
 
 OpenPositionDialog.propTypes = { handleClose: PropTypes.func.isRequired };
