@@ -8,6 +8,10 @@ import { } from "../../reducers/modules/filesReducer";
 // import { useLocation } from 'react-router-dom';
 // import { getNameFromUrl } from './utils';
 
+const mapStateToProps = (state) => ({
+    content: state.files.content
+})
+
 const darkTheme = createTheme({
     palette: {
         type: 'dark',
@@ -21,27 +25,22 @@ const darkTheme = createTheme({
     }
 });
 
-// function getRandomSource() {
-//     return sources[Math.floor(Math.random() * sources.length)];
-// }
-// https://reactrouter.com/web/example/query-parameters
-// function useQuery() {
-//     return new URLSearchParams(useLocation().search);
-// }
 
 const RoutedAvivator = (props) => {
 
-    const source = {
-        //     urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
-        urlOrFile: "http://http://20.210.126.209/:8000/static/LiveDead2_Plate_R_p00_0_D03f00d3.TIF",
-        description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells"
-    }
-    const [content, setContent] = useState(props.content);
+    const [source, setSource] = useState(props.content);
 
     useEffect(() => {
-        console.log("Viv viewer index.js, ", props.content);
+        console.log("Viv viewer index.js props.content : ", props.content);
         if (props.content) {
-            setContent(props.content);
+            let source = {
+                // urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/" + props.content[0].filename,
+                // description: "",
+                urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
+                description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells",
+            }
+            setSource(source);
+            // console.log("Viv viewer index.js source : ", source);
         }
     }, [props.content])
     // const query = useQuery();
@@ -62,9 +61,5 @@ const RoutedAvivator = (props) => {
         </>
     );
 }
-
-const mapStateToProps = (state) => ({
-    content: state.content
-})
 
 export default connect(mapStateToProps)(RoutedAvivator);
