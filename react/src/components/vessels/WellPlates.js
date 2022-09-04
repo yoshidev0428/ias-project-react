@@ -63,9 +63,9 @@ const WellPlates = (props) => {
         // setContent(props.content);
         if (props.content) {
             let _content = setHoleNumberInArray(props.content);
-            console.log("New Contents for HOLE: ", _content);
+            // console.log("New Contents for HOLE: ", _content);
             let new_array_content = sortArrayBasedOnHoleNumber(_content);
-            console.log("SORTED New Contents for HOLE: ", new_array_content);
+            // console.log("SORTED New Contents for HOLE: ", new_array_content);
             setContent(new_array_content);
         }
     }, [props.content])
@@ -97,7 +97,7 @@ const WellPlates = (props) => {
             old_content[i].hole = holeNumber(row, col);
             holes.push(holeNumber(row, col));
         }
-        console.log("Array of Holes: ", holes, old_content);
+        // console.log("Array of Holes: ", holes, old_content);
         activeHolesNumbers = getUniqueSortedNumber(holes);
         setActiveHoles(activeHolesNumbers);
         return old_content;
@@ -106,9 +106,9 @@ const WellPlates = (props) => {
     const sortArrayBasedOnHoleNumber = (content) => {
         let new_array_content = [];
         let old_content = [...content];
-        console.log("Active Holes: ", activeHolesNumbers);
+        // console.log("Active Holes: ", activeHolesNumbers);
         let maxIterate = Math.max(...activeHolesNumbers) + 1;
-        console.log("Max Holes: ", maxIterate);
+        // console.log("Max Holes: ", maxIterate);
         for (let i = 0; i < maxIterate; i++) {
             let data = {};
             let one_array = [];
@@ -176,14 +176,14 @@ const WellPlates = (props) => {
         setHoleClicked(holeNumber);
         if (activeHoles.includes(holeNumber)) {
             let dataHoleChosen = content[holeNumber]
-            console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
+            // console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
             let viewConfigs = getViewConfigs(dataHoleChosen);
-            console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
+            // console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
             store.dispatch({ type: "files_addFilesChosen", data: dataHoleChosen.data });
             store.dispatch({ type: "vessel_setViewConfigsObj", data: viewConfigs });
         }
         else {
-            console.log("NO DATA Content Hole number ", holeNumber);
+            // console.log("NO DATA Content Hole number ", holeNumber);
         }
     }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
@@ -7,7 +6,6 @@ import Grid from '@mui/material/Grid';
 // import Select from '@material-ui/core/Select';
 import CircularProgress from '@mui/material/CircularProgress';
 import shallow from 'zustand/shallow';
-
 import ChannelOptions from './ChannelOptions';
 import { FILL_PIXEL_VALUE } from '../../../constants';
 import {
@@ -64,10 +62,9 @@ function ChannelController({
     const rgbColor = toRgb(colormap, color);
     const [min, max] = domain;
     // If the min/max range is and the dtype is float, make the step size smaller so contrastLimits are smoother.
-    const step =
-        max - min < 500 && loader[0]?.dtype === 'Float32' ? (max - min) / 500 : 1;
+    const step = max - min < 500 && loader[0]?.dtype === 'Float32' ? (max - min) / 500 : 1;
     const shouldShowPixelValue = !useLinkedView && !use3d;
-    const shortName = name ? name?.slice(0, 1) + name?.slice(-1) : "";
+    const shortName = name ? name?.slice(0, 1) : "";
     return (
         // <Grid container direction="column" m={2} justifyContent="center">
         //   <Grid container direction="row" justifyContent="space-between">
@@ -92,20 +89,30 @@ function ChannelController({
             {/* <Grid item xs={2}>
             {getPixelValueDisplay(pixelValue, isLoading, shouldShowPixelValue)}
             </Grid> */}
-            <Grid className="d-flex flex-column channel-box text-center m-auto" item xs={2} md={2} sm={2}>
-                <FormControlLabel 
+            {/* <Grid className="flex-column channel-box text-center m-auto" item xs={2} md={2} sm={2}>
+                <FormControlLabel
                     control={<Checkbox
+                        onChange={toggleIsOn}
+                        disabled={isLoading}
+                        checked={channelsVisible}
+                        style={{
+                            margin: "0px",
+                            padding: "0px",
+                            color: rgbColor,
+                            '&$checked': { color: rgbColor },
+                        }}
+                    />} label={shortName} />
+            </Grid> */}
+            <div className="d-flex flex-column channel-box text-center">
+                <Checkbox
                     onChange={toggleIsOn}
-                    disabled={isLoading}
                     checked={channelsVisible}
-                    style={{
-                        margin:"0px",
-                        padding:"0px",
-                        color: rgbColor,
-                        '&$checked': { color: rgbColor }
-                    }}
-                />} label={shortName} />
-            </Grid>
+                    disabled={isLoading}
+                    size="small"
+                    // checked={channelsArray.lenght > 0 ? channelsArray.includes(i) : false}
+                    sx={{ color: rgbColor, padding: 0, '&.Mui-checked': { color: rgbColor, } }} />
+                <span style={{ color: rgbColor }}>{shortName}</span>
+            </div>
             {/* <Grid item xs={7}>
           <Slider
             disabled={isLoading}
