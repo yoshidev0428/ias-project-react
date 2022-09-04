@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 // import { Container } from 'react-bootstrap';
@@ -17,7 +17,7 @@ import {
 import { guessRgb, getSingleSelectionStats } from '../../../viv/utils';
 import SmallCard from '../../../custom/SmallCard';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 const mapStateToProps = state => ({
     viewConfigsObj: state.vessel.viewConfigsObj,
@@ -59,7 +59,6 @@ const Channel = (props) => {
         shallow
     );
     const loader = useLoader();
-
     const colormap = useImageSettingsStore(store => store.colormap);
     const [
         channelOptions,
@@ -90,57 +89,38 @@ const Channel = (props) => {
     const metadata = useMetadata();
     const isRgb = metadata && guessRgb(metadata);
     const { shape, labels } = loader[0];
-
-
-
-    const [channelConfig, setChannelConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.channel: {});
+    const [channelConfig, setChannelConfig] = useState(props.viewConfigsObj ? props.viewConfigsObj.channel : {});
     const [channelsArray, setChannelsArray] = useState([]);
 
     useEffect(() => {
-        if(props.viewConfigsObj){
+        if (props.viewConfigsObj) {
             setChannelConfig(props.viewConfigsObj.channel);
         }
-    },[props.viewConfigsObj])
-
-    useEffect(() => {
-        if(channelConfig){
+        if (channelConfig) {
             setChannelsArray(channelConfig.array);
         }
-    },[channelConfig])
+    }, [props.viewConfigsObj, channelConfig])
 
     const renderItems = (channels) => {
         return (
             channels.map((c, i) =>
                 <div key={i} className="d-flex flex-column channel-box text-center">
-                    <Checkbox // onChange={toggleIsOn} // checked={channelsVisible} 
-                        size="small" 
-                        // checked={channelsArray.lenght > 0 ? channelsArray.includes(i) : false}
-                        sx={{ color: c.color, padding: 0, '&.Mui-checked': { color: c.color,}}}/>
+                    <Checkbox
+                        size="small"
+                        disabled={true}
+                        sx={{ color: c.color, padding: 0, '&.Mui-checked': { color: c.color, } }} />
                     <span style={{ color: c.color }}>{c.label}</span>
                 </div>
             )
         )
     }
 
-
-
-
     const channelControllers = ids.map((id, i) => {
         const onSelectionChange = e => {
-            const selection = {
-                ...selections[i],
-                c: channelOptions.indexOf(e.target.value)
-            };
+            const selection = { ...selections[i], c: channelOptions.indexOf(e.target.value) };
             setIsChannelLoading(i, true);
-            getSingleSelectionStats({
-                loader,
-                selection,
-                use3d
-            }).then(({ domain, contrastLimits: newContrastLimit }) => {
-                setPropertiesForChannel(i, {
-                    contrastLimits: newContrastLimit,
-                    domains: domain
-                });
+            getSingleSelectionStats({ loader, selection, use3d }).then(({ domain, contrastLimits: newContrastLimit }) => {
+                setPropertiesForChannel(i, { contrastLimits: newContrastLimit, domains: domain });
                 useImageSettingsStore.setState({
                     onViewportLoad: () => {
                         useImageSettingsStore.setState({ onViewportLoad: () => { } });
@@ -193,12 +173,11 @@ const Channel = (props) => {
                 </div>
 
                 <div>
-                    <div className="d-flex justify-space-around">
-                        {!isRgb && channelControllers}
-                    </div>
-                    <SmallCard>
-                        {renderItems(channels)}
-                    </SmallCard>
+                    {
+                        isRgb === null || isRgb === undefined ? <SmallCard>
+                            {renderItems(channels)}
+                        </SmallCard> : <div className="d-flex justify-space-around">{channelControllers}</div>
+                    }
                 </div>
             </div>
         </>
