@@ -64,7 +64,7 @@ const Tiling = (props) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [alignment, setAlignment] = useState(0);
     const [checked, setChecked] = useState(true);
-    const [scale, setScale] = useState('');
+    const [scale, setScale] = useState(100);
     const [loadImageSource, setLoadImageSource] = useState(null);
 
     const tiling_bonding_patternMatch = false;
@@ -147,6 +147,7 @@ const Tiling = (props) => {
     };
 
     const handleScaleChange = (event) => {
+        console.log("handleScaleChange", event.target.value);
         setScale(event.target.value);
     };
 
@@ -154,14 +155,16 @@ const Tiling = (props) => {
         console.log(" Selected Image : ", index);
         if (fileObjs.length > 0) {
             setSelectedImageFileIndex(index);
-            displayImage(fileObjs[index], "tiff");
+            displayImage(fileObjs[index]);
         }
     };
 
-    const displayImage = async (file, type) => {
+    const displayImage = async (file) => {
+        console.log(file, "ddd");
+        let type = file.type.toString();
         try {
             if (type === "tiff") {
-                displayTiff(file, file.name, file.size);
+                displayTiff(file);
             }
         }
         catch (err) {
@@ -198,14 +201,14 @@ const Tiling = (props) => {
         ctx.putImageData(imageData, 0, 0);
     };
 
-    function displayTiff(fileDisplay, name, size) {
+    function displayTiff(fileDisplay) {
         fileDisplay.arrayBuffer().then((fileBuffer) => {
             let ifds = UTIF.decode(fileBuffer);
             UTIF.decodeImage(fileBuffer, ifds[0])
             var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
             let firstPageOfTif = ifds[0];
-            let imageWidth = firstPageOfTif.width;
-            let imageHeight = firstPageOfTif.height;
+            let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
+            let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
             setWidthImage(imageWidth);
             setHeightImage(imageHeight);
             const cnv = document.getElementById("canvas");
@@ -213,6 +216,7 @@ const Tiling = (props) => {
             cnv.height = imageHeight;
             const ctx = cnv.getContext("2d");
             let imageData = ctx.createImageData(imageWidth, imageHeight);
+            console.log(imageData[0], rgba[0], "imageData[0], ");
             for (let i = 0; i < rgba.length; i++) {
                 imageData.data[i] = rgba[i];
             }
@@ -317,7 +321,6 @@ const Tiling = (props) => {
                                             />
                                         </Col>
                                     </Row>
-
                                     <Row className="mt-4 mr-4">
                                         <Col xs={4}>
                                             <TextField
@@ -508,7 +511,7 @@ const Tiling = (props) => {
                 <Col md="auto" className="p-0 h-100">
                     {/*  Tiling Preview  */}
                     <div className="">
-                        <div className="row m-0">
+                        <div className="row m-0 canvas-area ">
                             {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} /> */}
                             <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} />
                             {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
@@ -519,11 +522,12 @@ const Tiling = (props) => {
                             </div>
                             <div className="col-sm-2 p-0" style={{ position: 'relative' }}>
                                 <Button className="position-absolute" style={{ height: "38px" }}>
-                                    {scale + "%"}
+                                    {scale.toString() + "%"}
                                     <Icon size={1} path={mdiPencil} />
                                 </Button>
                                 <Select
-                                    onChange={handleScaleChange}
+                                    value={scale}
+                                    onChange={(e) => handleScaleChange(e)}
                                     style={{ opacity: "0" }}
                                     className="position-absolute"
                                 >

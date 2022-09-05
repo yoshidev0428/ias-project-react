@@ -305,10 +305,14 @@ h6 {
     margin  : 0px;
 }
 
+.canvas-area {
+    width   : 460px;
+    height  : 460px;
+    overflow: scroll;
+}
+
 .canvas {
-    width           : 460px;
-    height          : 460px;
-    border          : 1px solid #333;
+    // border          : 1px solid #333;
     background-color: transparent;
 }
 

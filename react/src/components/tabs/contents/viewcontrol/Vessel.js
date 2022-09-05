@@ -35,7 +35,7 @@ const Vessel = (props) => {
     }, [currentVesselId]);
 
     useEffect(() => {
-        console.log("VESSEL: NEW CONTENT, ", props.content);
+        // console.log("VESSEL: NEW CONTENT, ", props.content);
         if (props.content) {
             setContents(props.content);
             let current_vessel = { id: 1, type: "WellPlate", rows: 8, cols: 12, title: "96", showName: true, showNumber: false };
