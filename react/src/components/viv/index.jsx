@@ -31,7 +31,7 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(props.content);
 
     useEffect(() => {
-        console.log("Viv viewer index.js props.content : ", props.content);
+        // console.log("Viv viewer index.js props.content : ", props.content);
         if (props.content) {
             let source = {
                 // urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/" + props.content[0].filename,

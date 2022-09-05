@@ -91,7 +91,7 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const [files, setFiles] = useState(acceptedFiles);
     const updateFiles = async (incommingFiles) => {
-        console.log(" OpenPositionDialog.js ImageDropzon updateFiles : incommingFiles : ", incommingFiles);
+        // console.log(" OpenPositionDialog.js ImageDropzon updateFiles : incommingFiles : ", incommingFiles);
         props.setLoading(true);
         let files = [];
         for (let i = 0; i < incommingFiles.length; i++) {
@@ -345,14 +345,14 @@ const DropzoneNamesFiles = (props) => {
         let new_content_processing = [];
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
-        console.log(old_content_p);
+        // console.log(old_content_p);
         for (let i = 0; i < old_content.length; i++) {
             new_content.push(JSON.parse(JSON.stringify(getNamePatternPerFile(old_content[i]))));
             new_content_processing.push(JSON.parse(JSON.stringify(getNamePatternPerFileForProcessing(old_content_p[i]))));
         }
         old_content_p = [];
         old_content = [];
-        console.log('new Contents For Processing: ', JSON.parse(JSON.stringify(new_content_processing)));
+        // console.log('new Contents For Processing: ', JSON.parse(JSON.stringify(new_content_processing)));
         store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(new_content_processing)) });
         setSearchRows(new_content);
     };
