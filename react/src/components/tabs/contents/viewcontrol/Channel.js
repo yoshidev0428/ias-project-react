@@ -116,6 +116,7 @@ const Channel = (props) => {
     }
 
     const channelControllers = ids.map((id, i) => {
+        console.log(id, " ------------- ");
         const onSelectionChange = e => {
             const selection = { ...selections[i], c: channelOptions.indexOf(e.target.value) };
             setIsChannelLoading(i, true);

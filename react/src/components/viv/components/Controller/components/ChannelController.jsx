@@ -55,10 +55,7 @@ function ChannelController({
 }) {
     const loader = useLoader();
     const colormap = useImageSettingsStore(store => store.colormap);
-    const [channelOptions, useLinkedView, use3d] = useViewerStore(
-        store => [store.channelOptions, store.useLinkedView, store.use3d],
-        shallow
-    );
+    const [channelOptions, useLinkedView, use3d] = useViewerStore(store => [store.channelOptions, store.useLinkedView, store.use3d], shallow);
     const rgbColor = toRgb(colormap, color);
     const [min, max] = domain;
     // If the min/max range is and the dtype is float, make the step size smaller so contrastLimits are smoother.

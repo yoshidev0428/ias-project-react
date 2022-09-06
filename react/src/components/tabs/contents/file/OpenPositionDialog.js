@@ -517,7 +517,7 @@ const DropzoneNamesFiles = (props) => {
                                         setPageSize(newPageSize);
                                     }
                                 }}
-                                rowsPerPageOptions={[5, 10, 20]}
+                                rowsPerPageOptions={[2, 5, 10, 20, 25]}
                                 pagination
                             />
                         </div>
