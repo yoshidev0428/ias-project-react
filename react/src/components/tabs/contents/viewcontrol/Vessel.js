@@ -72,8 +72,13 @@ const Vessel = (props) => {
 
     return (
         <Card ref={ref}>
+            <div className="d-flex common-border">
+                <h6 className='mb-0'> {currentVessel.title} - {currentVessel.type}</h6>
+            </div>
+            {renderVessel()}
+            <SelectDialog currentVessel={currentVesselId} open={showSelectDialog} closeDialog={() => { setShowSelectDialog(false) }} changeVessel={(id) => { setCurrentVesselId(id); setCurrentVessel(getVesselById(id)); }} />
+            <ExpansionDialog currentVessel={currentVesselId} open={showExpansionDialog} closeDialog={() => { setShowExpansionDialog(false) }} />
             <div className="d-flex justify-content-around align-items-center common-border">
-                <h6 style={{ width: "60%", align: "center" }}> {currentVessel.title} - {currentVessel.type}</h6>
                 <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
                     <Icon size={0.6}
                         horizontal
@@ -93,9 +98,6 @@ const Vessel = (props) => {
                     </Icon>
                 </button>
             </div>
-            {renderVessel()}
-            <SelectDialog currentVessel={currentVesselId} open={showSelectDialog} closeDialog={() => { setShowSelectDialog(false) }} changeVessel={(id) => { setCurrentVesselId(id); setCurrentVessel(getVesselById(id)); }} />
-            <ExpansionDialog currentVessel={currentVesselId} open={showExpansionDialog} closeDialog={() => { setShowExpansionDialog(false) }} />
         </Card >
     );
 }
