@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useDropzone as useReactDropzone } from 'react-dropzone';
-import shallow from 'zustand/shallow';
-// eslint-disable-next-line camelcase
 import { unstable_batchedUpdates } from 'react-dom';
+import shallow from 'zustand/shallow';
+import store from '../../reducers';
 
 import {
     useChannelsStore,
@@ -22,7 +22,7 @@ import {
 import { COLOR_PALLETE, FILL_PIXEL_VALUE } from './constants';
 
 export const useImage = (source) => {
-    
+
     const [use3d, toggleUse3d, toggleIsOffsetsSnackbarOn] = useViewerStore(
         store => [store.use3d, store.toggleUse3d, store.toggleIsOffsetsSnackbarOn],
         shallow
@@ -33,6 +33,7 @@ export const useImage = (source) => {
     );
     const loader = useLoader();
     const metadata = useMetadata();
+
     useEffect(() => {
         async function changeLoader() {
             // Placeholder
@@ -43,10 +44,7 @@ export const useImage = (source) => {
             const newLoader = await createLoader(
                 urlOrFile,
                 toggleIsOffsetsSnackbarOn,
-                message =>
-                    useViewerStore.setState({
-                        loaderErrorSnackbar: { on: true, message }
-                    })
+                message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } })
             );
             let nextMeta;
             let nextLoader;
@@ -62,6 +60,7 @@ export const useImage = (source) => {
                 nextMeta = newLoader.metadata;
                 nextLoader = newLoader.data;
             }
+            // console.log(nextLoader, nextMeta, "-------- newLoader nextMeta useImage hook.js");
             if (nextLoader) {
                 // console.info(
                 //     'Metadata (in JSON-like form) for current file being viewed: ',
@@ -69,12 +68,9 @@ export const useImage = (source) => {
                 // );
                 unstable_batchedUpdates(() => {
                     useChannelsStore.setState({ loader: nextLoader });
-                    useViewerStore.setState({
-                        metadata: nextMeta
-                    });
+                    useViewerStore.setState({ metadata: nextMeta });
                 });
                 if (use3d) toggleUse3d();
-                // eslint-disable-next-line no-unused-expressions
             }
         }
         if (source) changeLoader();
@@ -130,15 +126,13 @@ export const useImage = (source) => {
                 newDomains = stats.domains;
                 newContrastLimits = stats.contrastLimits;
                 // If there is only one channel, use white.
-                newColors =
-                    newDomains.length === 1
-                        ? [[255, 255, 255]]
-                        : newDomains.map((_, i) => COLOR_PALLETE[i]);
+                newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[i]);
                 useViewerStore.setState({
                     useLens: channelOptions.length !== 1,
                     useColormap: true
                 });
             }
+            // console.log(newColors, "-------- newColors useImage hook.js");
             useChannelsStore.setState({
                 ids: newDomains.map(() => String(Math.random())),
                 selections: newSelections,
@@ -151,16 +145,11 @@ export const useImage = (source) => {
                 isChannelLoading: newSelections.map(i => !i),
                 isViewerLoading: false,
                 pixelValues: new Array(newSelections.length).fill(FILL_PIXEL_VALUE),
-                // Set the global selections (needed for the UI). All selections have the same global selection.
                 globalSelection: newSelections[0],
                 channelOptions
             });
             const [xSlice, ySlice, zSlice] = getBoundingCube(loader);
-            useImageSettingsStore.setState({
-                xSlice,
-                ySlice,
-                zSlice
-            });
+            useImageSettingsStore.setState({ xSlice, ySlice, zSlice });
         };
         if (metadata) changeSettings();
     }, [loader, metadata]); // eslint-disable-line react-hooks/exhaustive-deps

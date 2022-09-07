@@ -40,7 +40,6 @@ const RoutedAvivator = (props) => {
                 description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells",
             }
             setSource(source);
-            // console.log("Viv viewer index.js source : ", source);
         }
     }, [props.content])
     // const query = useQuery();

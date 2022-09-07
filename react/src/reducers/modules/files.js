@@ -26,8 +26,8 @@ const files = (state = initState, action) => {
             state.files = null;
             state.isFilesAvailable = false;
             break;
-        case "files_addFilesChosen":
-            state.filesChosen = action.content;
+        case "files_selectedVesselHole":
+            state.selectedHole = action.content;
             state.isFilesAvailable = true;
             break
         default:

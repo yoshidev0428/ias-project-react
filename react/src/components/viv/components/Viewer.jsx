@@ -67,7 +67,6 @@ const Viewer = (props) => {
             // console.log(props.source, "use3d, useLinkedView");
         }
         if (props.mouseFlag !== null && props.mouseFlag !== undefined) {
-            console.log(mouseFlag, props.mouseFlag, "mouseFlag != props.mouseFlag");
             if (mouseFlag !== props.mouseFlag) {
                 setMouseFlag(props.mouseFlag);
             }
