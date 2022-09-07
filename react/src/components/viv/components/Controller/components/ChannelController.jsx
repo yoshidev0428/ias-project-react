@@ -39,20 +39,7 @@ const getPixelValueDisplay = (pixelValue, isLoading, shouldShowPixelValue) => {
     return FILL_PIXEL_VALUE;
 };
 
-function ChannelController({
-    name,
-    onSelectionChange,
-    channelsVisible,
-    pixelValue,
-    toggleIsOn,
-    handleSliderChange,
-    domain,
-    slider,
-    color,
-    handleRemoveChannel,
-    handleColorSelect,
-    isLoading
-}) {
+function ChannelController({ name, onSelectionChange, channelsVisible, pixelValue, toggleIsOn, handleSliderChange, domain, slider, color, handleRemoveChannel, handleColorSelect, isLoading }) {
     const loader = useLoader();
     const colormap = useImageSettingsStore(store => store.colormap);
     const [channelOptions, useLinkedView, use3d] = useViewerStore(store => [store.channelOptions, store.useLinkedView, store.use3d], shallow);

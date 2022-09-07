@@ -700,7 +700,7 @@ const OpenPositionDialog = (props) => {
 
 const mapStateToProps = (state) => ({
     files: state.files.file,
-    filesChosen: state.files.filesChosen,
+    filesChosen: state.files.selectedHole,
 });
 
 OpenPositionDialog.propTypes = { handleClose: PropTypes.func.isRequired };

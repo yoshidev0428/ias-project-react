@@ -128,12 +128,7 @@ const WellPlates = (props) => {
 
     const getViewConfigs = (dataHoleChosen) => {
         console.log("WELL PLATES: getViewConfigs", dataHoleChosen);
-        let viewConfigsInObj = getViewConfigsObjects(dataHoleChosen.data);
-        return viewConfigsInObj;
-    }
-
-    const getViewConfigsObjects = (dataHoleChosen) => {
-        let old_content = [...dataHoleChosen];
+        let old_content = [...dataHoleChosen.data];
         let zPosS = [];
         let timePointS = [];
         let channels = [];
@@ -163,12 +158,11 @@ const WellPlates = (props) => {
         let channelObj = {};
         channelObj['array'] = getUniqueSortedNumber(channels);
 
-        let viewConfigsObj = {};
-        viewConfigsObj['z'] = zPosObj;
-        viewConfigsObj['time'] = timePointObj;
-        viewConfigsObj['channel'] = channelObj;
-
-        return viewConfigsObj;
+        let viewConfigsInObj = {};
+        viewConfigsInObj['z'] = zPosObj;
+        viewConfigsInObj['time'] = timePointObj;
+        viewConfigsInObj['channel'] = channelObj;
+        return viewConfigsInObj;
     }
 
     const handleVesselClick = (e, holeNumber, row, col) => {
@@ -179,7 +173,7 @@ const WellPlates = (props) => {
             // console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
             let viewConfigs = getViewConfigs(dataHoleChosen);
             // console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
-            store.dispatch({ type: "files_addFilesChosen", data: dataHoleChosen.data });
+            store.dispatch({ type: "files_selectedVesselHole", content: dataHoleChosen.data });
             store.dispatch({ type: "vessel_setViewConfigsObj", data: viewConfigs });
         }
         else {
