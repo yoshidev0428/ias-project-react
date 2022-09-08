@@ -98,7 +98,8 @@ const ImageDropzone = (props) => {
             files.push(incommingFiles[i].file);
         }
         if (files.length > 0) {
-            await api.uploadImageTiles(files);
+            let res_upload_images = await api.uploadImageTiles(files);
+            // console.log("OpenPosition.js ImageDropzone upload image : ", res_upload_images.data);
         }
         props.setFiles(files);
         props.setLoading(false);
@@ -383,8 +384,8 @@ const DropzoneNamesFiles = (props) => {
     useEffect(() => {
         setContents([]);
         setSearchRows([]);
-        console.log('==========================================');
-        console.log(acceptedFiles);
+        // console.log('==========================================');
+        // console.log(acceptedFiles);
         for (let i = 0; i < acceptedFiles.length; i++) {
             if (acceptedFiles[i].valid) {
                 // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
@@ -568,7 +569,6 @@ const OpenPositionDialog = (props) => {
     useEffect(() => {
         if (filesUploaded.length > 0) {
             props.handleFilesUploaded(filesUploaded);
-            store.dispatch({ type: 'files_addFiles', content: filesUploaded });
         }
     }, [filesUploaded]);
 

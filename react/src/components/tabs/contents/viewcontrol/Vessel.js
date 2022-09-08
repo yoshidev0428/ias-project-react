@@ -35,13 +35,32 @@ const Vessel = (props) => {
     }, [currentVesselId]);
 
     useEffect(() => {
-        // console.log("VESSEL: NEW CONTENT, ", props.content);
+        console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
         if (props.content) {
-            setContents(props.content);
-            let current_vessel = { id: 1, type: "WellPlate", rows: 8, cols: 12, title: "96", showName: true, showNumber: false };
-            let current_content = props.content[0];
-            if (current_content.series.includes("Plate")) {
+            let current_contents = JSON.parse(JSON.stringify(props.content));
+            setContents(current_contents);
+            let current_vessel = { id: 1, type: "", rows: 1, cols: 1, title: "4", showName: true, showNumber: false };
+            if (current_contents[0].series.includes("Plate")) {
                 current_vessel.type = "WellPlate";
+                for (let i = 0; i < current_contents.length; i++) {
+                    if (current_contents[i].row + 1 > current_vessel.rows) {
+                        current_vessel.rows = current_contents[i].row + 1;
+                    }
+                    if (current_contents[i].col + 1 > current_vessel.cols) {
+                        current_vessel.cols = current_contents[i].col;
+                    }
+                }
+                if (current_vessel.rows * current_vessel.cols >= 384) { current_vessel.title = "384"; current_vessel.rows = 16; current_vessel.cols = 24; }
+                else if (current_vessel.rows * current_vessel.cols >= 96) { current_vessel.title = "96"; current_vessel.rows = 8; current_vessel.cols = 12; }
+                else if (current_vessel.rows * current_vessel.cols >= 48) { current_vessel.title = "48"; current_vessel.rows = 6; current_vessel.cols = 8; }
+                else if (current_vessel.rows * current_vessel.cols >= 4) { current_vessel.title = "4"; current_vessel.rows = 2; current_vessel.cols = 2; }
+                else { current_vessel.title = "4"; current_vessel.rows = 2; current_vessel.cols = 2; }
+            } else if (current_contents[0].series.includes("Slide")) {
+                current_vessel.type = "Slide";
+            } else if (current_contents[0].series.includes("Dish")) {
+                current_vessel.type = "Dish";
+            } else if (current_contents[0].series.includes("Wafer")) {
+                current_vessel.type = "Wafer";
             }
             setCurrentVessel(current_vessel);
         }

@@ -9,7 +9,7 @@ import { } from "../../reducers/modules/filesReducer";
 // import { getNameFromUrl } from './utils';
 
 const mapStateToProps = (state) => ({
-    content: state.files.content
+    content: state.files.files
 })
 
 const darkTheme = createTheme({
@@ -31,13 +31,11 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(props.content);
 
     useEffect(() => {
-        // console.log("Viv viewer index.js props.content : ", props.content);
+        console.log("Viv viewer index.js props.content : ", props.content);
         if (props.content) {
             let source = {
-                // urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/" + props.content[0].filename,
-                // description: "",
-                urlOrFile: "https://viv-demo.storage.googleapis.com/Vanderbilt-Spraggins-Kidney-MxIF.ome.tif",
-                description: "OME-TIFF Covid-19 Primary Gut Epithelial Stem Cells",
+                urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/" + props.content[0].file["name"],
+                description: "",
             }
             setSource(source);
         }
