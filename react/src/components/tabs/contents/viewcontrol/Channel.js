@@ -145,7 +145,6 @@ const Channel = (props) => {
     );
 
     // const channelControllers = ids.map((id, i) => {
-    //     console.log(id, i, isRgb, "-------- onSelectionChange e, i Channel.js");
     //     const onSelectionChange = (e, i) => {
     //         const selection = { ...selections[i], c: channelOptions.indexOf(e.target.value) };
     //         setIsChannelLoading(i, true);
@@ -169,7 +168,6 @@ const Channel = (props) => {
     //     const handleColorSelect = color => {
     //         setPropertiesForChannel(i, { colors: color });
     //     };
-    //     // console.log(channelOptions, colormap, "-------- channelOptions Channel.js");
     //     const name = channelOptions[selections[i].c];
     //     return (
     //         <Grid container key={`channel-controller-${name}-${id}`} style={{ width: '100%' }} item >

@@ -40,7 +40,7 @@ export const VESSELS = [
     ]
 ];
 
-export const getVesselById = id => {
+export const getVesselById = (id) => {
     for (let v of VESSELS) {
         for (let one of v) {
             if (one.id === id) {
