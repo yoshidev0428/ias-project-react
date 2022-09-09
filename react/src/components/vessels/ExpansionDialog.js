@@ -42,17 +42,12 @@ TabPanel.propTypes = {
 
 export const ExpansionDialog = (props) => {
 
+
     const maxDialogWidth = 600
     // const [tab, setTab] = useState(0);
     const [open, setOpen] = useState(true);
     const [currentVessel, setCurrentVessel] = useState(props.currentVessel);
     // const [ref, { width, height }] = useElementSize();
-
-    useEffect(() => {
-        setOpen(props.open);
-        setCurrentVessel(props.currentVessel);
-    }, [props]);
-
     // const handleTabChange = (event, newValue) => {
     //     setTab(newValue);
     // };
@@ -68,15 +63,19 @@ export const ExpansionDialog = (props) => {
         }
     };
 
+    useEffect(() => {
+        setOpen(props.open);
+        setCurrentVessel(props.currentVessel);
+    }, [props]);
+
     const renderVesselItem = (vessel) => {
         if (vessel) {
             switch (vessel.type) {
                 case 'Slide':
-                    // return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: 500 }}><Slides width={"480px"} height={"350px"} vessel={vessel} count={vessel.count} key={vessel.id}/></div>;
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth }}><Slides width={maxDialogWidth} count={vessel.count} key={vessel.id} /></div>;
                 case 'Dish':
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth }}><Dishes width={maxDialogWidth} size={vessel.size} key={vessel.id} /></div>;
-                case 'Well':
+                case 'WellPlate':
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth }}><WellPlates width={maxDialogWidth} rows={vessel.rows} cols={vessel.cols} showName={true} key={vessel.id} showNumber={true} /></div>;
                 case 'Wafer':
                     return <div role="button" onClick={() => { changeCurrentVessel(vessel.id) }} style={{ width: maxDialogWidth }}><Wafers width={maxDialogWidth} size={vessel.size} key={vessel.id} /></div>;

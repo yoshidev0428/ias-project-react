@@ -39,22 +39,16 @@ const Vessel = (props) => {
         if (props.content) {
             let current_contents = JSON.parse(JSON.stringify(props.content));
             setContents(current_contents);
-            let current_vessel = { id: 1, type: "", rows: 1, cols: 1, title: "4", showName: true, showNumber: false };
+            let current_vessel = { id: 12, type: "WellPlate", rows: 8, cols: 12, title: "96", showName: true };
             if (current_contents[0].series.includes("Plate")) {
-                current_vessel.type = "WellPlate";
-                for (let i = 0; i < current_contents.length; i++) {
-                    if (current_contents[i].row + 1 > current_vessel.rows) {
-                        current_vessel.rows = current_contents[i].row + 1;
-                    }
-                    if (current_contents[i].col + 1 > current_vessel.cols) {
-                        current_vessel.cols = current_contents[i].col;
-                    }
-                }
-                if (current_vessel.rows * current_vessel.cols >= 384) { current_vessel.title = "384"; current_vessel.rows = 16; current_vessel.cols = 24; }
-                else if (current_vessel.rows * current_vessel.cols >= 96) { current_vessel.title = "96"; current_vessel.rows = 8; current_vessel.cols = 12; }
-                else if (current_vessel.rows * current_vessel.cols >= 48) { current_vessel.title = "48"; current_vessel.rows = 6; current_vessel.cols = 8; }
-                else if (current_vessel.rows * current_vessel.cols >= 4) { current_vessel.title = "4"; current_vessel.rows = 2; current_vessel.cols = 2; }
-                else { current_vessel.title = "4"; current_vessel.rows = 2; current_vessel.cols = 2; }
+                let image_size = (current_contents[current_contents.length - 1].row + 1) * (current_contents[current_contents.length - 1].col);
+                if (image_size >= 384) { current_vessel = getVesselById(13); }
+                else if (image_size >= 96) { current_vessel = getVesselById(12); }
+                else if (image_size >= 48) { current_vessel = getVesselById(11); }
+                else if (image_size >= 24) { current_vessel = getVesselById(10); }
+                else if (image_size >= 12) { current_vessel = getVesselById(9); }
+                else if (image_size >= 6) { current_vessel = getVesselById(8); }
+                else { current_vessel = getVesselById(7); }
             } else if (current_contents[0].series.includes("Slide")) {
                 current_vessel.type = "Slide";
             } else if (current_contents[0].series.includes("Dish")) {
@@ -63,6 +57,7 @@ const Vessel = (props) => {
                 current_vessel.type = "Wafer";
             }
             setCurrentVessel(current_vessel);
+            setCurrentVesselId(current_vessel.id);
         }
     }, [props.content])
 
