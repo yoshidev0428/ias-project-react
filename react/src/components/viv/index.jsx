@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 import Avivator from './Avivator';
 import { } from "../../reducers/modules/filesReducer";
+import * as api from '../../api/tiles';
 // import sources from './source-info';
 // import { useLocation } from 'react-router-dom';
 // import { getNameFromUrl } from './utils';
@@ -28,13 +29,21 @@ const darkTheme = createTheme({
 
 const RoutedAvivator = (props) => {
 
-    const [source, setSource] = useState(props.content);
+    const [source, setSource] = useState([]);
+
+    const update_image_metaData = () => {
+        const { urlOrFile } = source;
+        let nextMeta;
+        let nextLoader;
+        // console.log(nextLoader, nextMeta, "-------- newLoader nextMeta useImage hook.js");
+        
+    }
 
     useEffect(() => {
         console.log("Viv viewer index.js props.content : ", props.content);
         if (props.content) {
             let source = {
-                urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/" + props.content[0].file["name"],
+                urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/LiveDead2_Plate_R_p00_0_A01f00d0.TIF",
                 description: "",
             }
             setSource(source);
