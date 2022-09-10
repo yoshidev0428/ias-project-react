@@ -45,9 +45,7 @@ async function getTotalImageCount(src, rootMeta, data) {
     const hasSubIFDs = Boolean(firstImage?.fileDirectory?.SubIFDs);
     if (hasSubIFDs) {
         return rootMeta.reduce((sum, imgMeta) => {
-            const {
-                Pixels: { SizeC, SizeT, SizeZ }
-            } = imgMeta;
+            const { Pixels: { SizeC, SizeT, SizeZ } } = imgMeta;
             const numImagesPerResolution = SizeC * SizeT * SizeZ;
             return numImagesPerResolution + sum;
         }, 1);
