@@ -13,6 +13,7 @@ from fastapi import (
     UploadFile,
     File, Form, HTTPException
 )
+import tifftools
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from mainApi.app.auth.auth import get_current_user
@@ -22,7 +23,7 @@ from typing import List
 from mainApi.app.db.mongodb import get_database
 from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
+from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing, generate_ome
 import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
@@ -42,22 +43,23 @@ router = APIRouter(
              response_model=List[TileModelDB])
 async def upload_image_tiles(files: List[UploadFile] = File(...),
                              clear_previous: bool = Form(False),
-                             current_user: UserModelDB = Depends(
-                                 get_current_user),
+                             current_user: UserModelDB = Depends(get_current_user),
                              db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
 
     for f in os.listdir(STATIC_PATH):
         os.remove(os.path.join(STATIC_PATH, f))
     filenames = []
+    filepaths = []
     for each_file in files:
         file_path = STATIC_PATH.joinpath(each_file.filename)
+        filepaths.append(file_path)
         async with aiofiles.open(file_path, 'wb') as f:
             content = await each_file.read()
             await f.write(content)
+        # result = await generate_ome(path = file_path)
         filenames.append(each_file.filename)
     # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
-    result = {"Flag_3d": True, "N_images": len(filenames),
-              "path_images": filenames}
+    result = {"Flag_3d": True, "N_images": len(filenames), "path_images": filenames}
     return JSONResponse(result)
 
 
@@ -69,8 +71,7 @@ async def upload_image_name(files_name: str = Form(''),
                             effectiveness: int = Form(1),
                             isroi: bool = Form(False),
                             roiPoints: object = Form(...),
-                            current_user: UserModelDB = Depends(
-                                get_current_user),
+                            current_user: UserModelDB = Depends(get_current_user),
                             db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     files_name = files_name.split("/")[-1]
     dictRoiPts = jsons.loads(roiPoints)
@@ -129,6 +130,7 @@ async def SuperRes(file_name: str = Form(''),
             response_model=List[TileModelDB],
             status_code=status.HTTP_200_OK)
 async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    print( current_user, "tiles -----------")
     tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
@@ -189,7 +191,7 @@ async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB
 
         Called using concurrent.futures to make it async
     """
-    print(tiles, " : align_tiles_naive : ")
+    print(tiles, " : align_tiles_naive : ----------------------------")
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         # await result
