@@ -52,7 +52,9 @@ async def add_image_tiles(path: Path,
     cache_path = STATIC_PATH
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
-    raw_source = io.imread(path)
+    print(path, "-------------------------")
+    raw_source = io.imread(path, True)
+    print("---------------------------------- + ")
     res = raw_source
     image_num = res.shape
     
@@ -93,3 +95,12 @@ async def add_image_tiles(path: Path,
         D_flag = False
         image_num = 1
         return D_flag, image_num, path_images
+
+async def generate_ome (path: Path):
+    print(path)
+    res = io.imread(path)
+    print(res, "---------------------")
+    print(" --------------------------- ")
+    tff = tifftools.read_tiff(Path)
+    tifftools.write_tiff(tff, 'output.tiff')
+    print(" --------------------------- ++ ")
