@@ -16,11 +16,6 @@ export const fileUpload = params => {
     return api.post("/image/tile/upload_image_tiles", params);
 };
 
-export const setMetadata = params => {
-    console.log(params)
-    return api.post("/image/tile/upload_image_tiles", params);
-};
-
 export const deconvol2D = params => {
     console.log(params);
     return api.post("/image/tile/deconvol2D", params);

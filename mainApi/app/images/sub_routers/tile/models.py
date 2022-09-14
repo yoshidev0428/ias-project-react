@@ -24,11 +24,29 @@ class TileModelDB(BaseModel):
 
     offset_x: Optional[int] = 0
     offset_y: Optional[int] = 0
-
+    
     row_index: Optional[int] = 0  # created by regex of name
     column_index: Optional[int] = 0  # created by regex of name
     channel: Optional[str] = "not specified"
+    field: Optional[int] = 0
+    z_position: Optional[int] = 0
+    time_point: Optional[str] = 0
+    class Config:
+        # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
+        allow_population_by_field_name = True
+        json_encoders = {ObjectId: str}
+        alias_generator = to_camel
 
+class NamePattenModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    filename: Optional[str] = ""
+    series: Optional[str] = ""
+    row: Optional[int] = 0  # created by regex of name
+    col: Optional[int] = 0  # created by regex of name
+    channel: Optional[str] = "not specified"
+    field: Optional[int] = 0
+    z_position: Optional[int] = 0
+    time_point: Optional[str] = 0
     class Config:
         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
         allow_population_by_field_name = True

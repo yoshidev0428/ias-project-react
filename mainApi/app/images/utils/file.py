@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List
 import os
 import PIL
+import tifffile
 from skimage import io
 import numpy as np
 import datetime
@@ -49,58 +50,70 @@ async def add_image_tiles(path: Path,
     Front end should include a validator that checks if the file has already been uploaded and then reject it.
     No validation is done in the backend
     """
-    cache_path = STATIC_PATH
-    if not os.path.exists(cache_path):
-        os.makedirs(cache_path)
-    print(path, "-------------------------")
-    raw_source = io.imread(path, True)
-    print("---------------------------------- + ")
-    res = raw_source
-    image_num = res.shape
     
-    current_time = datetime.datetime.now() 
-    time_str = current_time.strftime("%Y%m%d_%H%M%S")
-    path_images = []
-
-    if image_num[2] > 3:
-        for i in range(image_num[0]):
-            path_image = os.path.join(cache_path, 'slice_{num:03d}'.format(num=i)+ '_' + time_str + '.png')
-            io.imsave(path_image, normalize_2Dim_uint8(res[i]))
-            path_image = path_image.split('/')[-1]
-            path_images.append(path_image)
-        D_flag = True
-        return D_flag, image_num[0], path_images
-
-    else:
-        tiles: List[TileModelDB] = []
-        file = files[0]
-        path_image = os.path.join(cache_path, 'slice_000_'+ time_str +'.png')
-        io.imsave(path_image, normalize_2Dim_uint8(res))
-        path_image = path_image.split('/')[-1]
-        path_images.append(path_image)
-        width_px, height_px = PIL.Image.open(file.file).size
-
+    tiles: List[TileModelDB] = []
+    filenames = []
+    for each_file in files:
+        file_path = os.path.join(path, each_file.filename) 
+        # STATIC_PATH.joinpath(each_file.filename)
+        # filepaths.append(file_path)
+        async with aiofiles.open(file_path, 'wb') as f:
+            content = await each_file.read()
+            await f.write(content)
+        filenames.append(each_file.filename)
+        width_px, height_px = PIL.Image.open(file_path).size
         tile = TileModelDB(
             user_id=PyObjectId(current_user.id),
             absolute_path=str(path),
-            file_name=file.filename,
-            content_type=file.content_type,
+            file_name=each_file.filename,
+            content_type=each_file.content_type,
             width_px=width_px,
             height_px=height_px
         )
         tiles.append(tile)
-
-        await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
-        path = tiles[0].absolute_path
-        D_flag = False
-        image_num = 1
-        return D_flag, image_num, path_images
-
-async def generate_ome (path: Path):
-    print(path)
-    res = io.imread(path)
-    print(res, "---------------------")
-    print(" --------------------------- ")
-    tff = tifftools.read_tiff(Path)
-    tifftools.write_tiff(tff, 'output.tiff')
-    print(" --------------------------- ++ ")
+        # with tifffile.TiffFile(file_path) as tif:
+        #     tif_tags = {}
+        #     for tag in tif.pages[0].tags.values():
+        #         name, value = tag.name, tag.value
+        #         tif_tags[name] = value
+        #     print(tif_tags, " ------------ ")
+        #     image = tif.pages[0].asarray()
+    await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
+    return {"Flag_3d": True, "N_images": len(filenames), "path_images": filenames}
+    # cache_path = STATIC_PATH
+    # raw_source = io.imread(path, True)
+    # res = raw_source
+    # image_num = res.shape    
+    # current_time = datetime.datetime.now() 
+    # time_str = current_time.strftime("%Y%m%d_%H%M%S")
+    # path_images = []
+    # if image_num[2] > 3:
+    #     for i in range(image_num[0]):
+    #         path_image = os.path.join(cache_path, 'slice_{num:03d}'.format(num=i)+ '_' + time_str + '.png')
+    #         io.imsave(path_image, normalize_2Dim_uint8(res[i]))
+    #         path_image = path_image.split('/')[-1]
+    #         path_images.append(path_image)
+    #     D_flag = True
+    #     return D_flag, image_num[0], path_images
+    # else:
+        # tiles: List[TileModelDB] = []
+        # file = files[0]
+        # path_image = os.path.join(cache_path, 'slice_000_'+ time_str +'.png')
+        # io.imsave(path_image, normalize_2Dim_uint8(res))
+        # path_image = path_image.split('/')[-1]
+        # path_images.append(path_image)
+        # width_px, height_px = PIL.Image.open(file.file).size
+        # tile = TileModelDB(
+        #     user_id=PyObjectId(current_user.id),
+        #     absolute_path=str(path),
+        #     file_name=file.filename,
+        #     content_type=file.content_type,
+        #     width_px=width_px,
+        #     height_px=height_px
+        # )
+        # tiles.append(tile)
+        # await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
+        # path = tiles[0].absolute_path
+        # D_flag = False
+        # image_num = 1
+        # return D_flag, image_num, path_images
