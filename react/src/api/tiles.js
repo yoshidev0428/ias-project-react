@@ -1,6 +1,26 @@
 import { api } from "./base";
 import store from '../reducers';
 
+const state = store.getState();
+
+export const uploadImageFiles = (files) => {
+    const formData = new FormData();
+    for (let i in files) {
+        let f = files[i];
+        formData.append("files", f);
+    }
+
+    return api.post("image/tile/upload_image_tiles", formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            "Content-Type": "multipart/form-data",
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+};
+
 export const listTiles = (callback) => {
     api.get("image/tile/list")
         .then(function (response) {
@@ -17,7 +37,7 @@ export const alignTilesApi = (rows, method, callback) => {
     formData.append("method", method);
     formData.append("row", rows);
     api
-        .post("image/tile/align_tiles_naive", formData, {
+        .get("image/tile/align_tiles_naive", formData, {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Content-Type": "multipart/form-data"
@@ -37,15 +57,9 @@ export const alignTilesApi = (rows, method, callback) => {
         });
 };
 
-export const uploadImageTiles = (files) => {
-    const state = store.getState();
-    const formData = new FormData();
-    for (let i in files) {
-        let f = files[i];
-        formData.append("files", f);
-    }
-
-    return api.post("image/tile/upload_image_tiles", formData, {
+export const updateNameFile = (params) => {
+    // return api.post("/image/tile/update", params);
+    return api.post("image/tile/update", params, {
         headers: {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",

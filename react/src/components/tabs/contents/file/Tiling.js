@@ -27,7 +27,7 @@ import {
     mdiPencil,
 } from '@mdi/js';
 import { connect } from 'react-redux';
-import * as api from "../../../../api/tiles";
+import * as api_tiles from "../../../../api/tiles";
 import UTIF from "utif";
 
 const tilingMenus = [
@@ -99,7 +99,7 @@ const Tiling = (props) => {
         if (fileObjs.length > 0) {
             let method = event.target.value;
             if (tilingAlignButtons.includes(method)) {
-                api.alignTilesApi(fileObjs.length, method, handleApi);
+                api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
             }
         }
     };
@@ -116,7 +116,7 @@ const Tiling = (props) => {
     const handleChange = (event) => {
         setChecked(event.target.checked);
         if (fileObjs.length > 0) {
-            api.listTiles(handleApi);
+            api_tiles.listTiles(handleApi);
         }
     };
 

@@ -21,7 +21,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import SearchBar from 'material-ui-search-bar';
 import TextField from '@mui/material/TextField';
 
-import * as api from '../../../../api/tiles';
+// import { updateNameFile, uploadImageFiles } from '../../../../api/tiles';
+import * as api_tiles from '../../../../api/tiles';
 import OpenCloudDialog from './OpenCloudDialog';
 import Tiling from './Tiling';
 
@@ -89,7 +90,9 @@ TabContainer.propTypes = {
 };
 
 const ImageDropzone = (props) => {
+
     const [files, setFiles] = useState(acceptedFiles);
+
     const updateFiles = async (incommingFiles) => {
         // console.log(" OpenPositionDialog.js ImageDropzon updateFiles : incommingFiles : ", incommingFiles);
         props.setLoading(true);
@@ -98,8 +101,8 @@ const ImageDropzone = (props) => {
             files.push(incommingFiles[i].file);
         }
         if (files.length > 0) {
-            let res_upload_images = await api.uploadImageTiles(files);
-            // console.log("OpenPosition.js ImageDropzone upload image : ", res_upload_images.data);
+            let res_upload_images = await api_tiles.uploadImageFiles(files);
+            console.log("OpenPosition.js ImageDropzone uploaded image : ", res_upload_images.data);
         }
         props.setFiles(files);
         props.setLoading(false);
@@ -286,14 +289,13 @@ const DropzoneNamesFiles = (props) => {
                             }
                         }
                     }
-                    // console.log( namePatternsPrimary, 'openposition dlg , clickNamePattern   getSelectionText' );
                     setNamePatterns(namePatternsPrimaryValue);
                 }
             }
         }
     };
 
-    // update button function
+    // ----------------------------------------------------- update button function
     // Convert string to integer of some fields: row, col, field, channel, z, time
     const convertContentStringToInteger = (field, stringData) => {
         // console.log("OpenPositionDialog > convertContentStringToInteger, field, stringData :", field, stringData);
@@ -304,9 +306,7 @@ const DropzoneNamesFiles = (props) => {
         } else {
             newField = stringData.replace(/\D/g, '');
             intField = parseInt(newField);
-            // console.log("OpenPositionDialog > convertContentStringToInteger, ", intField);
         }
-        // console.log("OpenPositionDialog > convertContentStringToInteger, ", field, newField, intField);
         return intField;
     };
 
@@ -322,13 +322,15 @@ const DropzoneNamesFiles = (props) => {
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
         var result = {};
-        // console.log(" getNamePatternPerFileForProcessing  objectPerFile : ", Object.keys(objectPerFile));
-        for (let i = 0; i < Object.keys(objectPerFile).length - 3; i++) {
-            let key = Object.keys(objectPerFile)[i + 2];
+        console.log(" getNamePatternPerFileForProcessing  objectPerFile : ", Object.keys(objectPerFile), objectPerFile);
+        for (let i = 0; i < Object.keys(objectPerFile).length - 2; i++) {
+            let key = Object.keys(objectPerFile)[i + 1];
             if (key && objectPerFile !== null) {
-                let tempString = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
-                if (key === 'series' || key === 'filename') {
+                let tempString = objectPerFile.filename.substring(namePatterns[i - 1].start, namePatterns[i -1].end);
+                if (key === 'series') {
                     result[key] = tempString;
+                } else if (key === 'filename') {
+                    result[key] = objectPerFile.filename;
                 } else {
                     result[key] = convertContentStringToInteger(key, tempString);
                 }
@@ -337,7 +339,7 @@ const DropzoneNamesFiles = (props) => {
         return result;
     };
 
-    const updateNameType = () => {
+    const updateNameType = async () => {
         if (acceptedFiles === null || acceptedFiles === undefined) {
             console.log('acceptedFiles error : ', acceptedFiles);
             return '';
@@ -353,7 +355,9 @@ const DropzoneNamesFiles = (props) => {
         }
         old_content_p = [];
         old_content = [];
-        // console.log('new Contents For Processing: ', JSON.parse(JSON.stringify(new_content_processing)));
+        console.log(JSON.parse(JSON.stringify(new_content_processing)), " JSON.parse(JSON.stringify(new_content_processing)) ");
+        let result = await api_tiles.updateNameFile(JSON.parse(JSON.stringify(new_content_processing)));
+        console.log(result, " api_tiles.updateNameFile ");
         store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(new_content_processing)) });
         setSearchRows(new_content);
     };

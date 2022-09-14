@@ -32,22 +32,17 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState([]);
 
     const update_image_metaData = () => {
-        const { urlOrFile } = source;
-        let nextMeta;
-        let nextLoader;
-        // console.log(nextLoader, nextMeta, "-------- newLoader nextMeta useImage hook.js");
-        
     }
 
     useEffect(() => {
         console.log("Viv viewer index.js props.content : ", props.content);
-        if (props.content) {
-            let source = {
-                urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/LiveDead2_Plate_R_p00_0_A01f00d0.TIF",
-                description: "",
-            }
-            setSource(source);
-        }
+        // if (props.content) {
+        //     let source = {
+        //         urlOrFile: process.env.REACT_APP_BASE_API_URL + "static/LiveDead2_Plate_R_p00_0_A01f00d0.TIF",
+        //         description: "",
+        //     }
+        //     setSource(source);
+        // }
     }, [props.content])
     // const query = useQuery();
     // const {

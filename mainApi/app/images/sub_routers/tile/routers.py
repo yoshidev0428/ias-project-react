@@ -13,7 +13,6 @@ from fastapi import (
     UploadFile,
     File, Form, HTTPException
 )
-import tifftools
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from mainApi.app.auth.auth import get_current_user
@@ -21,9 +20,9 @@ from mainApi.app.auth.auth import get_current_user
 from typing import List
 
 from mainApi.app.db.mongodb import get_database
-from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel
+from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing, generate_ome
+from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
 import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
@@ -36,7 +35,7 @@ router = APIRouter(
     tags=["tile"],
 )
 
-
+# Upload Image file
 @router.post("/upload_image_tiles",
              response_description="Upload Image Tiles",
              status_code=status.HTTP_201_CREATED,
@@ -45,24 +44,86 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
                              clear_previous: bool = Form(False),
                              current_user: UserModelDB = Depends(get_current_user),
                              db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
-
-    for f in os.listdir(STATIC_PATH):
-        os.remove(os.path.join(STATIC_PATH, f))
-    filenames = []
-    filepaths = []
-    for each_file in files:
-        file_path = STATIC_PATH.joinpath(each_file.filename)
-        filepaths.append(file_path)
-        async with aiofiles.open(file_path, 'wb') as f:
-            content = await each_file.read()
-            await f.write(content)
-        # result = await generate_ome(path = file_path)
-        filenames.append(each_file.filename)
-    # cal = await add_image_tiles(path = file_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
-    result = {"Flag_3d": True, "N_images": len(filenames), "path_images": filenames}
+                             
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    if not os.path.exists(current_user_path):
+        os.makedirs(current_user_path)
+    else:
+        for f in os.listdir(current_user_path):
+            os.remove(os.path.join(current_user_path, f))
+        res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
+    result = await add_image_tiles(path = current_user_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
     return JSONResponse(result)
 
+# Alignment tilings
+@router.get("/list",
+            response_description="Upload Image Tiles",
+            response_model=List[TileModelDB],
+            status_code=status.HTTP_200_OK)
+async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    print( current_user, "tiles -----------")
+    tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
+    return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
+@router.get("/align_tiles_naive",
+            response_description="Align Tiles",
+            response_model=List[AlignedTiledModel],
+            status_code=status.HTTP_200_OK)
+async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB] = Depends(get_tile_list)) -> List[AlignedTiledModel]:
+    """
+        performs a naive aligning of the tiles simply based on the given rows and method.
+        does not perform any advanced stitching or pixel checking
+
+        Called using concurrent.futures to make it async
+    """
+    print(tiles, " : align_tiles_naive : ----------------------------")
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        # await result
+        aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)
+        return aligned_tiles
+
+@router.get("/align_tiles_ashlar",
+            response_description="Align Tiles",
+            # response_model=List[AlignedTiledModel],
+            status_code=status.HTTP_200_OK)
+async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list)) -> any:
+    """
+        performs a naive aligning of the tiles simply based on the given rows and method.
+        does not perform any advanced stitching or pixel checking
+
+        Called using concurrent.futures to make it async
+    """
+
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        # await result
+        aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles, "img_r{row:03}_c{col:03}.tif")
+        return aligned_tiles
+
+# Update Name and File - Name&&File Functions
+@router.post("/update",
+             response_description="Update Image Tiles With Name",
+             status_code=status.HTTP_200_OK)
+async def update(tiles: List[NamePattenModel],
+                       current_user: UserModelDB = Depends(get_current_user),
+                       db: AsyncIOMotorDatabase = Depends(get_database)):
+    # make sure we are not trying to alter any tiles we do not own
+    # we check this first and if they are trying to update any un owned docs we dont update any
+    # print("--------------------------")
+    for tile in tiles:
+        print(tile, "--------------------------")
+        # if tile.user_id != current_user.id:
+        #     raise HTTPException(
+        #         status_code=status.HTTP_401_UNAUTHORIZED,
+        #         detail="Cannot update tile that does not belong to user",
+        #         headers={"WWW-Authenticate": "Bearer"},
+        #     )
+
+    # for tile in tiles:
+    #     result = await db['tile-image-cache'].replace_one({'_id': tile.id}, tile.dict(exclude={'id'}))
+
+# View Controls
 @router.post("/deconvol2D",
              response_description="Convolution about 2D image",
              status_code=status.HTTP_201_CREATED,
@@ -124,37 +185,6 @@ async def SuperRes(file_name: str = Form(''),
               "path_images": path}
     return JSONResponse(result)
 
-
-@router.get("/list",
-            response_description="Upload Image Tiles",
-            response_model=List[TileModelDB],
-            status_code=status.HTTP_200_OK)
-async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
-    print( current_user, "tiles -----------")
-    tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
-    return pydantic.parse_obj_as(List[TileModelDB], tiles)
-
-
-@router.post("/update",
-             response_description="Update Image Tiles",
-             status_code=status.HTTP_200_OK)
-async def update_tiles(tiles: List[TileModelDB],
-                       current_user: UserModelDB = Depends(get_current_user),
-                       db: AsyncIOMotorDatabase = Depends(get_database)):
-    # make sure we are not trying to alter any tiles we do not own
-    # we check this first and if they are trying to update any un owned docs we dont update any
-    for tile in tiles:
-        if tile.user_id != current_user.id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Cannot update tile that does not belong to user",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-    for tile in tiles:
-        result = await db['tile-image-cache'].replace_one({'_id': tile.id}, tile.dict(exclude={'id'}))
-
-
 @router.post("/delete",
              response_description="Update Image Tiles",
              status_code=status.HTTP_200_OK)
@@ -178,45 +208,6 @@ async def delete_tiles(tiles: List[TileModelDB],
         results.append(result)
 
     return results
-
-
-@router.get("/align_tiles_naive",
-            response_description="Align Tiles",
-            response_model=List[AlignedTiledModel],
-            status_code=status.HTTP_200_OK)
-async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB] = Depends(get_tile_list)) -> List[AlignedTiledModel]:
-    """
-        performs a naive aligning of the tiles simply based on the given rows and method.
-        does not perform any advanced stitching or pixel checking
-
-        Called using concurrent.futures to make it async
-    """
-    print(tiles, " : align_tiles_naive : ----------------------------")
-    loop = asyncio.get_event_loop()
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        # await result
-        aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)
-        return aligned_tiles
-
-
-@router.get("/align_tiles_ashlar",
-            response_description="Align Tiles",
-            # response_model=List[AlignedTiledModel],
-            status_code=status.HTTP_200_OK)
-async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list)) -> any:
-    """
-        performs a naive aligning of the tiles simply based on the given rows and method.
-        does not perform any advanced stitching or pixel checking
-
-        Called using concurrent.futures to make it async
-    """
-
-    loop = asyncio.get_event_loop()
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        # await result
-        aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles, "img_r{row:03}_c{col:03}.tif")
-        return aligned_tiles
-
 
 @router.get("/export_stitched_image",
             response_description="Export stitched Image",
