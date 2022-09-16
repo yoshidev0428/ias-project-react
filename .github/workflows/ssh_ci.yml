@@ -29,11 +29,10 @@ jobs:
          command: cd ias-project-react && git reset --hard && git pull && 
                   export NVM_DIR=~/.nvm && 
                   source ~/.nvm/nvm.sh && 
-                  cd react && npm -v &&
-                  npm i && npm run build &&
-                  rm -R /var/www/html/* && 
-                  mv ./build/* /var/www/html/ && 
-                  cd .. && docker-compose up -d
+                  cd react && rm -R /var/www/html/* && cp ./build/* /var/www/html/ && cd .. && docker-compose up -d
+                  # npm -v && npm i && npm run build &&
+                  # rm -R /var/www/html/* && 
+                  # mv ./build/* /var/www/html/ && 
          host: ${{ secrets.HOST }}
          username: ${{ secrets.USERNAME }}
          password: ${{ secrets.PASSWORD }}
