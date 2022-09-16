@@ -43,6 +43,7 @@ __pycache__/
 .Python
 env/
 temp/
+# build/
 environment/
 static/
 #build/
