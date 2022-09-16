@@ -46,6 +46,7 @@ temp/
 # build/
 environment/
 static/
+#build/
 develop-eggs/
 dist/
 downloads/
