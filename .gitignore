@@ -45,7 +45,7 @@ env/
 temp/
 environment/
 static/
-build/
+#build/
 develop-eggs/
 dist/
 downloads/
