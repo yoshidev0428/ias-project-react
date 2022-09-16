@@ -25,13 +25,11 @@ import TextField from '@mui/material/TextField';
 import * as api_tiles from '../../../../api/tiles';
 import OpenCloudDialog from './OpenCloudDialog';
 import Tiling from './Tiling';
+import {
+    useViewerStore
+} from '../../../viv/state';
 
-var acceptedFiles = [
-    // { id: 1, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d0.TIF", type: "image/tiff", size: 910882 }, valid: true },
-    // { id: 2, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d1.TIF", type: "image/tiff", size: 1192406 }, valid: true },
-    // { id: 3, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f00d3.TIF", type: "image/tiff", size: 1192406 }, valid: true },
-    // { id: 4, errors: [], file: { name: "LiveDead2_Plate_R_p00_0_A01f01d0.TIF", type: "image/tiff", size: 1192406 }, valid: true },
-];
+var acceptedFiles = [];
 
 const columns = [
     { headerName: 'No', field: 'id', sortable: false },
@@ -66,7 +64,6 @@ const namePatternsPrimary = [
     { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
     { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
 ];
-// --------- Developer manual define
 // const namePatternsPrimary = [
 //     { label: 'Series', text: 'LiveDead2_Plate_R', start: 0, end: 17, color: '#4caf50' },
 //     { label: 'Row', text: 'A', start: 24, end: 25, color: '#1976d2' },
@@ -94,21 +91,19 @@ const ImageDropzone = (props) => {
     const [files, setFiles] = useState(acceptedFiles);
 
     const updateFiles = async (incommingFiles) => {
-        // console.log(" OpenPositionDialog.js ImageDropzon updateFiles : incommingFiles : ", incommingFiles);
         props.setLoading(true);
         let files = [];
         for (let i = 0; i < incommingFiles.length; i++) {
+            incommingFiles[i].file['path'] = incommingFiles[i].file.name;
             files.push(incommingFiles[i].file);
         }
         if (files.length > 0) {
-            let res_upload_images = await api_tiles.uploadImageFiles(files);
-            console.log("OpenPosition.js ImageDropzone uploaded image : ", res_upload_images.data);
+            await api_tiles.uploadImageFiles(files);
+            acceptedFiles = files;
+            store.dispatch({ type: 'files_addFiles', content: files });
+            setFiles(incommingFiles);
         }
-        props.setFiles(files);
         props.setLoading(false);
-        setFiles(incommingFiles);
-        acceptedFiles = incommingFiles;
-        store.dispatch({ type: 'files_addFiles', content: incommingFiles });
     };
 
     const startDrop = (drop) => {
@@ -149,14 +144,13 @@ const DropzoneMetaData = (props) => {
         setSearched('');
         requestSearch(searched);
     };
-    // console.log("searchrows=====>" + JSON.stringify(searchrows));
     const backgroundText = loading ? 'Loading...' : 'Drag and drop files or a folder';
 
     useEffect(() => {
         for (let i = 0; i < acceptedFiles.length; i++) {
-            if (acceptedFiles[i].valid) {
+            if (acceptedFiles[i]) {
                 // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
-                let current_file = { id: acceptedFiles[i].id.toString(), filename: acceptedFiles[i].file['name'].toString(), series: '', frame: '', c: '', size_c: '', size_t: '', size_x: '', size_y: '', size_z: '', };
+                let current_file = { id: (i + 1).toString(), filename: acceptedFiles[i]['name'].toString(), series: '', frame: '', c: '', size_c: '', size_t: '', size_x: '', size_y: '', size_z: '', };
                 setSearchRows(rows => [...rows, current_file]);
             }
         }
@@ -322,11 +316,10 @@ const DropzoneNamesFiles = (props) => {
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
         var result = {};
-        console.log(" getNamePatternPerFileForProcessing  objectPerFile : ", Object.keys(objectPerFile), objectPerFile);
-        for (let i = 0; i < Object.keys(objectPerFile).length - 2; i++) {
-            let key = Object.keys(objectPerFile)[i + 1];
+        for (let i = 0; i < Object.keys(objectPerFile).length - 3; i++) {
+            let key = Object.keys(objectPerFile)[i + 2];
             if (key && objectPerFile !== null) {
-                let tempString = objectPerFile.filename.substring(namePatterns[i - 1].start, namePatterns[i -1].end);
+                let tempString = objectPerFile.filename.substring(namePatterns[i].start, namePatterns[i].end);
                 if (key === 'series') {
                     result[key] = tempString;
                 } else if (key === 'filename') {
@@ -335,6 +328,7 @@ const DropzoneNamesFiles = (props) => {
                     result[key] = convertContentStringToInteger(key, tempString);
                 }
             }
+            result["filename"] = objectPerFile.filename;
         }
         return result;
     };
@@ -348,7 +342,7 @@ const DropzoneNamesFiles = (props) => {
         let new_content_processing = [];
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
-        // console.log(old_content_p);
+        console.log("OpenPositionDialog.js nameFile updateNameType : ", old_content_p);
         for (let i = 0; i < old_content.length; i++) {
             new_content.push(JSON.parse(JSON.stringify(getNamePatternPerFile(old_content[i]))));
             new_content_processing.push(JSON.parse(JSON.stringify(getNamePatternPerFileForProcessing(old_content_p[i]))));
@@ -356,8 +350,12 @@ const DropzoneNamesFiles = (props) => {
         old_content_p = [];
         old_content = [];
         console.log(JSON.parse(JSON.stringify(new_content_processing)), " JSON.parse(JSON.stringify(new_content_processing)) ");
-        let result = await api_tiles.updateNameFile(JSON.parse(JSON.stringify(new_content_processing)));
-        console.log(result, " api_tiles.updateNameFile ");
+        await api_tiles.updateNameFile(JSON.parse(JSON.stringify(new_content_processing)));
+        let newSource = {
+            urlOrFile: acceptedFiles,
+            description: 'data.zarr'
+        };
+        useViewerStore.setState({ source: newSource });
         store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(new_content_processing)) });
         setSearchRows(new_content);
     };
@@ -389,18 +387,17 @@ const DropzoneNamesFiles = (props) => {
         setContents([]);
         setSearchRows([]);
         // console.log('==========================================');
-        // console.log(acceptedFiles);
         for (let i = 0; i < acceptedFiles.length; i++) {
-            if (acceptedFiles[i].valid) {
+            if (acceptedFiles[i]) {
                 // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
-                let current_file = { id: acceptedFiles[i].id.toString(), filename: acceptedFiles[i].file['name'].toString(), series: '', row: '', col: '', field: '', channel: '', z: '', time: '', hole: -1, };
+                let current_file = { id: (i + 1).toString(), filename: acceptedFiles[i]['name'].toString(), series: '', row: '', col: '', field: '', channel: '', z: '', time: '', hole: -1, };
                 setContents(contents => [...contents, current_file]);
                 setSearchRows(rows => [...rows, current_file]);
             }
         }
         if (acceptedFiles.length > 0) {
             // filename: acceptedFiles[i].file['name'].toString()
-            setSelectedFileName(acceptedFiles[0].file['name'].toString().split(".")[0]);
+            setSelectedFileName(acceptedFiles[0]['name'].toString().split(".")[0]);
         }
         setLoading(true);
     }, []);
@@ -626,12 +623,7 @@ const OpenPositionDialog = (props) => {
                     </Tabs>
                     {selectedTab === 0 && (
                         <TabContainer>
-                            <ImageDropzone
-                                setFiles={(filesUploaded) => {
-                                    setFilesUploaded(filesUploaded);
-                                }}
-                                setLoading={(loading) => setIsLoading(loading)}
-                            />
+                            <ImageDropzone setLoading={(loading) => setIsLoading(loading)} />
                         </TabContainer>
                     )}
                     {selectedTab === 1 && (
