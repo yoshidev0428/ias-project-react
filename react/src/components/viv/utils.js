@@ -6,8 +6,8 @@ import {
     loadOmeTiff,
     loadBioformatsZarr,
     loadOmeZarr,
-    getChannelStats
-    // eslint-disable-next-line import/no-unresolved
+    getChannelStats,
+    loadMultiTiff,
 } from '@hms-dbmi/viv';
 
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
@@ -22,6 +22,16 @@ function isOMETIFF(urlOrFile) {
     if (Array.isArray(urlOrFile)) return false; // local Zarr is array of File Objects
     const name = typeof urlOrFile === 'string' ? urlOrFile : urlOrFile.name;
     return name.includes('ome.tiff') || name.includes('ome.tif');
+}
+
+function isMultiTiff(urlOrFile) {
+    const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
+    for (const filename of filenames) {
+        const lowerCaseName = filename.toLowerCase();
+        if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif')))
+            return false;
+    }
+    return true;
 }
 
 class UnsupportedBrowserError extends Error {
@@ -93,19 +103,36 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             }
             return source;
         }
+        console.log("hook.js createLoader ------- 000: ");
         // Bio-Formats Zarr
-        if ( Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function' ) {
+        if (Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function') {
             throw new UnsupportedBrowserError(
                 'Cannot upload a local Zarr with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
             );
         }
-
+        console.log("hook.js createLoader ------- 001: ", urlOrFile);
+        // Multiple flat tiffs
+        if (isMultiTiff(urlOrFile)) {
+            const multiTiffFiles = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
+            const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
+            console.log("hook.js createLoader ------- 003: ", mutiTiffSources);
+            try {
+                const source = await loadMultiTiff(mutiTiffSources);
+                // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
+                console.log("hook.js createLoader ------- 005: ", source);
+                return source;
+            } catch (e) {
+                console.log("hook.js loadMultiTiff ------- error : ", e.message);
+            }
+        }
         let source;
         try {
             source = await loadBioformatsZarr(urlOrFile);
+            console.log("hook.js createLoader ------- 002: ", source);
         } catch {
             // try ome-zarr
             const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
+            console.log("hook.js createLoader ------- 003: ", res);
             // extract metadata into OME-XML-like form
             const metadata = {
                 Pixels: {
@@ -117,6 +144,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             };
             source = { data: res.data, metadata };
         }
+        console.log("hook.js createLoader ------- 002: ");
         return source;
     } catch (e) {
         if (e instanceof UnsupportedBrowserError) {
@@ -124,6 +152,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         } else {
             handleLoaderError(null);
         }
+        console.log("hook.js createLoader ------- error : ", e.message);
         return { data: null };
     }
 }
