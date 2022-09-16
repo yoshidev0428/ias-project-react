@@ -7,7 +7,7 @@ import {
     loadBioformatsZarr,
     loadOmeZarr,
     getChannelStats,
-    // loadMultiTiff,
+    loadMultiTiff,
 } from '@hms-dbmi/viv';
 
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
@@ -117,10 +117,10 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
             console.log("hook.js createLoader ------- 003: ", mutiTiffSources);
             try {
-                // const source = await loadMultiTiff(mutiTiffSources);
-                // // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
-                // console.log("hook.js createLoader ------- 005: ", source);
-                // return source;
+                const source = await loadMultiTiff(mutiTiffSources);
+                // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
+                console.log("hook.js createLoader ------- 005: ", source);
+                return source;
             } catch (e) {
                 console.log("hook.js loadMultiTiff ------- error : ", e.message);
             }
