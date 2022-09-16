@@ -14,11 +14,11 @@ from fastapi import (
     File, Form, HTTPException
 )
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from typing import List
+import aiofiles
+import jsons
 
 from mainApi.app.auth.auth import get_current_user
-
-from typing import List
-
 from mainApi.app.db.mongodb import get_database
 from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
@@ -28,8 +28,7 @@ import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 from mainApi.config import STATIC_PATH
-import aiofiles
-import jsons
+
 router = APIRouter(
     prefix="/tile",
     tags=["tile"],
@@ -110,19 +109,23 @@ async def update(tiles: List[NamePattenModel],
                        db: AsyncIOMotorDatabase = Depends(get_database)):
     # make sure we are not trying to alter any tiles we do not own
     # we check this first and if they are trying to update any un owned docs we dont update any
-    # print("--------------------------")
-    for tile in tiles:
-        print(tile, "--------------------------")
-        # if tile.user_id != current_user.id:
-        #     raise HTTPException(
-        #         status_code=status.HTTP_401_UNAUTHORIZED,
-        #         detail="Cannot update tile that does not belong to user",
-        #         headers={"WWW-Authenticate": "Bearer"},
-        #     )
-
-    # for tile in tiles:
-    #     result = await db['tile-image-cache'].replace_one({'_id': tile.id}, tile.dict(exclude={'id'}))
-
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    current_files = []
+    current_row = 0
+    current_col = 1
+    for tile in tiles:        
+        additional_tile = {
+            "file_name": tile.filename,
+            "series": tile.series,
+            "row_index": tile.row,
+            "column_index": tile.col,
+            "channel": tile.channel,
+            "field": tile.field,
+            "z_position": tile.z_position,
+            "time_point": tile.time_point
+        }
+        await db['tile-image-cache'].update_one({'file_name': tile.filename}, {"$set": additional_tile})
+            
 # View Controls
 @router.post("/deconvol2D",
              response_description="Convolution about 2D image",
@@ -179,7 +182,6 @@ async def SuperRes(file_name: str = Form(''),
     abs_path = abs_path.split("/")[-1]
     path = []
     path.append(abs_path)
-
     result = {"Flag_3d": False,
               "N_images": 1,
               "path_images": path}
@@ -200,13 +202,10 @@ async def delete_tiles(tiles: List[TileModelDB],
                 detail="Cannot update tile that does not belong to user",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-
     results = []
-
     for tile in tiles:
         result = await db['tile-image-cache'].delete_one({'_id': tile.id})
         results.append(result)
-
     return results
 
 @router.get("/export_stitched_image",

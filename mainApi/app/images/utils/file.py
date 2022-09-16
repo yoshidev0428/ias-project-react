@@ -1,15 +1,17 @@
 from pathlib import Path
 from typing import List
 import os
+import datetime
+from fastapi import UploadFile
+import aiofiles
 import PIL
 import tifffile
 from skimage import io
 import numpy as np
-import datetime
-from fastapi import UploadFile
-import aiofiles
+
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId, ShowUserModel
+from mainApi.app.images.sub_routers.tile.models import NamePattenModel
 from mainApi.app.images.sub_routers.tile.models import TileModelDB
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
@@ -71,13 +73,6 @@ async def add_image_tiles(path: Path,
             height_px=height_px
         )
         tiles.append(tile)
-        # with tifffile.TiffFile(file_path) as tif:
-        #     tif_tags = {}
-        #     for tag in tif.pages[0].tags.values():
-        #         name, value = tag.name, tag.value
-        #         tif_tags[name] = value
-        #     print(tif_tags, " ------------ ")
-        #     image = tif.pages[0].asarray()
     await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
     return {"Flag_3d": True, "N_images": len(filenames), "path_images": filenames}
     # cache_path = STATIC_PATH
