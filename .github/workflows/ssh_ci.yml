@@ -30,7 +30,7 @@ jobs:
                   export NVM_DIR=~/.nvm && 
                   source ~/.nvm/nvm.sh && 
                   cd react && npm -v &&
-                  npm i --save && npm run build &&
+                  npm i && npm run build &&
                   rm -R /var/www/html/* && 
                   mv ./build/* /var/www/html/ && 
                   cd .. && docker-compose up -d
