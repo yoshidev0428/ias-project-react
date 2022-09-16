@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
     isShowAuthPage: state.auth.authPage !== null,
     isLoggedIn: !state.auth.isLoggedIn
 })
+
 const App = (props) => {
 
     useEffect(() => {
