@@ -21,7 +21,7 @@ class TileModelDB(BaseModel):
     content_type: str  # MIME type
     width_px: int
     height_px: int
-
+    series: Optional[str] = ""
     offset_x: Optional[int] = 0
     offset_y: Optional[int] = 0
     
@@ -30,7 +30,7 @@ class TileModelDB(BaseModel):
     channel: Optional[str] = "not specified"
     field: Optional[int] = 0
     z_position: Optional[int] = 0
-    time_point: Optional[str] = 0
+    time_point: Optional[int] = 0
     class Config:
         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
         allow_population_by_field_name = True
