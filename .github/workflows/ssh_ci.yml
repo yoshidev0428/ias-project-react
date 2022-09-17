@@ -27,9 +27,9 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
          command: cd ias-project-react && git reset --hard && git pull && 
-                  export NVM_DIR=~/.nvm && 
-                  source ~/.nvm/nvm.sh && 
-                  cd react && rm -R /var/www/html/* && mv ./build/* /var/www/html/ && cd .. && docker-compose up -d
+                  # export NVM_DIR=~/.nvm && 
+                  # source ~/.nvm/nvm.sh && 
+                  # cd react && rm -R /var/www/html/* && mv ./build/* /var/www/html/ && cd .. && docker-compose up -d
                   # npm -v && npm i && npm run build &&
                   # rm -R /var/www/html/* && 
                   # mv ./build/* /var/www/html/ && 
