@@ -41,13 +41,13 @@ export const useImage = (source) => {
             useViewerStore.setState({ isViewerLoading: true });
             if (use3d) toggleUse3d();
             const { urlOrFile } = source;
-            console.log("-------- urlOrFile useImage hook.js", urlOrFile);
+            // console.log("-------- urlOrFile useImage hook.js", urlOrFile);
             const newLoader = await createLoader(
                 urlOrFile,
                 toggleIsOffsetsSnackbarOn,
                 message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } })
             );
-            console.log("-------- newLoader useImage hook.js", newLoader);
+            // console.log("-------- newLoader useImage hook.js", newLoader);
             let nextMeta;
             let nextLoader;
             if (Array.isArray(newLoader)) {
@@ -62,9 +62,8 @@ export const useImage = (source) => {
                 nextMeta = newLoader.metadata;
                 nextLoader = newLoader.data;
             }
-            console.log("-------- nextLoader nextMeta useImage hook.js", nextLoader, nextMeta,);
+            // console.log("-------- nextLoader nextMeta useImage hook.js", nextLoader, nextMeta,);
             if (nextLoader) {
-                console.info('Metadata (in JSON-like form) for current file being viewed: ', nextMeta);
                 unstable_batchedUpdates(() => {
                     useChannelsStore.setState({ loader: nextLoader });
                     useViewerStore.setState({ metadata: nextMeta });

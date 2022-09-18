@@ -64,7 +64,6 @@ const Register = () => {
                 }
             })
             .catch(e => {
-                /* Error with registration of user */
                 store.dispatch({ type: "logOut" });
                 console.log(e);
                 // if (error.status === 401) {

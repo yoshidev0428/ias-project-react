@@ -40,6 +40,7 @@ import store from "../reducers";
 import { connect } from "react-redux";
 import { getWindowDimensions } from "../components/helpers";
 import logo75 from "../assets/images/logo75.png";
+
 function TabContainer(props) {
     return (
         <Typography component="div" style={{ padding: 0 }}>
@@ -68,21 +69,23 @@ const darkTheme = createTheme({
     },
 });
 
-const MainFrame = (props) => {
+const MainFrame = () => {
 
     const imageViewAreaRef = useRef(null);
-    const { height } = getWindowDimensions();
+    const [height, setHeight] = useState(100);
     const handleResize = () => {
+        let { height } = getWindowDimensions();
+        setHeight(height);
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeHeight", imageViewAreaRef.current.offsetHeight);
     };
+
     const [rightTabVal, setRightTabVal] = useState(0);
     const [leftTabVal, setLeftTabVal] = useState(3);
     const handleRightTabChange = (newValue) => {
         setRightTabVal(newValue);
     };
     const handleLeftTabChange = (newValue) => {
-        console.log(newValue, " ____");
         setLeftTabVal(newValue);
     };
 
@@ -97,17 +100,10 @@ const MainFrame = (props) => {
         store.dispatch({ type: "auth_logOut" });
     };
 
-    const [files, setFiles] = useState(props.files);
-
     useEffect(() => {
         handleResize();
+        window.addEventListener('resize', handleResize);
     }, [imageViewAreaRef]);
-
-    useEffect(() => {
-        if (props.files) {
-            setFiles(files);
-        }
-    }, [props.files])
 
     const HeaderContent = () => {
         return (

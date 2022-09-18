@@ -100,6 +100,10 @@ const ImageDropzone = (props) => {
         if (files.length > 0) {
             await api_tiles.uploadImageFiles(files);
             acceptedFiles = files;
+            let newSource = {
+                urlOrFile: acceptedFiles,
+                description: 'data.zarr'
+            };
             store.dispatch({ type: 'files_addFiles', content: files });
             setFiles(incommingFiles);
         }
@@ -127,7 +131,7 @@ const ImageDropzone = (props) => {
 
 const DropzoneMetaData = (props) => {
     // Pagination
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(1);
     // Table Rows
     const [loading, setLoading] = useState(false);
     // Search
@@ -147,14 +151,16 @@ const DropzoneMetaData = (props) => {
     const backgroundText = loading ? 'Loading...' : 'Drag and drop files or a folder';
 
     useEffect(() => {
-        for (let i = 0; i < acceptedFiles.length; i++) {
-            if (acceptedFiles[i]) {
-                // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
-                let current_file = { id: (i + 1).toString(), filename: acceptedFiles[i]['name'].toString(), series: '', frame: '', c: '', size_c: '', size_t: '', size_x: '', size_y: '', size_z: '', };
-                setSearchRows(rows => [...rows, current_file]);
+        if (acceptedFiles) {
+            for (let i = 0; i < acceptedFiles.length; i++) {
+                if (acceptedFiles[i]) {
+                    // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
+                    let current_file = { id: (i + 1).toString(), filename: acceptedFiles[i]['name'].toString(), series: '', frame: '', c: '', size_c: '', size_t: '', size_x: '', size_y: '', size_z: '', };
+                    setSearchRows(rows => [...rows, current_file]);
+                }
             }
+            setLoading(true);
         }
-        setLoading(true);
     }, []);
 
     return (
@@ -183,11 +189,17 @@ const DropzoneMetaData = (props) => {
                         <DataGrid
                             className='cell--textCenter'
                             style={{ textAlign: 'center', width: '100%' }}
-                            {...searchrows}
+                            rows={searchrows}
                             columns={columns}
                             pageSize={pageSize}
-                            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                            rowsPerPageOptions={[5, 10, 20]}
+                            onPageSizeChange={(newPageSize) => {
+                                if (isNaN(newPageSize)) {
+                                    setPageSize(acceptedFiles.length);
+                                } else {
+                                    setPageSize(newPageSize);
+                                }
+                            }}
+                            rowsPerPageOptions={[2, 5, 10, 20, 25]}
                             pagination
                         />
                     </div>
@@ -198,24 +210,19 @@ const DropzoneMetaData = (props) => {
 };
 
 const DropzoneNamesFiles = (props) => {
+
     // Names & Files Tab
     const exampleBox = useRef(null);
 
-    const [loading, setLoading] = useState(false);
-    // Pagination
-    const [pageSize, setPageSize] = useState(5);
-    // Search
+    const [loading, setLoading] = useState(false); // Pagination
+    const [pageSize, setPageSize] = useState(5); // Search
     const [contents, setContents] = useState([]);
-    const [searchrows, setSearchRows] = useState([]);
-    // Search Bar
+    const [searchrows, setSearchRows] = useState([]); // Search Bar
     const [searched, setSearched] = useState('');
 
     const [selectedFileName, setSelectedFileName] = useState('');
-
     const [selectionRange, setSelectionRange] = useState(null);
-
     const [namePatterns, setNamePatterns] = useState(namePatternsPrimary);
-
     //  Search Part
     const requestSearch = (searchedVal) => {
         const filteredRows = contents.filter((content) => {
@@ -236,9 +243,7 @@ const DropzoneNamesFiles = (props) => {
                     range = sel.getRangeAt(0);
                 let selectionRect = range.getBoundingClientRect(),
                     fullRect = exampleBox.current.getBoundingClientRect();
-                let startOffset =
-                    ((selectionRect.left - fullRect.left) / selectionRect.width) *
-                    range.toString().length;
+                let startOffset = ((selectionRect.left - fullRect.left) / selectionRect.width) * range.toString().length;
                 startOffset = Math.round(startOffset);
                 let selectionRangeValue = {
                     text: range.toString(),
@@ -289,6 +294,39 @@ const DropzoneNamesFiles = (props) => {
         }
     };
 
+    const onChangePattern = async (e, index) => {
+        let selectedText = "";
+        let inputed_value = e.target.value.toString();
+        for (let i = 0; i < inputed_value.length; i++) {
+            if (inputed_value.substring(i, i + 1) !== " ") {
+                selectedText = selectedText + inputed_value.substring(i, i + 1);
+            }
+        }
+        if (selectionRange !== null) {
+            let text = selectionRange.text;
+            let startOffset = selectionRange.startOffset;
+            let endOffset = selectionRange.endOffset;
+            // console.log(selectedText, selectionRange,  text, selectedText, text === selectedText);
+            if (text === selectedText) {
+                if (startOffset > -1 && endOffset > -1) {
+                    let namePatternsPrimaryValue = [...namePatterns];
+                    for (var i = 0; i < namePatternsPrimaryValue.length; i++) {
+                        if (index === i) {
+                            namePatternsPrimaryValue[index].text = text;
+                            namePatternsPrimaryValue[index].start = startOffset;
+                            namePatternsPrimaryValue[index].end = endOffset;
+                            for (let j = startOffset; j < endOffset; j++) {
+                                document.getElementById('filename' + j.toString()).style.color =
+                                    namePatternsPrimaryValue[index].color;
+                            }
+                        }
+                    }
+                    setNamePatterns(namePatternsPrimaryValue);
+                }
+            }
+        }
+
+    }
     // ----------------------------------------------------- update button function
     // Convert string to integer of some fields: row, col, field, channel, z, time
     const convertContentStringToInteger = (field, stringData) => {
@@ -333,7 +371,7 @@ const DropzoneNamesFiles = (props) => {
         return result;
     };
 
-    const updateNameType = async () => {
+    const updateNameType = () => {
         if (acceptedFiles === null || acceptedFiles === undefined) {
             console.log('acceptedFiles error : ', acceptedFiles);
             return '';
@@ -342,21 +380,12 @@ const DropzoneNamesFiles = (props) => {
         let new_content_processing = [];
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
-        console.log("OpenPositionDialog.js nameFile updateNameType : ", old_content_p);
+        // console.log("OpenPositionDialog.js nameFile updateNameType : ", old_content_p);
         for (let i = 0; i < old_content.length; i++) {
             new_content.push(JSON.parse(JSON.stringify(getNamePatternPerFile(old_content[i]))));
             new_content_processing.push(JSON.parse(JSON.stringify(getNamePatternPerFileForProcessing(old_content_p[i]))));
         }
-        old_content_p = [];
-        old_content = [];
-        console.log(JSON.parse(JSON.stringify(new_content_processing)), " JSON.parse(JSON.stringify(new_content_processing)) ");
-        await api_tiles.updateNameFile(JSON.parse(JSON.stringify(new_content_processing)));
-        let newSource = {
-            urlOrFile: acceptedFiles,
-            description: 'data.zarr'
-        };
-        useViewerStore.setState({ source: newSource });
-        store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(new_content_processing)) });
+        props.setContents(JSON.parse(JSON.stringify(new_content_processing)))
         setSearchRows(new_content);
     };
 
@@ -467,6 +496,7 @@ const DropzoneNamesFiles = (props) => {
                                     <TextField
                                         id={pattern.label}
                                         value={pattern.text}
+                                        onChange={(e) => onChangePattern(e, idx)}
                                         size='small'
                                         variant='standard'
                                         className='pattern-item-button'
@@ -548,7 +578,7 @@ const OpenPositionDialog = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
-    const [filesUploaded, setFilesUploaded] = useState([]);
+    const [contents, setContents] = useState([]);
 
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -560,18 +590,23 @@ const OpenPositionDialog = (props) => {
 
     const handleCloseOpenDlg = () => {
         props.handleClose();
-        resetPositionDlg();
-    };
-
-    const resetPositionDlg = () => {
         acceptedFiles = [];
     };
 
-    useEffect(() => {
-        if (filesUploaded.length > 0) {
-            props.handleFilesUploaded(filesUploaded);
+    const handleSetSetting = async () => {
+        if (contents != [] && contents != null && contents != undefined) {
+            await api_tiles.updateNameFile(contents);
+            let newSource = {
+                urlOrFile: acceptedFiles,
+                description: 'data.zarr'
+            };
+            useViewerStore.setState({ source: newSource });
+            store.dispatch({ type: 'content_addContent', content: contents });
         }
-    }, [filesUploaded]);
+    };
+
+    useEffect(() => {
+    }, []);
 
     useEffect(() => { }, []);
 
@@ -628,7 +663,7 @@ const OpenPositionDialog = (props) => {
                     )}
                     {selectedTab === 1 && (
                         <TabContainer>
-                            <Tiling files={filesUploaded} />
+                            <Tiling files={acceptedFiles} />
                         </TabContainer>
                     )}
                     {selectedTab === 2 && (
@@ -638,7 +673,7 @@ const OpenPositionDialog = (props) => {
                     )}
                     {selectedTab === 3 && (
                         <TabContainer>
-                            <DropzoneNamesFiles />
+                            <DropzoneNamesFiles setContents={(contents) => { setContents(contents) }} />
                         </TabContainer>
                     )}
                     {selectedTab === 4 && (
@@ -648,9 +683,8 @@ const OpenPositionDialog = (props) => {
                     )}
                 </DialogContent>
                 <DialogActions
-                    style={{ display: '-webkit-box !important' }}
                     className='border'>
-                    {selectedTab === 0 ? (
+                    {selectedTab === 0 && (
                         <div className='d-flex'>
                             <Button
                                 className='cloud-btn'
@@ -661,33 +695,34 @@ const OpenPositionDialog = (props) => {
                                 Cloud
                             </Button>
                             {isLoading ? (
-                                <div className='progress' style={{ width: '400px' }}>
+                                <div className='progress' style={{ width: '400px', marginRight: '180px' }}>
                                     <div className='progress-bar'></div>
                                 </div>
                             ) : (
-                                <div style={{ width: '400px' }}></div>
+                                <div style={{ width: '580px' }}></div>
                             )}
-                            <Button
-                                style={{ marginLeft: '180px' }}
-                                size='medium'
-                                color='primary'
-                                variant='contained'
-                                onClick={handleCloseOpenDlg}>
-                                Cancel
-                            </Button>
+
                             {cloudDialog && (
                                 <OpenCloudDialog handleClose={handleCloudDialog} />
                             )}
                         </div>
-                    ) : (
+                    )}
+                    {selectedTab === 3 && (
                         <Button
                             size='medium'
                             color='primary'
                             variant='contained'
-                            onClick={handleCloseOpenDlg}>
-                            Cancel
+                            onClick={handleSetSetting}>
+                            Set
                         </Button>
                     )}
+                    <Button
+                        size='medium'
+                        color='primary'
+                        variant='contained'
+                        onClick={handleCloseOpenDlg}>
+                        Cancel
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

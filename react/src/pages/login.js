@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router";
 import { Form, Button, Alert, Container } from "react-bootstrap";
 import * as authApi from "../api/auth";
 import store from "../reducers"

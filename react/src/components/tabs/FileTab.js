@@ -33,7 +33,7 @@ import {
     mdiCog
 } from '@mdi/js';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 const mapStateToProps = state => ({
     files: state.files.files,
@@ -98,8 +98,7 @@ const FileTab = (props) => {
         inputFile.current.click();
     };
     const onFileChangeCapture = (e) => {
-        console.log(e.target.files, " file information ");
-        props.changeOpenedFile(e.target.files);
+        console.log("FileTab.js onFolderChangeCapture : file information : ", e.target.files);
     };
 
     const folderInput = useRef(null);
@@ -108,64 +107,24 @@ const FileTab = (props) => {
         // inputFile.current.click();
     };
     const onFolderChangeCapture = (e) => {
-        console.log(e.target.files, " folder information ");
-        if(e.target.files){
-            props.changeOpenedFile(e.target.files);
-        }
+        console.log("FileTab.js onFolderChangeCapture : folder information : ", e.target.files);
     }
 
-    const handleFilesUploaded = (filesUpload) => {
-        if(filesUpload){
-            setFilesUploaded(filesUpload);
-        }
-    }
+    useEffect(() => {
 
-    const getFilesDisplayed = (filesData, filesChosen) => {
-        let dataIds = [];
-        if(filesChosen.length > 0){
-            for(let i = 0; i < filesChosen.length; i++){
-                let id = parseInt(filesChosen[i].id);
-                dataIds.push(id);
-            }
-        }
-
-        // console.log("File Tab: DATA IDS, ", dataIds);
-        // console.log("File Tab: FILES DATA, ", filesData);
-        
-        var imageData = [];
-        for(let j=0; j < dataIds.length; j++){
-            // console.log("Data ", dataIds[j]-1, filesData[dataIds[j]-1]);
-            var imageOne = filesData[dataIds[j]-1];
-            imageData.push(imageOne);
-        }
-
-        // console.log("File Tab: IMAGE DATA, ", imageData);
-        return imageData;
-    }
-
-    useEffect(() =>{
-        if(props.filesChosen){
-            // setFilesChosen(props.filesChosen);
-            // console.log("File Tab: FILES CHOSEN, ", props.filesChosen);
-            // console.log("File Tab: FILES, ", filesUploaded);
-            let dataFilesChosenDisplayed = getFilesDisplayed(filesUploaded, props.filesChosen);
-            console.log("File Tab: FILES CHOSEN DISPLAYED, ", dataFilesChosenDisplayed);
-            // changeLoadFile(dataFilesChosenDisplayed);
-            props.changeOpenedFile(dataFilesChosenDisplayed)
-        }
-    },[props.filesChosen])
+    }, [])
 
     return (
         <TabItem title="File/Edit">
-            <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }}/>
-            <input directory="" webkitdirectory="" type="file" ref={folderInput} onChange={onFolderChangeCapture} style={{ display: "none" }}/>
+            <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }} />
+            <input directory="" webkitdirectory="" type="file" ref={folderInput} onChange={onFolderChangeCapture} style={{ display: "none" }} />
             <SmallCard title="Open">
                 {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" /*click={showCloudDialog}*/ />}
                 {cloudDialog && <OpenCloudDialog handleClose={handleClose} />}
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
-                {positionDialog && <OpenPositionDialog handleFilesUploaded={(files)=>handleFilesUploaded(files)} title=" " handleClose={handleClose} />}
+                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} />}
             </SmallCard>
             <Divider />
             <SmallCard title="Save / Load">
@@ -183,7 +142,7 @@ const FileTab = (props) => {
             </SmallCard>
             <Divider />
             <SmallCard title="Comment">
-                <div className='d-flex justify-content-around' style={{width:'100%'}}>
+                <div className='d-flex justify-content-around' style={{ width: '100%' }}>
                     <CustomButton icon={mdiNearMe} click={onSelect1} />
                     <CustomButton icon={mdiPencil} click={onSelect1} />
                     <CustomButton icon={mdiCheckboxBlankCircleOutline} click={onSelect1} />
