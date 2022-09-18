@@ -27,9 +27,6 @@ const darkTheme = createTheme({
     }
 });
 
-function getRandomSource() {
-    return sources[Math.floor(Math.random() * sources.length)];
-}
 
 const RoutedAvivator = (props) => {
 
@@ -37,7 +34,7 @@ const RoutedAvivator = (props) => {
     // const url = query.get('image_url');
     const [source, setSource] = useState(null);
     useEffect(() => {
-        // console.log(props, "Avivator : image file -------- ");
+        console.log(props, "Avivator : image file -------- ", props);
         if (props.content) {
             setSource({
                 urlOrFile: props.files,

@@ -127,7 +127,6 @@ const WellPlates = (props) => {
     }
 
     const getViewConfigs = (dataHoleChosen) => {
-        console.log("WELL PLATES: getViewConfigs", dataHoleChosen);
         let old_content = [...dataHoleChosen.data];
         let zPosS = [];
         let timePointS = [];
@@ -166,15 +165,16 @@ const WellPlates = (props) => {
     }
 
     const handleVesselClick = (e, holeNumber, row, col) => {
-        // console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
+        e.preventDefault();
+        console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
         setHoleClicked(holeNumber);
         if (activeHoles.includes(holeNumber)) {
             let dataHoleChosen = content[holeNumber]
-            // console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
+            console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
             let viewConfigs = getViewConfigs(dataHoleChosen);
-            // console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
-            store.dispatch({ type: "files_selectedVesselHole", content: dataHoleChosen.data });
-            store.dispatch({ type: "vessel_setViewConfigsObj", data: viewConfigs });
+            console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
+            // store.dispatch({ type: "files_selectedVesselHole", content: dataHoleChosen.data });
+            // store.dispatch({ type: "vessel_setViewConfigsObj", data: viewConfigs });
         }
         else {
             // console.log("NO DATA Content Hole number ", holeNumber);
@@ -210,7 +210,7 @@ const WellPlates = (props) => {
                                 }
                                 {
                                     [...Array(cols)].map((x, c) =>
-                                        <div onClick={e => handleVesselClick(e.preventDefault(), holeNumber(r, c), r, c)}
+                                        <div onClick={e => handleVesselClick(e, holeNumber(r, c), r, c)}
                                             key={"circle" + holeNumber(r, c)}
                                             style={{ width: radious, height: radious }}
                                             className={classnames({

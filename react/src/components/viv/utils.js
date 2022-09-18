@@ -103,36 +103,35 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             }
             return source;
         }
-        console.log("hook.js createLoader ------- 000: ");
+        // console.log("hook.js createLoader ------- 000: ");
         // Bio-Formats Zarr
         if (Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function') {
             throw new UnsupportedBrowserError(
                 'Cannot upload a local Zarr with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
             );
         }
-        console.log("hook.js createLoader ------- 001: ", urlOrFile);
+        // console.log("hook.js createLoader ------- 001: ", urlOrFile);
         // Multiple flat tiffs
         if (isMultiTiff(urlOrFile)) {
             const multiTiffFiles = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
             const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
-            console.log("hook.js createLoader ------- 003: ", mutiTiffSources);
+            // console.log("hook.js createLoader ------- 003: ", mutiTiffSources);
             try {
                 const source = await loadMultiTiff(mutiTiffSources);
                 // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
                 console.log("hook.js createLoader ------- 005: ", source);
                 return source;
             } catch (e) {
-                console.log("hook.js loadMultiTiff ------- error : ", e.message);
+                // console.log("hook.js loadMultiTiff ------- error : ", e.message);
             }
         }
         let source;
         try {
             source = await loadBioformatsZarr(urlOrFile);
-            console.log("hook.js createLoader ------- 002: ", source);
+            // console.log("hook.js createLoader ------- 002: ", source);
         } catch {
             // try ome-zarr
             const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-            console.log("hook.js createLoader ------- 003: ", res);
             // extract metadata into OME-XML-like form
             const metadata = {
                 Pixels: {
@@ -144,7 +143,6 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             };
             source = { data: res.data, metadata };
         }
-        console.log("hook.js createLoader ------- 002: ");
         return source;
     } catch (e) {
         if (e instanceof UnsupportedBrowserError) {

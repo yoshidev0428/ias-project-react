@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '../reducers';
-const state = store.getState();
+var state = store.getState();
 
 export const api = axios.create({
     baseURL: process.env.REACT_APP_BASE_API_URL,
@@ -18,9 +18,9 @@ api.interceptors.request.use((request) => {
     console.log('[API Request] : ', request);
     // console.log("111", state.auth);
     /* add auth headers */
+    state = store.getState();
     if (state.auth.token) {
-        request.headers['Authorization'] =
-            state.auth.tokenType + ' ' + state.auth.token;
+        request.headers['Authorization'] = state.auth.tokenType + ' ' + state.auth.token;
         request.headers['Content-Type'] = 'application/json';
     }
     // if (sessionStorage.getItem("authToken")) {
