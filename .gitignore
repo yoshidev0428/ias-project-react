@@ -139,7 +139,7 @@ ENV/
 .mypy_cache/
 
 *.sqlite3
-media/
+# media/
 *.pyc
 *.db
 *.pid
