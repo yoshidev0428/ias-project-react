@@ -31,7 +31,7 @@ const WellPlates = (props) => {
     const [radious, setRadious] = useState(Math.floor(Math.floor(radiusCalculated) * 0.9));
     const [rect, setRect] = useState(calculateDRect);
     const [fontSize, setFontSize] = useState(radiusCalculated / 2 > VESSEL_WELLPLATE_MAX_FONTSIZE ? VESSEL_WELLPLATE_MAX_FONTSIZE : radiusCalculated / 2);
-    const [holeClicked, setHoleClicked] = useState(-1);
+    const [holeClicked, setHoleClicked] = useState(0);
     const [content, setContent] = useState(props.content);
     const [activeHoles, setActiveHoles] = useState([]);
 
@@ -60,12 +60,10 @@ const WellPlates = (props) => {
     }, [props]);
 
     useEffect(() => {
-        // setContent(props.content);
         if (props.content) {
-            let _content = setHoleNumberInArray(props.content);
-            // console.log("New Contents for HOLE: ", _content);
+            let _content = setHoleNumberInArray(JSON.parse(JSON.stringify(props.content)));
             let new_array_content = sortArrayBasedOnHoleNumber(_content);
-            // console.log("SORTED New Contents for HOLE: ", new_array_content);
+            // console.log("WellPlates.js  useEffect SORTED New Contents for HOLE : ", content);
             setContent(new_array_content);
         }
     }, [props.content])
@@ -97,9 +95,9 @@ const WellPlates = (props) => {
             old_content[i].hole = holeNumber(row, col);
             holes.push(holeNumber(row, col));
         }
-        // console.log("Array of Holes: ", holes, old_content);
         activeHolesNumbers = getUniqueSortedNumber(holes);
         setActiveHoles(activeHolesNumbers);
+        setHoleClicked(activeHolesNumbers[0])
         return old_content;
     }
 
@@ -166,15 +164,13 @@ const WellPlates = (props) => {
 
     const handleVesselClick = (e, holeNumber, row, col) => {
         e.preventDefault();
-        console.log("Event: ", e, ". Hole Number: ", holeNumber, ". Row: ", row, ". Col: ", col);
+        // console.log("WellPlates.js handleVesselClick  activeHoles  Hole Number: ", activeHoles, holeNumber, ". Row: ", row, ". Col: ", col);
         setHoleClicked(holeNumber);
         if (activeHoles.includes(holeNumber)) {
-            let dataHoleChosen = content[holeNumber]
-            console.log("Content Hole number ", holeNumber, " CLICKED: ", dataHoleChosen);
-            let viewConfigs = getViewConfigs(dataHoleChosen);
-            console.log("WELL PLATES: handleVesselClick > viewConfigs", viewConfigs);
-            // store.dispatch({ type: "files_selectedVesselHole", content: dataHoleChosen.data });
-            // store.dispatch({ type: "vessel_setViewConfigsObj", data: viewConfigs });
+            // let dataHoleChosen = content[holeNumber]
+            // let viewConfigs = getViewConfigs(dataHoleChosen);
+            // console.log("WellPlates.js handleVesselClick  > viewConfigs : ", viewConfigs, "Hole number : ", holeNumber, ":  CLICKED : ", dataHoleChosen);
+            store.dispatch({ type: "files_selectedVesselHole", content: { row: row, col: col + 1 } });
         }
         else {
             // console.log("NO DATA Content Hole number ", holeNumber);
