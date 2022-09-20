@@ -100,10 +100,10 @@ const ImageDropzone = (props) => {
         if (files.length > 0) {
             await api_tiles.uploadImageFiles(files);
             acceptedFiles = files;
-            let newSource = {
-                urlOrFile: acceptedFiles,
-                description: 'data.zarr'
-            };
+            // let newSource = {
+            //     urlOrFile: acceptedFiles,
+            //     description: 'data.zarr'
+            // };
             store.dispatch({ type: 'files_addFiles', content: files });
             setFiles(incommingFiles);
         }
@@ -415,10 +415,8 @@ const DropzoneNamesFiles = (props) => {
     useEffect(() => {
         setContents([]);
         setSearchRows([]);
-        // console.log('==========================================');
         for (let i = 0; i < acceptedFiles.length; i++) {
             if (acceptedFiles[i]) {
-                // filename: acceptedFiles[i].file['name'].toString()   acceptedFiles[i].file.name.toString()
                 let current_file = { id: (i + 1).toString(), filename: acceptedFiles[i]['name'].toString(), series: '', row: '', col: '', field: '', channel: '', z: '', time: '', hole: -1, };
                 setContents(contents => [...contents, current_file]);
                 setSearchRows(rows => [...rows, current_file]);
@@ -594,14 +592,11 @@ const OpenPositionDialog = (props) => {
     };
 
     const handleSetSetting = async () => {
-        if (contents != [] && contents != null && contents != undefined) {
+        if (contents !== [] && contents !== null && contents !== undefined) {
             await api_tiles.updateNameFile(contents);
-            let newSource = {
-                urlOrFile: acceptedFiles,
-                description: 'data.zarr'
-            };
-            useViewerStore.setState({ source: newSource });
-            store.dispatch({ type: 'content_addContent', content: contents });
+            store.dispatch({ type: 'content_addContent', content: JSON.parse(JSON.stringify(contents)) });
+            props.handleClose();
+            acceptedFiles = [];
         }
     };
 

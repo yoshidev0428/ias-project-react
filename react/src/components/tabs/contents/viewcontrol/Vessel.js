@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Card from '@mui/material/Card';
-import { getVesselById } from '../../../../utils/vessel-types';
+import { getVesselById, VESSELS } from '../../../../utils/vessel-types';
 import { useElementSize } from 'usehooks-ts';
 import Dishes from '../../../vessels/Dishes';
 import Slides from '../../../vessels/Slides';
@@ -14,10 +14,13 @@ import {
 import Icon from '@mdi/react';
 import { SelectDialog } from '../../../vessels/SelectDialog';
 import { ExpansionDialog } from '../../../vessels/ExpansionDialog';
-// import CustomButton from '../../../custom/CustomButton';
+import {
+    useViewerStore
+} from '../../../viv/state';
 
 const mapStateToProps = (state) => ({
-    content: state.files.content
+    content: state.files.content,
+    files: state.files.files,
 })
 
 const Vessel = (props) => {
@@ -29,33 +32,42 @@ const Vessel = (props) => {
     const [contents, setContents] = useState(props.content);
     const [ref, { width }] = useElementSize();
 
-    useEffect(() => {
-        setCurrentVessel(getVesselById(currentVesselId));
-        // console.log("Current Vessel: ", currentVessel);
-    }, [currentVesselId]);
+    const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
+        let vesselID = 12;
+        let currentVesselTypeGroup = [];
+        for (let i = 0; i < VESSELS.length; i++) {
+            if (seriesStr.includes(VESSELS[i][0].type)) {
+                currentVesselTypeGroup = VESSELS[i];
+                break;
+            }
+            if (seriesStr.includes("Plate") && VESSELS[i][0].type.includes("Plate")) {
+                currentVesselTypeGroup = VESSELS[i];
+                break;
+            }
+        }
+        if (currentVesselTypeGroup.length > 0) {
+            for (let i = 0; i < currentVesselTypeGroup.length; i++) {
+                if (currentVesselTypeGroup[i].rows >= maxRow && currentVesselTypeGroup[i].cols >= maxCol) {
+                    vesselID = currentVesselTypeGroup[i].id;
+                    break;
+                }
+            }
+        }
+        return vesselID;
+    }
 
     useEffect(() => {
         console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
         if (props.content) {
             let current_contents = JSON.parse(JSON.stringify(props.content));
-            setContents(current_contents);
+            setContents(JSON.parse(JSON.stringify(current_contents)));
             let current_vessel = { id: 12, type: "WellPlate", rows: 8, cols: 12, title: "96", showName: true };
-            if (current_contents[0].series.includes("Plate")) {
-                let image_size = (current_contents[current_contents.length - 1].row + 1) * (current_contents[current_contents.length - 1].col);
-                if (image_size >= 384) { current_vessel = getVesselById(13); }
-                else if (image_size >= 96) { current_vessel = getVesselById(12); }
-                else if (image_size >= 48) { current_vessel = getVesselById(11); }
-                else if (image_size >= 24) { current_vessel = getVesselById(10); }
-                else if (image_size >= 12) { current_vessel = getVesselById(9); }
-                else if (image_size >= 6) { current_vessel = getVesselById(8); }
-                else { current_vessel = getVesselById(7); }
-            } else if (current_contents[0].series.includes("Slide")) {
-                current_vessel.type = "Slide";
-            } else if (current_contents[0].series.includes("Dish")) {
-                current_vessel.type = "Dish";
-            } else if (current_contents[0].series.includes("Wafer")) {
-                current_vessel.type = "Wafer";
+            let maxRow = 0; let maxCow = 1;
+            for (let i = 0; i < current_contents.length; i++) {
+                if (current_contents[i].row > maxRow) maxRow = current_contents[i].row;
+                if (current_contents[i].col > maxCow) maxCow = current_contents[i].col;
             }
+            current_vessel = getVesselById(getCorrectVesselID(current_contents[0].series, maxRow + 1, maxCow));
             setCurrentVessel(current_vessel);
             setCurrentVesselId(current_vessel.id);
         }
