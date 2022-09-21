@@ -31,8 +31,6 @@ const darkTheme = createTheme({
 
 const RoutedAvivator = (props) => {
 
-    // const query = useQuery();
-    // const url = query.get('image_url');
     const [source, setSource] = useState(null);
 
     const displayFiles = (contents, files, row, col) => {
@@ -43,13 +41,13 @@ const RoutedAvivator = (props) => {
                     current_files.push(files[i]);
                 }
             }
-            console.log("index.jsx : displayFiles : current_files : -------- : ", current_files);
+            // console.log("index.jsx : displayFiles : current_files : -------- : ", current_files);
             setSource({ urlOrFile: current_files, description: 'data.zarr' });
         }
     }
 
     useEffect(() => {
-        console.log("index.jsx : props.content -------- : ", props);
+        // console.log("index.jsx : props.content -------- : ", props);
         if (props.content) {
             if (props.selectedHole !== undefined && props.selectedHole !== null) {
                 displayFiles(props.content, props.files, props.selectedHole.row, props.selectedHole.col);

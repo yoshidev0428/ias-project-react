@@ -14,7 +14,7 @@ import {
     mdiPlus
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import { getWindowDimensions } from "../helpers";
+// import { getWindowDimensions } from "../helpers";
 
 /**
  * This component serves as batteries-included visualization for OME-compliant tiff or zarr images.
