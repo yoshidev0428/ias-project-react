@@ -8,6 +8,8 @@ import Slides from '../../../vessels/Slides';
 import WellPlates from '../../../vessels/WellPlates';
 import Wafers from '../../../vessels/Wafers';
 import {
+    mdiChevronLeft, 
+    mdiChevronRight,
     mdiSyncAlert,
     mdiImageFilterCenterFocus,
 } from '@mdi/js';
@@ -56,6 +58,13 @@ const Vessel = (props) => {
         return vesselID;
     }
 
+    const changeVesselSeries = (direction) => {
+        if ( direction ) {
+            console.log("next");
+        } else {
+            console.log("previous");
+        }
+    }
     useEffect(() => {
         console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
         if (props.content) {
@@ -97,7 +106,28 @@ const Vessel = (props) => {
     }
 
     return (
+
         <Card ref={ref}>
+            <div className="d-flex align-items-center common-border">
+                <button className='btn btn-light btn-sm' style={{ width: "50%" }} onClick={() => changeVesselSeries(false)}>
+                    <Icon size={0.9}
+                        horizontal
+                        vertical
+                        rotate={180}
+                        color="#212529"
+                        path={mdiChevronLeft}>
+                    </Icon>
+                </button>
+                <button className='btn btn-light btn-sm' style={{ width: "50%" }} onClick={() => changeVesselSeries(true)}>
+                    <Icon size={0.9}
+                        horizontal
+                        vertical
+                        rotate={180}
+                        color="#212529"
+                        path={mdiChevronRight}>
+                    </Icon>
+                </button>
+            </div>
             <div className="d-flex common-border">
                 <h6 className='mb-0'> {currentVessel.title} - {currentVessel.type}</h6>
             </div>
@@ -105,8 +135,8 @@ const Vessel = (props) => {
             <SelectDialog currentVessel={currentVesselId} open={showSelectDialog} closeDialog={() => { setShowSelectDialog(false) }} changeVessel={(id) => { setCurrentVesselId(id); setCurrentVessel(getVesselById(id)); }} />
             <ExpansionDialog currentVessel={currentVesselId} open={showExpansionDialog} closeDialog={() => { setShowExpansionDialog(false) }} />
             <div className="d-flex justify-content-around align-items-center common-border">
-                <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowSelectDialog(true)}>
-                    <Icon size={0.6}
+                <button className='btn btn-light btn-sm' style={{ width: "50%" }} onClick={() => setShowSelectDialog(true)}>
+                    <Icon size={0.8}
                         horizontal
                         vertical
                         rotate={180}
@@ -114,8 +144,8 @@ const Vessel = (props) => {
                         path={mdiSyncAlert}>
                     </Icon>
                 </button>
-                <button className='btn btn-light btn-sm' style={{ width: "25%" }} onClick={() => setShowExpansionDialog(true)}>
-                    <Icon size={0.6}
+                <button className='btn btn-light btn-sm' style={{ width: "50%" }} onClick={() => setShowExpansionDialog(true)}>
+                    <Icon size={0.8}
                         horizontal
                         vertical
                         rotate={180}
