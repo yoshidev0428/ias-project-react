@@ -5,8 +5,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Divider from '@material-ui/core/Divider';
 import shallow from 'zustand/shallow';
-
-import ChannelController from './components/ChannelController';
 import Menu from './components/Menu';
 import ColormapSelect from './components/ColormapSelect';
 import GlobalSelectionSlider from './components/GlobalSelectionSlider';
@@ -14,7 +12,6 @@ import LensSelect from './components/LensSelect';
 import VolumeButton from './components/VolumeButton';
 import RenderingModeSelect from './components/RenderingModeSelect';
 import Slicer from './components/Slicer';
-import AddChannel from './components/AddChannel';
 import PanLockToggle from './components/PanLockToggle';
 import ZoomLockToggle from './components/ZoomLockToggle';
 import SideBySideToggle from './components/SideBySideToggle';
@@ -154,7 +151,7 @@ const Controller = () => {
                 style={{ width: '100%' }}
                 item
             >
-                <ChannelController
+                {/* <ChannelController
                     name={name}
                     onSelectionChange={onSelectionChange}
                     channelsVisible={channelsVisible[i]}
@@ -167,7 +164,7 @@ const Controller = () => {
                     handleRemoveChannel={handleRemoveChannel}
                     handleColorSelect={handleColorSelect}
                     isLoading={isChannelLoading[i]}
-                />
+                /> */}
             </Grid>
         );
     });
@@ -210,7 +207,7 @@ const Controller = () => {
                         {!isRgb && <CircularProgress />}
                     </Grid>
                 )}
-                {!isRgb && <AddChannel />}
+                {/* {!isRgb && <AddChannel />} */}
             </TabPanel>
             <TabPanel value={tab} index={1}>
                 {<RenderingModeSelect />}

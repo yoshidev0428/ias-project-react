@@ -103,32 +103,32 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             }
             return source;
         }
-        // console.log("hook.js createLoader ------- 000: ");
-        // Bio-Formats Zarr
-        if (Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function') {
-            throw new UnsupportedBrowserError(
-                'Cannot upload a local Zarr with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
-            );
-        }
-        // console.log("hook.js createLoader ------- 001: ", urlOrFile);
-        // Multiple flat tiffs
+        // console.log("utils.js  createLoader ------- 000: ");
+        // // Bio-Formats Zarr
+        // if (Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function') {
+        //     throw new UnsupportedBrowserError(
+        //         'Cannot upload a local Zarr with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
+        //     );
+        // }
+        // // Multiple flat tiffs
+        // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
             const multiTiffFiles = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
             const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
-            // console.log("hook.js createLoader ------- 003: ", mutiTiffSources);
+            // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
             try {
                 const source = await loadMultiTiff(mutiTiffSources);
+                // console.log("utils.js  loadMultiTiff ------- source : ", source);
                 // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
-                console.log("hook.js createLoader ------- 005: ", source);
                 return source;
             } catch (e) {
-                // console.log("hook.js loadMultiTiff ------- error : ", e.message);
+                console.log("utils.js  loadMultiTiff ------- error : ", e.message);
             }
         }
         let source;
         try {
             source = await loadBioformatsZarr(urlOrFile);
-            // console.log("hook.js createLoader ------- 002: ", source);
+            // console.log("utils.js  createLoader ------- 002: ", source);
         } catch {
             // try ome-zarr
             const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
@@ -150,7 +150,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         } else {
             handleLoaderError(null);
         }
-        console.log("hook.js createLoader ------- error : ", e.message);
+        console.log("utils.js  createLoader ------- error : ", e.message);
         return { data: null };
     }
 }
@@ -200,7 +200,6 @@ export function buildDefaultSelection(pixelSource) {
     let selection = [];
     const globalSelection = getDefaultGlobalSelection(pixelSource);
     // First non-global dimension with some sort of selectable values.
-
     const firstNonGlobalDimension = pixelSource.labels
         .map((name, i) => ({ name, size: pixelSource.shape[i] }))
         .find(d => !GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name) && d.size);
@@ -232,7 +231,6 @@ export function useWindowSize(isFull, scaleWidth, scaleHeight) {
 
     const { height, width } = getWindowDimensions();
     function getSize() {
-        // console.log( height, width, isFull, scaleWidth, scaleHeight, "useWindowSize -----");
         if (isFull) {
             return {
                 width: width * scaleWidth,
@@ -249,14 +247,11 @@ export function useWindowSize(isFull, scaleWidth, scaleHeight) {
         //     height: height * scaleHeight
         // };
     }
-    const [windowSize, setWindowSize] = useState(getSize());
     useEffect(() => {
-        const handleResize = () => {
-            setWindowSize(getSize());
-        };
-        window.addEventListener('resize', handleResize);
+        getSize();
+        window.addEventListener('resize', getSize);
         return () => {
-            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('resize', getSize);
         };
     });
     return getSize();
@@ -308,9 +303,7 @@ export async function getSingleSelectionStats3D({ loader, selection }) {
 }
 
 export const getSingleSelectionStats = async ({ loader, selection, use3d }) => {
-    const getStats = use3d
-        ? getSingleSelectionStats3D
-        : getSingleSelectionStats2D;
+    const getStats = use3d ? getSingleSelectionStats3D : getSingleSelectionStats2D;
     return getStats({ loader, selection });
 };
 
@@ -351,13 +344,11 @@ export function isMobileOrTablet() {
 export function guessRgb({ Pixels }) {
     const numChannels = Pixels.Channels.length;
     const { SamplesPerPixel } = Pixels.Channels[0];
-
     const is3Channel8Bit = numChannels === 3 && Pixels.Type === 'uint8';
-    const interleavedRgb =
-        Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
-
+    const interleavedRgb = Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
     return SamplesPerPixel === 3 || is3Channel8Bit || interleavedRgb;
 }
+
 export function truncateDecimalNumber(value, maxLength) {
     if (!value && value !== 0) return '';
     const stringValue = value.toString();

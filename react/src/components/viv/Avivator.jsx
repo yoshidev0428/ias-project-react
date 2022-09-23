@@ -43,7 +43,7 @@ export default function Avivator(props) {
     }
 
     useEffect(() => {
-        console.log(props, "Avivator : image file -------- ");
+        // console.log(props, "Avivator : image file -------- ");
         if (props.source !== null) {
             useViewerStore.setState({ source: source, isNoImageUrlSnackbarOn: isDemoImage });
         }

@@ -60,12 +60,9 @@ const Viewer = (props) => {
     const viewSize = useWindowSize(props.isFullScreen, 1, 1);
     // const pictureInPictureViewerRef = React.forwardRef(null);
     const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
-    
+
     useEffect(() => {
-        // console.log(use3d, useLinkedView, viewSize, "Viewer.jsx : use3d, useLinkedView");
-        if (props.source !== null && props.source !== undefined) {
-            // console.log(props.source, "use3d, useLinkedView");
-        }
+        // console.log("Viewer.jsx : use3d, useLinkedView", use3d, useLinkedView, viewSize);
         if (props.mouseFlag !== null && props.mouseFlag !== undefined) {
             if (mouseFlag !== props.mouseFlag) {
                 setMouseFlag(props.mouseFlag);

@@ -43,7 +43,7 @@ const DEFAUlT_CHANNEL_VALUES = {
 export const useChannelsStore = create(set => ({
     ...DEFAUlT_CHANNEL_STATE,
     ...generateToggles(DEFAUlT_CHANNEL_VALUES, set),
-    toggleIsOn: index =>
+    toggleIsOn: (index) =>
         set(state => {
             const channelsVisible = [...state.channelsVisible];
             channelsVisible[index] = !channelsVisible[index];
@@ -59,7 +59,7 @@ export const useChannelsStore = create(set => ({
             });
             return { ...state, ...newState };
         }),
-    removeChannel: channel =>
+    removeChannel: (channel) =>
         set(state => {
             const newState = {};
             const channelKeys = Object.keys(DEFAUlT_CHANNEL_VALUES);

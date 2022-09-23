@@ -17,14 +17,13 @@ export const COLORMAP_OPTIONS = [
     'inferno'
 ];
 export const COLOR_PALLETE = [
+    [255, 255, 255],
     [0, 0, 255],
     [0, 255, 0],
-    [255, 0, 255],
-    [255, 255, 0],
-    [255, 128, 0],
+    [255, 0, 0],
     [0, 255, 255],
-    [255, 255, 255],
-    [255, 0, 0]
+    [255, 255, 0],
+    [255, 0, 255]
 ];
 export const GLOBAL_SLIDER_DIMENSION_FIELDS = ['z', 't'];
 export const INITIAL_SLIDER_VALUE = [1500, 20000];

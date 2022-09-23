@@ -28,14 +28,17 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
-import DLMLTab from "../components/tabs/DLMLTab";
-import AdjustTab from "../components/tabs/AdjustTab";
-import FilterTab from "../components/tabs/FilterTab";
-import FileTab from "../components/tabs/FileTab";
-import ViewTab from "../components/tabs/ViewTab";
-import MeasureTab from "../components/tabs/MeasureTab";
-import ReportTab from "../components/tabs/ReportTab";
-import SettingsTab from "../components/tabs/SettingsTab";
+
+import DLMLTab from "../components/tabsLeft/DLMLTab";
+import AdjustTab from "../components/tabsLeft/AdjustTab";
+import FilterTab from "../components/tabsLeft/FilterTab";
+import FileTab from "../components/tabsLeft/FileTab";
+
+import ViewTab from "../components/tabsRight/ViewTab";
+import MeasureTab from "../components/tabsRight/MeasureTab";
+import ReportTab from "../components/tabsRight/ReportTab";
+import SettingsTab from "../components/tabsRight/SettingsTab";
+
 import store from "../reducers";
 import { connect } from "react-redux";
 import { getWindowDimensions } from "../components/helpers";
@@ -76,8 +79,9 @@ const MainFrame = () => {
     const handleResize = () => {
         let { height } = getWindowDimensions();
         setHeight(height);
+        // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
-        localStorage.setItem("imageViewSizeHeight", imageViewAreaRef.current.offsetHeight);
+        localStorage.setItem("imageViewSizeHeight", height - 65);
     };
 
     const [rightTabVal, setRightTabVal] = useState(0);
@@ -103,6 +107,9 @@ const MainFrame = () => {
     useEffect(() => {
         handleResize();
         window.addEventListener('resize', handleResize);
+        return () => {
+            window.addEventListener('resize', handleResize);
+        };
     }, [imageViewAreaRef]);
 
     const HeaderContent = () => {
