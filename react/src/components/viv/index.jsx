@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import { grey } from '@material-ui/core/colors';
 import Avivator from './Avivator';
-import { } from "../../reducers/modules/filesReducer";
 // import * as api from '../../api/tiles';
 // import sources from './source-info';
 // import { useLocation } from 'react-router-dom';
@@ -34,16 +33,33 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(null);
 
     const displayFiles = (contents, files, row, col) => {
-        if (files.length > 1 && files[0].type === "image/tiff") {
-            let current_files = [];
+        // if (files.N_images !== null && files.N_images !== undefined) {
+        if (contents.length > 1) {
+            let hole_files = [];
+            let layer_files = []; let layer_contents = [];
+            let minField = contents[0].field;
             for (let i = 0; i < contents.length; i++) {
                 if (contents[i].row === row && contents[i].col === col) {
-                    current_files.push(files[i]);
+                    // let fileURL = process.env.REACT_APP_BASE_API_URL + files.path.substring(1) + "/" + contents[i].filename;
+                    // current_files.push(fileURL);
+                    // current_files.push([{ c: contents[i].channel, z: 0, t: 0 }, files[i]]);
+                    hole_files.push({ content: contents[i], file: files[i] });
+                    if (contents[i].field < minField) {
+                        minField = contents[i].field;
+                    }
                 }
             }
-            // console.log("index.jsx : displayFiles : current_files : -------- : ", current_files);
-            setSource({ urlOrFile: current_files, description: 'data.zarr' });
+            // console.log("index.jsx : displayFiles : hole_files : -------- : ", hole_files);
+            for (let i = 0; i < hole_files.length; i++) {
+                if (hole_files[i].content.field === minField) {
+                    layer_files.push(hole_files[i].file);
+                    layer_contents.push(hole_files[i].content);
+                }
+            }
+            // console.log("index.jsx : displayFiles : hole_files, layer_files : -------- : ", hole_files, layer_files);
+            setSource({ urlOrFile: layer_files, contents: layer_contents, description: '' });
         }
+        // }
     }
 
     useEffect(() => {
