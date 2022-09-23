@@ -61,6 +61,7 @@ const namePatternsPrimary = [
     { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
     { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
 ];
+
 // const namePatternsPrimary = [
 //     { label: 'Series', text: 'LiveDead2_Plate_R', start: 0, end: 17, color: '#4caf50' },
 //     { label: 'Row', text: 'A', start: 24, end: 25, color: '#1976d2' },
