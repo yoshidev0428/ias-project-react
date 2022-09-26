@@ -8,7 +8,7 @@ import Slides from './contents/vessels/Slides';
 import WellPlates from './contents/vessels/WellPlates';
 import Wafers from './contents/vessels/Wafers';
 import {
-    mdiChevronLeft, 
+    mdiChevronLeft,
     mdiChevronRight,
     mdiSyncAlert,
     mdiImageFilterCenterFocus,
@@ -32,7 +32,7 @@ const Vessel = (props) => {
     const [ref, { width }] = useElementSize();
 
     const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
-        let vesselID = 12;
+        let vesselID = -1;
         let currentVesselTypeGroup = [];
         for (let i = 0; i < VESSELS.length; i++) {
             if (seriesStr.includes(VESSELS[i][0].type)) {
@@ -46,21 +46,59 @@ const Vessel = (props) => {
         }
         if (currentVesselTypeGroup.length > 0) {
             for (let i = 0; i < currentVesselTypeGroup.length; i++) {
-                if (currentVesselTypeGroup[i].rows >= maxRow && currentVesselTypeGroup[i].cols >= maxCol) {
+                if (currentVesselTypeGroup[0].type === "WellPlate") {
+                    if (currentVesselTypeGroup[i].rows >= maxRow && currentVesselTypeGroup[i].cols >= maxCol) {
+                        vesselID = currentVesselTypeGroup[i].id;
+                        break;
+                    }
+                } else {
+
+                }
+                if (currentVesselTypeGroup[i].rows >= maxRow && currentVesselTypeGroup[i].cols >= maxCol && currentVesselTypeGroup[0].type === "WellPlate") {
                     vesselID = currentVesselTypeGroup[i].id;
                     break;
                 }
             }
         }
+        if (vesselID === -1) {
+            alert("There is no suitable size in VESSEL!");
+            vesselID = 12;
+        }
         return vesselID;
     }
 
     const changeVesselSeries = (direction) => {
-        if ( direction ) {
-            console.log("next");
-        } else {
-            console.log("previous");
+        let current_VesselGroupIndex = 0;
+        for (let i = 0; VESSELS.length; i++) {
+            if (VESSELS[i][0].type === currentVessel.type) {
+                current_VesselGroupIndex = i;
+                break;
+            }
         }
+        let maxRow = 0; let maxCol = 1; let current_contents = [...contents];
+        for (let i = 0; i < current_contents.length; i++) {
+            if (current_contents[i].row > maxRow) maxRow = current_contents[i].row;
+            if (current_contents[i].col > maxCol) maxCol = current_contents[i].col;
+        }
+        let seriesStr = currentVessel.type;
+        console.log("Vessl.js changeVesselSeries", direction, current_VesselGroupIndex);
+        if (direction) {
+            if (current_VesselGroupIndex === VESSELS.length - 1) {
+                seriesStr = VESSELS[0][0].type;
+            } else {
+                seriesStr = VESSELS[current_VesselGroupIndex + 1][0].type;
+            }
+        } else {
+            if (current_VesselGroupIndex === 0) {
+                seriesStr = VESSELS[VESSELS.length - 1][0].type;
+            } else {
+                seriesStr = VESSELS[current_VesselGroupIndex - 1][0].type;
+            }
+        }
+        console.log(seriesStr, maxRow + 1, maxCol);
+        let vesselID = getCorrectVesselID(seriesStr, maxRow + 1, maxCol);
+        setCurrentVessel(getVesselById(vesselID));
+        setCurrentVesselId(vesselID);
     }
     useEffect(() => {
         console.log("View Control Vessel.js : NEW CONTENT : ", props.content);

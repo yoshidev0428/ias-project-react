@@ -22,25 +22,6 @@ async def save_upload_file(upload_file: UploadFile, destination: Path, chunk_siz
         while content := await upload_file.read(chunk_size):  # async read chunk
             await out_file.write(content)  # async write chunk
 
-
-def convol2D_processing(file_name):
-    abs_path = STATIC_PATH
-    file_path = str(abs_path) + "/" + str(file_name)
-    img = PIL.Image.open(file_path)
-    gray = img.convert('L')
-    bw = gray.point(lambda x: 0 if x<128 else 255, '1')
-    img = str(file_name).split(".")[0] + "_update.png"
-    path = str(abs_path) + "/" + str(img)
-    bw.save(path)
-    return path
-
-def normalize_2Dim_uint8(im):
-    im = im.astype(np.float32)
-    min = np.min(im)
-    max = np.max(im)
-    im = (im-min)/(max-min)*255
-    return im.astype(np.uint8)
-
 async def add_image_tiles(path: Path,
                         files: List[UploadFile],
                         clear_previous: bool,
@@ -57,8 +38,6 @@ async def add_image_tiles(path: Path,
     filenames = []
     for each_file in files:
         file_path = os.path.join(path, each_file.filename) 
-        # STATIC_PATH.joinpath(each_file.filename)
-        # filepaths.append(file_path)
         async with aiofiles.open(file_path, 'wb') as f:
             content = await each_file.read()
             await f.write(content)
@@ -74,7 +53,7 @@ async def add_image_tiles(path: Path,
         )
         tiles.append(tile)
     await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
-    return {"Flag_3d": True, "N_images": len(filenames), "path_images": filenames}
+    return {"Flag_3d": True, "N_images": len(filenames), "images": filenames}
     # cache_path = STATIC_PATH
     # raw_source = io.imread(path, True)
     # res = raw_source
@@ -112,3 +91,21 @@ async def add_image_tiles(path: Path,
         # D_flag = False
         # image_num = 1
         # return D_flag, image_num, path_images
+
+def convol2D_processing(file_name):
+    abs_path = STATIC_PATH
+    file_path = str(abs_path) + "/" + str(file_name)
+    img = PIL.Image.open(file_path)
+    gray = img.convert('L')
+    bw = gray.point(lambda x: 0 if x<128 else 255, '1')
+    img = str(file_name).split(".")[0] + "_update.png"
+    path = str(abs_path) + "/" + str(img)
+    bw.save(path)
+    return path
+
+def normalize_2Dim_uint8(im):
+    im = im.astype(np.float32)
+    min = np.min(im)
+    max = np.max(im)
+    im = (im-min)/(max-min)*255
+    return im.astype(np.uint8)

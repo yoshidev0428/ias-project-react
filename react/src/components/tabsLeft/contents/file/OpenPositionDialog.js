@@ -51,25 +51,25 @@ const nameTypeTableHeaders = [
     { headerName: 'Time Point', field: 'time' },
 ];
 
-const namePatternsPrimary = [
-    { label: 'Series', text: '', start: 0, end: 17, color: '#4caf50' },
-    { label: 'Row', text: '', start: 24, end: 25, color: '#1976d2' },
-    { label: 'Column', text: '', start: 25, end: 27, color: '#ff5722' },
-    { label: 'Field', text: '', start: 27, end: 30, color: '#fb8c00' },
-    { label: 'Channel', text: '', start: 30, end: 32, color: '#9c27b0' },
-    { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
-    { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
-];
-
 // const namePatternsPrimary = [
-//     { label: 'Series', text: 'LiveDead2_Plate_R', start: 0, end: 17, color: '#4caf50' },
-//     { label: 'Row', text: 'A', start: 24, end: 25, color: '#1976d2' },
-//     { label: 'Column', text: '01', start: 25, end: 27, color: '#ff5722' },
-//     { label: 'Field', text: 'f00', start: 27, end: 30, color: '#fb8c00' },
-//     { label: 'Channel', text: 'd0', start: 30, end: 32, color: '#9c27b0' },
-//     { label: 'Z Position', text: '0', start: 22, end: 23, color: '#607d8b' },
-//     { label: 'Time Point', text: 'p00', start: 18, end: 21, color: '#ff5252' },
+//     { label: 'Series', text: '', start: 0, end: 17, color: '#4caf50' },
+//     { label: 'Row', text: '', start: 24, end: 25, color: '#1976d2' },
+//     { label: 'Column', text: '', start: 25, end: 27, color: '#ff5722' },
+//     { label: 'Field', text: '', start: 27, end: 30, color: '#fb8c00' },
+//     { label: 'Channel', text: '', start: 30, end: 32, color: '#9c27b0' },
+//     { label: 'Z Position', text: '', start: 22, end: 23, color: '#607d8b' },
+//     { label: 'Time Point', text: '', start: 18, end: 21, color: '#ff5252' },
 // ];
+
+const namePatternsPrimary = [
+    { label: 'Series', text: 'LiveDead2_Plate_R', start: 0, end: 17, color: '#4caf50' },
+    { label: 'Row', text: 'A', start: 24, end: 25, color: '#1976d2' },
+    { label: 'Column', text: '01', start: 25, end: 27, color: '#ff5722' },
+    { label: 'Field', text: 'f00', start: 27, end: 30, color: '#fb8c00' },
+    { label: 'Channel', text: 'd0', start: 30, end: 32, color: '#9c27b0' },
+    { label: 'Z Position', text: '0', start: 22, end: 23, color: '#607d8b' },
+    { label: 'Time Point', text: 'p00', start: 18, end: 21, color: '#ff5252' },
+];
 
 const TabContainer = (props) => {
     return (
