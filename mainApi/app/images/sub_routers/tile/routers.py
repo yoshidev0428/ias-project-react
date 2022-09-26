@@ -27,7 +27,7 @@ import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId
-from mainApi.config import STATIC_PATH
+from mainApi.config import STATIC_PATH, CURRENT_STATIC
 
 router = APIRouter(
     prefix="/tile",
@@ -52,6 +52,7 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
             os.remove(os.path.join(current_user_path, f))
         res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
     result = await add_image_tiles(path = current_user_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
+    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
     return JSONResponse(result)
 
 # Alignment tilings
