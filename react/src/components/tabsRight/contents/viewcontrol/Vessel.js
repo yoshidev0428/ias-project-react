@@ -44,6 +44,7 @@ const Vessel = (props) => {
                 break;
             }
         }
+        // console.log("Vessel.js getCorrectVesselID  currentVesselTypeGroup : ", currentVesselTypeGroup[0]);
         if (currentVesselTypeGroup.length > 0) {
             for (let i = 0; i < currentVesselTypeGroup.length; i++) {
                 if (currentVesselTypeGroup[0].type === "WellPlate") {
@@ -51,12 +52,16 @@ const Vessel = (props) => {
                         vesselID = currentVesselTypeGroup[i].id;
                         break;
                     }
-                } else {
-
-                }
-                if (currentVesselTypeGroup[i].rows >= maxRow && currentVesselTypeGroup[i].cols >= maxCol && currentVesselTypeGroup[0].type === "WellPlate") {
-                    vesselID = currentVesselTypeGroup[i].id;
-                    break;
+                } else if (currentVesselTypeGroup[0].type === "Dish" || currentVesselTypeGroup[0].type === "Wafer") {
+                    if (currentVesselTypeGroup[i].size >= (maxRow + 1) * (maxCol + 1)) {
+                        vesselID = currentVesselTypeGroup[i].id;
+                        break;
+                    }
+                } else if (currentVesselTypeGroup[0] === "Slide") {
+                    if (currentVesselTypeGroup[i].count >= (maxRow + 1) * (maxCol + 1)) {
+                        vesselID = currentVesselTypeGroup[i].id;
+                        break;
+                    }
                 }
             }
         }
@@ -100,8 +105,9 @@ const Vessel = (props) => {
         setCurrentVessel(getVesselById(vesselID));
         setCurrentVesselId(vesselID);
     }
+
     useEffect(() => {
-        console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
+        // console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
         if (props.content && props.content !== []) {
             let current_contents = JSON.parse(JSON.stringify(props.content));
             setContents(JSON.parse(JSON.stringify(current_contents)));
