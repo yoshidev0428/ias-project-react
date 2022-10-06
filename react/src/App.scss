@@ -294,11 +294,6 @@ h6 {
     border-color    : #fff;
 }
 
-.control-panel div {
-    // height: 100%;
-    // width: calc(100% - 400px);
-}
-
 .control-panel .inside {
     position: relative;
     height  : 100%;
@@ -430,4 +425,23 @@ h6 {
 .css-6hp17o-MuiList-root-MuiMenu-list {
     display       : flex;
     flex-direction: column;
+}
+
+// Color Css
+.color-blue {
+    color: #1976d2;
+}
+
+.bg-blue {
+    background-color: #1976d2;
+}
+
+// Input
+.input-removeArrow input::-webkit-outer-spin-button,
+.input-removeArrow input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin            : 0 !important;
+}
+.input-removeArrow input[type=number] {
+    -moz-appearance: textfield !important;
 }

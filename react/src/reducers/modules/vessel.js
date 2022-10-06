@@ -1,5 +1,7 @@
 const DEFAULT_PARAMS = {
     currentVesselType: "Well",
+    selectedVesselHole: { row: 0, col: 1},
+    selectedVesselZ: 0,
     viewConfigsObj: {},
 };
 
@@ -10,6 +12,12 @@ const initState = {
 //action redux
 const vessel = (state = initState, action) => {
     switch (action.type) {
+        case "vessel_selectedVesselHole":
+            state.selectedVesselHole = action.content;
+            break
+        case "vessel_selectedVesselZ":
+            state.selectedVesselZ = action.content;
+            break
         case "vessel_setCurrentVesselType":
             state.currentVesselType = action.data;
             break;
@@ -19,7 +27,7 @@ const vessel = (state = initState, action) => {
         default:
             break;
     }
-    return { ...state }
+    return {...state}
 };
 
 export default vessel;

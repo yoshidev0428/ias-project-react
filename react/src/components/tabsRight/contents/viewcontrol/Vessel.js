@@ -100,7 +100,7 @@ const Vessel = (props) => {
                 seriesStr = VESSELS[current_VesselGroupIndex - 1][0].type;
             }
         }
-        console.log(seriesStr, maxRow + 1, maxCol);
+        // console.log(seriesStr, maxRow + 1, maxCol);
         let vesselID = getCorrectVesselID(seriesStr, maxRow + 1, maxCol);
         setCurrentVessel(getVesselById(vesselID));
         setCurrentVesselId(vesselID);
