@@ -38,7 +38,7 @@ import { connect } from 'react-redux';
 const mapStateToProps = state => ({
     files: state.files.files,
     isFilesAvailable: state.files.isFilesAvailable,
-    filesChosen: state.files.selectedHole,
+    filesChosen: state.vessel.selectedVesselHole,
     isFilesChosenAvailable: state.files.isFilesChosenAvailable,
 
 })

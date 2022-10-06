@@ -62,15 +62,23 @@ const namePatternsPrimary = [
     {label: "Z Position", text: "", start: 22, end: 23, color: "#607d8b", field: "z"},
     {label: "Time Point", text: "", start: 18, end: 21, color: "#ff5252", field: "time"},
 ];
-
 // const namePatternsPrimary = [
-//     { label: "Series", text: "LiveDead2_Plate_R", start: 0, end: 17, color: "#4caf50" },
-//     { label: "Row", text: "A", start: 24, end: 25, color: "#1976d2" },
-//     { label: "Column", text: "01", start: 25, end: 27, color: "#ff5722" },
-//     { label: "Field", text: "f00", start: 27, end: 30, color: "#fb8c00" },
-//     { label: "Channel", text: "d0", start: 30, end: 32, color: "#9c27b0" },
-//     { label: "Z Position", text: "0", start: 22, end: 23, color: "#607d8b" },
-//     { label: "Time Point", text: "p00", start: 18, end: 21, color: "#ff5252" },
+//     {label: "Series", text: "LiveDead2_Plate_R", start: 0, end: 15, color: "#4caf50", field: "series"},
+//     {label: "Row", text: "A", start: 25, end: 26, color: "#1976d2", field: "row"},
+//     {label: "Column", text: "01", start: 26, end: 28, color: "#ff5722", field: "col"},
+//     {label: "Field", text: "f21", start: 28, end: 31, color: "#fb8c00", field: "field"},
+//     {label: "Channel", text: "d0", start: 31, end: 33, color: "#9c27b0", field: "channel"},
+//     {label: "Z Position", text: "0", start: 23, end: 24, color: "#607d8b", field: "z"},
+//     {label: "Time Point", text: "p150", start: 18, end: 22, color: "#ff5252", field: "time"},
+// ];
+// const namePatternsPrimary = [
+//     { label: "Series", text: "LiveDead2_Plate_R", start: 0, end: 17, color: "#4caf50", field: "series" },
+//     { label: "Row", text: "A", start: 24, end: 25, color: "#1976d2", field: "row" },
+//     { label: "Column", text: "01", start: 25, end: 27, color: "#ff5722", field: "col" },
+//     { label: "Field", text: "f00", start: 27, end: 30, color: "#fb8c00", field: "field" },
+//     { label: "Channel", text: "d0", start: 30, end: 32, color: "#9c27b0", field: "channel" },
+//     { label: "Z Position", text: "0", start: 22, end: 23, color: "#607d8b", field: "z" },
+//     { label: "Time Point", text: "p00", start: 18, end: 21, color: "#ff5252", field: "time" },
 // ];
 
 const TabContainer = (props) => {
@@ -325,6 +333,7 @@ const DropzoneNamesFiles = (props) => {
                         }
                     }
                     setNamePatterns(namePatternsPrimaryValue);
+                    console.log("OpenPositionDialog : onChangePattern : namepatterns", namePatterns);
                 }
             }
         }
@@ -402,9 +411,9 @@ const DropzoneNamesFiles = (props) => {
         }
         let new_content = [];
         let new_content_processing = [];
+        // console.log("OpenPositionDialog.js nameFile updateNameType : ", contents);
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
-        // console.log("OpenPositionDialog.js nameFile updateNameType : ", old_content_p);
         for (let i = 0; i < old_content.length; i++) {
             let result = getNamePatternPerFileForProcessing(old_content_p[i]);
             new_content.push(result[1]);
@@ -624,7 +633,7 @@ const OpenPositionDialog = (props) => {
 
     const handleSetSetting = async () => {
         if (contents !== [] && contents !== null && contents !== undefined) {
-            console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
+            // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
             props.handleClose();
@@ -755,7 +764,7 @@ const OpenPositionDialog = (props) => {
 
 const mapStateToProps = (state) => ({
     files: state.files.file,
-    filesChosen: state.files.selectedHole,
+    filesChosen: state.vessel.selectedVesselHole,
 });
 
 OpenPositionDialog.propTypes = {handleClose: PropTypes.func.isRequired};
