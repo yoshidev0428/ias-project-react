@@ -1,7 +1,7 @@
 const DEFAULT_PARAMS = {
     isFilesAvailable: false,
     isContentAvailable: false,
-    files: null,
+    filesName: null,
     filesChosen: null,
     isFilesChosenAvailable: false,
     content: null,
@@ -19,7 +19,7 @@ const files = (state = initState, action) => {
             state.isContentAvailable = true;
             break;
         case "files_addFiles":
-            state.files = action.content;
+            state.filesName = action.content.filesName;
             state.isFilesAvailable = true;
             break
         case "files_removeAllFiles":

@@ -8,7 +8,7 @@ cache/
 # react project
 node_modules/
 # dist/
-# static/
+static/
 # templates/
 # local env files
 .env.local

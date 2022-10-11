@@ -22,7 +22,6 @@ import {
 
 const mapStateToProps = (state) => ({
     content: state.files.content,
-    files: state.files.files,
 })
 
 const Vessel = (props) => {

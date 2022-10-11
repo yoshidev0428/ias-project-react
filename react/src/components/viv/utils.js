@@ -11,6 +11,9 @@ import {
 } from '@hms-dbmi/viv';
 
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
+import * as api_tiles from '../../api/tiles';
+import {getImageByUrl} from '../../api/fetch';
+import store from '../../reducers';
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 
@@ -113,8 +116,14 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         // // Multiple flat tiffs
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
-            const multiTiffFiles = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-            const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
+            const fileNames = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
+            let mutiTiffSources = []
+
+            for(let i = 0; i < fileNames.length; i ++)
+            {
+                let file = await getImageByUrl(fileNames[i].name)
+                mutiTiffSources[i] = [{ c: i, z: 0, t: 0 }, file]
+            }
             // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
             try {
                 const source = await loadMultiTiff(mutiTiffSources);

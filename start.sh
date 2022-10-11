@@ -8,8 +8,8 @@ docker compose up -d
 echo ------ Started Backend
 cd react
 echo ------ Starting Frontend
-npm install
-npm start
+yarn install
+yarn start
 
 cmd /k
 # PAUSE

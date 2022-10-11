@@ -2,11 +2,14 @@ import asyncio
 import concurrent
 import os
 import pydantic
+import string
+from tokenize import String
 from PIL import Image
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import (
     Request,
+    Response,
     APIRouter,
     Depends,
     status,
@@ -54,6 +57,16 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
     result = await add_image_tiles(path = current_user_path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
     return JSONResponse(result)
+
+@router.get("/get_image/{image}", 
+            response_description="Get Image Tiles",
+            response_model=List[TileModelDB])
+async def get_image(image: str,
+                    clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    return FileResponse(os.path.join(current_user_path + '/', image), media_type="image/tiff")
 
 # Alignment tilings
 @router.get("/list",
