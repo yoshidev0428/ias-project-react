@@ -22,6 +22,7 @@ import SearchBar from "material-ui-search-bar";
 import TextField from "@mui/material/TextField";
 // import { updateNameFile, uploadImageFiles } from "../../../../api/tiles";
 import * as api_tiles from "../../../../api/tiles";
+import {getMergedImage} from '../../../../api/fetch';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
 import image from '../../../../reducers/modules/image';
@@ -112,6 +113,7 @@ const ImageDropzone = (props) => {
                 newAcceptedFiles.push(incommingFiles[i].file);
             }
         }
+
         if (newAcceptedFiles.length > 0) {
             let resUpload = await api_tiles.uploadImageFiles(newAcceptedFiles);
             acceptedFiles = acceptedFiles.concat(newAcceptedFiles);

@@ -2,6 +2,7 @@ import asyncio
 import concurrent
 import os
 import pydantic
+from pydantic import BaseModel
 import string
 from tokenize import String
 from PIL import Image
@@ -10,6 +11,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi import (
     Request,
     Response,
+    Body,
     APIRouter,
     Depends,
     status,
@@ -23,7 +25,7 @@ import jsons
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
-from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel
+from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
 import mainApi.app.images.utils.deconvolution as Deconv
@@ -31,6 +33,7 @@ import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 from mainApi.config import STATIC_PATH, CURRENT_STATIC
+import tifftools
 
 router = APIRouter(
     prefix="/tile",
@@ -58,6 +61,7 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
     return JSONResponse(result)
 
+# Return one Image file
 @router.get("/get_image/{image}", 
             response_description="Get Image Tiles",
             response_model=List[TileModelDB])
@@ -67,6 +71,35 @@ async def get_image(image: str,
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     return FileResponse(os.path.join(current_user_path + '/', image), media_type="image/tiff")
+
+# Return merge Image files
+##########################################################
+
+@router.post("/get_merged_image",
+            response_description="Get Image Tiles",
+            response_model=List[TileModelDB])
+async def merge_image(merge_req_body: str = Body(embed=True),
+                    clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    reqbody = merge_req_body.split('&')
+
+    images = reqbody[0].split(',')
+    newImageName = reqbody[1] + '.TIF'
+
+    if os.path.isfile(os.path.join(current_user_path + '/', newImageName)):
+        return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
+
+    tff_lst = [os.path.join(current_user_path + '/', image) for image in images]
+    tff = tifftools.read_tiff(tff_lst[0])
+    for other in tff_lst[1:]:
+        othertff = tifftools.read_tiff(other)
+        tff['ifds'].extend(othertff['ifds'])
+    tifftools.write_tiff(tff, os.path.join(current_user_path + '/', newImageName))
+    return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
+    # return JSONResponse({"aa": tff_lst[0], "bb": newImageName})
+    # return JSONResponse({"aa": merge_req_body.fileNames, 'bb': merge_req_body.newImageName})
 
 # Alignment tilings
 @router.get("/list",
