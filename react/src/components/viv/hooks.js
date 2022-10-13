@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDropzone as useReactDropzone } from 'react-dropzone';
 import { unstable_batchedUpdates } from 'react-dom';
 import shallow from 'zustand/shallow';
-// import store from '../../reducers';
+import store from '../../reducers';
 import {
     useChannelsStore,
     useImageSettingsStore,
@@ -32,6 +32,7 @@ export const useImage = (source) => {
             // Placeholder
             useViewerStore.setState({ isChannelLoading: [true] });
             useViewerStore.setState({ isViewerLoading: true });
+            store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
             const { urlOrFile } = source;
             // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader);
@@ -68,6 +69,7 @@ export const useImage = (source) => {
             // Placeholder
             useViewerStore.setState({ isChannelLoading: [true] });
             useViewerStore.setState({ isViewerLoading: true });
+            store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
             const newSelections = buildDefaultSelection(loader[0]);
             // console.log("-------- hook.js useEffect metadata.Pixels : ", metadata.Pixels);
@@ -144,6 +146,7 @@ export const useImage = (source) => {
                 globalSelection: newSelections[0],
                 channelOptions
             });
+            store.dispatch({type: "image_loading_state_change", content: false});
             const [xSlice, ySlice, zSlice] = getBoundingCube(loader);
             useImageSettingsStore.setState({ xSlice, ySlice, zSlice });
         };

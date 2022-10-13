@@ -28,7 +28,6 @@ const makeFormBody = (details) => {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-    console.log(formBody)
     return formBody
 }
 
@@ -52,7 +51,19 @@ export const getMergedImage = async function(fileNames, newImageName, callback) 
         }
     };
     fetch("http://localhost:8000/image/tile/get_merged_image", options)
-        .then(response => response.blob())
+        .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.json().then(data => {
+                    if(data.error) {
+                        alert(data.error)
+                    }
+                    callback(true)
+                });
+            } else {
+                return response.blob()
+            }
+        })
         .then(blob => {
             let file = new File([blob], newImageName, { type: "image/tiff" })
             file.path = newImageName

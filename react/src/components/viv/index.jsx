@@ -115,7 +115,6 @@ const RoutedAvivator = (props) => {
                             } */
                             // console.log(nfield_files)
                             // console.log(nfield_contents)
-                            console.log("index.jsx : displayFiles : field_files, field_contents : -------- : ", nfield_files, nfield_contents);
                             setSource({urlOrFile: nfield_files, contents: nfield_contents, description: ''});
                         }
                     }

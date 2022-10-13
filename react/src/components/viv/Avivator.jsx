@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {connect} from 'react-redux';
 import { useViewerStore } from './state';
 import { useImage } from './hooks';
 import Viewer from './components/Viewer';
@@ -6,6 +7,7 @@ import DropzoneWrapper from './components/DropzoneWrapper';
 import Controller from './components/Controller';
 import SnackBars from './components/Snackbars';
 import Footer from './components/Footer';
+import Loader from './components/Loader';
 import './index.css';
 import { FullScreen } from '@chiragrupani/fullscreen-react';
 import {
@@ -23,9 +25,14 @@ import Icon from '@mdi/react';
  * @param {Object} props.history A React router history object to create new urls (optional).
  * @param {Object} args.sources A list of sources for a dropdown menu, like [{ url, description }]
  * */
-export default function Avivator(props) {
 
-    const { history, source: source, isDemoImage } = props;
+ const mapStateToProps = (state) => ({
+    isImageLoading: state.files.isImageLoading,
+})
+
+const Avivator = function(props) {
+
+    const { history, source: source, isDemoImage, isImageLoading } = props;
     // const source = useViewerStore(store => store.source);
     const isViewerLoading = useViewerStore(store => store.isViewerLoading);
     const useLinkedView = useViewerStore(store => store.useLinkedView);
@@ -82,6 +89,9 @@ export default function Avivator(props) {
                         </Icon>
                     </button>
                 </div>
+                {isImageLoading && <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+                    <Loader />
+                </div>}
                 <div className="bg-light h-100 w-100">
                     {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} />}
                     {/* <DropzoneWrapper>
@@ -95,3 +105,4 @@ export default function Avivator(props) {
         </>
     );
 }
+export default connect(mapStateToProps)(Avivator);

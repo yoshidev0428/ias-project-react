@@ -109,11 +109,14 @@ const ImageDropzone = (props) => {
                 files.push(incommingFiles[i]);
             }
             if (!acceptedFiles.includes(incommingFiles[i].file)) {
-                incommingFiles[i].file["path"] = incommingFiles[i].file.name.replace(/\s+/g, "");
+                let file = incommingFiles[i].file
+                let newName = file.name.replace(/\s+/g, '');
+                incommingFiles[i].file = new File([file], newName, {type: file.type});
+                incommingFiles[i].file["path"] = file.name.replace(/\s+/g, "");
+                // incommingFiles[i].file.name = incommingFiles[i].file.name.trim()
                 newAcceptedFiles.push(incommingFiles[i].file);
             }
         }
-
         if (newAcceptedFiles.length > 0) {
             let resUpload = await api_tiles.uploadImageFiles(newAcceptedFiles);
             acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
@@ -360,6 +363,7 @@ const DropzoneNamesFiles = (props) => {
     };
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
+        console.log(objectPerFile)
         let result = {};
         let resultContent = {};
         let moveIndex = 0;
@@ -641,6 +645,7 @@ const OpenPositionDialog = (props) => {
             // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
+            // store.dispatch({type: "image_loading_state_change", content: true});
             props.handleClose();
             acceptedFiles = [];
         }

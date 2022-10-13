@@ -5,6 +5,7 @@ const DEFAULT_PARAMS = {
     filesChosen: null,
     isFilesChosenAvailable: false,
     content: null,
+    isImageLoading: false,
 };
 
 const initState = {
@@ -17,6 +18,7 @@ const files = (state = initState, action) => {
         case "content_addContent":
             state.content = action.content;
             state.isContentAvailable = true;
+            state.isImageLoading = true;
             break;
         case "files_addFiles":
             state.filesName = action.content.filesName;
@@ -26,6 +28,8 @@ const files = (state = initState, action) => {
             state.files = null;
             state.isFilesAvailable = false;
             break;
+        case "image_loading_state_change":
+            state.isImageLoading = action.content
         default:
             break;
     }
