@@ -29,7 +29,8 @@ jobs:
          instance_name: 'lifeanalytics-vm'
          zone: 'us-central1-f'
          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-         command: cd ias-project-react && git reset --hard && git pull 
+         command: mkdir test
+                  # cd ias-project-react && git reset --hard && git pull &&
                   # export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && 
                   # npm -v && cd react && npm i && npm run build && 
                   # rm -R /var/www/html/* && cp ./build/* /var/www/html/ && cd .. && docker-compose up -d
