@@ -32,7 +32,7 @@ jobs:
          instance_name: 'lifeanalytics-vm'
          zone: 'us-central1-f'
          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-         command: 'mkdir test'
+         command: 'cd iasgcp && mkdir test'
                   # cd ias-project-react && git reset --hard && git pull &&
                   # export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && 
                   # npm -v && cd react && npm i && npm run build && 
