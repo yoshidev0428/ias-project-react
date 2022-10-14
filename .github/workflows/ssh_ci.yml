@@ -26,13 +26,10 @@ jobs:
       - name: executing remote ssh commands using password
         uses: garygrossgarten/github-action-ssh@release
         with:
+         instance_name: 'lifeanalytics-vm'
+         zone: 'us-central1-f'
+         ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
          command: cd ias-project-react && git reset --hard && git pull && 
                   export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && 
-                  cd react && npm -v && npm i && npm run build && 
-                  rm -R /var/www/html/* && mv ./build/* /var/www/html/ && 
-                  cd .. && docker-compose up -d
-         host: ${{ secrets.HOST }}
-         username: ${{ secrets.USERNAME }}
-         password: ${{ secrets.PASSWORD }}
-         port: ${{ secrets.PORT }}
-         script: whoami
+                  # npm -v && cd react && npm i && npm run build && 
+                  # rm -R /var/www/html/* && cp ./build/* /var/www/html/ && cd .. && docker-compose up -d
