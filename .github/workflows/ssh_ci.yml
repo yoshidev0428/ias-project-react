@@ -18,18 +18,21 @@ jobs:
     # The type of runner that the job will run on
     name: Build
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      #- uses: actions/checkout@v3
-      - name: executing remote ssh commands using password
-        uses: garygrossgarten/github-action-ssh@release
+      - uses: actions/checkout@v3
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          service_account: 'github-action@capable-alcove-265511.iam.gserviceaccount.com'
+      - id: 'compute-ssh'
+        uses: 'google-github-actions/ssh-compute@v0'
         with:
          instance_name: 'lifeanalytics-vm'
          zone: 'us-central1-f'
          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-         command: mkdir test
+         command: 'mkdir test'
                   # cd ias-project-react && git reset --hard && git pull &&
                   # export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && 
                   # npm -v && cd react && npm i && npm run build && 
