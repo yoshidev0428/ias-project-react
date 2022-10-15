@@ -26,4 +26,11 @@ jobs:
         uses: 'google-github-actions/auth@v0'
         with:
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          command: cd iasgcp && mkdir test
+      - id: 'compute-ssh'
+        uses: 'google-github-actions/ssh-compute@v0'
+        with:
+          instance_name: 'lifeanalytics-vm'
+          zone: 'us-central1-f'
+          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+          #command: cd iasgcp && mkdir test
+          command: 'echo Hello world'
