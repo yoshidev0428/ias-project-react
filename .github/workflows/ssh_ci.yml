@@ -32,5 +32,5 @@ jobs:
           instance_name: 'lifeanalytics-vm'
           zone: 'us-central1-f'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          #command: cd iasgcp && mkdir test
-          command: 'echo Hello world'
+          command: mkdir test
+          # command: 'echo Hello world'
