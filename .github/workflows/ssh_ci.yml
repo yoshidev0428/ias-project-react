@@ -31,6 +31,7 @@ jobs:
         with:
           instance_name: 'lifeanalytics-vm'
           zone: 'us-central1-f'
+          username: ${{ secrets.USERNAME }}
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: mkdir test
                     # git reset --hard && 
