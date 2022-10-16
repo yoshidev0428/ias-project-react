@@ -21,20 +21,19 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v0'
+      - name: executing remote ssh commands using password
+        uses: garygrossgarten/github-action-ssh@release
         with:
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-      - id: 'compute-ssh'
-        uses: 'google-github-actions/ssh-compute@v0'
-        with:
-          instance_name: 'lifeanalytics-vm'
-          zone: 'us-central1-f'
-          username: ${{ secrets.USERNAME }}
-          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: mkdir test
-                    # git reset --hard && 
-                    # export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh &&
-                    # npm -v && cd react && npm i && npm run build && 
-                    # rm -R /var/www/html-IAS/* && cp ./build/* /var/www/html-IAS/ && cd .. && docker-compose up -d
+         command: cd ias-project-react && git reset --hard && git pull 
+                  # && 
+                  # export NVM_DIR=~/.nvm && source ~/.nvm/nvm.sh && 
+                  # cd react && rm -R /var/www/html/* && cp ./build/* /var/www/html/ && cd .. && docker-compose up -d
+                  # npm -v && npm i && npm run build &&
+                  # rm -R /var/www/html/* && 
+                  # mv ./build/* /var/www/html/ && 
+         host: ${{ secrets.HOST }}
+         username: ${{ secrets.USERNAME }}
+         key: ${{ secrets.PASSWORD }}
+         # password: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+         port: ${{ secrets.PORT }}
+         script: whoami
