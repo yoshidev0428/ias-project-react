@@ -22,9 +22,12 @@ import SearchBar from "material-ui-search-bar";
 import TextField from "@mui/material/TextField";
 // import { updateNameFile, uploadImageFiles } from "../../../../api/tiles";
 import * as api_tiles from "../../../../api/tiles";
+import {getMergedImage} from '../../../../api/fetch';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
-
+import image from '../../../../reducers/modules/image';
+import { api } from "../../../../api/base";
+import axios from 'axios';
 var acceptedFiles = [];
 
 const columns = [
@@ -94,7 +97,7 @@ TabContainer.propTypes = {
 };
 
 const ImageDropzone = (props) => {
-
+    const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
 
     const updateFiles = async (incommingFiles) => {
@@ -106,15 +109,20 @@ const ImageDropzone = (props) => {
                 files.push(incommingFiles[i]);
             }
             if (!acceptedFiles.includes(incommingFiles[i].file)) {
-                incommingFiles[i].file["path"] = incommingFiles[i].file.name.replace(/\s+/g, "");
+                let file = incommingFiles[i].file
+                let newName = file.name.replace(/\s+/g, '');
+                incommingFiles[i].file = new File([file], newName, {type: file.type});
+                incommingFiles[i].file["path"] = file.name.replace(/\s+/g, "");
+                // incommingFiles[i].file.name = incommingFiles[i].file.name.trim()
                 newAcceptedFiles.push(incommingFiles[i].file);
             }
         }
         if (newAcceptedFiles.length > 0) {
             let resUpload = await api_tiles.uploadImageFiles(newAcceptedFiles);
             acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
+            let imagePath = resUpload.data.path;
             if (resUpload.data !== null && resUpload.data !== undefined) {
-                store.dispatch({type: "files_addFiles", content: acceptedFiles});
+                store.dispatch({type: "files_addFiles", content: {filesName: acceptedFiles.map(file => file.name), path: imagePath}});
             } else {
                 console.log(" OpenPositionDialog.js updateFiles : Get error in uploading image files");
             }
@@ -355,6 +363,7 @@ const DropzoneNamesFiles = (props) => {
     };
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
+        console.log(objectPerFile)
         let result = {};
         let resultContent = {};
         let moveIndex = 0;
@@ -636,6 +645,7 @@ const OpenPositionDialog = (props) => {
             // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
+            // store.dispatch({type: "image_loading_state_change", content: true});
             props.handleClose();
             acceptedFiles = [];
         }

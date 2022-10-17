@@ -1,18 +1,35 @@
 from fastapi import (
     FastAPI, APIRouter,
+    Request,
+    Response
 )
+from typing import Callable
+
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
 
 import os
 from mainApi.app.auth.routers import router as auth_router
 from mainApi.app.db.mongodb_utils import connect_to_mongo, close_mongo_connection
 from mainApi.app.images.routers import router as image_router
 from mainApi.config import ALLOWED_HOSTS
-from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles 
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.routing import APIRoute
+from mainApi.config import STATIC_PATH
 # from mainApi.config import connect_db, close_db
 # from mainApi.app.images.utils import file
 
-app = FastAPI(title='IAS Project')
+middleware = [
+    Middleware(
+        CORSMiddleware,
+        allow_origins=['*'],
+        allow_credentials=True,
+        allow_methods=['*'],
+        allow_headers=['*']
+    )
+]
+app = FastAPI(title='IAS Project', middleware=middleware)
 
 script_dir = os.path.dirname(__file__)
 st_abs_file_path = os.path.join(script_dir, "static/")
@@ -27,14 +44,6 @@ app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 if not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_HOSTS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 app.add_event_handler("startup", connect_to_mongo)

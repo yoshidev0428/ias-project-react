@@ -11,6 +11,9 @@ import {
 } from '@hms-dbmi/viv';
 
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
+import * as api_tiles from '../../api/tiles';
+import {getImageByUrl} from '../../api/fetch';
+import store from '../../reducers';
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 
@@ -113,8 +116,14 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         // // Multiple flat tiffs
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
-            const multiTiffFiles = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-            const mutiTiffSources = multiTiffFiles.map((e, i) => [{ c: i, z: 0, t: 0 }, e]);
+            const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
+            let mutiTiffSources = []
+            for(let i = 0; i < files.length; i ++)
+            {
+                let file = files[i]
+                // let file = await getImageByUrl(files[i].name)
+                mutiTiffSources[i] = [{ c: i, z: 0, t: 0 }, file]
+            }
             // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
             try {
                 const source = await loadMultiTiff(mutiTiffSources);
@@ -124,26 +133,27 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             } catch (e) {
                 console.log("utils.js  loadMultiTiff ------- error : ", e.message);
             }
+        } else {
+            let source;
+            try {
+                source = await loadBioformatsZarr(urlOrFile);
+                // console.log("utils.js  createLoader ------- 002: ", source);
+            } catch {
+                // try ome-zarr
+                const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
+                // extract metadata into OME-XML-like form
+                const metadata = {
+                    Pixels: {
+                        Channels: res.metadata.omero.channels.map(c => ({
+                            Name: c.label,
+                            SamplesPerPixel: 1
+                        }))
+                    }
+                };
+                source = { data: res.data, metadata };
+            }
+            return source;
         }
-        let source;
-        try {
-            source = await loadBioformatsZarr(urlOrFile);
-            // console.log("utils.js  createLoader ------- 002: ", source);
-        } catch {
-            // try ome-zarr
-            const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-            // extract metadata into OME-XML-like form
-            const metadata = {
-                Pixels: {
-                    Channels: res.metadata.omero.channels.map(c => ({
-                        Name: c.label,
-                        SamplesPerPixel: 1
-                    }))
-                }
-            };
-            source = { data: res.data, metadata };
-        }
-        return source;
     } catch (e) {
         if (e instanceof UnsupportedBrowserError) {
             handleLoaderError(e.message);

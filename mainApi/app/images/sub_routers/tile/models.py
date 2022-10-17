@@ -11,6 +11,9 @@ class AlignMethodEnum(str, Enum):
     byRow = "byRow"
     byColumn = "byColumn"
 
+class MergeImgModel(BaseModel):
+    fileNames: str = ""
+    newImageName: str = ""
 
 class TileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")

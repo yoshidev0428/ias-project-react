@@ -1,9 +1,11 @@
 import { api } from "./base";
 import store from '../reducers';
+import files from "../reducers/modules/files";
 
 const state = store.getState();
 
 export const uploadImageFiles = (files) => {
+    const state = store.getState();
     const formData = new FormData();
     for (let i in files) {
         let f = files[i];
@@ -20,6 +22,30 @@ export const uploadImageFiles = (files) => {
         }
     });
 };
+
+export const getImageByUrl = (imgName, callback) => {    
+    const state = store.getState();
+    fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/" + imgName, {
+    headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+        "Authorization": state.auth.tokenType + " " + state.auth.token,
+    }
+    })
+    .then((response) => {
+        return response.blob();
+    })
+    .then((blob)=>{
+        let file = new File([blob], imgName, { type: "image/tiff" })
+        file.path = imgName
+        console.log(file)
+        callback(null, file)
+    })
+    .catch(err => {
+        callback(true)
+    })
+}
 
 export const listTiles = (callback) => {
     api.get("image/tile/list")

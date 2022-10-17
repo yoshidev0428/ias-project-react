@@ -1,10 +1,11 @@
 const DEFAULT_PARAMS = {
     isFilesAvailable: false,
     isContentAvailable: false,
-    files: null,
+    filesName: null,
     filesChosen: null,
     isFilesChosenAvailable: false,
     content: null,
+    isImageLoading: false,
 };
 
 const initState = {
@@ -17,15 +18,18 @@ const files = (state = initState, action) => {
         case "content_addContent":
             state.content = action.content;
             state.isContentAvailable = true;
+            state.isImageLoading = true;
             break;
         case "files_addFiles":
-            state.files = action.content;
+            state.filesName = action.content.filesName;
             state.isFilesAvailable = true;
             break
         case "files_removeAllFiles":
             state.files = null;
             state.isFilesAvailable = false;
             break;
+        case "image_loading_state_change":
+            state.isImageLoading = action.content
         default:
             break;
     }
