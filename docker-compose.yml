@@ -1,4 +1,4 @@
-version: "3.8"
+version: "4.12"
 services:
     mainapi:
         build:
@@ -67,7 +67,7 @@ services:
         env_file:
             - ./env_files/celery_tasks.env
         ports:
-            - "5555:5555"
+            - 5555:5555
         depends_on:
             - rabbitmq
     ## stitching worker
