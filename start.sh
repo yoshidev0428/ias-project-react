@@ -2,14 +2,14 @@
 cd "$(dirname "$0")"
 echo ------ Starting Backend
 git pull
-docker compose build
+docker-compose build
 echo ------ Docker Build Complete
-docker compose up -d
+docker-compose up -d
 echo ------ Started Backend
 cd react
 echo ------ Starting Frontend
-yarn install
-yarn start
+npm install
+npm start
 
 cmd /k
 # PAUSE
