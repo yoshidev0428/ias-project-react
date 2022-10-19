@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { fromBlob, fromUrl } from 'geotiff'; // eslint-disable-line import/no-extraneous-dependencies
-import { Matrix4 } from '@math.gl/core';
-import { getWindowDimensions } from "../helpers";
+import {useState, useEffect} from 'react';
+import {fromBlob, fromUrl} from 'geotiff'; // eslint-disable-line import/no-extraneous-dependencies
+import {Matrix4} from '@math.gl/core';
+import {getWindowDimensions} from "../helpers";
 import {
     loadOmeTiff,
     loadBioformatsZarr,
@@ -10,7 +10,7 @@ import {
     loadMultiTiff,
 } from '@hms-dbmi/viv';
 
-import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
+import {GLOBAL_SLIDER_DIMENSION_FIELDS} from './constants';
 import * as api_tiles from '../../api/tiles';
 import {getImageByUrl} from '../../api/fetch';
 import store from '../../reducers';
@@ -58,14 +58,14 @@ async function getTotalImageCount(src, rootMeta, data) {
     const hasSubIFDs = Boolean(firstImage?.fileDirectory?.SubIFDs);
     if (hasSubIFDs) {
         return rootMeta.reduce((sum, imgMeta) => {
-            const { Pixels: { SizeC, SizeT, SizeZ } } = imgMeta;
+            const {Pixels: {SizeC, SizeT, SizeZ}} = imgMeta;
             const numImagesPerResolution = SizeC * SizeT * SizeZ;
             return numImagesPerResolution + sum;
         }, 1);
     }
     const levels = data[0].length;
     const {
-        Pixels: { SizeC, SizeT, SizeZ }
+        Pixels: {SizeC, SizeT, SizeZ}
     } = rootMeta[0];
     const numImagesPerResolution = SizeC * SizeT * SizeZ;
     return numImagesPerResolution * levels;
@@ -85,14 +85,14 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         // OME-TIFF
         if (isOMETIFF(urlOrFile)) {
             if (urlOrFile instanceof File) {
-                const source = await loadOmeTiff(urlOrFile, { images: 'all' });
+                const source = await loadOmeTiff(urlOrFile, {images: 'all'});
                 return source;
             }
             const url = urlOrFile;
             const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
             const isOffsets404 = res.status === 404;
             const offsets = !isOffsets404 ? await res.json() : undefined;
-            const source = await loadOmeTiff(urlOrFile, { offsets, images: 'all' });
+            const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
             // Show a warning if the total number of channels/images exceeds a fixed amount.
             // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
             // built in to the format for them, hence the ternary.
@@ -118,11 +118,10 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         if (isMultiTiff(urlOrFile)) {
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
             let mutiTiffSources = []
-            for(let i = 0; i < files.length; i ++)
-            {
+            for (let i = 0; i < files.length; i++) {
                 let file = files[i]
                 // let file = await getImageByUrl(files[i].name)
-                mutiTiffSources[i] = [{ c: i, z: 0, t: 0 }, file]
+                mutiTiffSources[i] = [{c: i, z: 0, t: 0}, file]
             }
             // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
             try {
@@ -140,7 +139,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
                 // console.log("utils.js  createLoader ------- 002: ", source);
             } catch {
                 // try ome-zarr
-                const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
+                const res = await loadOmeZarr(urlOrFile, {type: 'multiscales'});
                 // extract metadata into OME-XML-like form
                 const metadata = {
                     Pixels: {
@@ -150,7 +149,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
                         }))
                     }
                 };
-                source = { data: res.data, metadata };
+                source = {data: res.data, metadata};
             }
             return source;
         }
@@ -161,7 +160,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             handleLoaderError(null);
         }
         console.log("utils.js  createLoader ------- error : ", e.message);
-        return { data: null };
+        return {data: null};
     }
 }
 
@@ -176,7 +175,7 @@ export function getNameFromUrl(url) {
  *
  * @param { import('../../src/types').PixelSource<['t', 'z', 'c']> } pixelSource
  */
-function getDefaultGlobalSelection({ labels, shape }) {
+function getDefaultGlobalSelection({labels, shape}) {
     const dims = labels
         .map((name, i) => [name, i])
         .filter(d => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d[0]));
@@ -211,7 +210,7 @@ export function buildDefaultSelection(pixelSource) {
     const globalSelection = getDefaultGlobalSelection(pixelSource);
     // First non-global dimension with some sort of selectable values.
     const firstNonGlobalDimension = pixelSource.labels
-        .map((name, i) => ({ name, size: pixelSource.shape[i] }))
+        .map((name, i) => ({name, size: pixelSource.shape[i]}))
         .find(d => !GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name) && d.size);
 
     for (let i = 0; i < Math.min(4, firstNonGlobalDimension.size); i += 1) {
@@ -222,7 +221,7 @@ export function buildDefaultSelection(pixelSource) {
     }
 
     selection = isInterleaved(pixelSource.shape)
-        ? [{ ...selection[0], c: 0 }]
+        ? [{...selection[0], c: 0}]
         : selection;
     return selection;
 }
@@ -239,7 +238,7 @@ export function range(length) {
 
 export function useWindowSize(isFull, scaleWidth, scaleHeight) {
 
-    const { height, width } = getWindowDimensions();
+    const {height, width} = getWindowDimensions();
     function getSize() {
         if (isFull) {
             return {
@@ -267,27 +266,27 @@ export function useWindowSize(isFull, scaleWidth, scaleHeight) {
     return getSize();
 }
 
-export async function getSingleSelectionStats2D({ loader, selection }) {
+export async function getSingleSelectionStats2D({loader, selection}) {
     const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
-    const raster = await data.getRaster({ selection });
+    const raster = await data.getRaster({selection});
     const selectionStats = getChannelStats(raster.data);
-    const { domain, contrastLimits } = selectionStats;
-    return { domain, contrastLimits };
+    const {domain, contrastLimits} = selectionStats;
+    return {domain, contrastLimits};
 }
 
-export async function getSingleSelectionStats3D({ loader, selection }) {
+export async function getSingleSelectionStats3D({loader, selection}) {
     const lowResSource = loader[loader.length - 1];
-    const { shape, labels } = lowResSource;
+    const {shape, labels} = lowResSource;
     // eslint-disable-next-line no-bitwise
     const sizeZ = shape[labels.indexOf('z')] >> (loader.length - 1);
     const raster0 = await lowResSource.getRaster({
-        selection: { ...selection, z: 0 }
+        selection: {...selection, z: 0}
     });
     const rasterMid = await lowResSource.getRaster({
-        selection: { ...selection, z: Math.floor(sizeZ / 2) }
+        selection: {...selection, z: Math.floor(sizeZ / 2)}
     });
     const rasterTop = await lowResSource.getRaster({
-        selection: { ...selection, z: Math.max(0, sizeZ - 1) }
+        selection: {...selection, z: Math.max(0, sizeZ - 1)}
     });
     const stats0 = getChannelStats(raster0.data);
     const statsMid = getChannelStats(rasterMid.data);
@@ -312,20 +311,20 @@ export async function getSingleSelectionStats3D({ loader, selection }) {
     };
 }
 
-export const getSingleSelectionStats = async ({ loader, selection, use3d }) => {
+export const getSingleSelectionStats = async ({loader, selection, use3d}) => {
     const getStats = use3d ? getSingleSelectionStats3D : getSingleSelectionStats2D;
-    return getStats({ loader, selection });
+    return getStats({loader, selection});
 };
 
-export const getMultiSelectionStats = async ({ loader, selections, use3d }) => {
+export const getMultiSelectionStats = async ({loader, selections, use3d}) => {
     const stats = await Promise.all(
         selections.map(selection =>
-            getSingleSelectionStats({ loader, selection, use3d })
+            getSingleSelectionStats({loader, selection, use3d})
         )
     );
     const domains = stats.map(stat => stat.domain);
     const contrastLimits = stats.map(stat => stat.contrastLimits);
-    return { domains, contrastLimits };
+    return {domains, contrastLimits};
 };
 
 /* eslint-disable no-useless-escape */
@@ -351,9 +350,9 @@ export function isMobileOrTablet() {
 /**
  * @param { import('../../src/loaders/omexml').OMEXML[0] } imgMeta
  */
-export function guessRgb({ Pixels }) {
+export function guessRgb({Pixels}) {
     const numChannels = Pixels.Channels.length;
-    const { SamplesPerPixel } = Pixels.Channels[0];
+    const {SamplesPerPixel} = Pixels.Channels[0];
     const is3Channel8Bit = numChannels === 3 && Pixels.Type === 'uint8';
     const interleavedRgb = Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
     return SamplesPerPixel === 3 || is3Channel8Bit || interleavedRgb;
@@ -372,7 +371,7 @@ export function truncateDecimalNumber(value, maxLength) {
  * @param {Object} loader PixelSource
  */
 export function getPhysicalSizeScalingMatrix(loader) {
-    const { x, y, z } = loader?.meta?.physicalSizes ?? {};
+    const {x, y, z} = loader?.meta?.physicalSizes ?? {};
     if (x?.size && y?.size && z?.size) {
         const min = Math.min(z.size, x.size, y.size);
         const ratio = [x.size / min, y.size / min, z.size / min];
@@ -383,7 +382,7 @@ export function getPhysicalSizeScalingMatrix(loader) {
 
 export function getBoundingCube(loader) {
     const source = Array.isArray(loader) ? loader[0] : loader;
-    const { shape, labels } = source;
+    const {shape, labels} = source;
     const physicalSizeScalingMatrix = getPhysicalSizeScalingMatrix(source);
     const xSlice = [0, physicalSizeScalingMatrix[0] * shape[labels.indexOf('x')]];
     const ySlice = [0, physicalSizeScalingMatrix[5] * shape[labels.indexOf('y')]];

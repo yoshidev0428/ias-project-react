@@ -9,9 +9,11 @@ import Icon from '@mdi/react';
 import {
     mdiSwapVertical
 } from '@mdi/js';
-import store from "../../../../reducers";
-import StepRangeSlider from 'react-step-range-slider'
+import StepRangeSlider from 'react-step-range-slider';
 import {connect} from 'react-redux';
+
+import store from "../../../../reducers";
+
 
 const Input = styled(TextField)`
   width: 50px;

@@ -26,7 +26,7 @@ import {getMergedImage} from '../../../../api/fetch';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
 import image from '../../../../reducers/modules/image';
-import { api } from "../../../../api/base";
+import {api} from "../../../../api/base";
 import axios from 'axios';
 var acceptedFiles = [];
 
@@ -200,13 +200,7 @@ const DropzoneMetaData = (props) => {
                             onCancelSearch={() => cancelSearch()}
                         />
                     </CardContent>
-                    <div
-                        className=""
-                        style={{
-                            height: "380px",
-                            width: "100%",
-                            border: "2px solid gray",
-                        }}>
+                    <div className="" style={{height: "380px", width: "100%", border: "2px solid gray"}}>
                         <DataGrid
                             className="cell--textCenter"
                             style={{textAlign: "center", width: "100%"}}
@@ -363,7 +357,6 @@ const DropzoneNamesFiles = (props) => {
     };
 
     const getNamePatternPerFileForProcessing = (objectPerFile) => {
-        console.log(objectPerFile)
         let result = {};
         let resultContent = {};
         let moveIndex = 0;
@@ -706,7 +699,7 @@ const OpenPositionDialog = (props) => {
                     )}
                     {selectedTab === 1 && (
                         <TabContainer>
-                            <Tiling files={acceptedFiles} />
+                            <Tiling fileNames={acceptedFiles.map(file => file.name)} />
                         </TabContainer>
                     )}
                     {selectedTab === 2 && (
@@ -744,7 +737,6 @@ const OpenPositionDialog = (props) => {
                             ) : (
                                 <div style={{width: "580px"}}></div>
                             )}
-
                             {cloudDialog && (
                                 <OpenCloudDialog handleClose={handleCloudDialog} />
                             )}

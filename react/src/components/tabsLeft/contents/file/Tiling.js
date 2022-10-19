@@ -1,6 +1,6 @@
 
-import React, { useRef, useState, useEffect } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import React, {useRef, useState, useEffect} from 'react';
+import {Row, Col} from 'react-bootstrap';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Tooltip from '@mui/material/Tooltip'
@@ -9,7 +9,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { Image } from 'react-bootstrap';
+import {Image} from 'react-bootstrap';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -26,8 +26,15 @@ import {
     mdiClose,
     mdiPencil,
 } from '@mdi/js';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import * as api_tiles from "../../../../api/tiles";
+import RoutedAvivator from "../../../viv/Avivator";
+import Vessel from "../../../tabsRight/contents/viewcontrol/Vessel";
+import Objective from "../../../tabsRight/contents/viewcontrol/Objective";
+import Channel from "../../../tabsRight/contents/viewcontrol/Channel";
+import ImageAdjust from "../../../tabsRight/contents/viewcontrol/ImageAdjust";
+import ZPosition from "../../../tabsRight/contents/viewcontrol/ZPosition";
+import Timeline from "../../../tabsRight/contents/viewcontrol/Timeline";
 import UTIF from "utif";
 
 const tilingMenus = [
@@ -39,6 +46,7 @@ const tilingMenus = [
     "Result",
     "Option"
 ];
+
 const tilingAlignButtons = [
     "Cascade",
     "Height Decreasing",
@@ -48,13 +56,14 @@ const tilingAlignButtons = [
     "By Rows"
 ];
 
-let TAG = "Tiling : ";
+const TAG = "Tiling : ";
 let stylingTiling = {
-    ToggleButtonGroup: { margin: '0 auto', width: '22px', height: '22px' }
+    ToggleButtonGroup: {margin: '0 auto', width: '22px', height: '22px'}
 }
 
 const Tiling = (props) => {
 
+    const [fileNames, setFileNames] = useState([]);
     const [value, setValue] = useState(0);
     const [fileObjs, setFileObjs] = useState([]);
     const [selectedImageFileIndex, setSelectedImageFileIndex] = useState(0);
@@ -68,7 +77,7 @@ const Tiling = (props) => {
     const [loadImageSource, setLoadImageSource] = useState(null);
 
     const tiling_bonding_patternMatch = false;
-    const alignButtonImage = (index) => { return `../../../assets/images/pos_align_${index}.png`; };
+    const alignButtonImage = (index) => {return `../../../assets/images/pos_align_${index}.png`;};
     const canvasElement = useRef(null);
 
     // Change text fields
@@ -223,51 +232,54 @@ const Tiling = (props) => {
     }
 
     useEffect(() => {
-        if (props.files.length > 0) {
-            console.log("props.files.length : ", props.files);
-            setFileObjs(props.files);
-            setSelectedImageFileIndex(0);
-            if (props.files[0].type.includes("image/tiff")) {
-                displayImage(props.files[0], "tiff");
-            }
+        if (props.fileNames.length > 0) {
+            console.log(TAG, " props.files.length : ", props.fileNames);
+            setFileNames(props.fileNames);
+            // setFileObjs(props.files);
+            // setSelectedImageFileIndex(0);
+            // if (props.files[0].type.includes("image/tiff")) {
+            //     displayImage(props.files[0], "tiff");
+            // }
         }
-    }, [props.files])
+    }, [props.fileNames])
 
     return (
         <>
-            <Row no-gutters="true" className='m-0 drop pa-5' style={{ maxWidth: "100%", height: "520px" }}>
+            <Row no-gutters="true" className='m-0 drop pa-5' style={{maxWidth: "100%", height: "520px"}}>
                 <Col xs={1} className="border p-0">
                     <List className='border p-0' id="position-dlg-span">
                         {tilingMenus.map((menuTitle, idx) => {
-                            return <ListItemButton style={{ fontSize: "12px !important" }} className="border" key={idx} onClick={(event) => handleListItemClick(event, idx)}>
+                            return <ListItemButton style={{fontSize: "12px !important"}} className="border" key={idx} onClick={(event) => handleListItemClick(event, idx)}>
                                 <ListItemText primary={menuTitle} />
                             </ListItemButton>
                         })}
                     </List>
                 </Col>
-                <Col xs={5} className="p-0 h-100">
+                <Col xs={3} className="p-0 h-100">
                     {/* Tiling Control Panel  */}
                     <div className="control-panel h-100">
                         {/* Editing */}
                         {selectedIndex === 0 &&
                             <Card className='h-100' variant="outlined">
                                 <CardContent className="pa-1"><h5>Editing</h5></CardContent>
-                                <div className="inside p-3">{
-                                    fileObjs !== undefined && fileObjs !== null ? <List className="overflow-auto" style={{ maxHeight: '80%', overflow: 'auto' }}>
-                                        {
-                                            fileObjs.map((content, idx) => {
-                                                if (idx === selectedImageFileIndex) {
-                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "lightblue" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                        <ListItemText primary={content.name} />
-                                                    </ListItemButton>
-                                                } else {
-                                                    return <ListItemButton style={{ fontSize: "8px !important", width: "fit-content", backgroundColor: "white" }} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
-                                                        <ListItemText primary={content.name} />
-                                                    </ListItemButton>
-                                                }
-                                            })}
-                                    </List> : <></>
-                                }
+                                <div className="inside overflow-auto">
+                                    {
+                                        fileNames !== undefined && fileNames !== null ? <List>
+                                            {
+                                                fileNames.map((fileName, idx) => {
+                                                    if (idx === selectedImageFileIndex) {
+                                                        return <ListItemButton style={{width: "fit-content", backgroundColor: "lightblue"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                            <p className="label-text margin-0">{fileName}</p>
+                                                        </ListItemButton>
+                                                    } else {
+                                                        return <ListItemButton style={{width: "fit-content", backgroundColor: "white"}} className="border" key={idx} onClick={(event) => handleListContentItemClick(event, idx)}>
+                                                            <p className="label-text margin-0">{fileName}</p>
+                                                        </ListItemButton>
+                                                    }
+                                                })
+                                            }
+                                        </List> : <></>
+                                    }
                                 </div>
                             </Card>
                         }
@@ -279,12 +291,12 @@ const Tiling = (props) => {
                                     <ToggleButtonGroup
                                         value={alignment}
                                         exclusive
-                                        onChange={(e) => { handleAlignment(e) }}
+                                        onChange={(e) => {handleAlignment(e)}}
                                         aria-label="text alignment"
                                     >
                                         {[...Array(6)].map((_, i) => {
                                             return <Tooltip title={tilingAlignButtons[i]} key={i}>
-                                                <ToggleButton key={i.toString() + "ToggleButton"} value={i}><Image value={tilingAlignButtons[i]} style={{ ...stylingTiling.ToggleButtonGroup, filter: i === 3 ? 'grayscale(1)' : '' }} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
+                                                <ToggleButton key={i.toString() + "ToggleButton"} value={i}><Image value={tilingAlignButtons[i]} style={{...stylingTiling.ToggleButtonGroup, filter: i === 3 ? 'grayscale(1)' : ''}} src={alignButtonImage(i)} alt='no image' /></ToggleButton>
                                             </Tooltip >
                                         })}
                                     </ToggleButtonGroup>
@@ -415,7 +427,7 @@ const Tiling = (props) => {
                                         <Col xs={6}>
                                             <Button
                                                 className="px-0"
-                                                style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={normalizeImgLuminance}
                                             >Normalize</Button>
                                         </Col>
@@ -424,7 +436,7 @@ const Tiling = (props) => {
                                         <Col xs={6}>
                                             <Button
                                                 className="px-0"
-                                                style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={correctLighting}
                                             >Correct</Button>
                                         </Col>
@@ -442,12 +454,12 @@ const Tiling = (props) => {
                                             <Icon color="yellow" path={mdiWeatherSunny} size={1} />
                                             <Button
                                                 className="px-0"
-                                                style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={decreaseImgLuminance}
                                             >-</Button>
                                             <Icon color="yellow" path={mdiWeatherSunny} size={1} />
                                             <Button
-                                                className="px-0" style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                className="px-0" style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={increaseImgLuminance}
                                             >+</Button>
                                         </Col>
@@ -455,7 +467,7 @@ const Tiling = (props) => {
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Button
-                                                className="px-0" style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                className="px-0" style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={resetImgLuminance}
                                             >Reset</Button>
                                         </Col>
@@ -463,7 +475,7 @@ const Tiling = (props) => {
                                     <Row className="mt-4 mr-4">
                                         <Col xs={6}>
                                             <Button
-                                                className="px-0" style={{ minWidth: "34px", height: '34px', color: '#009688' }}
+                                                className="px-0" style={{minWidth: "34px", height: '34px', color: '#009688'}}
                                                 onClick={bestFit}
                                             >BestFit</Button>
                                         </Col>
@@ -506,27 +518,27 @@ const Tiling = (props) => {
                         }
                     </div>
                 </Col>
-                <Col md="auto" className="p-0 h-100">
+                <Col xs={5} className="p-0 h-100" >
                     {/*  Tiling Preview  */}
-                    <div className="">
-                        <div className="row m-0 canvas-area ">
-                            {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} /> */}
-                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{ cursor: "grab" }} />
-                            {/* <RoutedAvivator openedImageSource={loadImageSource} /> */}
+                    <div style={{flexDirection: "column"}}>
+                        <div className="row m-0" style={{height: "420px"}}>
+                            <RoutedAvivator />
+                            {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
+                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}
                         </div>
                         <div className="row m-0">
                             <div className="col p-0">
                                 <ScrollArea />
                             </div>
-                            <div className="col-sm-2 p-0" style={{ position: 'relative' }}>
-                                <Button className="position-absolute" style={{ height: "38px" }}>
+                            <div className="col-sm-2 p-0" style={{position: 'relative'}}>
+                                <Button className="position-absolute" style={{height: "40px"}}>
                                     {scale.toString() + "%"}
                                     <Icon size={1} path={mdiPencil} />
                                 </Button>
                                 <Select
                                     value={scale}
                                     onChange={(e) => handleScaleChange(e)}
-                                    style={{ opacity: "0" }}
+                                    style={{opacity: "0"}}
                                     className="position-absolute"
                                 >
                                     <MenuItem value={1}>1</MenuItem>
@@ -541,14 +553,14 @@ const Tiling = (props) => {
                         </div>
                     </div>
                 </Col>
-                {/* <Col  md="auto" className="p-0 border" style={{ height: "100%", position: "relative", overflowY: "scroll" }}>
+                <Col xs={3} className="p-0 border" style={{height: "100%", position: "relative", overflowY: "scroll"}}>
                     <Vessel />
                     <Objective />
                     <Channel />
                     <ImageAdjust />
                     <ZPosition />
                     <Timeline />
-                </Col> */}
+                </Col>
             </Row>
         </>
     )
