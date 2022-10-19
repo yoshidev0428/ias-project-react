@@ -7,8 +7,10 @@ from pathlib import Path
 
 from starlette.datastructures import CommaSeparatedStrings
 STATIC_PATH = Path(os.path.join(os.path.dirname(__file__), "app/static/"))
+CURRENT_STATIC = Path('/static')
 IMAGE_PATH = Path('/image-storage')
 CACHE_PATH = Path('/cache-storage')
+# CACHE_PATH = Path(os.path.join(os.path.dirname(__file__), "app/static/cache-storage"))
 
 ALLOWED_HOSTS = CommaSeparatedStrings(os.getenv("ALLOWED_HOSTS", ""))
 
@@ -27,6 +29,7 @@ if not MONGODB_URL:
         MONGO_DB_NAME = os.getenv("MONGO_DB", "dev_db")
 
     MONGODB_URL = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}"
+    # MONGODB_URL = f"mongodb://localhost:{MONGO_PORT}"
 
 #
 # class BasicSettings(BaseSettings):

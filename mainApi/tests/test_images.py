@@ -40,11 +40,11 @@ class TestImagesTiles:
         tiles = [TileModelDB.parse_obj(tile) for tile in data]
 
         assert len(tiles) == len(files)
-
+        print("======= testing ")
         assert tiles[0].width_px == 1392
         assert tiles[0].height_px == 1040
 
-        assert tiles[0].file_name == "img_r001_c001.tif"
+        assert tiles[0].file_name == "img_r001_c00.tif"
         assert tiles[0].absolute_path == str(CACHE_PATH
                                              .joinpath(str(created_user.user.id))
                                              .joinpath("tiles")

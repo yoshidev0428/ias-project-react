@@ -19,7 +19,11 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     apt-get install -y netcat
 
-RUN pip install histomicstk --find-links https://girder.github.io/large_image_wheels
+# Install dependencies to solve dependency bug: openslide
+RUN apt-get install -y openslide-tools && \
+    apt install -y build-essential && \
+    pip install openslide-python
+
 
 WORKDIR /app
 
@@ -34,7 +38,7 @@ COPY ./mainApi /app/mainApi/
 RUN chmod -R 777 /app/mainApi/app/static
 
 ## Copy shared
-COPY ./shared_utils /app/shared_utils/
-COPY ./celery_tasks/ /app/celery_tasks/
+COPY ./docker_compose_libs/shared_utils/ /app/shared_utils/
+COPY ./docker_compose_libs/celery_tasks/ /app/celery_tasks/
 
 

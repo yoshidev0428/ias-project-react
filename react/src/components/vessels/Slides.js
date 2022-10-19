@@ -1,5 +1,5 @@
-import { height } from '@mui/system';
 import React, { useEffect, useState } from 'react';
+import { height } from '@mui/system';
 import { VESSEL_SLIDE_H_RATIO, VESSEL_SLIDE_MAX_HEIGHT, VESSEL_SLIDE_V_RATIO } from '../../utils/constants';
 
 export default function Slides(props) {
@@ -19,11 +19,8 @@ export default function Slides(props) {
                 height: props.width * VESSEL_SLIDE_H_RATIO
             };
         }
-
         const MAX_HEIGHT = calculateDRect.height / 3;
-
-        const one_height =
-            (calculateDRect.height - (props.count - 1) * 20) / props.count;
+        const one_height = (calculateDRect.height - (props.count - 1) * 20) / props.count;
         if (one_height > MAX_HEIGHT) {
             calculateDSlide = {
                 width: calculateDRect.width,
@@ -49,9 +46,7 @@ export default function Slides(props) {
         }
 
         const MAX_WIDTH = calculateDRect.height / 3;
-
-        const one_width =
-            (calculateDRect.width - (props.count - 1) * 20) / props.count;
+        const one_width = (calculateDRect.width - (props.count - 1) * 20) / props.count;
         if (one_width > MAX_WIDTH) {
             calculateDSlide = {
                 width: MAX_WIDTH,
@@ -66,14 +61,13 @@ export default function Slides(props) {
     }
 
     const [width, setWidth] = useState(props.width);
-    const [count, setCount] = useState(props.count == NaN ? 0 : props.count);
+    const [count, setCount] = useState(isNaN(props.count) ? 0 : props.count);
     const [showNumber, setShowNumber] = useState(props.showNumber);
     const [rect, setRect] = useState(calculateDRect);
     const [slide, setSlide] = useState(calculateDSlide);
 
     useEffect(() => {
-        if (width != props.width || count != props.count || showNumber != props.showNumber) {
-
+        if (width !== props.width || count !== props.count || showNumber !== props.showNumber) {
             if (props.count < 3) {
                 if (props.width * VESSEL_SLIDE_H_RATIO > VESSEL_SLIDE_MAX_HEIGHT) {
                     calculateDRect = {
@@ -89,8 +83,7 @@ export default function Slides(props) {
 
                 const MAX_HEIGHT = calculateDRect.height / 3;
 
-                const one_height =
-                    (calculateDRect.height - (props.count - 1) * 20) / props.count;
+                const one_height = (calculateDRect.height - (props.count - 1) * 20) / props.count;
                 if (one_height > MAX_HEIGHT) {
                     calculateDSlide = {
                         width: calculateDRect.width,
@@ -114,11 +107,8 @@ export default function Slides(props) {
                         height: props.width * VESSEL_SLIDE_V_RATIO
                     };
                 }
-
                 const MAX_WIDTH = calculateDRect.height / 3;
-
-                const one_width =
-                    (calculateDRect.width - (props.count - 1) * 20) / props.count;
+                const one_width = (calculateDRect.width - (props.count - 1) * 20) / props.count;
                 if (one_width > MAX_WIDTH) {
                     calculateDSlide = {
                         width: MAX_WIDTH,
@@ -131,12 +121,11 @@ export default function Slides(props) {
                     };
                 }
             }
-            setWidth(props.width);
-            setCount(props.count);
-            setRect(calculateDRect);
-
-            setSlide(calculateDSlide);
         }
+        setWidth(props.width);
+        setCount(props.count);
+        setRect(calculateDRect);
+        setSlide(calculateDSlide);
     }, [props]);
 
     if (count < 3) {
@@ -154,7 +143,7 @@ export default function Slides(props) {
             }
         </div>);
     } else {
-        return (<div style={{ width: rect.width }} className="d-flex flex-row justify-content-center">
+        return (<div style={{ width: rect.width, height: rect.height }} className="d-flex flex-row justify-content-center">
             {
                 [...Array(count)].map((x, i) =>
                     <div key={'slides' + i} className="d-flex flex-column justify-content-center">

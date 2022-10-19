@@ -10,10 +10,10 @@ import vessel from './modules/vessel'
 const reducer = combineReducers({
     auth: auth,
     experiment: experiment,
-    files:files,
-    image:image,
-    vessel:vessel
-  });
+    files: files,
+    image: image,
+    vessel: vessel
+});
 
 const store = createStore(reducer)
-export default store ;
+export default store;

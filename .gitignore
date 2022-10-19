@@ -8,7 +8,7 @@ cache/
 # react project
 node_modules/
 # dist/
-# static/
+static/
 # templates/
 # local env files
 .env.local
@@ -42,7 +42,11 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+temp/
+# build/
+environment/
+# static/
+# build/
 develop-eggs/
 dist/
 downloads/
@@ -113,7 +117,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-.env.*
+# .env.*
 !.env.sample
 
 # virtualenv
@@ -135,7 +139,7 @@ ENV/
 .mypy_cache/
 
 *.sqlite3
-media/
+# media/
 *.pyc
 *.db
 *.pid
@@ -144,4 +148,4 @@ media/
 /vue/.nvmrc
 /datasets/
 /_tmp/
-*.sh
+#*.sh

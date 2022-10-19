@@ -16,5 +16,6 @@ db = DataBase()
 async def get_database() -> AsyncIOMotorDatabase:
     return db.client[MONGO_DB_NAME]
 
+
 async def get_database_client() -> AsyncIOMotorClient:
     return db.client

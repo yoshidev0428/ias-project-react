@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { VESSEL_WAFER_RATIO, VESSEL_WAFER_MAX_HEIGHT, VESSEL_WAFER_GAP, VESSEL_WAFER_MAX_SIZE } from '../../utils/constants';
 
-export default function Wafers (props) {
+export default function Wafers(props) {
 
     var calculateDRect = {};
-
     if (props.width * VESSEL_WAFER_RATIO > VESSEL_WAFER_MAX_HEIGHT) {
         calculateDRect.height = VESSEL_WAFER_MAX_HEIGHT;
         calculateDRect.width = calculateDRect.height / VESSEL_WAFER_RATIO;
@@ -12,7 +11,6 @@ export default function Wafers (props) {
         calculateDRect.width = props.width;
         calculateDRect.height = props.width * VESSEL_WAFER_RATIO;
     }
-
     const [selected, setSelected] = useState(false);
     const max_radius = calculateDRect.height - VESSEL_WAFER_GAP;
     const [width, setWidth] = useState(props.width);
@@ -22,8 +20,10 @@ export default function Wafers (props) {
         ? max_radius
         : Math.abs(Math.ceil(props.size * max_radius) / VESSEL_WAFER_MAX_SIZE));
 
+
     useEffect(() => {
-        if (width != props.width || size != props.size) {
+
+        if (width !== props.width || size !== props.size) {
 
             if (props.width * VESSEL_WAFER_RATIO > VESSEL_WAFER_MAX_HEIGHT) {
                 calculateDRect.height = VESSEL_WAFER_MAX_HEIGHT;
@@ -32,7 +32,6 @@ export default function Wafers (props) {
                 calculateDRect.width = props.width;
                 calculateDRect.height = props.width * VESSEL_WAFER_RATIO;
             }
-
             const max_radius = calculateDRect.height - VESSEL_WAFER_GAP;
             setWidth(props.width);
             setSize(props.size);
@@ -46,8 +45,7 @@ export default function Wafers (props) {
     const renderDishes = () => {
         return (
             <div style={{ width: rect.width, height: rect.height }} className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center">
-                <div style={{ width: radious, height: radious }} className={'border border-dark rounded-circle wafer-box ' + (selected ? 'selected' : '')} onClick={() => {setSelected(!selected)}}>
-
+                <div style={{ width: radious, height: radious }} className={'border border-dark rounded-circle wafer-box ' + (selected ? 'selected' : '')} onClick={() => { setSelected(!selected) }}>
                 </div>
             </div>
         );
