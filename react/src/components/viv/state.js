@@ -2,7 +2,7 @@
 import create from 'zustand';
 
 // eslint-disable-next-line import/no-unresolved
-import { RENDERING_MODES } from '@hms-dbmi/viv';
+import {RENDERING_MODES} from '@hms-dbmi/viv';
 
 const captialize = string => string.charAt(0).toUpperCase() + string.slice(1);
 
@@ -27,7 +27,7 @@ const DEFAUlT_CHANNEL_STATE = {
     domains: [],
     selections: [],
     ids: [],
-    loader: [{ labels: [], shape: [] }],
+    loader: [{labels: [], shape: []}],
     image: 0
 };
 
@@ -36,7 +36,7 @@ const DEFAUlT_CHANNEL_VALUES = {
     contrastLimits: [0, 65535],
     colors: [255, 255, 255],
     domains: [0, 65535],
-    selections: { z: 0, c: 0, t: 0 },
+    selections: {z: 0, c: 0, t: 0},
     ids: ''
 };
 
@@ -47,7 +47,7 @@ export const useChannelsStore = create(set => ({
         set(state => {
             const channelsVisible = [...state.channelsVisible];
             channelsVisible[index] = !channelsVisible[index];
-            return { ...state, channelsVisible };
+            return {...state, channelsVisible};
         }),
     setPropertiesForChannel: (channel, newProperties) =>
         set(state => {
@@ -57,7 +57,7 @@ export const useChannelsStore = create(set => ({
                 newState[property] = [...state[property]];
                 newState[property][channel] = value;
             });
-            return { ...state, ...newState };
+            return {...state, ...newState};
         }),
     removeChannel: (channel) =>
         set(state => {
@@ -68,12 +68,12 @@ export const useChannelsStore = create(set => ({
                     newState[key] = state[key].filter((_, j) => j !== channel);
                 }
             });
-            return { ...state, ...newState };
+            return {...state, ...newState};
         }),
     addChannel: newProperties =>
         set(state => {
             const entries = Object.entries(newProperties);
-            const newState = { ...state };
+            const newState = {...state};
             entries.forEach(([property, value]) => {
                 newState[property] = [...state[property], value];
             });
@@ -123,7 +123,7 @@ const DEFAULT_VIEWER_STATE = {
     use3d: false,
     useLens: false,
     useColormap: false,
-    globalSelection: { z: 0, t: 0 },
+    globalSelection: {z: 0, t: 0},
     channelOptions: [],
     metadata: null,
     viewState: null,
@@ -138,18 +138,18 @@ export const useViewerStore = create(set => ({
         set(state => {
             const newIsChannelLoading = [...state.isChannelLoading];
             newIsChannelLoading[index] = val;
-            return { ...state, isChannelLoading: newIsChannelLoading };
+            return {...state, isChannelLoading: newIsChannelLoading};
         }),
     addIsChannelLoading: val =>
         set(state => {
             const newIsChannelLoading = [...state.isChannelLoading, val];
-            return { ...state, isChannelLoading: newIsChannelLoading };
+            return {...state, isChannelLoading: newIsChannelLoading};
         }),
     removeIsChannelLoading: index =>
         set(state => {
             const newIsChannelLoading = [...state.isChannelLoading];
             newIsChannelLoading.splice(index, 1);
-            return { ...state, isChannelLoading: newIsChannelLoading };
+            return {...state, isChannelLoading: newIsChannelLoading};
         })
 }));
 

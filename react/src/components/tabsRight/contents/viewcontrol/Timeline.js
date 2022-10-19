@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import { Col, Container } from 'react-bootstrap';
-import Slider from '@mui/material/Slider';
-import { styled } from '@mui/material/styles';
+import {Col, Container} from 'react-bootstrap';
+// import Slider from '@mui/material/Slider';
+import {styled} from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -15,19 +15,31 @@ import {
     // mdiFastForward
 } from '@mdi/js';
 import {connect} from 'react-redux';
+import StepRangeSlider from 'react-step-range-slider';
+
 
 const Input = styled(TextField)`
   width: 50px;
   border
 `;
 
-const mapStateToProps = state => ({
-    viewConfigsObj: state.vessel.viewConfigsObj,
+const mapStateToProps = (state) => ({
+    content: state.files.content,
+    files: state.files.files,
+    selectedVesselHole: state.vessel.selectedVesselHole,
 })
 
 const Timeline = (props) => {
-    const [value, setValue] = React.useState(1);
-    const [timeConfig, setTimeConfig] = useState(props.viewConfigsObj? props.viewConfigsObj.time: {});
+
+    var contents = [];
+    const [isLoading, setIsLoading] = useState(false);
+    const [range, setRange] = useState([
+        {value: 1, step: 1},
+        {value: 2, step: 2}
+    ]);
+
+    const [value, setValue] = useState(1);
+    const [timeConfig, setTimeConfig] = useState(props.viewConfigsObj ? props.viewConfigsObj.time : {});
     const [minSlider, setMinSlider] = useState(1);
     const [maxSlider, setMaxSlider] = useState(50);
     const SliderChange = (event, newValue) => {
@@ -69,18 +81,40 @@ const Timeline = (props) => {
     };
 
     useEffect(() => {
-        if(props.viewConfigsObj){
+        if (props.viewConfigsObj) {
             setTimeConfig(props.viewConfigsObj.time);
         }
-    },[props.viewConfigsObj])
+    }, [props.viewConfigsObj])
 
     useEffect(() => {
-        if(timeConfig){
-            setMinSlider(timeConfig.min);
-            setMaxSlider(timeConfig.max);
-            setValue(timeConfig.min);
+        if (props.content) {
+            // console.log(" Zposition.js useEffect props.content : ", props.content);
+            if (props.content.length > 0) {
+                setIsLoading(false);
+                contents = props.content; let zMin = 0; let zMax = 0;
+                for (let i = 0; i < contents.length; i++) {
+                    if (contents[i].z > zMax) {
+                        zMax = contents[i].z;
+                    }
+                    if (contents[i].z < zMin) {
+                        zMin = contents[i].z;
+                    }
+                }
+                if (zMax > 0) {
+                    let rangeValues = [];
+                    for (let i = 0; i < zMax - zMin + 1; i++) {
+                        rangeValues.push({value: i + 1, step: i + 1});
+                    }
+                    console.log(" Zposition.js useEffect rangeValues : ", rangeValues);
+                    setRange(rangeValues);
+                    setMinSlider(zMin + 1);
+                    setMaxSlider(zMax + 1);
+                    setIsLoading(true);
+                }
+            }
+            // setZPosConfig(props.viewConfigsObj.z);
         }
-    },[timeConfig])
+    }, [props.content])
 
     return (
         <>
@@ -105,13 +139,12 @@ const Timeline = (props) => {
           <IconButton color="primary" size="small" onClick={onFForward}><Icon path={mdiFastForward} size={1}/></IconButton> */}
                         </Grid>
                         <Grid item xs>
-                            <Slider
-                                value={typeof value === 'number' ? value : 0}
-                                onChange={SliderChange}
-                                aria-labelledby="input-slider"
-                                min={minSlider}
-                                max={maxSlider}
-                                size="small"
+                            <StepRangeSlider
+                                value={value}
+                                range={range}
+                                onChange={(value) => {SliderChange(value)}}
+                                disabled={!isLoading}
+                                className="color-blue mr-5"
                             />
                         </Grid>
                         <Grid item>
@@ -121,7 +154,7 @@ const Timeline = (props) => {
                                 onChange={InputChange}
                                 onBlur={Blur}
                                 variant="standard"
-                                style={{ BorderNone: true, border: 'none' }}
+                                style={{BorderNone: true, border: 'none'}}
                                 InputProps={{
                                     step: minSlider,
                                     min: minSlider,
@@ -134,13 +167,13 @@ const Timeline = (props) => {
                             />
                         </Grid>
                     </Grid>
-                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop:"-18px"}}>
+                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop: "-18px"}}>
                         <Col md={4}>
                             <Input
                                 value={minSlider}
                                 size="small"
                                 className="pa-0 ma-0 no-underline"
-                                style={{ BorderNone: true }}
+                                style={{BorderNone: true}}
                                 onKeyDown={onlyNumber}
                                 variant="standard"
                                 InputProps={{
@@ -157,7 +190,7 @@ const Timeline = (props) => {
                                 size="small"
                                 className="pa-0 ma-0 no-underline"
                                 variant="standard"
-                                style={{ BorderNone: true }}
+                                style={{BorderNone: true}}
                                 onKeyDown={onlyNumber}
                                 InputProps={{
                                     type: 'number',

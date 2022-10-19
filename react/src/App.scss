@@ -78,14 +78,7 @@
     }
 }
 
-.primary--text {
-    color    : #1976d2;
-    font-size: 8px;
-}
 
-.label-text {
-    font-size: small;
-}
 
 .justify-space-around {
     justify-content: space-around !important;
@@ -108,6 +101,7 @@
     color           : #FFFFFF !important;
 }
 
+// font
 .h1,
 .h2,
 .h3,
@@ -121,6 +115,21 @@ h4,
 h5,
 h6 {
     font-weight: bold;
+}
+
+
+.label-text {
+    font-size: small;
+}
+
+.example-string>>>pre {
+    font-size  : 1.2em;
+    font-weight: bold;
+}
+
+.primary--text {
+    color    : #1976d2;
+    font-size: 8px;
 }
 
 .spacer {
@@ -297,6 +306,7 @@ h6 {
 .control-panel .inside {
     position: relative;
     height  : 100%;
+    width   : 100%;
     margin  : 0px;
 }
 
@@ -376,11 +386,6 @@ h6 {
     min-height: 30px !important;
 }
 
-.example-string>>>pre {
-    font-size  : 1.2em;
-    font-weight: bold;
-}
-
 .name-type-input {
     margin-left     : -5px;
     margin-right    : -5px;
@@ -442,6 +447,21 @@ h6 {
     -webkit-appearance: none !important;
     margin            : 0 !important;
 }
+
 .input-removeArrow input[type=number] {
     -moz-appearance: textfield !important;
+}
+
+// OverFlow
+.overflow-auto {
+    overflow: auto;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+// Margin 
+.margin-0 {
+    margin: 0 !important;
 }

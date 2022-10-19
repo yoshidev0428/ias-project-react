@@ -111,7 +111,6 @@ async def merge_image(merge_req_body: str = Body(embed=True),
             response_model=List[TileModelDB],
             status_code=status.HTTP_200_OK)
 async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
-    print( current_user, "tiles -----------")
     tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
@@ -126,7 +125,6 @@ async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB
 
         Called using concurrent.futures to make it async
     """
-    print(tiles, " : align_tiles_naive : ----------------------------")
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         # await result
@@ -144,7 +142,6 @@ async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list))
 
         Called using concurrent.futures to make it async
     """
-
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         # await result
