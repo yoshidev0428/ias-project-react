@@ -1,8 +1,3 @@
-
-.common-border {
-    border: 2px solid rgba(0, 0, 0, .125);
-}
-
 .tab-button {
     padding  : 0px !important;
     border   : 1px solid rgba(0, 0, 0, .125) !important;
@@ -16,12 +11,23 @@
     width  : 30px !important;
 }
 
+/* Border */
+.common-border {
+    border: 2px solid rgba(0, 0, 0, .125);
+}
+
+/* Font */
 .font-16 {
     font-size: 16px !important;
 }
 
 .font-20 {
     font-size: 20px !important;
+}
+
+/* background */ 
+.cover-gray {
+    opacity: 0.6;
 }
 
 .dialog-close-btn {

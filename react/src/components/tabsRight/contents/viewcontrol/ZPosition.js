@@ -22,10 +22,12 @@ const mapStateToProps = (state) => ({
     content: state.files.content,
     files: state.files.files,
     selectedVesselHole: state.vessel.selectedVesselHole,
+    isImageLoading: state.files.isImageLoading,
 })
 
 const ZPosition = (props) => {
 
+    const {isImageLoading} = props;
     var contents = [];
     const [value, setValue] = useState(1);
     const [minSlider, setMinSlider] = useState(1);
@@ -34,7 +36,7 @@ const ZPosition = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [range, setRange] = useState([
         {value: 1, step: 1},
-        {value: 2, step: 2}
+        {value: 2, step: 1}
     ]);
 
     const updateZ = (newValue) => {
@@ -72,7 +74,7 @@ const ZPosition = (props) => {
             // console.log(" Zposition.js useEffect props.content : ", props.content);
             if (props.content.length > 0) {
                 setIsLoading(false);
-                contents = props.content; let zMin = 0; let zMax = 0;
+                contents = props.content; let zMin = contents[0].z; let zMax = contents[0].z;
                 for (let i = 0; i < contents.length; i++) {
                     if (contents[i].z > zMax) {
                         zMax = contents[i].z;
@@ -84,9 +86,10 @@ const ZPosition = (props) => {
                 if (zMax > 0) {
                     let rangeValues = [];
                     for (let i = 0; i < zMax - zMin + 1; i++) {
-                        rangeValues.push({value: i + 1, step: i + 1});
+                        rangeValues.push({value: i + 1, step: 1});
                     }
                     console.log(" Zposition.js useEffect rangeValues : ", rangeValues);
+                    setValue(zMin + 1);
                     setRange(rangeValues);
                     setMinSlider(zMin + 1);
                     setMaxSlider(zMax + 1);
@@ -135,7 +138,7 @@ const ZPosition = (props) => {
 
     return (
         <>
-            <div className="common-border">
+            <div className={`common-border ${isLoading || !isImageLoading ? "" : "cover-gray"}`}>
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Z Position</h6>
                     <div>
@@ -144,7 +147,7 @@ const ZPosition = (props) => {
                     </div>
                 </div>
                 <Container fluid={true} className="px-0 py-0" >
-                    <Grid container spacing={1} alignItems="left mt-3">
+                    <Grid container spacing={1} alignItems="left">
                         <Grid item xs={2}>
                             <Icon path={mdiSwapVertical} size={1} />
                         </Grid>
@@ -166,7 +169,7 @@ const ZPosition = (props) => {
                                 style={{BorderNone: true, border: 'none'}}
                                 InputProps={{
                                     step: minSlider, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true,
-                                    disabled: !isLoading,
+                                    disabled: true,
                                 }}
                             />
                         </Grid>

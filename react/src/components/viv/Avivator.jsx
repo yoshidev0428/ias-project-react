@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
-import { useViewerStore } from './state';
-import { useImage } from './hooks';
+import {useViewerStore} from './state';
+import {useImage} from './hooks';
 import Viewer from './components/Viewer';
 import DropzoneWrapper from './components/DropzoneWrapper';
 import Controller from './components/Controller';
@@ -9,7 +9,7 @@ import SnackBars from './components/Snackbars';
 import Footer from './components/Footer';
 import Loader from './components/Loader';
 import './index.css';
-import { FullScreen } from '@chiragrupani/fullscreen-react';
+import {FullScreen} from '@chiragrupani/fullscreen-react';
 import {
     mdiFullscreen,
     mdiMinus,
@@ -26,13 +26,13 @@ import Icon from '@mdi/react';
  * @param {Object} args.sources A list of sources for a dropdown menu, like [{ url, description }]
  * */
 
- const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => ({
     isImageLoading: state.files.isImageLoading,
 })
 
-const Avivator = function(props) {
+const Avivator = function (props) {
 
-    const { history, source: source, isDemoImage, isImageLoading } = props;
+    const {history, source: source, isDemoImage, isImageLoading} = props;
     // const source = useViewerStore(store => store.source);
     const isViewerLoading = useViewerStore(store => store.isViewerLoading);
     const useLinkedView = useViewerStore(store => store.useLinkedView);
@@ -52,16 +52,16 @@ const Avivator = function(props) {
     useEffect(() => {
         // console.log(props, "Avivator : image file -------- ");
         if (props.source !== null) {
-            useViewerStore.setState({ source: source, isNoImageUrlSnackbarOn: isDemoImage });
+            useViewerStore.setState({source: source, isNoImageUrlSnackbarOn: isDemoImage});
         }
     }, [isFullScreen, mouseFlag]); // eslint-disable-line react-hooks/exhaustive-deps
     useImage(source);
 
     return (
         <>
-            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => { setFullScreen(isFullScreen) }} className="bg-light h-100 w-100">
+            <FullScreen isFullScreen={isFullScreen} onChange={(isFullScreen) => {setFullScreen(isFullScreen)}} className="bg-light h-100 w-100">
                 <div className='leaf_control'>
-                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomIn") }} style={{ borderRadius: "5px 5px 0px 0px" }}>
+                    <button className='leaf_control_btn border-bottom' onClick={() => {zoomControl("zoomIn")}} style={{borderRadius: "5px 5px 0px 0px"}}>
                         <Icon size={1}
                             horizontal
                             vertical
@@ -70,7 +70,7 @@ const Avivator = function(props) {
                             path={mdiPlus}>
                         </Icon>
                     </button>
-                    <button className='leaf_control_btn border-bottom' onClick={() => { zoomControl("zoomOut") }} >
+                    <button className='leaf_control_btn border-bottom' onClick={() => {zoomControl("zoomOut")}} >
                         <Icon size={1}
                             horizontal
                             vertical
@@ -79,7 +79,7 @@ const Avivator = function(props) {
                             path={mdiMinus}>
                         </Icon>
                     </button>
-                    <button className="leaf_control_btn" onClick={() => { zoomControl("fullScreen") }} style={{ borderRadius: "0px 0px 5px 5px" }}>
+                    <button className="leaf_control_btn" onClick={() => {zoomControl("fullScreen")}} style={{borderRadius: "0px 0px 5px 5px"}}>
                         <Icon size={1}
                             horizontal
                             vertical
@@ -89,7 +89,7 @@ const Avivator = function(props) {
                         </Icon>
                     </button>
                 </div>
-                {isImageLoading && <div style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+                {isImageLoading && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
                     <Loader />
                 </div>}
                 <div className="bg-light h-100 w-100">
