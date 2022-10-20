@@ -46,7 +46,6 @@ export default function Wafers(props) {
         return (
             <div style={{ width: rect.width, height: rect.height }} className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center">
                 <div style={{ width: radious, height: radious }} className={'border border-dark rounded-circle wafer-box ' + (selected ? 'selected' : '')} onClick={() => { setSelected(!selected) }}>
-
                 </div>
             </div>
         );

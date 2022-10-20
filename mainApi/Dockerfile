@@ -24,7 +24,6 @@ RUN apt-get install -y openslide-tools && \
     apt install -y build-essential && \
     pip install openslide-python
 
-RUN pip install histomicstk --find-links https://girder.github.io/large_image_wheels
 
 WORKDIR /app
 
