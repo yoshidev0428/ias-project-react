@@ -34,9 +34,9 @@ export const useImage = (source) => {
             useViewerStore.setState({ isViewerLoading: true });
             store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
-            const { urlOrFile } = source;
+            const { urlOrFile, contents } = source;
             // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader);
-            const newLoader = await createLoader(urlOrFile, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
+            const newLoader = await createLoader(urlOrFile, contents, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
             // console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
             let nextMeta;
             let nextLoader;
@@ -124,13 +124,13 @@ export const useImage = (source) => {
                     }
                 }
                 // newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[i]);
-                console.log("hook.js useEffect newColors", newColors);
+                // console.log("hook.js useEffect newColors", newColors);
                 useViewerStore.setState({
                     useLens: channelOptions.length !== 1,
                     useColormap: true
                 });
             }
-            console.log("-------- hook.js useEffect newColors : ", newColors);
+            // console.log("-------- hook.js useEffect newColors : ", newColors);
             useChannelsStore.setState({
                 ids: newDomains.map(() => String(Math.random())),
                 selections: newSelections,

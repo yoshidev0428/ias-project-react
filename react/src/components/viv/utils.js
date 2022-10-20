@@ -78,7 +78,7 @@ async function getTotalImageCount(src, rootMeta, data) {
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
-export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
+export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, handleLoaderError) {
     // If the loader fails to load, handle the error (show an error snackbar).
     // Otherwise load.
     try {
@@ -117,17 +117,31 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-            let mutiTiffSources = []
-            for (let i = 0; i < files.length; i++) {
-                let file = files[i]
-                // let file = await getImageByUrl(files[i].name)
-                mutiTiffSources[i] = [{c: i, z: 0, t: 0}, file]
+            let mutiTiffSources = [];
+            // console.log("utils.js  loadMultiTiff ------- contents : ", contents, files);
+            for (let i = 0; i < contents.length; i++) {
+                mutiTiffSources[i] = [{c: i, z: 0, t: 0}, files[i]];
             }
+            // let channels = []; let times = []; let index_file = 0;
+            // for (let i = 0; i < contents.length; i++) {
+            //     if (times.indexOf(contents[i].time) === -1) {
+            //         times.push(contents[i].time)
+            //     }
+            //     if (channels.indexOf(contents[i].channel) === -1) {
+            //         channels.push(contents[i].channel)
+            //     }
+            // }
+            // for ( let i = 0; i < times.length; i++) {
+            //     for ( let j = 0; j < channels.length; j++) {
+            //         mutiTiffSources[index_file] = [{c: j, z: 0, t: i}, files[index_file]];
+            //         index_file = index_file + 1;
+            //     }
+            // }
             // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
             try {
                 const source = await loadMultiTiff(mutiTiffSources);
-                // console.log("utils.js  loadMultiTiff ------- source : ", source);
                 // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
+                // console.log("utils.js  loadMultiTiff ------- source : ", source);
                 return source;
             } catch (e) {
                 console.log("utils.js  loadMultiTiff ------- error : ", e.message);
