@@ -2,6 +2,7 @@ const DEFAULT_PARAMS = {
     currentVesselType: "Well",
     selectedVesselHole: { row: 0, col: 1},
     selectedVesselZ: 0,
+    selectedVesselTime: 0,
     viewConfigsObj: {},
 };
 
@@ -17,6 +18,9 @@ const vessel = (state = initState, action) => {
             break
         case "vessel_selectedVesselZ":
             state.selectedVesselZ = action.content;
+            break
+        case "vessel_selectedVesselTime":
+            state.selectedVesselTime = action.content;
             break
         case "vessel_setCurrentVesselType":
             state.currentVesselType = action.data;

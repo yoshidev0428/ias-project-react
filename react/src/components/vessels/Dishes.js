@@ -21,6 +21,7 @@ export default function Dishes(props) {
         ? max_radius
         : Math.abs(Math.ceil(props.size * max_radius) / VESSEL_DISH_MAX_SIZE));
 
+
     useEffect(() => {
         if (width !== props.width || size !== props.size) {
             if (props.width * VESSEL_DISH_RATIO > VESSEL_DISH_MAX_HEIGHT) {
