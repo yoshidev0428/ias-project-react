@@ -25,9 +25,10 @@ import jsons
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
-from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel
+from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
+from mainApi.app.images.utils.experiment import add_experiment, get_experiment_data
 import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
@@ -61,6 +62,139 @@ async def upload_image_tiles(files: List[UploadFile] = File(...),
     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
     return JSONResponse(result)
 
+#############################################################################
+# Delete Image files
+#############################################################################
+@router.post("/delete_image_files",
+             response_description="Delete Image Tiles",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[TileModelDB])
+async def delete_images(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    data = await request.form()
+    files = data.get("images").split(',')
+    for filePath in files:
+        if not os.path.exists(filePath):
+            return JSONResponse({error: "You are attemting to delete non-existing file"})
+        if not os.path.isfile(filePath): 
+            return JSONResponse({error: "You are attemting to delete folder, not file"})
+        os.remove(filePath)
+
+    for f in os.listdir(current_user_path):
+        path = os.path.join(current_user_path, f)
+        if os.path.isdir(path) and len(os.listdir(path)) == 0:
+            os.rmdir(path)
+
+    return JSONResponse({"success": "success"})
+
+#############################################################################
+# Register Experiment
+#############################################################################
+@router.post("/register_experiment",
+             response_description="Register Experiment",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def delete_images(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    data = await request.form()
+
+    files = data.get("images").split(',')
+    expName = data.get('expName')
+    result = await add_experiment(expName, files, clear_previous=clear_previous, current_user=current_user, db=db)
+    return JSONResponse({"success": result})
+
+#############################################################################
+# Get Experiment data by name
+#############################################################################
+@router.get("/get_experiment_data/{expName}", 
+            response_description="Get Experiment Data",
+            response_model=List[ExperimentModel])
+async def get_image(expName: str,
+                    clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    # tiles = await db['experiment'].find({'expName': "experiment_1"})
+    all_tiles = [doc async for doc in db['experiment'].find()]
+    print(all_tiles)
+
+    tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
+    print(tiles)
+    if len(tiles) == 0:
+        return JSONResponse({"success": False, "error": "Cannot find the experiment data"})
+
+    experiment = tiles[0]
+    files = experiment['fileNames']
+    return JSONResponse({"success": True, "data": files})
+
+#############################################################################
+# Get Experiment names
+#############################################################################
+@router.get("/get_experiment_names", 
+            response_description="Get Experiment names",
+            response_model=List[str])
+async def get_image(clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[str]:
+    expNames = [doc['expName'] async for doc in db['experiment'].find()]
+    print(expNames)
+    return JSONResponse({"success": True, "data": expNames})
+
+#############################################################################
+# Get Image By its full path
+#############################################################################
+@router.post("/get_image_by_path",
+            response_description="Get Image By its full path",
+            response_model=List[TileModelDB])
+async def merge_image(merge_req_body: str = Body(embed=True),
+                    clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    imagePath = merge_req_body
+
+    return FileResponse(imagePath, media_type="image/tiff")
+
+#############################################################################
+# New Upload Image file
+@router.post("/upload_images/{folder_name}",
+             response_description="Upload Image Tiles",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[TileModelDB])
+async def upload_images(folder_name: str,
+                             files: List[UploadFile] = File(...),
+                             clear_previous: bool = Form(False),
+                             current_user: UserModelDB = Depends(get_current_user),
+                             db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                             
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    print(folder_name)
+    print(current_user_path)
+
+    # Make user directory   
+    if not os.path.exists(current_user_path):
+        os.makedirs(current_user_path)
+
+    # Check if the folder exists, if not make a new one
+    path = os.path.join(current_user_path, folder_name)
+    print(path)
+    if os.path.isdir(path):
+        result = {}
+        result["error"] = "Folder is already existing"
+        return JSONResponse(result)
+    else:
+        os.mkdir(path)
+        res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
+        result = await add_image_tiles(path = path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
+        result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
+
+    return JSONResponse(result)
+
 # Return one Image file
 @router.get("/get_image/{image}", 
             response_description="Get Image Tiles",
@@ -72,9 +206,38 @@ async def get_image(image: str,
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     return FileResponse(os.path.join(current_user_path + '/', image), media_type="image/tiff")
 
-# Return merge Image files
-##########################################################
+# Return Image tree
+@router.get("/get_image_tree", 
+            response_description="Get Image Tiles",
+            response_model=List[TileModelDB])
+async def get_image(clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
 
+    if os.path.isdir(current_user_path) == False:
+        os.mkdir(current_user_path)
+        return JSONResponse({"error": "You have no image data, please upload"})
+
+    sub_dirs = os.listdir(current_user_path)
+    if len(sub_dirs) == 0:
+        return JSONResponse({"error": "You have no image data, please upload"})
+
+    output = [dI for dI in os.listdir(current_user_path) if os.path.isdir(os.path.join(current_user_path,dI))]
+    response = []
+
+    for folderName in output:
+        current_folder = os.path.join(current_user_path, folderName)
+        files = [{"value": os.path.join(current_folder, f), "label": f} for f in os.listdir(current_folder) if os.path.isfile(os.path.join(current_folder, f))]
+        response.append({
+            "value": current_folder,
+            "label": folderName,
+            "children": files
+        })        
+
+    return JSONResponse({"data": response})
+
+# Return merge Image files
 @router.post("/get_merged_image",
             response_description="Get Image Tiles",
             response_model=List[TileModelDB])
@@ -111,6 +274,7 @@ async def merge_image(merge_req_body: str = Body(embed=True),
             response_model=List[TileModelDB],
             status_code=status.HTTP_200_OK)
 async def get_tile_list(current_user: UserModelDB = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    print( current_user, "tiles -----------")
     tiles = await db['tile-image-cache'].find({'user_id': current_user.id})["absolute_path"]
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
@@ -125,6 +289,7 @@ async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB
 
         Called using concurrent.futures to make it async
     """
+    print(tiles, " : align_tiles_naive : ----------------------------")
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         # await result
@@ -142,6 +307,7 @@ async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list))
 
         Called using concurrent.futures to make it async
     """
+
     loop = asyncio.get_event_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         # await result

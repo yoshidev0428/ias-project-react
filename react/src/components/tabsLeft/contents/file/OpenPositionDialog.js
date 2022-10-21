@@ -11,6 +11,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from '@mui/material/DialogContentText';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -22,8 +23,10 @@ import SearchBar from "material-ui-search-bar";
 import TextField from "@mui/material/TextField";
 // import { updateNameFile, uploadImageFiles } from "../../../../api/tiles";
 import * as api_tiles from "../../../../api/tiles";
-import {getMergedImage} from '../../../../api/fetch';
+import {getMergedImage, getImagesByNames} from '../../../../api/fetch';
+import * as api_experiment from "../../../../api/experiment"
 import OpenCloudDialog from "./OpenCloudDialog";
+import OpenExperimentDialog from "./OpenExperimentDialog";
 import Tiling from "./Tiling";
 import image from '../../../../reducers/modules/image';
 import {api} from "../../../../api/base";
@@ -99,7 +102,54 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
+    
+    useEffect(() => {
+        const updateByExpName = async () => {
+            const {fileNames} = props;
+            // Bring files for exp, set files!!!! status
+        };
+        updateByExpName();
+    }, [])
 
+    useEffect(() => {
+        const bringFilesByName = async () => {
+            const {fileNames} = props;
+            props.setLoading(true);
+            let incommingFiles = []
+            incommingFiles = await getImagesByNames(fileNames);
+            await updateFilesNew(incommingFiles.map(file => {return {file: file}}), fileNames)
+        }
+        bringFilesByName()
+    }, [props.fileNames])
+    
+    const updateFilesByNames = (fileNames) => {
+        store.dispatch({type: "files_addFiles", content: {filesName: fileNames}});
+    }
+    const updateFilesNew = async (incommingFiles, filesPath) => {
+        props.setLoading(true);
+        let files = [];
+        let newAcceptedFiles = [];
+        for (let i = 0; i < incommingFiles.length; i++) {
+            if (!files.includes(incommingFiles[i])) {
+                files.push(incommingFiles[i]);
+            }
+            if (!acceptedFiles.includes(incommingFiles[i].file)) {
+                let file = incommingFiles[i].file
+                let newName = file.name.replace(/\s+/g, '');
+                incommingFiles[i].file = new File([file], newName, {type: file.type});
+                incommingFiles[i].file["path"] = file.name.replace(/\s+/g, "");
+                // incommingFiles[i].file.name = incommingFiles[i].file.name.trim()
+                newAcceptedFiles.push(incommingFiles[i].file);
+                files.push(file)
+                setFiles(files)
+            }
+        }
+        if (newAcceptedFiles.length > 0) {
+            acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
+            store.dispatch({type: "files_addFiles", content: {filesName: acceptedFiles.map(file => file.name), filesPath: filesPath}});
+        }
+        props.setLoading(false);
+    };
     const updateFiles = async (incommingFiles) => {
         props.setLoading(true);
         let files = [];
@@ -144,7 +194,7 @@ const ImageDropzone = (props) => {
             onDrop={() => {startDrop()}}
             value={files}>
             {files.map((file, index) => (
-                <FileItem key={index} {...file} k={file.name} info preview />
+                <FileItem key={index} {...file} k={file.name} valid={true} info preview />
             ))}
         </Dropzone>
     );
@@ -613,6 +663,10 @@ const OpenPositionDialog = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
     const [cloudDialog, setCloudDialog] = useState(false);
+    const [experimentDialog, setExperimentDialog] = useState(false);
+
+    const [expName, setExpName] = useState(null);
+    const [fileNames, setFileNames] = useState([]);
     const [contents, setContents] = useState([]);
 
     const onTabChange = (event, newValue) => {
@@ -623,6 +677,19 @@ const OpenPositionDialog = (props) => {
         setCloudDialog(!cloudDialog);
     };
 
+    const handleExperimentDialog = () => {
+        setExperimentDialog(true)
+    }
+
+    const setDialogStatus = (open) => {
+        setExperimentDialog(open)
+    }
+
+    const handleExpNameChange = (name) => {
+        setExpName(name)
+        getExperimentData(name)
+        setExperimentDialog(false)
+    }
     const handleCloseOpenDlg = () => {
         props.handleClose();
         acceptedFiles = [];
@@ -632,6 +699,20 @@ const OpenPositionDialog = (props) => {
             namePatternsPrimary[i].end = 0;
         }
     };
+    const getExperimentData = async (name) => {
+        try {
+            let response = await api_experiment.getExperimentData(name)
+            let data = response.data
+            if(data.success) {
+                setFileNames(data.data)
+            } else {
+                console.log(response.error)    
+            }
+        } catch(err) {
+            console.log("Error occured while getting experiment data")
+            throw err;
+        }
+    }
 
     const handleSetSetting = async () => {
         if (contents !== [] && contents !== null && contents !== undefined) {
@@ -664,72 +745,77 @@ const OpenPositionDialog = (props) => {
                         &times;
                     </button>
                 </div>
-                <DialogContent className="p-0" style={{width: "1000px"}}>
-                    <Tabs
-                        className="border"
-                        variant="fullWidth"
-                        value={selectedTab}
-                        onChange={onTabChange}
-                        aria-label="scrollable auto tabs example">
-                        <Tab
-                            className="common-tab-button font-16 primary--text"
-                            label="Images"
-                        />
-                        <Tab
-                            className="common-tab-button font-16 primary--text"
-                            label="Tiling"
-                        />
-                        <Tab
-                            className="common-tab-button font-16 primary--text"
-                            label="Metadata"
-                        />
-                        <Tab
-                            className="common-tab-button font-16 primary--text"
-                            label="Names &amp; Files"
-                        />
-                        <Tab
-                            className="common-tab-button font-16 primary--text"
-                            label="Groups"
-                        />
-                    </Tabs>
-                    {selectedTab === 0 && (
-                        <TabContainer>
-                            <ImageDropzone setLoading={(loading) => setIsLoading(loading)} />
-                        </TabContainer>
-                    )}
-                    {selectedTab === 1 && (
-                        <TabContainer>
-                            <Tiling fileNames={acceptedFiles.map(file => file.name)} />
-                        </TabContainer>
-                    )}
-                    {selectedTab === 2 && (
-                        <TabContainer>
-                            <DropzoneMetaData />
-                        </TabContainer>
-                    )}
-                    {selectedTab === 3 && (
-                        <TabContainer>
-                            <DropzoneNamesFiles setContents={(contents) => {setContents(contents)}} />
-                        </TabContainer>
-                    )}
-                    {selectedTab === 4 && (
-                        <TabContainer>
-                            <DropzoneGroup />
-                        </TabContainer>
-                    )}
+                <DialogContent className="p-0" style={{width: "1000px", display: "flex", flexDirection: "row"}}>
+                    <Button
+                        className="cloud-btn"
+                        variant="contained"
+                        onClick={handleExperimentDialog}
+                        color="primary"
+                        style={{height: "fit-content", margin: "10px", marginTop: "50px"}}>
+                        Cloud
+                    </Button>
+                    <div style={{width: "100%"}}>
+                        <Tabs
+                            className="border"
+                            variant="fullWidth"
+                            value={selectedTab}
+                            onChange={onTabChange}
+                            aria-label="scrollable auto tabs example">
+                            <Tab
+                                className="common-tab-button font-16 primary--text"
+                                label="Images"
+                            />
+                            <Tab
+                                className="common-tab-button font-16 primary--text"
+                                label="Tiling"
+                            />
+                            <Tab
+                                className="common-tab-button font-16 primary--text"
+                                label="Metadata"
+                            />
+                            <Tab
+                                className="common-tab-button font-16 primary--text"
+                                label="Names &amp; Files"
+                            />
+                            <Tab
+                                className="common-tab-button font-16 primary--text"
+                                label="Groups"
+                            />
+                        </Tabs>
+                        {selectedTab === 0 && (
+                            <TabContainer>
+                                <ImageDropzone 
+                                    setLoading={(loading) => setIsLoading(loading)} 
+                                    fileNames={fileNames}
+                                />
+                            </TabContainer>
+                        )}
+                        {selectedTab === 1 && (
+                            <TabContainer>
+                                <Tiling fileNames={acceptedFiles.map(file => file.name)} />
+                            </TabContainer>
+                        )}
+                        {selectedTab === 2 && (
+                            <TabContainer>
+                                <DropzoneMetaData />
+                            </TabContainer>
+                        )}
+                        {selectedTab === 3 && (
+                            <TabContainer>
+                                <DropzoneNamesFiles setContents={(contents) => {setContents(contents)}} />
+                            </TabContainer>
+                        )}
+                        {selectedTab === 4 && (
+                            <TabContainer>
+                                <DropzoneGroup />
+                            </TabContainer>
+                        )}
+                    </div>
                 </DialogContent>
                 <DialogActions
                     className="border">
                     {selectedTab === 0 && (
                         <div className="d-flex">
-                            <Button
-                                className="cloud-btn"
-                                variant="contained"
-                                onClick={handleCloudDialog}
-                                color="primary"
-                                style={{marginRight: "150px", marginLeft: "0px"}}>
-                                Cloud
-                            </Button>
                             {isLoading ? (
                                 <div className="progress" style={{width: "400px", marginRight: "180px"}}>
                                     <div className="progress-bar"></div>
@@ -759,6 +845,13 @@ const OpenPositionDialog = (props) => {
                         Cancel
                     </Button>
                 </DialogActions>
+                {
+                    <OpenExperimentDialog 
+                        onOpen={experimentDialog} 
+                        setDialogStatus={setDialogStatus}
+                        handleExpNameChange={handleExpNameChange}
+                    />
+                }
             </Dialog>
         </>
     );
