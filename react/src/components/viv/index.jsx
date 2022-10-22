@@ -37,7 +37,7 @@ const RoutedAvivator = (props) => {
 
     const displayFiles = (contents, filesName, row, col, z, time) => {
         console.log("index.jsx : displayFiles : param : -------- : ", filesName, row, col, z, time);
-        if (contents.length > 1) {
+        if (contents.length >= 1) {
             let hole_files = [];
             // let layer_files = []; let layer_contents = []; let field_files = []; let field_contents = [];
             for (let i = 0; i < contents.length; i++) {
@@ -47,7 +47,7 @@ const RoutedAvivator = (props) => {
             }
             // console.log("index.jsx : displayFiles : hole_files : -------- : ", hole_files);
             let min_time = time;
-            if (min_time <= 0) {
+            if (min_time <= 0 && hole_files.length > 0) {
                 min_time = hole_files[0].content.time;
                 for (let i = 0; i < hole_files.length; i++) {
                     if (min_time > hole_files[i].content.time) {
