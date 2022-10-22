@@ -147,6 +147,8 @@ const OpenCloudDialog = (props) => {
     }
 
     useEffect(() => {
+        setUploading(true)
+
         const expName = "experiement_" + new Date().toISOString()
         const upFName = "upload_" + new Date().toISOString()
 
@@ -154,6 +156,7 @@ const OpenCloudDialog = (props) => {
         setUploadFolderName(upFName)
 
         getTree()
+        setUploading(false)
     }, [])
 
     const icons = {
@@ -239,7 +242,7 @@ const OpenCloudDialog = (props) => {
                     />
                 </div>
                 <div>
-                    <Typography component="div">View your cloud data</Typography>
+                    <Typography component="div" className="mb-1">View your cloud data</Typography>
                     <CheckboxTree
                         nodes={props.experiments}
                         checked={checked}
