@@ -118,8 +118,8 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
         if (isMultiTiff(urlOrFile)) {
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
             let mutiTiffSources = [];
-            // console.log("utils.js  loadMultiTiff ------- contents : ", contents, files);
-            for (let i = 0; i < contents.length; i++) {
+            console.log("utils.js  loadMultiTiff ------- contents : ", contents, files);
+            for (let i = 0; i < files.length; i++) {
                 mutiTiffSources[i] = [{c: i, z: 0, t: 0}, files[i]];
             }
             // let channels = []; let times = []; let index_file = 0;
