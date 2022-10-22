@@ -32,7 +32,7 @@ const mapStateToProps = (state) => ({
 
 const Avivator = function (props) {
 
-    const {history, source: source, isDemoImage, isImageLoading} = props;
+    const {history, source: source, containerType: containerType, isDemoImage, isImageLoading} = props;
     // const source = useViewerStore(store => store.source);
     const isViewerLoading = useViewerStore(store => store.isViewerLoading);
     const useLinkedView = useViewerStore(store => store.useLinkedView);
@@ -93,7 +93,7 @@ const Avivator = function (props) {
                     <Loader />
                 </div>}
                 <div className="bg-light h-100 w-100">
-                    {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} />}
+                    {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} viewType={containerType}/>}
                     {/* <DropzoneWrapper>
                         {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} />}
                     </DropzoneWrapper> */}

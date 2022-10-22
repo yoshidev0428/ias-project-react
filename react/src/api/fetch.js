@@ -22,11 +22,12 @@ export const getImageByUrl = async function(imgName) {
                 "Authorization": state.auth.tokenType + " " + state.auth.token,
             }
         });
-        let blob = await response.blob()
-        let file = new File([blob], imgName, { type: "image/tiff" })
-        file.path = imgName
+        let blob = await response.blob();
+        let file = new File([blob], imgName, {type: "image/tiff"});
+        file.path = imgName;
         return file;
-    } catch(err) {
+    } catch (err) {
+        console.log(" api/fetch getImageByUrl : error = ", err);
         return null
     }
 }

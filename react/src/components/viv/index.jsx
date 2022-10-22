@@ -16,6 +16,7 @@ const mapStateToProps = (state) => ({
     selectedVesselHole: state.vessel.selectedVesselHole,
     selectedVesselZ: state.vessel.selectedVesselZ,
     selectedVesselTime: state.vessel.selectedVesselTime,
+    tiling_selectedFile: state.tiling.tiling_selectedFile,
 })
 
 const darkTheme = createTheme({
@@ -35,6 +36,7 @@ const darkTheme = createTheme({
 const RoutedAvivator = (props) => {
 
     const [source, setSource] = useState(null);
+    const [avivatorType, setAvivatorType] = useState("mainFrame");
 
     const displayFiles = (contents, filesName, filesPath, row, col, z, time) => {
         console.log("index.jsx : displayFiles : param : -------- : ", filesName, row, col, z, time);
@@ -121,6 +123,7 @@ const RoutedAvivator = (props) => {
         }
     }
 
+    // MainFrame useEffect
     useEffect(() => {
         // console.log(" ==== index.jsx : props.content -------- : ", props);
         if (props.content) {
@@ -132,9 +135,27 @@ const RoutedAvivator = (props) => {
         }
     }, [props.content, props.filesName, props.selectedVesselHole, props.selectedVesselZ, props.selectedVesselTime]);
 
+    const displayFileOnTiling = (file) => {
+        setSource({urlOrFile: [file], contents: [], description: 'tiling'});
+    }
+    // Tiling Tab useEffect
+    useEffect(() => {
+        // console.log(" ==== index.jsx : props.content -------- : ", props);
+        if (props.tiling_selectedFile !== null && props.tiling_selectedFile !== undefined) {
+            displayFileOnTiling(props.tiling_selectedFile);
+        }
+    }, [props.tiling_selectedFile]);
+
+    // Page Settings
+    useEffect(() => {
+        if (props.type) {
+            setAvivatorType(props.type);
+        }
+    }, [props.type]);
+
     return (
         <ThemeProvider theme={darkTheme}>
-            <Avivator source={source} isDemoImage />
+            <Avivator source={source} containerType={avivatorType} isDemoImage />
         </ThemeProvider>
     );
 }
