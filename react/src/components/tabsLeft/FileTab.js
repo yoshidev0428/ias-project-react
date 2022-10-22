@@ -3,11 +3,9 @@ import TabItem from '../custom/TabItem';
 import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
-// import Icon from '@mdi/react';
 import OpenCloudDialog from "./contents/file/OpenCloudDialog";
-// import OpenFileDialog from "./contents/file/OpenFileDialog";
-// import OpenFolderDialog from "./contents/file/OpenFolderDialog";
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
+import * as api_experiment from "../../api/experiment";
 import {
     mdiCloudDownloadOutline,
     mdiEmailNewsletter,
@@ -83,13 +81,20 @@ const FileTab = (props) => {
     const [folderDialog, setfolderDialog] = useState(false);
     const [positionDialog, setpositionDialog] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState([]);
+    const [treeData, setTreeData] = useState([]);
 
     const showPositionDialog = () => {
         setpositionDialog(true);
     }
+    const setCloudDialog = () => {
+        setcloudDialog(true);
+    }
 
     const handleClose = () => {
         setpositionDialog(false);
+    }
+    const handleCloudClose = () => {
+        setcloudDialog(false)
     }
 
     const inputFile = useRef(null);
@@ -110,7 +115,19 @@ const FileTab = (props) => {
     }
 
     useEffect(() => {
-
+        const getImageTree = async () => {
+            let response = await api_experiment.getImageTree()
+            let data = response.data
+            if(data.error) {
+                setTreeData([])
+                console.log("Error occured while invoking getImageTree api")
+                alert("Error occured while getting the tree")
+            } else {
+                setTreeData(data.data)
+            }
+        }
+        getImageTree()
+            .catch(console.error)
     }, [])
 
     return (
@@ -118,12 +135,19 @@ const FileTab = (props) => {
             <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }} />
             <input directory="" webkitdirectory="" type="file" ref={folderInput} onChange={onFolderChangeCapture} style={{ display: "none" }} />
             <SmallCard title="Open">
-                {<CustomButton icon={mdiCloudDownloadOutline} label="Cloud" /*click={showCloudDialog}*/ />}
-                {cloudDialog && <OpenCloudDialog handleClose={handleClose} />}
+                <CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={() => setCloudDialog(true)} />
+                {
+                    cloudDialog && 
+                    <OpenCloudDialog 
+                        handleClose={handleCloudClose} 
+                        // treeData={treeData}
+                    />
+                }
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
-                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} />}
+                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} 
+                    setCloudDialog={setCloudDialog} />}
             </SmallCard>
             <Divider />
             <SmallCard title="Save / Load">

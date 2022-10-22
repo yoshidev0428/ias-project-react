@@ -11,6 +11,7 @@ import {getMergedImage} from '../../api/fetch';
 
 const mapStateToProps = (state) => ({
     filesName: state.files.filesName,
+    filesPath: state.files.filesPath,
     content: state.files.content,
     selectedVesselHole: state.vessel.selectedVesselHole,
     selectedVesselZ: state.vessel.selectedVesselZ,
@@ -36,7 +37,8 @@ const RoutedAvivator = (props) => {
 
     const [source, setSource] = useState(null);
     const [avivatorType, setAvivatorType] = useState("mainFrame");
-    const displayFiles = (contents, filesName, row, col, z, time) => {
+
+    const displayFiles = (contents, filesName, filesPath, row, col, z, time) => {
         console.log("index.jsx : displayFiles : param : -------- : ", filesName, row, col, z, time);
         if (contents.length > 1) {
             let hole_files = [];
@@ -92,7 +94,16 @@ const RoutedAvivator = (props) => {
                     ]
                     let extension = sample.content.filename.split('.').pop();
                     let newImageName = newNameArr.join('_') + '.' + extension;
-                    getMergedImage(hole_time_channel_files.map(file => file.content.filename), newImageName, (err, newFile) => {
+                    let getFullPathFromName = (name) => {
+                        let res = filesPath.filter(path => path.indexOf(name) != -1)
+                        if(res.length == 1)
+                            return res[0]
+                        else return false
+                    }
+                    getMergedImage(hole_time_channel_files.map(file => {
+                        let path = getFullPathFromName(file.content.filename)
+                        return path
+                    }), newImageName, (err, newFile) => {
                         if (err) {
                             console.log("Error occured while merging files")
                             return
@@ -117,9 +128,9 @@ const RoutedAvivator = (props) => {
         // console.log(" ==== index.jsx : props.content -------- : ", props);
         if (props.content) {
             if (props.selectedVesselHole !== undefined && props.selectedVesselHole !== null) {
-                displayFiles(props.content, props.filesName, props.selectedVesselHole.row, props.selectedVesselHole.col, props.selectedVesselZ, props.selectedVesselTime);
+                displayFiles(props.content, props.filesName, props.filesPath, props.selectedVesselHole.row, props.selectedVesselHole.col, props.selectedVesselZ, props.selectedVesselTime);
             } else {
-                displayFiles(props.content, props.filesName, props.content[0].row, props.content[0].col, props.selectedVesselZ, props.selectedVesselTime);
+                displayFiles(props.content, props.filesName, props.filesPath, props.content[0].row, props.content[0].col, props.selectedVesselZ, props.selectedVesselTime);
             }
         }
     }, [props.content, props.filesName, props.selectedVesselHole, props.selectedVesselZ, props.selectedVesselTime]);

@@ -5,7 +5,7 @@ from bson import ObjectId
 from pydantic import BaseModel, validator, Field
 
 from mainApi.app.auth.models.user import PyObjectId, to_camel
-
+from typing import List
 
 class AlignMethodEnum(str, Enum):
     byRow = "byRow"
@@ -14,6 +14,16 @@ class AlignMethodEnum(str, Enum):
 class MergeImgModel(BaseModel):
     fileNames: str = ""
     newImageName: str = ""
+
+class ExperimentModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    user_id: PyObjectId = Field(default_factory=PyObjectId)
+    expName: str
+    fileNames: List[str]
+    class Config:
+        allow_population_by_field_name = True
+        json_encoders = {ObjectId: str}
+        alias_generator = to_camel
 
 class TileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
