@@ -31,6 +31,10 @@ import Tiling from "./Tiling";
 import image from '../../../../reducers/modules/image';
 import {api} from "../../../../api/base";
 import axios from 'axios';
+import {
+    mdiCloudDownloadOutline
+} from '@mdi/js';
+
 var acceptedFiles = [];
 
 const columns = [
@@ -186,12 +190,18 @@ const ImageDropzone = (props) => {
         setFiles([]);
         acceptedFiles = [];
     };
+    const clickDrop = (e) => {
+        e.preventDefault()
+        props.handleExperimentDialog()
+    }
 
     return (
         <Dropzone
             onChange={(incommingFiles) => updateFiles(incommingFiles)}
+            onClick={(e) => clickDrop(e)}
             onReset={() => {setFiles([])}}
             onDrop={() => {startDrop()}}
+            label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
                 <FileItem key={index} {...file} k={file.name} valid={true} info preview />
@@ -732,7 +742,7 @@ const OpenPositionDialog = (props) => {
             <Dialog
                 open={true}
                 onClose={handleCloseOpenDlg}
-                maxWidth={"1010"}
+                maxWidth={"1110"}
                 className="m-0"
                 style={{top: "0%", bottom: "auto"}}>
                 <div className="d-flex border-bottom">
@@ -745,7 +755,7 @@ const OpenPositionDialog = (props) => {
                         &times;
                     </button>
                 </div>
-                <DialogContent className="p-0" style={{width: "1000px", display: "flex", flexDirection: "row"}}>
+                <DialogContent className="p-0" style={{width: "1100px", display: "flex", flexDirection: "row"}}>
                     <Button
                         className="cloud-btn"
                         variant="contained"
@@ -787,6 +797,7 @@ const OpenPositionDialog = (props) => {
                                 <ImageDropzone 
                                     setLoading={(loading) => setIsLoading(loading)} 
                                     fileNames={fileNames}
+                                    handleExperimentDialog={handleExperimentDialog}
                                 />
                             </TabContainer>
                         )}
@@ -848,6 +859,7 @@ const OpenPositionDialog = (props) => {
                 {
                     <OpenExperimentDialog 
                         onOpen={experimentDialog} 
+                        setCloudDialog={props.setCloudDialog}
                         setDialogStatus={setDialogStatus}
                         handleExpNameChange={handleExpNameChange}
                     />

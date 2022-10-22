@@ -146,7 +146,8 @@ const FileTab = (props) => {
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
-                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} />}
+                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} 
+                    setCloudDialog={setCloudDialog} />}
             </SmallCard>
             <Divider />
             <SmallCard title="Save / Load">

@@ -41,6 +41,7 @@
     "jwt-decode": "^2.2.0",
     "list-react-files": "^0.2.0",
     "lodash": "^4.17.21",
+    "material-icons": "^1.12.0",
     "material-ui-search-bar": "^1.0.0",
     "mdi-material-ui": "^7.2.0",
     "path": "^0.12.7",

@@ -17,7 +17,11 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import AddIcon from '@mui/icons-material/Add';
 import { blue } from '@mui/material/colors';
-
+import IconButton from '@mui/material/IconButton';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import FolderIcon from '@mui/icons-material/Folder';
 import * as api_experiment from "../../../../api/experiment"
 
 const OpenExperimentDialog = (props) => {
@@ -76,7 +80,7 @@ const OpenExperimentDialog = (props) => {
         props.handleExpNameChange(expName)
     };
     const handleAddNewExperimentClick = () => {
-        alert("add new")
+        props.setCloudDialog()
     }
     return (
         <>
@@ -89,28 +93,29 @@ const OpenExperimentDialog = (props) => {
                     </DialogContentText>
                     <List sx={{ pt: 0 }} style={{padding: "20px 0px"}}>
                         {expNames.map((expName) => (
-                          <ListItem style={{padding: "10px 0px"}} button onClick={() => handleListItemClick(expName)} key={expName}>
-                            <ListItemAvatar>
-                              <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                                <PersonIcon />
-                              </Avatar>
-                            </ListItemAvatar>
+                          <ListItem style={{padding: "10px 0px"}} button onClick={() => handleListItemClick(expName)} key={expName}
+                              secondaryAction={
+                                <IconButton edge="end" aria-label="delete">
+                                  <DeleteIcon />
+                                </IconButton>
+                              }>
+                            <ListItemIcon>
+                              <InboxIcon />
+                            </ListItemIcon>
                             <ListItemText primary={expName} />
                           </ListItem>
                         ))}
                         <ListItem style={{padding: "10px 0px"}} autoFocus button onClick={() => handleAddNewExperimentClick()}>
-                          <ListItemAvatar>
-                            <Avatar>
-                              <AddIcon />
-                            </Avatar>
-                          </ListItemAvatar>
+                          <ListItemIcon>
+                              <FolderIcon />
+                            </ListItemIcon>
                           <ListItemText primary="Add New Experiment" />
                         </ListItem>
                     </List>
 
                     <DialogContentText className="mt-4">
                         Do you want to have a new experiment?
-                        <a href="#" className="ml-1" style={{}}>Click here..</a>
+                        <a href="#" className="ml-1" onClick={() => handleAddNewExperimentClick()}>Click here..</a>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
