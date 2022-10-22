@@ -108,14 +108,6 @@ const ImageDropzone = (props) => {
     const [files, setFiles] = useState(acceptedFiles);
     
     useEffect(() => {
-        const updateByExpName = async () => {
-            const {fileNames} = props;
-            // Bring files for exp, set files!!!! status
-        };
-        updateByExpName();
-    }, [])
-
-    useEffect(() => {
         const bringFilesByName = async () => {
             const {fileNames} = props;
             props.setLoading(true);
