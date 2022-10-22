@@ -14,7 +14,7 @@ const makeFormBody = (details) => {
 export const getImageByUrl = async function (imgName) {
     try {
         const state = store.getState();
-        let response = await fetch(process.env.REACT_APP_BASE_API_URL + "/image/tile/get_image/" + imgName, {
+        let response = await fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/" + imgName, {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
@@ -22,11 +22,12 @@ export const getImageByUrl = async function (imgName) {
                 "Authorization": state.auth.tokenType + " " + state.auth.token,
             }
         });
-        let blob = await response.blob()
-        let file = new File([blob], imgName, {type: "image/tiff"})
-        file.path = imgName
+        let blob = await response.blob();
+        let file = new File([blob], imgName, {type: "image/tiff"});
+        file.path = imgName;
         return file;
     } catch (err) {
+        console.log(" api/fetch getImageByUrl : error = ", err);
         return null
     }
 }

@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
 import {connect} from "react-redux";
-import store from "../../../../reducers";
 // import { useDropzone } from "react-dropzone"
 // import { borderBottom } from "@mui/system";
 import PropTypes from "prop-types";
@@ -21,13 +20,14 @@ import {DataGrid} from "@mui/x-data-grid";
 import SearchBar from "material-ui-search-bar";
 import TextField from "@mui/material/TextField";
 // import { updateNameFile, uploadImageFiles } from "../../../../api/tiles";
+import store from "../../../../reducers";
 import * as api_tiles from "../../../../api/tiles";
-import {getMergedImage} from '../../../../api/fetch';
+// import {getMergedImage} from '../../../../api/fetch';
 import OpenCloudDialog from "./OpenCloudDialog";
 import Tiling from "./Tiling";
-import image from '../../../../reducers/modules/image';
-import {api} from "../../../../api/base";
-import axios from 'axios';
+// import image from '../../../../reducers/modules/image';
+// import {api} from "../../../../api/base";
+
 var acceptedFiles = [];
 
 const columns = [

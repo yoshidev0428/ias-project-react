@@ -28,6 +28,7 @@ import {
 } from '@mdi/js';
 import {connect} from 'react-redux';
 import * as api_tiles from "../../../../api/tiles";
+import {getImageByUrl} from "../../../../api/fetch"
 import RoutedAvivator from "../../../viv/Avivator";
 import Vessel from "../../../tabsRight/contents/viewcontrol/Vessel";
 import Objective from "../../../tabsRight/contents/viewcontrol/Objective";
@@ -35,6 +36,7 @@ import Channel from "../../../tabsRight/contents/viewcontrol/Channel";
 import ImageAdjust from "../../../tabsRight/contents/viewcontrol/ImageAdjust";
 import ZPosition from "../../../tabsRight/contents/viewcontrol/ZPosition";
 import Timeline from "../../../tabsRight/contents/viewcontrol/Timeline";
+import store from "../../../../reducers";
 import UTIF from "utif";
 
 const tilingMenus = [
@@ -67,6 +69,7 @@ const Tiling = (props) => {
     const [value, setValue] = useState(0);
     const [fileObjs, setFileObjs] = useState([]);
     const [selectedImageFileIndex, setSelectedImageFileIndex] = useState(0);
+
     const [widthImage, setWidthImage] = useState(window.innerWidth);
     const [heightImage, setHeightImage] = useState(window.innerHeight);
 
@@ -98,35 +101,34 @@ const Tiling = (props) => {
         console.log("ok")
     };
 
-    const handleListItemClick = (event, index) => {
+    const handleListItemClick = (index) => {
         setSelectedIndex(index);
-        console.log(index)
     };
 
     const handleAlignment = (event) => {
-        // console.log(" handleAlignment", fileObjs.length, event.target.value);
-        if (fileObjs.length > 0) {
-            let method = event.target.value;
-            if (tilingAlignButtons.includes(method)) {
-                api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
-            }
-        }
+        // // console.log(" handleAlignment", fileObjs.length, event.target.value);
+        // if (fileObjs.length > 0) {
+        //     let method = event.target.value;
+        //     if (tilingAlignButtons.includes(method)) {
+        //         api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
+        //     }
+        // }
     };
 
-    const handleApi = (response, status) => {
-        if (status) {
-            console.log("handleAlignTilesApi : response :", response);
-            displayResponse(response);
-        } else {
-            console.log("handleAlignTilesApi : error :", response);
-        }
-    }
+    // const handleApi = (response, status) => {
+    //     if (status) {
+    //         console.log("handleAlignTilesApi : response :", response);
+    //         displayResponse(response);
+    //     } else {
+    //         console.log("handleAlignTilesApi : error :", response);
+    //     }
+    // }
 
     const handleChange = (event) => {
-        setChecked(event.target.checked);
-        if (fileObjs.length > 0) {
-            api_tiles.listTiles(handleApi);
-        }
+        // setChecked(event.target.checked);
+        // if (fileObjs.length > 0) {
+        //     api_tiles.listTiles(handleApi);
+        // }
     };
 
     const autoPatternMathing = () => {
@@ -160,86 +162,93 @@ const Tiling = (props) => {
         setScale(event.target.value);
     };
 
-    const handleListContentItemClick = (event, index) => {
+    const handleListContentItemClick = async (index) => {
         console.log(" Selected Image : ", index);
-        if (fileObjs.length > 0) {
+        if (fileNames.length > 0) {
             setSelectedImageFileIndex(index);
-            displayImage(fileObjs[index]);
+            let file = await getImageByUrl(fileNames[index]);
+            if (file !== null) {
+                // store.dispatch({type: "tiling_selectedFile", content: file});
+            }
         }
     };
 
-    const displayImage = async (file) => {
-        console.log(file, "ddd");
-        let type = file.type.toString();
-        try {
-            if (type === "tiff") {
-                displayTiff(file);
-            }
-        }
-        catch (err) {
-            console.log(" error : Tiling.js useEffect : ", err);
-        }
-    }
+    // const displayImage = async (file) => {
+    //     console.log(file, "ddd");
+    //     let type = file.type.toString();
+    //     try {
+    //         if (type === "tiff") {
+    //             displayTiff(file);
+    //         }
+    //     }
+    //     catch (err) {
+    //         console.log(" error : Tiling.js useEffect : ", err);
+    //     }
+    // }
 
-    const displayResponse = async (response) => {
-        try {
-            displayAlignment(response);
-        }
-        catch (err) {
-            console.log(" error : Tiling.js useEffect : ", err);
-        }
-    }
+    // const displayResponse = async (response) => {
+    //     try {
+    //         displayAlignment(response);
+    //     }
+    //     catch (err) {
+    //         console.log(" error : Tiling.js useEffect : ", err);
+    //     }
+    // }
 
-    function displayAlignment(response) {
-        var rgba = UTIF.toRGBA8(response[0]);  // Uint8Array with RGBA pixels
-        const firstPageOfTif = response[0];
-        const imageWidth = firstPageOfTif.width;
-        const imageHeight = firstPageOfTif.height;
-        setWidthImage(imageWidth);
-        setHeightImage(imageHeight);
-        const cnv = document.getElementById("canvas");
-        cnv.width = imageWidth;
-        cnv.height = imageHeight;
-        const ctx = cnv.getContext("2d");
-        const imageData = ctx.createImageData(imageWidth, imageHeight);
-        for (let i = 0; i < rgba.length; i++) {
-            imageData.data[i] = rgba[i];
-        }
-        ctx.putImageData(imageData, 0, 0);
-    };
+    // function displayAlignment(response) {
+    //     var rgba = UTIF.toRGBA8(response[0]);  // Uint8Array with RGBA pixels
+    //     const firstPageOfTif = response[0];
+    //     const imageWidth = firstPageOfTif.width;
+    //     const imageHeight = firstPageOfTif.height;
+    //     setWidthImage(imageWidth);
+    //     setHeightImage(imageHeight);
+    //     const cnv = document.getElementById("canvas");
+    //     cnv.width = imageWidth;
+    //     cnv.height = imageHeight;
+    //     const ctx = cnv.getContext("2d");
+    //     const imageData = ctx.createImageData(imageWidth, imageHeight);
+    //     for (let i = 0; i < rgba.length; i++) {
+    //         imageData.data[i] = rgba[i];
+    //     }
+    //     ctx.putImageData(imageData, 0, 0);
+    // };
 
-    function displayTiff(fileDisplay) {
-        fileDisplay.arrayBuffer().then((fileBuffer) => {
-            let ifds = UTIF.decode(fileBuffer);
-            UTIF.decodeImage(fileBuffer, ifds[0])
-            var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-            let firstPageOfTif = ifds[0];
-            let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
-            let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
-            setWidthImage(imageWidth);
-            setHeightImage(imageHeight);
-            const cnv = document.getElementById("canvas");
-            cnv.width = imageWidth;
-            cnv.height = imageHeight;
-            const ctx = cnv.getContext("2d");
-            let imageData = ctx.createImageData(imageWidth, imageHeight);
-            console.log(imageData[0], rgba[0], "imageData[0], ");
-            for (let i = 0; i < rgba.length; i++) {
-                imageData.data[i] = rgba[i];
-            }
-            ctx.putImageData(imageData, 0, 0);
-        })
-    }
+    // function displayTiff(fileDisplay) {
+    //     fileDisplay.arrayBuffer().then((fileBuffer) => {
+    //         let ifds = UTIF.decode(fileBuffer);
+    //         UTIF.decodeImage(fileBuffer, ifds[0])
+    //         var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+    //         let firstPageOfTif = ifds[0];
+    //         let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
+    //         let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
+    //         setWidthImage(imageWidth);
+    //         setHeightImage(imageHeight);
+    //         const cnv = document.getElementById("canvas");
+    //         cnv.width = imageWidth;
+    //         cnv.height = imageHeight;
+    //         const ctx = cnv.getContext("2d");
+    //         let imageData = ctx.createImageData(imageWidth, imageHeight);
+    //         console.log(imageData[0], rgba[0], "imageData[0], ");
+    //         for (let i = 0; i < rgba.length; i++) {
+    //             imageData.data[i] = rgba[i];
+    //         }
+    //         ctx.putImageData(imageData, 0, 0);
+    //     })
+    // }
 
     useEffect(() => {
+        console.log(TAG, " props.files.length : ", props.fileNames.length);
         if (props.fileNames.length > 0) {
-            console.log(TAG, " props.files.length : ", props.fileNames);
-            setFileNames(props.fileNames);
-            // setFileObjs(props.files);
-            // setSelectedImageFileIndex(0);
-            // if (props.files[0].type.includes("image/tiff")) {
-            //     displayImage(props.files[0], "tiff");
-            // }
+            const fetchData = async () => {
+                setFileNames(props.fileNames);
+                setSelectedImageFileIndex(0);
+                let file = await getImageByUrl(props.fileNames[0]);
+                if (file !== null) {
+                    // store.dispatch({type: "tiling_selectedFile", content: file});
+                }
+            }
+            // call the function
+            fetchData();
         }
     }, [props.fileNames])
 
@@ -521,8 +530,8 @@ const Tiling = (props) => {
                 <Col xs={5} className="p-0 h-100" >
                     {/*  Tiling Preview  */}
                     <div style={{flexDirection: "column"}}>
-                        <div className="row m-0" style={{height: "420px"}}>
-                            <RoutedAvivator />
+                        <div className="row m-0" style={{backgroundColor: "#ddd", height: "420px", width: "480px", overflowY: "auto"}} >
+                            <RoutedAvivator type={"tiling"} />
                             {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
                             <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}
                         </div>

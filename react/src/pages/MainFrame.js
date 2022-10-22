@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -11,9 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Avatar from '@mui/material/Avatar';
 import Logout from '@mui/icons-material/Logout';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { blue } from '@mui/material/colors';
-import { Row, Col, Container } from 'react-bootstrap';
+import {ThemeProvider, createTheme} from '@mui/material/styles';
+import {blue} from '@mui/material/colors';
+import {Row, Col, Container} from 'react-bootstrap';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SchoolIcon from '@mui/icons-material/School';
@@ -40,13 +40,13 @@ import ReportTab from "../components/tabsRight/ReportTab";
 import SettingsTab from "../components/tabsRight/SettingsTab";
 
 import store from "../reducers";
-import { connect } from "react-redux";
-import { getWindowDimensions } from "../components/helpers";
+import {connect} from "react-redux";
+import {getWindowDimensions} from "../components/helpers";
 import logo75 from "../assets/images/logo75.png";
 
 function TabContainer(props) {
     return (
-        <Typography component="div" style={{ padding: 0 }}>
+        <Typography component="div" style={{padding: 0}}>
             {props.children}
         </Typography>
     );
@@ -76,7 +76,7 @@ const MainFrame = () => {
     const imageViewAreaRef = useRef(null);
     const [height, setHeight] = useState(100);
     const handleResize = () => {
-        let { height } = getWindowDimensions();
+        let {height} = getWindowDimensions();
         setHeight(height);
         // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
@@ -100,7 +100,7 @@ const MainFrame = () => {
         setAnchorEl(null);
     };
     const handleLogout = () => {
-        store.dispatch({ type: "auth_logOut" });
+        store.dispatch({type: "auth_logOut"});
     };
 
     useEffect(() => {
@@ -113,7 +113,7 @@ const MainFrame = () => {
 
     const HeaderContent = () => {
         return (
-            <Box sx={{ flexGrow: 1, height: "65px" }}>
+            <Box sx={{flexGrow: 1, height: "65px"}}>
                 <ThemeProvider theme={darkTheme}>
                     <AppBar className="main-header" position="static">
                         <Toolbar>
@@ -125,7 +125,7 @@ const MainFrame = () => {
                                 color="inherit" >
                                 <MenuIcon />
                             </IconButton>
-                            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                                 <img
                                     width="116"
                                     height="48"
@@ -163,7 +163,7 @@ const MainFrame = () => {
                                     <MenuItem onClick={handleClose}>My account</MenuItem>
                                 </Menu>
                                 <IconButton size="large">
-                                    <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}> JM </Avatar>
+                                    <Avatar sx={{width: 30, height: 30, bgcolor: blue[500]}}> JM </Avatar>
                                 </IconButton>
                                 <IconButton
                                     size="large"
@@ -184,9 +184,9 @@ const MainFrame = () => {
     return (
         <>
             <HeaderContent />
-            <Container fluid={true} className="p-0" style={{ height: (height - 65).toString() + "px" }}>
+            <Container fluid={true} className="p-0" style={{height: (height - 65).toString() + "px"}}>
                 <Row noGutters>
-                    <Col xs={2} className='p-2 border-right' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Left Panel */}
+                    <Col xs={2} className='p-2 border-right' style={{height: (height - 65).toString() + "px", overflowY: "auto"}}> {/* Left Panel */}
                         <div className='card border'>
                             <Tabs
                                 // variant="scrollable"
@@ -210,10 +210,10 @@ const MainFrame = () => {
                             {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                         </div>
                     </Col>
-                    <Col xs={8} ref={imageViewAreaRef} style={{ backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto" }}> {/* Central Panel, Viv Image Viewer */}
-                        <RoutedAvivator />
+                    <Col xs={8} ref={imageViewAreaRef} style={{backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto"}}> {/* Central Panel, Viv Image Viewer */}
+                        <RoutedAvivator type={"mainFrame"} />
                     </Col>
-                    <Col xs={2} className='border-left p-2' style={{ height: (height - 65).toString() + "px", overflowY: "auto" }}>
+                    <Col xs={2} className='border-left p-2' style={{height: (height - 65).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>
                             <Tabs
                                 allowScrollButtonsMobile
