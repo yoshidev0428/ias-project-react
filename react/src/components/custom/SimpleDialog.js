@@ -25,12 +25,12 @@ const SimpleDialog = (props) => {
     };    
     return (
         <>
-            <Dialog open={true} onClose={props.click} fullWidth={props.fullWidth || false} >
+            <Dialog open={true} onClose={props.click} fullWidth="md" maxWidth="md" >
                 <DialogTitle>{props.title}</DialogTitle>
-                <DialogContent>
+                <DialogContent style={{padding: "0px 24px"}}>
                     <div>{props.children}</div>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions style={{padding: "12px 24px"}}>
                     <div className="spacer"></div>
                     {props.newButton && <Button variant="contained" color="info" onClick={newed}
                         disabled={props.newDisable}
@@ -47,12 +47,12 @@ const SimpleDialog = (props) => {
                     >
                         {/* {props.removeTitle} */}
                     </Button>}
-                    <Button variant="contained" color="success" onClick={selected} 
+                    <Button variant="contained" color="success" onClick={props.onOK} 
                         disabled={props.selectDisable}
                     >
                         {props.okTitle}
                     </Button>
-                    {!props.singleButton && <Button variant="contained" color="primary" onClick={props.click}                        
+                    {!props.singleButton && <Button variant="contained" color="primary" onClick={props.onCancel}                        
                     >
                         {props.closeTitle}
                     </Button>}

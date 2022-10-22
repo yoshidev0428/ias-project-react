@@ -23,6 +23,25 @@ export const uploadImageFiles = (files) => {
     });
 };
 
+export const uploadImages = (files, folderName) => {
+    const state = store.getState();
+    const formData = new FormData();
+    for (let i in files) {
+        let f = files[i];
+        formData.append("files", f);
+    }
+
+    return api.post("image/tile/upload_images/" + folderName, formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            "Content-Type": "multipart/form-data",
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+};
+
 export const getImageByUrl = (imgName, callback) => {    
     const state = store.getState();
     fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/" + imgName, {
