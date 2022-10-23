@@ -23,6 +23,8 @@ const mapStateToProps = state => ({
 
 const Channel = (props) => {
 
+    const [colorType, setColorType] = useState(true);
+
     const channels = [
         {id: 0, label: "S", color: "black", disabled: true, current_id: -1, rgbColor: [255, 255, 255], channelsVisible: false},
         {id: 1, label: "B", color: "blue", disabled: true, current_id: -1, rgbColor: [0, 0, 255], channelsVisible: false},
@@ -77,23 +79,46 @@ const Channel = (props) => {
     //     }
     // }, [props.viewConfigsObj])
 
+    const onColorMono = () => {
+        console.log("Color/Mono", colorType, colors, channelsVisible);
+        for (let channelId = 0; channelId < channels.length; channelId++) {
+            for (let colorId = 0; colorId < colors.length; colorId++) {
+                if (colors[colorId][0] === channels[channelId].rgbColor[0] && 
+                    colors[colorId][1] === channels[channelId].rgbColor[1] && 
+                    colors[colorId][2] === channels[channelId].rgbColor[2]) {
+                    console.log(channelId, colorId);
+                    if (channelId == 0) {
+                        if (channelsVisible[colorId] == colorType) {
+                            toggleIsOn(colorId);
+                        }
+                    } else {
+                        if (channelsVisible[colorId] != colorType) {
+                            toggleIsOn(colorId);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        setColorType(!colorType);
+    }
+    
     const renderItems = (channels) => {
+        // console.log("renderItems", colors, ids, channelsVisible);
         let current_channels = channels;
         let isLoading = false;
         let rgbColor = toRgb(colormap, [0, 0, 0]);
-        if (ids !== null && ids !== undefined) {
-            if (ids.length > 0) {
-                for (let i = 0; i < ids.length; i++) {
-                    for (let j = 0; j < current_channels.length; j++) {
-                        if (colors[i][0] === current_channels[j].rgbColor[0] && colors[i][1] === current_channels[j].rgbColor[1] && colors[i][2] === current_channels[j].rgbColor[2]) {
-                            current_channels[j].current_id = i;
-                            current_channels[j].disabled = false;
+        if (colors !== null && colors !== undefined) {
+            for (let i = 0; i < colors.length; i++) {
+                for (let j = 0; j < current_channels.length; j++) {
+                    if (colors[i][0] === current_channels[j].rgbColor[0] && colors[i][1] === current_channels[j].rgbColor[1] && colors[i][2] === current_channels[j].rgbColor[2]) {
+                        current_channels[j].current_id = i;
+                        current_channels[j].disabled = false;
                             current_channels[j].channelsVisible = channelsVisible[i];
-                            break;
-                        }
+                        break;
                     }
-                    rgbColor = toRgb(colormap, colors[i]);
                 }
+                rgbColor = toRgb(colormap, colors[i]);
             }
         }
         return (
@@ -119,7 +144,7 @@ const Channel = (props) => {
                     <h6>Channels</h6>
                     <div>
                         <div className="spacer"></div>
-                        <Button className="py-0" variant="contained" color="primary" size="small">Color/Mono</Button>
+                        <Button className="py-0" onClick={(e) => onColorMono()} variant="contained" color="primary" size="small">Color/Mono</Button>
                     </div>
                 </div>
                 <div>
