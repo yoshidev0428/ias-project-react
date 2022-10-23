@@ -85,3 +85,13 @@ Pass : Kubo@0823
 
 To be able to operate on the following sites.
 http://20.210.126.209/
+
+
+### About GCP
+Current(24.10.2022) use GCP for server and link subscription google.
+https://console.cloud.google.com/home/dashboard?project=capable-alcove-265511&hl=ja
+ID: daisukekubota0823@google.com
+Pass : Life@Analytics
+
+To be able to operate on the following sites.
+???
