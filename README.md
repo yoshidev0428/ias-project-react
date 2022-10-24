@@ -83,5 +83,18 @@ https://portal.azure.com/#home
 ID: daisukekubota@outlook.jp
 Pass : Kubo@0823
 
-To be able to operate on the following sites.
-http://20.210.126.209/
+### About GCP
+Current(24.10.2022) use GCP for server and link subscription google.
+https://console.cloud.google.com/home/dashboard?project=capable-alcove-265511
+ID: daisukekubota0823@google.com
+Pass : Life@Analytics
+
+  - Project Name : LifeAnalytics
+  - Vm instance : Compute Engine / Vm Instances / lifeanalytics-vm
+  - External IP : 34.72.210.99
+  - account name(ssh key account) : iasgcp
+  - Reference File : gitaction workflow command - ssh_ci.yml
+
+
+
+
