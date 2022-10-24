@@ -89,12 +89,9 @@ https://console.cloud.google.com/home/dashboard?project=capable-alcove-265511
 ID: daisukekubota0823@google.com
 Pass : Life@Analytics
 
+To be able to operate on the following sites.
   - Project Name : LifeAnalytics
   - Vm instance : Compute Engine / Vm Instances / lifeanalytics-vm
   - External IP : 34.72.210.99
   - account name(ssh key account) : iasgcp
   - Reference File : gitaction workflow command - ssh_ci.yml
-
-
-
-
