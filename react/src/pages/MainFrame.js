@@ -44,6 +44,9 @@ import {connect} from "react-redux";
 import {getWindowDimensions} from "../components/helpers";
 import logo75 from "../assets/images/logo75.png";
 
+import UserPage from "./user"
+import AccountPage from "./account"
+
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -72,6 +75,9 @@ const darkTheme = createTheme({
 });
 
 const MainFrame = () => {
+    const [userPage, setUserPage] = useState(false)
+    const [accountPage, setAccountPage] = useState(false)
+    const [vivPage, setVivPage] = useState(true)
 
     const imageViewAreaRef = useRef(null);
     const [height, setHeight] = useState(100);
@@ -102,6 +108,21 @@ const MainFrame = () => {
     const handleLogout = () => {
         store.dispatch({type: "auth_logOut"});
     };
+    const handleUserPage = () => {
+        setAccountPage(false)
+        setVivPage(false)
+        setUserPage(true)
+    }
+    const handleOpenAccount = () => {
+        setUserPage(false)
+        setVivPage(false)
+        setAccountPage(true)
+    }
+    const handleOpenViv = () => {
+        setUserPage(false)
+        setAccountPage(false)
+        setVivPage(true)
+    }
 
     useEffect(() => {
         handleResize();
@@ -159,10 +180,10 @@ const MainFrame = () => {
                                     open={Boolean(anchorEl)}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                                    <MenuItem onClick={handleOpenViv}>My Workspace</MenuItem>
+                                    <MenuItem onClick={handleOpenAccount}>My account</MenuItem>
                                 </Menu>
-                                <IconButton size="large">
+                                <IconButton size="large" onClick={handleUserPage}>
                                     <Avatar sx={{width: 30, height: 30, bgcolor: blue[500]}}> JM </Avatar>
                                 </IconButton>
                                 <IconButton
@@ -211,7 +232,9 @@ const MainFrame = () => {
                         </div>
                     </Col>
                     <Col xs={8} ref={imageViewAreaRef} style={{backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto"}}> {/* Central Panel, Viv Image Viewer */}
-                        <RoutedAvivator type={"mainFrame"} />
+                        {userPage && <UserPage />}
+                        {accountPage && <AccountPage />}
+                        {vivPage && <RoutedAvivator />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - 65).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>

@@ -94,11 +94,7 @@ const OpenExperimentDialog = (props) => {
                     <List sx={{ pt: 0 }} style={{padding: "20px 0px"}}>
                         {expNames.map((expName) => (
                           <ListItem style={{padding: "10px 0px"}} button onClick={() => handleListItemClick(expName)} key={expName}
-                              secondaryAction={
-                                <IconButton edge="end" aria-label="delete">
-                                  <DeleteIcon />
-                                </IconButton>
-                              }>
+                              >
                             <ListItemIcon>
                               <InboxIcon />
                             </ListItemIcon>
