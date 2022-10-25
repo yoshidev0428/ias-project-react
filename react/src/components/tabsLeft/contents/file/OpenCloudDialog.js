@@ -23,6 +23,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from '@mui/material/DialogContentText';
 
+import CloudPlan from '../../../custom/CloudPlan'
 
 import {
   MdCheckBox,
@@ -98,7 +99,7 @@ const OpenCloudDialog = (props) => {
         let data = response.data
         if(data.error) {
             console.log("Error occured while invoking getImageTree api")
-            alert("Error occured while getting the tree")
+            //alert("Error occured while getting the tree")
         } else {
             store.dispatch({type: "set_experiment_data", content: data.data});
         }
@@ -128,7 +129,7 @@ const OpenCloudDialog = (props) => {
             if(data.success) {
                 alert("Successfully registered")
             } else {
-                console.log("Failed to register")
+                alert("Failed to register")
             }
             props.handleClose()
         } catch(err) {
@@ -243,14 +244,16 @@ const OpenCloudDialog = (props) => {
                 </div>
                 <div>
                     <Typography component="div" className="mb-1">View your cloud data</Typography>
-                    <CheckboxTree
-                        nodes={props.experiments}
-                        checked={checked}
-                        expanded={expanded}
-                        onCheck={checked => setChecked(checked)}
-                        onExpand={expanded => setExpanded(expanded)}
-                        icons={icons}
-                    />
+                    {props.experiments.length ?
+                        <CheckboxTree
+                            nodes={props.experiments}
+                            checked={checked}
+                            expanded={expanded}
+                            onCheck={checked => setChecked(checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={icons}
+                        /> : <label>No data found, please upload..</label>
+                    }
                 </div>
                 <div className="mt-2 mb-2">
                     {uploading && <LinearProgress />}
