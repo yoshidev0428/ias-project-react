@@ -39,7 +39,7 @@ const RoutedAvivator = (props) => {
     const [avivatorType, setAvivatorType] = useState("mainFrame");
 
     const displayFiles = (contents, filesName, filesPath, row, col, z, time) => {
-        console.log("index.jsx : displayFiles : param : -------- : ", filesName, row, col, z, time);
+        console.log("index.jsx : displayFiles : param : -------- : ", contents, filesName, row, col, z, time);
         if (contents.length >= 1) {
             let hole_files = [];
             // let layer_files = []; let layer_contents = []; let field_files = []; let field_contents = [];
@@ -84,14 +84,26 @@ const RoutedAvivator = (props) => {
                 // console.log("index.jsx : displayFiles : hole_time_channel_files : -------- : ", hole_time_channel_files);
                 if (hole_time_channel_files.length > 0) {
                     let sample = hole_time_channel_files[0];
-                    let newNameArr = [
-                        sample.content.series,
-                        "row" + sample.content.row,
-                        "col" + sample.content.col,
-                        "channel" + channels[i],
-                        "time" + sample.content.time,
-                        "z" + sample.content.z,
-                    ]
+                    let newNameArr;
+                    if (!sample.content.dimensionChanged) {
+                        newNameArr = [
+                            sample.content.series,
+                            "row" + sample.content.row,
+                            "col" + sample.content.col,
+                            "channel" + channels[i],
+                            "time" + sample.content.time,
+                            "z" + sample.content.z,
+                        ]
+                    } else {
+                        newNameArr = [
+                            sample.content.series,
+                            "row" + sample.content.row,
+                            "col" + sample.content.col,
+                            "channel" + channels[i],
+                            "time" + sample.content.z,
+                            "z" + sample.content.time,
+                        ]
+                    }
                     let extension = sample.content.filename.split('.').pop();
                     let newImageName = newNameArr.join('_') + '.' + extension;
                     let getFullPathFromName = (name) => {

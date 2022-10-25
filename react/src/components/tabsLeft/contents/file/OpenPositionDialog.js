@@ -412,6 +412,7 @@ const DropzoneNamesFiles = (props) => {
         let result = {};
         let resultContent = {};
         let moveIndex = 0;
+        result[`dimensionChanged`] = false;
         for (let i = 0; i < namePatternOrders.length; i++) {
             let key = namePatternOrders[i];
             if (key && objectPerFile !== null) {

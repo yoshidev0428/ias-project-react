@@ -80,20 +80,20 @@ const Channel = (props) => {
     // }, [props.viewConfigsObj])
 
     const onColorMono = () => {
-        console.log("Color/Mono", colorType, colors, channelsVisible);
-        for (let channelId = 0; channelId < channels.length; channelId++) {
-            for (let colorId = 0; colorId < colors.length; colorId++) {
-                if (colors[colorId][0] === channels[channelId].rgbColor[0] && 
-                    colors[colorId][1] === channels[channelId].rgbColor[1] && 
-                    colors[colorId][2] === channels[channelId].rgbColor[2]) {
-                    console.log(channelId, colorId);
-                    if (channelId == 0) {
-                        if (channelsVisible[colorId] == colorType) {
-                            toggleIsOn(colorId);
+        // console.log("Color/Mono", colorType, colors, channelsVisible);
+        for (let channelIdx = 0; channelIdx < channels.length; channelIdx++) {
+            for (let colorIdx = 0; colorIdx < colors.length; colorIdx++) {
+                if (colors[colorIdx][0] === channels[channelIdx].rgbColor[0] && 
+                    colors[colorIdx][1] === channels[channelIdx].rgbColor[1] && 
+                    colors[colorIdx][2] === channels[channelIdx].rgbColor[2]) {
+                    console.log(channelIdx, colorIdx);
+                    if (channelIdx == 0) {
+                        if (channelsVisible[colorIdx] == colorType) {
+                            toggleIsOn(colorIdx);
                         }
                     } else {
-                        if (channelsVisible[colorId] != colorType) {
-                            toggleIsOn(colorId);
+                        if (channelsVisible[colorIdx] != colorType) {
+                            toggleIsOn(colorIdx);
                         }
                     }
                     break;
