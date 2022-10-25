@@ -81,7 +81,7 @@ const FileTab = (props) => {
 
     const swapDimension = (isEntire) => {
         const { content, selectedVesselHole } = props;
-        console.log("Before swap dimension: ", content);
+        // console.log("Before swap dimension: ", content);
 
         let newContent = [];
         for (let i = 0; i < content.length; i++) {
@@ -95,7 +95,7 @@ const FileTab = (props) => {
             }
         }
 
-        console.log("After swap dimension: ", newContent);
+        // console.log("After swap dimension: ", newContent);
         store.dispatch({type: "content_addContent", content: newContent});
     }
 
