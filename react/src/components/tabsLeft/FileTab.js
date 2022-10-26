@@ -32,12 +32,14 @@ import {
 } from '@mdi/js';
 
 import { connect } from 'react-redux';
+import store from "../../reducers";
 
 const mapStateToProps = state => ({
     isFilesAvailable: state.files.isFilesAvailable,
     filesChosen: state.vessel.selectedVesselHole,
     isFilesChosenAvailable: state.files.isFilesChosenAvailable,
-
+    content: state.files.content,
+    selectedVesselHole: state.vessel.selectedVesselHole,
 })
 
 const FileTab = (props) => {
@@ -76,6 +78,41 @@ const FileTab = (props) => {
     const onSelect1 = () => {
         console.log("click onSelect1");
     };
+
+    const swapDimension = (isEntire) => {
+        const { content, selectedVesselHole } = props;
+        // console.log("Before swap dimension: ", content);
+
+        let newContent = [];
+        for (let i = 0; i < content.length; i++) {
+            if (isEntire || content[i].row == selectedVesselHole.row && content[i].col == selectedVesselHole.col) {
+                let tempContent = {...content[i]};
+                const tempVal = tempContent.z;
+                tempContent.z = tempContent.time;
+                tempContent.time = tempVal;
+                tempContent.dimensionChanged = !tempContent.dimensionChanged;
+                newContent.push(tempContent);
+            }
+        }
+
+        // console.log("After swap dimension: ", newContent);
+        store.dispatch({type: "content_addContent", content: newContent});
+    }
+
+    const onChangeDimensionZ2T = () => {
+        // console.log("ChangeDimension: click Z->T");
+        swapDimension(false);
+    }
+
+    const onChangeDimensionT2Z = () => {
+        // console.log("ChangeDimension: click T->Z");
+        swapDimension(false);
+    }
+
+    const onChangeDimensionSet = () => {
+        // console.log("ChangeDimension: click set");
+        swapDimension(true);
+    }
 
     const [cloudDialog, setcloudDialog] = useState(false);
     const [folderDialog, setfolderDialog] = useState(false);
@@ -177,9 +214,9 @@ const FileTab = (props) => {
             </SmallCard>
             <Divider />
             <SmallCard title="Change Dimension">
-                <CustomButton icon={mdiSortClockDescendingOutline} label="Z->T" click={onSelect1} />
-                <CustomButton icon={mdiSortClockAscending} label="T->Z" click={onSelect1} />
-                <CustomButton icon={mdiCog} label="Set" click={onSelect1} />
+                <CustomButton icon={mdiSortClockDescendingOutline} label="Z->T" click={onChangeDimensionZ2T} />
+                <CustomButton icon={mdiSortClockAscending} label="T->Z" click={onChangeDimensionT2Z} />
+                <CustomButton icon={mdiCog} label="Set" click={onChangeDimensionSet} />
             </SmallCard>
         </TabItem>
     );

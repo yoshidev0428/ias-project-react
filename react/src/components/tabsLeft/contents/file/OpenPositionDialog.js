@@ -34,7 +34,7 @@ import axios from 'axios';
 import {
     mdiCloudDownloadOutline
 } from '@mdi/js';
-
+import { FileIcon, defaultStyles } from "react-file-icon";
 var acceptedFiles = [];
 
 const columns = [
@@ -102,7 +102,6 @@ const TabContainer = (props) => {
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
-
 const ImageDropzone = (props) => {
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
@@ -110,16 +109,52 @@ const ImageDropzone = (props) => {
     useEffect(() => {
         const bringFilesByName = async () => {
             const {fileNames} = props;
-            props.setLoading(true);
-            let incommingFiles = []
-            incommingFiles = await getImagesByNames(fileNames);
-            await updateFilesNew(incommingFiles.map(file => {return {file: file}}), fileNames)
+            // props.setLoading(true);
+            // let incommingFiles = []
+            // incommingFiles = await getImagesByNames(fileNames);
+
+            let filesPath = fileNames
+            let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
+
+            await updateNew(filesName)
+            // await updateFilesNew(incommingFiles.map(file => {return {file: file}}), filesName)
         }
         bringFilesByName()
     }, [props.fileNames])
     
     const updateFilesByNames = (fileNames) => {
         store.dispatch({type: "files_addFiles", content: {filesName: fileNames}});
+    }
+    const updateNew = async (fileNames) => {
+        let files = [];
+        let newAcceptedFiles = [];
+        for(let i = 0; i < fileNames.length; i ++) {
+            let fileName = fileNames[i]
+            function hex2a(hexx) {
+                var hex = hexx.toString();//force conversion
+                var str = '';
+                for (var i = 0; i < hex.length; i += 2)
+                    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+                return str;
+            }
+            let f = new File([""], fileName, {type: "image/tiff"})
+            f.path = fileName
+            newAcceptedFiles.push(f);
+            files.push(f)
+
+            if(i == fileNames.length - 1) {
+                console.log(files)
+                console.log(newAcceptedFiles)        
+
+                
+                if (newAcceptedFiles.length > 0) {
+                    acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
+                    store.dispatch({type: "files_addFiles", content: {filesName: acceptedFiles.map(file => file.name), filesPath: fileNames}});
+                }
+                props.setLoading(false);
+                setFiles(files)
+            }
+        }
     }
     const updateFilesNew = async (incommingFiles, filesPath) => {
         props.setLoading(true);
@@ -196,7 +231,10 @@ const ImageDropzone = (props) => {
             label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
-                <FileItem key={index} {...file} k={file.name} valid={true} info preview />
+                <div style={{width: "20%", display: "flex", flexDirection:"column", padding: "20px"}}>
+                    <FileIcon extension={file.name.split('.').pop()} {...defaultStyles.tif} />
+                    <label style={{overflow: "hidden"}}>{file.name}</label>
+                </div>
             ))}
         </Dropzone>
     );
@@ -412,6 +450,7 @@ const DropzoneNamesFiles = (props) => {
         let result = {};
         let resultContent = {};
         let moveIndex = 0;
+        result[`dimensionChanged`] = false;
         for (let i = 0; i < namePatternOrders.length; i++) {
             let key = namePatternOrders[i];
             if (key && objectPerFile !== null) {

@@ -30,17 +30,17 @@ const ZPosition = (props) => {
     const {isImageLoading} = props;
     var contents = [];
     const [value, setValue] = useState(1);
-    const [minSlider, setMinSlider] = useState(1);
-    const [maxSlider, setMaxSlider] = useState(2);
+    const [minSlider, setMinSlider] = useState(0);
+    const [maxSlider, setMaxSlider] = useState(1);
 
     const [isLoading, setIsLoading] = useState(false);
     const [range, setRange] = useState([
-        {value: 1, step: 1},
-        {value: 2, step: 1}
+        {value: 0, step: 1},
+        {value: 1, step: 1}
     ]);
 
     const updateZ = (newValue) => {
-        store.dispatch({ type: "vessel_selectedVesselZ", content: newValue - 1 });
+        store.dispatch({ type: "vessel_selectedVesselZ", content: newValue });
     }
 
     const SliderChange = (newValue) => {
@@ -85,15 +85,16 @@ const ZPosition = (props) => {
                 }
                 if (zMax > 0) {
                     let rangeValues = [];
-                    for (let i = 0; i < zMax - zMin + 1; i++) {
-                        rangeValues.push({value: i + 1, step: 1});
+                    for (let i = zMin; i <= zMax; i++) {
+                        rangeValues.push({value: i, step: 1});
                     }
                     console.log(" Zposition.js useEffect rangeValues : ", rangeValues);
-                    setValue(zMin + 1);
+                    setValue(zMin);
                     setRange(rangeValues);
-                    setMinSlider(zMin + 1);
-                    setMaxSlider(zMax + 1);
+                    setMinSlider(zMin);
+                    setMaxSlider(zMax);
                     setIsLoading(true);
+                    updateZ(zMin);
                 }
             }
             // setZPosConfig(props.viewConfigsObj.z);
@@ -168,7 +169,7 @@ const ZPosition = (props) => {
                                 variant="standard"
                                 style={{BorderNone: true, border: 'none'}}
                                 InputProps={{
-                                    step: minSlider, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true,
+                                    step: 1, min: minSlider, max: maxSlider, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true,
                                     disabled: true,
                                 }}
                             />

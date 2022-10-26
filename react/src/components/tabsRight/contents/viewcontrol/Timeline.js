@@ -145,6 +145,7 @@ const Timeline = (props) => {
                     setMinSlider(timeMin);
                     setMaxSlider(timeMax);
                     setIsLoading(true);
+                    updateTime(timeMin);
                 }
             }
             // setZPosConfig(props.viewConfigsObj.z);
