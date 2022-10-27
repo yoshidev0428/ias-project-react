@@ -67,8 +67,6 @@ export const getImagesByNames = async function(imgNames) {
     }
 }
 
-
-
 export const getMergedImage = async function(fileNames, newImageName, callback) {
     const state = store.getState();
     const params = {
@@ -108,3 +106,4 @@ export const getMergedImage = async function(fileNames, newImageName, callback) 
         })
         .catch(err => callback(true))
 }
+
