@@ -3,7 +3,7 @@ const DEFAULT_PARAMS = {
     token: sessionStorage.getItem("authToken"),
     tokenType: sessionStorage.getItem("authTokenType"),
     authPage: sessionStorage.getItem("authToken") ? null : process.env.REACT_APP_LOGIN_PAGE,
-    user: null,
+    user: sessionStorage.getItem("authUser") !== null ? JSON.parse(sessionStorage.getItem("authUser")) : null,
     otpSecrets: 'null',
     message: null,
     status: null,
@@ -26,10 +26,10 @@ const auth = (state = initState, action) => {
             break;
         case "auth_loggedIn":
             setLoggedIn(state, action.payload);
-            setUser(action.payload.user);
+            setUser(state, action.payload.user);
             sessionStorage.setItem("authToken", action.payload.token);
             sessionStorage.setItem("authTokenType", action.payload.tokenType);
-            console.log("loggedin");
+            // console.log("loggedin", action.payload.user, typeof action.payload.user);
             break;
         case "auth_setAuthPage":
             setAuthPage(state, action.page);
@@ -40,6 +40,7 @@ const auth = (state = initState, action) => {
         case "auth_logOut":
             sessionStorage.removeItem("authToken");
             sessionStorage.removeItem("authTokenType");
+            sessionStorage.removeItem("authUser");
             setLoggedOut(state);
             break;
         case "auth_setAuthSecrets":
@@ -48,13 +49,22 @@ const auth = (state = initState, action) => {
         default:
             break;
     }
-    return { ...state }
+    return {...state}
 };
 
 
 ///mutiation
 const setUser = (state, user) => {
-    state.user = user;
+    let jsonUser = {
+        email: user.email,
+        fullName: user.fullName,
+        isActive: user.isActive,
+        isAdmin: user.isAdmin,
+        createdAt: user.createdAt,
+        _id: user._id,
+    }
+    state.user = jsonUser;
+    sessionStorage.setItem("authUser", JSON.stringify(jsonUser));
 };
 const setLoggedIn = (state, payload) => {
     state.isLoggedIn = true;

@@ -46,7 +46,7 @@ import logo75 from "../assets/images/logo75.png";
 
 import UserPage from "./user"
 import AccountPage from "./account"
-
+import SupportChatSlack from "../components/tabsRight/SupportChatSlack";
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -252,6 +252,7 @@ const MainFrame = () => {
                             {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
                             {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
                         </div>
+                        <SupportChatSlack />
                     </Col>
                 </Row>
             </Container>

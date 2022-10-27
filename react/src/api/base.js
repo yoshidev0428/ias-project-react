@@ -1,5 +1,5 @@
-import axios from 'axios';
 import store from '../reducers';
+import axios from "axios";
 var state = store.getState();
 
 export const api = axios.create({
