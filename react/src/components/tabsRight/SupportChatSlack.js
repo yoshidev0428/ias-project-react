@@ -30,8 +30,8 @@ const SupportChatSlack = (props) => {
 
     return (
         <>
-            <div className="common-border">
-                <div className="d-flex justify-space-between align-center" >
+            <div className="position-fixed chat-area bg-white rounded p-2 border">
+                <div className="align-center" >
                     <h6>Support Chat - Need Help?</h6>
                 </div>
                 <textarea
@@ -42,7 +42,6 @@ const SupportChatSlack = (props) => {
                     value={message}
                     onChange={(e) => {setMessage(e.target.value)}}
                 />
-
                 <button className="btn-primary focus:shadow text-white font-bold rounded w-100" onClick={(e) => submitForm(e)}>
                     Submit
                 </button>

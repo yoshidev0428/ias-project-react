@@ -99,7 +99,7 @@ const Avivator = function (props) {
                     </DropzoneWrapper> */}
                     {/* <Controller /> */}
                     {/* <SnackBars /> */}
-                    {!useLinkedView && <Footer />}
+                    {/* {!useLinkedView && <Footer />} */}
                 </div>
             </FullScreen>
         </>

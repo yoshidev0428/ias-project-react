@@ -28,6 +28,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
+import FooterContent from "../components/footer/FooterContent";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";
 import AdjustTab from "../components/tabsLeft/AdjustTab";
@@ -46,7 +47,7 @@ import logo75 from "../assets/images/logo75.png";
 
 import UserPage from "./user"
 import AccountPage from "./account"
-import SupportChatSlack from "../components/tabsRight/SupportChatSlack";
+
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -74,6 +75,7 @@ const darkTheme = createTheme({
     },
 });
 
+const fixedBarHeight = 90;
 const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)
@@ -86,7 +88,7 @@ const MainFrame = () => {
         setHeight(height);
         // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
         localStorage.setItem("imageViewSizeWidth", imageViewAreaRef.current.offsetWidth);
-        localStorage.setItem("imageViewSizeHeight", height - 65);
+        localStorage.setItem("imageViewSizeHeight", height - fixedBarHeight);
     };
 
     const [rightTabVal, setRightTabVal] = useState(0);
@@ -205,9 +207,9 @@ const MainFrame = () => {
     return (
         <>
             <HeaderContent />
-            <Container fluid={true} className="p-0" style={{height: (height - 65).toString() + "px"}}>
+            <Container fluid={true} className="p-0" style={{height: (height - fixedBarHeight).toString() + "px"}}>
                 <Row noGutters>
-                    <Col xs={2} className='p-2 border-right' style={{height: (height - 65).toString() + "px", overflowY: "auto"}}> {/* Left Panel */}
+                    <Col xs={2} className='p-2 border-right' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}> {/* Left Panel */}
                         <div className='card border'>
                             <Tabs
                                 // variant="scrollable"
@@ -231,12 +233,12 @@ const MainFrame = () => {
                             {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                         </div>
                     </Col>
-                    <Col xs={8} ref={imageViewAreaRef} style={{backgroundColor: "#ddd", height: (height - 65).toString() + "px", overflowY: "auto"}}> {/* Central Panel, Viv Image Viewer */}
+                    <Col xs={8} ref={imageViewAreaRef} style={{backgroundColor: "#ddd", height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}> {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
                         {vivPage && <RoutedAvivator />}
                     </Col>
-                    <Col xs={2} className='border-left p-2' style={{height: (height - 65).toString() + "px", overflowY: "auto"}}>
+                    <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>
                             <Tabs
                                 allowScrollButtonsMobile
@@ -251,11 +253,11 @@ const MainFrame = () => {
                             {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
                             {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
                             {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
-                        </div>
-                        <SupportChatSlack />
+                        </div>                        
                     </Col>
                 </Row>
             </Container>
+            <FooterContent />
         </>
     );
 };
