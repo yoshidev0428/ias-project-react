@@ -75,7 +75,7 @@ const darkTheme = createTheme({
     },
 });
 
-const fixedBarHeight = 90;
+const fixedBarHeight = 91;
 const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)

@@ -16,8 +16,8 @@ import {ThemeProvider, createTheme} from "@mui/material/styles";
 import {blue} from "@mui/material/colors";
 import {
     mdiChatQuestionOutline
-} from '@mdi/js';
-import Icon from '@mdi/react';
+} from "@mdi/js";
+import Icon from "@mdi/react";
 import {Row, Col, Container} from "react-bootstrap";
 
 import {darkTheme} from "../constant/constants";
@@ -34,14 +34,14 @@ const FooterContent = (props) => {
 
     return (
         <>
-            <Box sx={{flexGrow: 1, height: "25px"}}>
+            <Box sx={{flexGrow: 1, height: "26px"}}>
                 <AppBar className="bg-lightgray color-darkgray" position="static">
                     <Row noGutters>
                         <Col xs={11}>
 
                         </Col>
-                        <Col item xs={1} className="d-flex">
-                            <button className='btn btn-sm pt-0 pb-0' style={{width: "50%", marginRight: "0px"}} onClick={() => setShowChatFlag(!showChatFlag)}>
+                        <Col item xs={1}>
+                            <button className="btn btn-sm pt-0 pb-0" onClick={() => setShowChatFlag(!showChatFlag)}>
                                 <Icon size={0.5}
                                     horizontal
                                     vertical
@@ -55,7 +55,7 @@ const FooterContent = (props) => {
                 </AppBar>
             </Box>
             {
-                showChatFlag && <SupportChatSlack />
+                showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
             }
         </>
     );
