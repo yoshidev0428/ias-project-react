@@ -17,6 +17,12 @@ const mapStateToProps = (state) => ({
 const SupportChatSlack = (props) => {
 
     const [message, setMessage] = useState("");
+
+    function handleCloseChatBox() {
+        setMessage("");
+        props.updateShowFlag();
+    }
+
     async function submitForm(e) {
         e.preventDefault();
         let res = await submit_message(message);
@@ -30,19 +36,20 @@ const SupportChatSlack = (props) => {
 
     return (
         <>
-            <div className="common-border">
-                <div className="d-flex justify-space-between align-center" >
+            <div className="position-fixed chat-area bg-white rounded p-2 border">
+                <div className="d-flex" >
                     <h6>Support Chat - Need Help?</h6>
+                    <button className="btn-primary rounded button-small m-auto" color="primary" size="small" onClick={handleCloseChatBox}> &times;
+                    </button>
                 </div>
-                <textarea
-                    className="block text-gray-700 border rounded p-1 leading-tight focus:outline-none focus:bg-white w-100"
+                <textarea 
+                    className="block text-gray-700 border rounded p-1 mt-1 leading-tight focus:outline-none focus:bg-white w-100"
                     id="message"
                     type="message"
                     placeholder="Write your message here"
                     value={message}
                     onChange={(e) => {setMessage(e.target.value)}}
                 />
-
                 <button className="btn-primary focus:shadow text-white font-bold rounded w-100" onClick={(e) => submitForm(e)}>
                     Submit
                 </button>

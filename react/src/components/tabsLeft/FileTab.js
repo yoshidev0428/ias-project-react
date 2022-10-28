@@ -157,10 +157,10 @@ const FileTab = (props) => {
             let data = response.data
             if(data.error) {
                 setTreeData([])
-                console.log("Error occured while invoking getImageTree api")
-                alert("Error occured while getting the tree")
+                console.log("Error occured while invoking getImageTree api");
+                // alert("Error occured while getting the tree");
             } else {
-                setTreeData(data.data)
+                setTreeData(data.data);
             }
         }
         getImageTree()

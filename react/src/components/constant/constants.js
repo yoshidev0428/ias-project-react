@@ -1,3 +1,4 @@
+import {ThemeProvider, createTheme} from '@mui/material/styles';
 // components/vessels/slides
 export const VESSEL_SLIDE_H_RATIO = 0.6;
 export const VESSEL_SLIDE_V_RATIO = 0.5;
@@ -31,8 +32,17 @@ export const TILING_CANVAS_SIZE = 450;
 export const TILING_SCALE_OPTIONS = [0.5, 2, 5, 10, 20, 50, 100];
 
 export const COLORS = {
-  BLACK: '#212529',
-  LIGHT_CYAN: '#0f9688',
+    BLACK: '#212529',
+    LIGHT_CYAN: '#0f9688',
 }
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [220, 220, 220];
+
+export const darkTheme = createTheme({
+    palette: {
+        mode: 'dark',
+        primary: {
+            main: '#1976d2',
+        },
+    },
+});
