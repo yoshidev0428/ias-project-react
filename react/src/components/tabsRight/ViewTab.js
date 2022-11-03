@@ -9,7 +9,6 @@ import Channel from "./contents/viewcontrol/Channel";
 import ImageAdjust from "./contents/viewcontrol/ImageAdjust";
 import ZPosition from "./contents/viewcontrol/ZPosition";
 import Timeline from "./contents/viewcontrol/Timeline";
-import SupportChatSlack from "./SupportChatSlack";
 // import ImageSeries from "./contents/viewcontrol/ImageSeries";
 // import DropzoneButton from "../viv/components/Controller/components/DropzoneButton";
 // import LensSelect from "../viv/components/Controller/components/LensSelect";
