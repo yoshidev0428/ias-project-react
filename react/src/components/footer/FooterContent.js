@@ -21,7 +21,7 @@ import Icon from "@mdi/react";
 import {Row, Col, Container} from "react-bootstrap";
 
 import {darkTheme} from "../constant/constants";
-import SupportChatSlack from "../tabsRight/SupportChatSlack";
+import SupportChatSlack from "./SupportChatSlack";
 
 const mapStateToProps = (state) => ({
 
@@ -37,7 +37,7 @@ const FooterContent = (props) => {
             <Box sx={{flexGrow: 1, height: "26px"}}>
                 <AppBar className="bg-lightgray color-darkgray" position="static">
                     <Row noGutters>
-                        <Col xs={11}>
+                        <Col xs={10}>
 
                         </Col>
                         <Col item xs={1}>
@@ -50,6 +50,8 @@ const FooterContent = (props) => {
                                     path={mdiChatQuestionOutline}>
                                 </Icon>
                             </button>
+                        </Col>
+                        <Col xs={1}>
                         </Col>
                     </Row>
                 </AppBar>

@@ -1,4 +1,3 @@
-import tiff from "tiff.js";
 import atob from "atob";
 import { FILE_TYPES } from "./file-types";
 
@@ -30,12 +29,6 @@ const base64ToArrayBuffer = base64 => {
         bytes[i] = binary_string.charCodeAt(i);
     }
     return bytes.buffer;
-};
-
-const tiffImage = base64 => {
-    const buffer = base64ToArrayBuffer(base64);
-    const tiff_data = new tiff({ buffer });
-    return tiff_data.toDataURL();
 };
 
 const readEntriesAsync = reader => {
@@ -84,7 +77,6 @@ export {
     getFileName,
     getFileExtension,
     checkFileType,
-    tiffImage,
     enumerateDirectory,
     isOverlapped,
     loadImage,
