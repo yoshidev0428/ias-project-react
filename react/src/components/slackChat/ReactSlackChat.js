@@ -15,15 +15,15 @@ import {
     hasAttachment,
     isSystemMessage,
     isAdmin,
-} from './lib/chat-functions';
-import {hooks, themes, utils, cacheChannelMap} from './lib';
+} from './slackChat_func/chat-functions';
+import {hooks, themes, utils, cacheChannelMap} from './slackChat_func';
 // Slack API Funcs
 import {
     getChannels,
     getUsers,
     getMessages,
     postMessage,
-} from './lib/slack-utils';
+} from './slackChat_func/slack-utils';
 import './ReactSlackChat.scss';
 
 // Utils
