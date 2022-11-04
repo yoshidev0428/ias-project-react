@@ -79,6 +79,7 @@ const OpenExperimentDialog = (props) => {
     const handleListItemClick = (expName) => {
         props.handleExpNameChange(expName)
     };
+    
     const handleAddNewExperimentClick = () => {
         props.setCloudDialog()
     }

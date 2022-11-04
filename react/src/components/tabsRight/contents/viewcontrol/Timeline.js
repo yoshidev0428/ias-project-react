@@ -38,11 +38,19 @@ const Timeline = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [range, setRange] = useState([
         {value: 1, step: 1},
-        {value: 2, step: 1}
+        {value: 2, step: 1},
+        {value: 3, step: 1},
+        {value: 4, step: 1},
+        {value: 5, step: 1},
+        {value: 6, step: 1},
+        {value: 7, step: 1},
+        {value: 8, step: 1},
+        {value: 9, step: 1},
+        {value: 10, step: 1}
     ]);
     const [value, setValue] = useState(1);
     const [minSlider, setMinSlider] = useState(1);
-    const [maxSlider, setMaxSlider] = useState(2);
+    const [maxSlider, setMaxSlider] = useState(10);
 
     const updateTime = (newValue) => {
         store.dispatch({type: "vessel_selectedVesselTime", content: newValue});
@@ -154,7 +162,8 @@ const Timeline = (props) => {
 
     return (
         <>
-            <div className={`common-border ${isLoading || !isImageLoading ? "" : "cover-gray"}`}>
+            <div className={`common-border ${isLoading ? "" : "cover-gray"}`}>
+                {/* || !isImageLoading  */}
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Timeline</h6>
                     <div>

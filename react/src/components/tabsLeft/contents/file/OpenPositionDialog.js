@@ -34,7 +34,7 @@ import axios from 'axios';
 import {
     mdiCloudDownloadOutline
 } from '@mdi/js';
-import { FileIcon, defaultStyles } from "react-file-icon";
+import {FileIcon, defaultStyles} from "react-file-icon";
 var acceptedFiles = [];
 
 const columns = [
@@ -105,30 +105,29 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
-    
+
     useEffect(() => {
         const bringFilesByName = async () => {
             const {fileNames} = props;
             // props.setLoading(true);
             // let incommingFiles = []
             // incommingFiles = await getImagesByNames(fileNames);
-
-            let filesPath = fileNames
+            // let filesPath = fileNames
             let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
-
             await updateNew(filesName)
             // await updateFilesNew(incommingFiles.map(file => {return {file: file}}), filesName)
         }
         bringFilesByName()
     }, [props.fileNames])
-    
+
     const updateFilesByNames = (fileNames) => {
         store.dispatch({type: "files_addFiles", content: {filesName: fileNames}});
     }
+
     const updateNew = async (fileNames) => {
         let files = [];
         let newAcceptedFiles = [];
-        for(let i = 0; i < fileNames.length; i ++) {
+        for (let i = 0; i < fileNames.length; i++) {
             let fileName = fileNames[i]
             function hex2a(hexx) {
                 var hex = hexx.toString();//force conversion
@@ -142,11 +141,9 @@ const ImageDropzone = (props) => {
             newAcceptedFiles.push(f);
             files.push(f)
 
-            if(i == fileNames.length - 1) {
-                console.log(files)
-                console.log(newAcceptedFiles)        
-
-                
+            if (i == fileNames.length - 1) {
+                console.log(files);
+                console.log(newAcceptedFiles);
                 if (newAcceptedFiles.length > 0) {
                     acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
                     store.dispatch({type: "files_addFiles", content: {filesName: acceptedFiles.map(file => file.name), filesPath: fileNames}});
@@ -156,6 +153,7 @@ const ImageDropzone = (props) => {
             }
         }
     }
+
     const updateFilesNew = async (incommingFiles, filesPath) => {
         props.setLoading(true);
         let files = [];
@@ -181,6 +179,7 @@ const ImageDropzone = (props) => {
         }
         props.setLoading(false);
     };
+
     const updateFiles = async (incommingFiles) => {
         props.setLoading(true);
         let files = [];
@@ -217,6 +216,7 @@ const ImageDropzone = (props) => {
         setFiles([]);
         acceptedFiles = [];
     };
+    
     const clickDrop = (e) => {
         e.preventDefault()
         props.handleExperimentDialog()
@@ -231,7 +231,7 @@ const ImageDropzone = (props) => {
             label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
-                <div style={{width: "20%", display: "flex", flexDirection:"column", padding: "20px"}}>
+                <div style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}}>
                     <FileIcon extension={file.name.split('.').pop()} {...defaultStyles.tif} />
                     <label style={{overflow: "hidden"}}>{file.name}</label>
                 </div>
@@ -701,8 +701,9 @@ const DropzoneGroup = () => {
 };
 
 const OpenPositionDialog = (props) => {
+
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedTab, setSelectedTab] = useState(0);
+    const [selectedTab, setSelectedTab] = useState(props.selectTab ? props.selectTab : 0);
     const [cloudDialog, setCloudDialog] = useState(false);
     const [experimentDialog, setExperimentDialog] = useState(false);
 
@@ -731,6 +732,7 @@ const OpenPositionDialog = (props) => {
         getExperimentData(name)
         setExperimentDialog(false)
     }
+
     const handleCloseOpenDlg = () => {
         props.handleClose();
         acceptedFiles = [];
@@ -740,16 +742,17 @@ const OpenPositionDialog = (props) => {
             namePatternsPrimary[i].end = 0;
         }
     };
+
     const getExperimentData = async (name) => {
         try {
             let response = await api_experiment.getExperimentData(name)
             let data = response.data
-            if(data.success) {
+            if (data.success) {
                 setFileNames(data.data)
             } else {
-                console.log(response.error)    
+                console.log(response.error)
             }
-        } catch(err) {
+        } catch (err) {
             console.log("Error occured while getting experiment data")
             throw err;
         }
@@ -766,7 +769,11 @@ const OpenPositionDialog = (props) => {
         }
     };
 
-    useEffect(() => { }, []);
+    useEffect(() => { 
+        if ( props.selectTab === 3 ) {
+
+        }
+    }, [props.selectTab]);
 
     return (
         <>
@@ -825,8 +832,8 @@ const OpenPositionDialog = (props) => {
                         </Tabs>
                         {selectedTab === 0 && (
                             <TabContainer>
-                                <ImageDropzone 
-                                    setLoading={(loading) => setIsLoading(loading)} 
+                                <ImageDropzone
+                                    setLoading={(loading) => setIsLoading(loading)}
                                     fileNames={fileNames}
                                     handleExperimentDialog={handleExperimentDialog}
                                 />
@@ -888,8 +895,8 @@ const OpenPositionDialog = (props) => {
                     </Button>
                 </DialogActions>
                 {
-                    <OpenExperimentDialog 
-                        onOpen={experimentDialog} 
+                    <OpenExperimentDialog
+                        onOpen={experimentDialog}
                         setCloudDialog={props.setCloudDialog}
                         setDialogStatus={setDialogStatus}
                         handleExpNameChange={handleExpNameChange}

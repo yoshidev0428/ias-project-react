@@ -30,13 +30,21 @@ const ZPosition = (props) => {
     const {isImageLoading} = props;
     var contents = [];
     const [value, setValue] = useState(1);
-    const [minSlider, setMinSlider] = useState(0);
-    const [maxSlider, setMaxSlider] = useState(1);
+    const [minSlider, setMinSlider] = useState(1);
+    const [maxSlider, setMaxSlider] = useState(10);
 
     const [isLoading, setIsLoading] = useState(false);
     const [range, setRange] = useState([
-        {value: 0, step: 1},
-        {value: 1, step: 1}
+        {value: 1, step: 1},
+        {value: 2, step: 1},
+        {value: 3, step: 1},
+        {value: 4, step: 1},
+        {value: 5, step: 1},
+        {value: 6, step: 1},
+        {value: 7, step: 1},
+        {value: 8, step: 1},
+        {value: 9, step: 1},
+        {value: 10, step: 1}
     ]);
 
     const updateZ = (newValue) => {
@@ -139,7 +147,8 @@ const ZPosition = (props) => {
 
     return (
         <>
-            <div className={`common-border ${isLoading || !isImageLoading ? "" : "cover-gray"}`}>
+            <div className={`common-border ${isLoading ? "" : "cover-gray"}`}> 
+            {/* || !isImageLoading */}
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Z Position</h6>
                     <div>
