@@ -116,6 +116,7 @@ const FileTab = (props) => {
 
     const [cloudDialog, setcloudDialog] = useState(false);
     const [folderDialog, setfolderDialog] = useState(false);
+    const [selectTab, setSelectTab] = useState(0);
     const [positionDialog, setpositionDialog] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState([]);
     const [treeData, setTreeData] = useState([]);
@@ -149,6 +150,8 @@ const FileTab = (props) => {
     };
     const onFolderChangeCapture = (e) => {
         console.log("FileTab.js onFolderChangeCapture : folder information : ", e.target.files);
+        setSelectTab(3);
+        showPositionDialog(true)
     }
 
     useEffect(() => {
@@ -174,17 +177,13 @@ const FileTab = (props) => {
             <SmallCard title="Open">
                 <CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={() => setCloudDialog(true)} />
                 {
-                    cloudDialog && 
-                    <OpenCloudDialog 
-                        handleClose={handleCloudClose} 
-                        // treeData={treeData}
+                    cloudDialog && <OpenCloudDialog handleClose={handleCloudClose} // treeData={treeData}
                     />
                 }
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
-                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} 
-                    setCloudDialog={setCloudDialog} />}
+                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} selectTab={selectTab}/>}
             </SmallCard>
             <Divider />
             <SmallCard title="Save / Load">
