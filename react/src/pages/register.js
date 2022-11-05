@@ -1,21 +1,52 @@
-import React, { useState } from "react";
-import { Form, Button, Alert, Container } from "react-bootstrap";
+import React, {useState} from "react";
+import {Form, Button, Alert, Container, Col, Row} from "react-bootstrap";
 import * as authApi from "../api/auth";
 import store from "../reducers";
 
-
 const Register = () => {
 
+    const columns = [{
+        Header: 'Name',
+        accessor: 'name' // String-based value accessors!
+    }, {
+        Header: 'Age',
+        accessor: 'age',
+        Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+    }, {
+        id: 'friendName', // Required because our accessor is not a string
+        Header: 'Friend Name',
+        accessor: d => d.friend.name // Custom value accessors!
+    }, {
+        Header: props => <span>Friend Age</span>, // Custom header components!
+        accessor: 'friend.age'
+    }];
+
+    const data = [{
+        name: 'Tanner Linsley',
+        age: 26,
+        friend: {
+            name: 'Jason Maurer',
+            age: 23,
+        }
+    }, {
+        name: 'Tanner Linsley',
+        age: 26,
+        friend: {
+            name: 'Jason Maurer',
+            age: 23,
+        }
+    }]
     // User information hook
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [userType, setUserType] = ("0");
     const [error, setError] = useState("");
 
     const showLogin = async (e) => {
-        store.dispatch({ type: "auth_setAuthPage", page: "loginPage" });
+        store.dispatch({type: "auth_setAuthPage", page: "loginPage"});
     };
     // Function to call submit
     const callSubmit = async (e) => {
@@ -38,7 +69,7 @@ const Register = () => {
             return;
         }
         /* exclude password_repeat from registrationData */
-        const { password_repeat, ...registrationData } = registerForm;
+        const {password_repeat, ...registrationData} = registerForm;
 
         authApi
             .register_user(registrationData)
@@ -60,11 +91,11 @@ const Register = () => {
                         }
                     });
                     /* then we show the QR code so that the user may save it */
-                    store.dispatch({ type: "auth_setAuthPage", page: process.env.REACT_APP_OTP_QR_PAGE });
+                    store.dispatch({type: "auth_setAuthPage", page: process.env.REACT_APP_OTP_QR_PAGE});
                 }
             })
             .catch(e => {
-                store.dispatch({ type: "logOut" });
+                store.dispatch({type: "logOut"});
                 console.log(e);
                 // if (error.status === 401) {
                 //   context.dispatch("logOut");
@@ -83,34 +114,45 @@ const Register = () => {
                     <h2 className="title">{"IAS-Register"}</h2>
                 </Container>
                 <Form onSubmit={callSubmit}>
-                    <Form.Group controlId="formRegisterFirstname">
-                        {/* <Form.Label>First Name</Form.Label> */}
-                        <Form.Control type="text" placeholder="Firstname" value={firstName} onChange={(f) => setFirstName(f.currentTarget.value)} />
-                    </Form.Group>
-                    <Form.Group controlId="formRegisterLastname">
-                        {/* <Form.Label>Last Name</Form.Label> */}
-                        <Form.Control type="text" placeholder="Lastname" value={lastName} onChange={(l) => setLastName(l.currentTarget.value)} />
-                    </Form.Group>
-                    <Form.Group controlId="formRegisterEmail">
-                        {/* <Form.Label>Email</Form.Label> */}
-                        <Form.Control type="email" placeholder="Useremail" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
-                    </Form.Group>
-                    <Form.Group controlId="formRegisterPassword">
-                        {/* <Form.Label>Password</Form.Label> */}
-                        <Form.Control type="password" placeholder="Password" value={password} onChange={(p) => setPassword(p.currentTarget.value)} />
-                    </Form.Group>
-                    <Form.Group controlId="formRegisterPasswordConfirmation">
-                        {/* <Form.Label>Confirm Password</Form.Label> */}
-                        <Form.Control type="password" placeholder="Confirm password" value={passwordConfirmation} onChange={(p) => setPasswordConfirmation(p.currentTarget.value)} />
-                    </Form.Group>
-                    <Alert variant="danger" style={error !== "" ? { display: "block" } : { display: "none" }}>
-                        {error}
-                    </Alert>
-                    <Button variant="primary" type="submit" block style={{ width: "100%", height: "40px", color: "white", marginBottom: "5px", marginTop: "5px", background: "#007bff", borderRadius: "2px" }}>
-                        Register
-                    </Button>
-                    <Button type="button" className="link-button" onClick={showLogin}>Switch to Login</Button>
-                    {/* <a href="/" className="link-button" onClick={console.log("hhh")}>Switch to Login</a> */}
+                    <Row>
+                        <Col xs={6}>
+                            <Form.Group controlId="formRegisterFirstname">
+                                {/* <Form.Label>First Name</Form.Label> */}
+                                <Form.Control type="text" placeholder="Firstname" value={firstName} onChange={(f) => setFirstName(f.currentTarget.value)} />
+                            </Form.Group>
+                            <Form.Group controlId="formRegisterEmail">
+                                {/* <Form.Label>Email</Form.Label> */}
+                                <Form.Control type="email" placeholder="Useremail" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
+                            </Form.Group>
+                            <Form.Group controlId="formRegisterPassword">
+                                {/* <Form.Label>Password</Form.Label> */}
+                                <Form.Control type="password" placeholder="Password" value={password} onChange={(p) => setPassword(p.currentTarget.value)} />
+                            </Form.Group>
+                        </Col>
+                        <Col xs={6}>
+                            <Form.Group controlId="formRegisterLastname">
+                                {/* <Form.Label>Last Name</Form.Label> */}
+                                <Form.Control type="text" placeholder="Lastname" value={lastName} onChange={(l) => setLastName(l.currentTarget.value)} />
+                            </Form.Group>
+                            <Form.Group controlId="formRegisterEmail">
+                                {/* <Form.Label>Email</Form.Label> */}
+                                <Form.Control type="email" placeholder="Useremail" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
+                            </Form.Group>
+                            <Form.Group controlId="formRegisterPasswordConfirmation">
+                                {/* <Form.Label>Confirm Password</Form.Label> */}
+                                <Form.Control type="password" placeholder="Confirm password" value={passwordConfirmation} onChange={(p) => setPasswordConfirmation(p.currentTarget.value)} />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Container className="title-container">
+                        <Alert variant="danger" style={error !== "" ? {display: "block"} : {display: "none"}}>
+                            {error}
+                        </Alert>
+                        <Button variant="primary" type="submit" block style={{width: "100%", height: "40px", color: "white", marginBottom: "5px", marginTop: "5px", background: "#007bff", borderRadius: "2px"}}>
+                            Register
+                        </Button>
+                        <Button type="button" className="link-button" onClick={showLogin}>Switch to Login</Button>
+                    </Container>
                 </Form>
             </Container>
         </div>
