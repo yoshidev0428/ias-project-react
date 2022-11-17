@@ -117,11 +117,43 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-            let mutiTiffSources = [];
             console.log("utils.js  loadMultiTiff ------- contents : ", contents, files);
+            let minC = -1, maxC = -1;
+            let minZ = -1, maxZ = -1;
             for (let i = 0; i < files.length; i++) {
-                mutiTiffSources[i] = [{c: i, z: 0, t: 0}, files[i]];
+                if (minC === -1 || contents[i].channel < minC) {
+                    minC = contents[i].channel;
+                }
+                if (maxC === -1 || maxC < contents[i].channel) {
+                    maxC = contents[i].channel;
+                }
+                if (minZ === -1 || contents[i].z < minZ) {
+                    minZ = contents[i].z;
+                }
+                if (maxZ === -1 || maxZ < contents[i].z) {
+                    maxZ = contents[i].z;
+                }
             }
+            console.log("utils.js  loadMultiTiff ------- (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
+            let multiTiffSources = [];
+            for (let c = minC; c <= maxC; c++) {
+                for (let z = minZ; z <= maxZ; z++) {
+                    let found = false;
+                    for (let i = 0; i < files.length; i++) {
+                        if (c === contents[i].channel && z === contents[i].z) {
+                            multiTiffSources.push([{t: 0, c: contents[i].channel, z: contents[i].z}, files[i]]);
+                            found = true;
+                            break;
+                        }
+                    }
+                    // if (!found) {
+                    //     multiTiffSources.push([{t: 0, c: c, z: z}, undefined]);
+                    // }
+                }
+            }
+            // for (let i = 0; i < files.length; i++) {
+            //     multiTiffSources[i] = [{c: contents[i].channel, z: contents[i].z, t: 0}, files[i]];
+            // }
             // let channels = []; let times = []; let index_file = 0;
             // for (let i = 0; i < contents.length; i++) {
             //     if (times.indexOf(contents[i].time) === -1) {
@@ -133,15 +165,15 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
             // }
             // for ( let i = 0; i < times.length; i++) {
             //     for ( let j = 0; j < channels.length; j++) {
-            //         mutiTiffSources[index_file] = [{c: j, z: 0, t: i}, files[index_file]];
+            //         multiTiffSources[index_file] = [{c: j, z: 0, t: i}, files[index_file]];
             //         index_file = index_file + 1;
             //     }
             // }
-            // console.log("utils.js  createLoader ------- 003: ", mutiTiffSources);
+            console.log("utils.js  createLoader ------- 003: ", multiTiffSources);
             try {
-                const source = await loadMultiTiff(mutiTiffSources);
-                // const source = await loadMultiTiff(mutiTiffSources, { images: 'all', pool: false });
-                // console.log("utils.js  loadMultiTiff ------- source : ", source);
+                // const source = await loadMultiTiff(multiTiffSources);
+                const source = await loadMultiTiff(multiTiffSources, { images: 'all', pool: false });
+                console.log("utils.js  loadMultiTiff ------- source : ", source);
                 return source;
             } catch (e) {
                 console.log("utils.js  loadMultiTiff ------- error : ", e.message);
