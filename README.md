@@ -77,7 +77,7 @@ The gole is Viv viewer to display every images on frontend by using backend that
 
 *** This project structure is configured as perfectly and as well for image processing and viv viewer.
 
-### About Azure
+### About Azure: no longer used
 Use Azure for server and link subscription to Microsoft Azure Sponsorship.
 https://portal.azure.com/#home
 ID: daisukekubota@outlook.jp
@@ -95,3 +95,7 @@ To be able to operate on the following sites.
   - External IP : 34.72.210.99
   - account name(ssh key account) : iasgcp
   - Reference File : gitaction workflow command - ssh_ci.yml
+  
+  
+### About Web page
+ - login page http://ias.lifeanalytics.org/
