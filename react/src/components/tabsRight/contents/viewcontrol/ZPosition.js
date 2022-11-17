@@ -23,11 +23,12 @@ const mapStateToProps = (state) => ({
     files: state.files.files,
     selectedVesselHole: state.vessel.selectedVesselHole,
     isImageLoading: state.files.isImageLoading,
+    is3dView: state.image.is3dView,
 })
 
 const ZPosition = (props) => {
 
-    const {isImageLoading} = props;
+    const {isImageLoading, is3dView} = props;
     var contents = [];
     const [value, setValue] = useState(1);
     const [minSlider, setMinSlider] = useState(1);
@@ -74,7 +75,7 @@ const ZPosition = (props) => {
     };
 
     const on3DView = () => {
-        console.log("on3DVIew clicked")
+        store.dispatch({type: "set_3d_view_mode", content: !is3dView});
     }
 
     useEffect(() => {
@@ -147,13 +148,12 @@ const ZPosition = (props) => {
 
     return (
         <>
-            <div className={`common-border ${isLoading ? "" : "cover-gray"}`}> 
-            {/* || !isImageLoading */}
+            <div className={`common-border ${isLoading || !isImageLoading ? "" : "cover-gray"}`}>
                 <div className="d-flex justify-space-between align-center" >
                     <h6>Z Position</h6>
                     <div>
                         <div className="spacer"></div>
-                        <Button className="py-0" variant="contained" color="primary" size="small" onClick={on3DView}>3-D View</Button>
+                        <Button className="py-0" variant="contained" style = {is3dView ? {backgroundColor:'#1976D2'} : {backgroundColor:'#C8CCCA'}} size="small" onClick={on3DView}>3-D View</Button>
                     </div>
                 </div>
                 <Container fluid={true} className="px-0 py-0" >
