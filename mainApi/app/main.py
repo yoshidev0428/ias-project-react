@@ -23,8 +23,8 @@ from mainApi.config import STATIC_PATH
 middleware = [
     Middleware(
         CORSMiddleware,
-        allow_origins=['*'],
-        allow_credentials=False,
+        allow_origins=['http://localhost:3000', 'http://ias.lifeanalytics.org'],
+        allow_credentials=True,
         allow_methods=['*'],
         allow_headers=['*']
     )
