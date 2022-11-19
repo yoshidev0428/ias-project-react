@@ -22,7 +22,8 @@ RUN apt-get update && \
 # Install dependencies to solve dependency bug: openslide
 RUN apt-get install -y openslide-tools && \
     apt install -y build-essential && \
-    pip install openslide-python
+    pip install openslide-python \
+    pip install histomicstk
 
 
 WORKDIR /app
