@@ -11,7 +11,7 @@ from skimage.util import crop
 import os
 import os.path as osp
 from mainApi.config import STATIC_PATH
-import histomicstk as htk
+#import histomicstk as htk
 # Deconvolution 3D
 def RechardDeconvolution3d(file_name, effectiveness, isroi, dictRoiPts, gamma=0.2):
     fName, ext= '', ''

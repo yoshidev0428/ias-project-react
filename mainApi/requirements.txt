@@ -24,4 +24,5 @@ scikit-image
 flowdec[tf_gpu]
 tensorflow_addons
 jsons
+tifftools
 # histomicstk
