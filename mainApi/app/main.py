@@ -19,16 +19,16 @@ from fastapi.routing import APIRoute
 from mainApi.config import STATIC_PATH
 # from mainApi.config import connect_db, close_db
 # from mainApi.app.images.utils import file
-import logging
-from fastapi.logger import logger as fastapi_logger
+# import logging
+# from fastapi.logger import logger as fastapi_logger
 
 
-gunicorn_error_logger = logging.getLogger("gunicorn.error")
-gunicorn_logger = logging.getLogger("gunicorn")
-uvicorn_access_logger = logging.getLogger("uvicorn.access")
-uvicorn_access_logger.handlers = gunicorn_error_logger.handlers
-fastapi_logger.handlers = gunicorn_error_logger.handlers
-fastapi_logger.setLevel(logging.DEBUG)
+# gunicorn_error_logger = logging.getLogger("gunicorn.error")
+# gunicorn_logger = logging.getLogger("gunicorn")
+# uvicorn_access_logger = logging.getLogger("uvicorn.access")
+# uvicorn_access_logger.handlers = gunicorn_error_logger.handlers
+# fastapi_logger.handlers = gunicorn_error_logger.handlers
+# fastapi_logger.setLevel(logging.DEBUG)
 
 middleware = [
     Middleware(
