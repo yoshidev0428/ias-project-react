@@ -7,6 +7,7 @@ const DEFAULT_PARAMS = {
     isFilesChosenAvailable: false,
     content: null,
     isImageLoading: false,
+    experimentName: null,
 };
 
 const initState = {
@@ -32,6 +33,8 @@ const files = (state = initState, action) => {
             break;
         case "image_loading_state_change":
             state.isImageLoading = action.content
+        case "register_experiment_name":
+            state.experimentName = action.content
         default:
             break;
     }

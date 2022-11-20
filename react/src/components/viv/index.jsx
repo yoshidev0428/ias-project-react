@@ -13,6 +13,7 @@ const mapStateToProps = (state) => ({
     filesName: state.files.filesName,
     filesPath: state.files.filesPath,
     content: state.files.content,
+    experimentName: state.files.experimentName,
     selectedVesselHole: state.vessel.selectedVesselHole,
     selectedVesselZ: state.vessel.selectedVesselZ,
     selectedVesselTime: state.vessel.selectedVesselTime,
@@ -39,8 +40,8 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(null);
     const [avivatorType, setAvivatorType] = useState("mainFrame");
 
-    const displayFiles = (contents, filesPath, row, col, z, time, is3dView) => {
-        console.log("index.jsx : displayFiles : param : -------- : ", contents, filesPath, row, col, z, time, is3dView);
+    const displayFiles = (expName, contents, filesPath, row, col, z, time, is3dView) => {
+        console.log("index.jsx : displayFiles : param : -------- : ", expName, contents, filesPath, row, col, z, time, is3dView);
         if (contents.length >= 1) {
             let hole_files = [];
             // let layer_files = []; let layer_contents = []; let field_files = []; let field_contents = [];
@@ -91,7 +92,7 @@ const RoutedAvivator = (props) => {
                 let getFullPathFromName = (name) => {
                     let res = filesPath.filter(path => path.indexOf(name) !== -1)
                     if(res.length === 1)
-                        return res[0]
+                        return expName + "/" + res[0]
                     else return ""
                 }
                 getMergedImage([getFullPathFromName(time_files[i].filename)], newImageName, (err, newFile) => {
@@ -178,10 +179,10 @@ const RoutedAvivator = (props) => {
         // console.log(" ==== index.jsx : props.content -------- : ", props);
         if (props.content) {
             if (props.selectedVesselHole !== undefined && props.selectedVesselHole !== null) {
-                displayFiles(props.content, props.filesPath, props.selectedVesselHole.row, props.selectedVesselHole.col, 
+                displayFiles(props.experimentName, props.content, props.filesPath, props.selectedVesselHole.row, props.selectedVesselHole.col, 
                     props.selectedVesselZ, props.selectedVesselTime, props.is3dView);
             } else {
-                displayFiles(props.content, props.filesPath, props.content[0].row, props.content[0].col, 
+                displayFiles(props.experimentName, props.content, props.filesPath, props.content[0].row, props.content[0].col, 
                     props.selectedVesselZ, props.selectedVesselTime, props.is3dView);
             }
         }

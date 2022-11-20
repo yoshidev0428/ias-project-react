@@ -249,13 +249,14 @@ async def merge_image(merge_req_body: str = Body(embed=True),
     reqbody = merge_req_body.split('&')
 
     images = reqbody[0].split(',')
-    newImageName = reqbody[1] + '.TIF'
+    newImageName = reqbody[1]
 
     if os.path.isfile(os.path.join(current_user_path + '/', newImageName)):
         return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
 
     tff_lst = [os.path.join(current_user_path + '/', image) for image in images]
-    if os.path.isfile(tff_lst[0]):
+    print("requested image list:\n", tff_lst)
+    if len(tff_lst) > 0 and os.path.isfile(tff_lst[0]):
         tff = tifftools.read_tiff(tff_lst[0])
         for other in tff_lst[1:]:
             if os.path.isfile(other):
@@ -264,7 +265,7 @@ async def merge_image(merge_req_body: str = Body(embed=True),
         tifftools.write_tiff(tff, os.path.join(current_user_path + '/', newImageName))
         return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
     else:
-        return JSONResponse({error: "Requested images are not exist!"})
+        return JSONResponse({'error': "Requested images are not exist!"})
     # return JSONResponse({"aa": tff_lst[0], "bb": newImageName})
     # return JSONResponse({"aa": merge_req_body.fileNames, 'bb': merge_req_body.newImageName})
 
