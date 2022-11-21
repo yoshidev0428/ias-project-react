@@ -35,9 +35,9 @@ export const useImage = (source) => {
             store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
             const { urlOrFile, contents } = source;
-            // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader);
+            console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader);
             const newLoader = await createLoader(urlOrFile, contents, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
-            // console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
+            console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
             let nextMeta;
             let nextLoader;
             if (Array.isArray(newLoader)) {
@@ -52,7 +52,7 @@ export const useImage = (source) => {
                 nextMeta = newLoader.metadata;
                 nextLoader = newLoader.data;
             }
-            // console.log("-------- nextLoader nextMeta useImage hook.js", nextLoader, nextMeta,);
+            console.log("-------- nextLoader nextMeta useImage hook.js", nextLoader, nextMeta,);
             if (nextLoader) {
                 unstable_batchedUpdates(() => {
                     useChannelsStore.setState({ loader: nextLoader });
@@ -70,18 +70,19 @@ export const useImage = (source) => {
             useViewerStore.setState({ isChannelLoading: [true] });
             useViewerStore.setState({ isViewerLoading: true });
             store.dispatch({type: "image_loading_state_change", content: true});
+            console.log("-------- hook.js useEffect toggleUse3d : ", toggleUse3d);
             if (use3d) toggleUse3d();
             const newSelections = buildDefaultSelection(loader[0]);
-            // console.log("-------- hook.js useEffect metadata.Pixels : ", metadata.Pixels);
+            console.log("-------- hook.js useEffect metadata.Pixels : ", metadata.Pixels);
             const { Channels } = metadata.Pixels;
-            // console.log("-------- hook.js useEffect Channels : ", Channels);
+            console.log("-------- hook.js useEffect Channels : ", Channels);
             const channelOptions = Channels.map((c, i) => c.Name ?? `Channel ${i}`);
             // Default RGB.
             let newContrastLimits = [];
             let newDomains = [];
             let newColors = [];
             const isRgb = guessRgb(metadata);
-            // console.log("-------- hook.js useEffect isRgb : ", isRgb, metadata, channelOptions, source?.contents);
+            console.log("-------- hook.js useEffect isRgb : ", isRgb, metadata, channelOptions, source?.contents);
             if (isRgb) {
                 if (isInterleaved(loader[0].shape)) {
                     // These don't matter because the data is interleaved.
@@ -110,9 +111,9 @@ export const useImage = (source) => {
                 }
                 useViewerStore.setState({ useColormap: false, useLens: false });
             } else {
-                // console.log("-------- hook.js useEffect getMultiSelectionStats : ", loader, newSelections, source?.contents);
+                console.log("-------- hook.js useEffect getMultiSelectionStats : ", loader, newSelections, source?.contents);
                 const stats = await getMultiSelectionStats({ loader, selections: newSelections, use3d: false });
-                // console.log("-------- hook.js useEffect getMultiSelectionStats stats: ", stats);
+                console.log("-------- hook.js useEffect getMultiSelectionStats stats: ", stats);
                 newDomains = stats.domains;
                 newContrastLimits = stats.contrastLimits;
                 // If there is only one channel, use white.
@@ -123,14 +124,14 @@ export const useImage = (source) => {
                         newColors.push(COLOR_PALLETE[source?.contents[i].channel]);
                     }
                 }
-                // newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[i]);
-                // console.log("hook.js useEffect newColors", newColors);
+                newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[i]);
+                console.log("hook.js useEffect newColors", newColors);
                 useViewerStore.setState({
                     useLens: channelOptions.length !== 1,
                     useColormap: true
                 });
             }
-            // console.log("-------- hook.js useEffect newColors : ", newColors);
+            console.log("-------- hook.js useEffect newColors : ", newColors);
             useChannelsStore.setState({
                 ids: newDomains.map(() => String(Math.random())),
                 selections: newSelections,

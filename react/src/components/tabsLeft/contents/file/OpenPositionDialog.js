@@ -730,6 +730,7 @@ const OpenPositionDialog = (props) => {
     const handleExpNameChange = (name) => {
         setExpName(name)
         store.dispatch({type: "register_experiment_name", content: name});
+        console.log("OpenPositionDialog: handleExpNameChange : register experiment name = ", name);
         getExperimentData(name)
         setExperimentDialog(false)
     }

@@ -70,41 +70,63 @@ const RoutedAvivator = (props) => {
                     time_files.push(hole_files[i]);
                 }
             }
-            // times.sort((a, b) => (a - b));
+            time_files.sort((a, b) => (a.filename < b.filename) ? -1 : ((a.filename > b.filename) ? 1 : 0));
             console.log("index.jsx : displayFiles : times : -------- : ", min_time, time_files);
+
+            let minC = -1, maxC = -1;
+            let minZ = -1, maxZ = -1;
+            for (let i = 0; i < time_files.length; i++) {
+                if (minC === -1 || time_files[i].channel < minC) {
+                    minC = time_files[i].channel;
+                }
+                if (maxC === -1 || maxC < time_files[i].channel) {
+                    maxC = time_files[i].channel;
+                }
+                if (minZ === -1 || time_files[i].z < minZ) {
+                    minZ = time_files[i].z;
+                }
+                if (maxZ === -1 || maxZ < time_files[i].z) {
+                    maxZ = time_files[i].z;
+                }
+            }
+            console.log("index.jsx : displayFiles : (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
 
             let nchannel_files = [];
             let nchannel_contents = [];
-            for (let i = 0; i < time_files.length; i++) {
-                console.log("index.jsx : displayFiles : time_files : -------- : ", 
-                    time_files[i].filename, time_files[i].time, time_files[i].channel, time_files[i].z);
-                let sample = time_files[i];
-                let newNameArr = [
-                    sample.series,
-                    "row" + sample.row,
-                    "col" + sample.col,
-                    "channel" + sample.channel
-                ];
-                newNameArr.push("time" + (sample.dimensionChanged ? sample.z : sample.time));
-                newNameArr.push("z" + (sample.dimensionChanged ? sample.time : sample.z));
-                let extension = sample.filename.split('.').pop();
-                let newImageName = newNameArr.join('_') + '.' + extension;
-                let getFullPathFromName = (name) => {
-                    let res = filesPath.filter(path => path.indexOf(name) !== -1)
-                    if(res.length === 1)
-                        return expName + "/" + res[0]
-                    else return ""
-                }
-                getMergedImage([getFullPathFromName(time_files[i].filename)], newImageName, (err, newFile) => {
-                    if (err) {
-                        console.log("Error occured while merging files")
-                        return
-                    } else {
-                        nchannel_files.push(newFile);
-                        nchannel_contents.push(sample);
+            for (let z = minZ; z <= maxZ; z++) {
+                for (let c = minC; c <= maxC; c++) {
+                    let field_files = time_files.filter(file => file.channel === c && file.z == z);
+                    console.log("index.jsx : displayFiles : field_files : -------- : ", field_files);
+                    if (field_files.length > 0) {
+                        let sample = field_files[0];
+                        let newNameArr = [
+                            sample.series,
+                            "row" + sample.row,
+                            "col" + sample.col,
+                            "channel" + sample.channel
+                        ];
+                        newNameArr.push("time" + (sample.dimensionChanged ? sample.z : sample.time));
+                        newNameArr.push("z" + (sample.dimensionChanged ? sample.time : sample.z));
+                        let extension = sample.filename.split('.').pop();
+                        let newImageName = newNameArr.join('_') + '.' + extension;
+                        let getFullPathFromName = (name) => {
+                            let res = filesPath.filter(path => path.indexOf(name) !== -1)
+                            if(res.length === 1)
+                                return expName + "/" + res[0]
+                            else return ""
+                        }
+                        getMergedImage([getFullPathFromName(sample.filename)], newImageName, (err, newFile) => {
+                            if (err) {
+                                console.log("Error occured while merging files")
+                                return
+                            } else {
+                                nchannel_files.push(newFile);
+                                nchannel_contents.push(sample);
+                            }
+                        });
+                        console.log("index.jsx->displayFiles->getMergedImage: ", nchannel_files, nchannel_contents);
                     }
-                });
-                console.log("index.jsx->displayFiles->getMergedImage: ", nchannel_files, nchannel_contents);
+                }
             }
             setTimeout(() => {
                 if (nchannel_files.length > 0) {
