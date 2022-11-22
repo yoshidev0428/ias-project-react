@@ -130,7 +130,7 @@ const RoutedAvivator = (props) => {
             }
             setTimeout(() => {
                 if (nchannel_files.length > 0) {
-                    const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, description: ''};
+                    const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, is3dView: is3dView, description: ''};
                     console.log("index.js displayFiles : source = : ", imageSource);
                     setSource(imageSource);
                 }

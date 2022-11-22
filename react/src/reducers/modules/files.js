@@ -33,8 +33,10 @@ const files = (state = initState, action) => {
             break;
         case "image_loading_state_change":
             state.isImageLoading = action.content
+            break;
         case "register_experiment_name":
             state.experimentName = action.content
+            break;
         default:
             break;
     }

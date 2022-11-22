@@ -25,6 +25,7 @@ const DEFAUlT_CHANNEL_STATE = {
     contrastLimits: [],
     colors: [],
     domains: [],
+    channelMap: [],
     selections: [],
     ids: [],
     loader: [{labels: [], shape: []}],
