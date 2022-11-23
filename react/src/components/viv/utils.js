@@ -137,7 +137,7 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
                     maxZ = contents[i].z;
                 }
             }
-            console.log("utils.js  loadMultiTiff ------- (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
+            // console.log("utils.js  loadMultiTiff ------- (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
             let multiTiffSources = [];
             let channelMap = [];
             for (let z = minZ; z <= maxZ; z++) {
@@ -322,6 +322,7 @@ export async function getSingleSelectionStats2D({loader, selection}) {
     const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
     console.log("utils.js: getSingleSelectionStats2D: data = ", data, ", selection = ", selection);
     const raster = await data.getRaster({selection});
+    // console.log("utils.js: getSingleSelectionStats2D: raster = ", raster);
     const selectionStats = getChannelStats(raster.data);
     const {domain, contrastLimits} = selectionStats;
     return {domain, contrastLimits};

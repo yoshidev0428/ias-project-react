@@ -40,8 +40,8 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(null);
     const [avivatorType, setAvivatorType] = useState("mainFrame");
 
-    const displayFiles = (expName, contents, filesPath, row, col, z, time, is3dView) => {
-        console.log("index.jsx : displayFiles : param : -------- : ", expName, contents, filesPath, row, col, z, time, is3dView);
+    const displayFiles = async (expName, contents, filesPath, row, col, z, time, is3dView) => {
+        // console.log("index.jsx : displayFiles : param : -------- : ", expName, contents, filesPath, row, col, z, time, is3dView);
         if (contents.length >= 1) {
             let hole_files = [];
             // let layer_files = []; let layer_contents = []; let field_files = []; let field_contents = [];
@@ -50,9 +50,9 @@ const RoutedAvivator = (props) => {
                     hole_files.push(contents[i]);
                 }
             }
-            console.log("index.jsx : displayFiles : hole_files : -------- : ", hole_files);
+            // console.log("index.jsx : displayFiles : hole_files : -------- : ", hole_files);
             let min_time = time;
-            if (min_time <= 0 && hole_files.length > 0) {
+            if (min_time < 0 && hole_files.length > 0) {
                 min_time = hole_files[0].time;
                 for (let i = 0; i < hole_files.length; i++) {
                     if (min_time > hole_files[i].time) {
@@ -71,7 +71,7 @@ const RoutedAvivator = (props) => {
                 }
             }
             time_files.sort((a, b) => (a.filename < b.filename) ? -1 : ((a.filename > b.filename) ? 1 : 0));
-            console.log("index.jsx : displayFiles : times : -------- : ", min_time, time_files);
+            // console.log("index.jsx : displayFiles : times : -------- : ", min_time, time_files);
 
             let minC = -1, maxC = -1;
             let minZ = -1, maxZ = -1;
@@ -89,14 +89,15 @@ const RoutedAvivator = (props) => {
                     maxZ = time_files[i].z;
                 }
             }
-            console.log("index.jsx : displayFiles : (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
+            // console.log("index.jsx : displayFiles : (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
 
             let nchannel_files = [];
             let nchannel_contents = [];
+            let requestCount = 0;
             for (let z = minZ; z <= maxZ; z++) {
                 for (let c = minC; c <= maxC; c++) {
                     let field_files = time_files.filter(file => file.channel === c && file.z == z);
-                    console.log("index.jsx : displayFiles : field_files : -------- : ", field_files);
+                    // console.log("index.jsx : displayFiles : field_files : -------- : ", field_files);
                     if (field_files.length > 0) {
                         let sample = field_files[0];
                         let newNameArr = [
@@ -124,17 +125,21 @@ const RoutedAvivator = (props) => {
                                 nchannel_contents.push(sample);
                             }
                         });
-                        console.log("index.jsx->displayFiles->getMergedImage: ", nchannel_files, nchannel_contents);
+                        requestCount++;
                     }
                 }
             }
-            setTimeout(() => {
-                if (nchannel_files.length > 0) {
-                    const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, is3dView: is3dView, description: ''};
-                    console.log("index.js displayFiles : source = : ", imageSource);
-                    setSource(imageSource);
+            // time out
+            for (let elapsed = 0; elapsed < 5000; elapsed += 100) {
+                if (nchannel_files.length >= requestCount) {
+                    console.log("index.js displayFiles : nchannel_files.length = ", nchannel_files.length, ", requestCount = ", requestCount);
+                    break;
                 }
-            }, 5000);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, is3dView: is3dView, description: ''};
+            console.log("index.js displayFiles : source = : ", imageSource);
+            setSource(imageSource);
 
             // let channels = [];
             // for (let i = 0; i < time_files.length; i++) {

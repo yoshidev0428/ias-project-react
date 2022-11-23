@@ -762,7 +762,7 @@ const OpenPositionDialog = (props) => {
 
     const handleSetSetting = async () => {
         if (contents !== [] && contents !== null && contents !== undefined) {
-            console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
+            // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
             props.handleClose();
