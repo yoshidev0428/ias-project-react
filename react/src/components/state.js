@@ -24,8 +24,12 @@ const DEFAUlT_FLAG_STATE = {
     Focusflag: false,
     Superflag: false,
     OpenCloudflag: false,
-    OpenFileflag: false
-};
+    OpenFileflag: false,
+    DialogBasicFlag: false,
+    DialogCustomFlag: false,
+    DialogCustomNameFlag: false,
+    DialogCellposeFlag: false
+}
 
 export const useFlagsStore = create(set => ({
     ...DEFAUlT_FLAG_STATE,
