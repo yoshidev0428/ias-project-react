@@ -446,21 +446,26 @@ async def export_stitched_image() -> List[TileModelDB]:
 #############################################################################
 # Get Image Raw Data
 #############################################################################
-@router.get("/get_channel_states/{imageName}", 
+@router.get("/get_channel_states/{concatedName}", 
             response_description="Get Image Raw Data")
-async def get_image_raw_data(imageName: str, 
+async def get_image_raw_data(
+            concatedName: str, 
             clear_previous: bool = Form(False),
             current_user: UserModelDB = Depends(get_current_user),
             db: AsyncIOMotorDatabase = Depends(get_database)):
 
-    expNames = [doc['expName'] async for doc in db['experiment'].find()]
-    if len(expNames) <= 0:
-        return JSONResponse({"success": False, "error": "Cannot find the experiment name"})
+    # expNames = [doc['expName'] async for doc in db['experiment'].find()]
+    # if len(expNames) <= 0:
+    #     return JSONResponse({"success": False, "error": "Cannot find the experiment name"})
+    # expName = expNames[0]
 
-    print("get_image_raw_data: ", expNames[0], imageName)
+    pos = concatedName.find('&')
+    expName = concatedName[(pos + 1 - len(concatedName)):]
+    imageName = concatedName[0:pos]
+    print("get_image_raw_data: ", concatedName, expName, imageName)
 
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    image_path = os.path.join(current_user_path + '/', expNames[0] + '/', imageName)
+    image_path = os.path.join(current_user_path + '/', expName+ '/', imageName)
     print("get_image_raw_data: ", image_path)
     if not os.path.isfile(image_path):
         return JSONResponse({"success": False, "error": "Cannot find the image"})
