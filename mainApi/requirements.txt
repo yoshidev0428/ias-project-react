@@ -1,4 +1,4 @@
-#bioformats==0.1.15
+python-bioformats
 
 celery # workers
 aioredis # asyncio redis api
@@ -26,3 +26,4 @@ tensorflow_addons
 jsons
 tifftools
 # histomicstk
+# tifffile
