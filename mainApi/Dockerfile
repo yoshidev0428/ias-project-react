@@ -22,8 +22,10 @@ RUN apt-get update && \
 # Install dependencies to solve dependency bug: openslide
 RUN apt-get install -y openslide-tools && \
     apt install -y build-essential && \
-    pip install openslide-python
-
+    apt install -y default-jdk && \
+    pip install --upgrade pip \
+    pip install openslide-python \
+    pip install numpy
 
 WORKDIR /app
 

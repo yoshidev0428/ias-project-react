@@ -36,6 +36,14 @@ from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 from mainApi.config import STATIC_PATH, CURRENT_STATIC
 import tifftools
 
+import javabridge
+import bioformats
+from bioformats import logback
+from mainApi.app.images.utils.contrastlimits import calculateImageStats
+
+javabridge.start_vm(class_path=bioformats.JARS)
+
+
 router = APIRouter(
     prefix="/tile",
     tags=["tile"],
@@ -251,12 +259,11 @@ async def merge_image(merge_req_body: str = Body(embed=True),
     images = reqbody[0].split(',')
     newImageName = reqbody[1]
 
-    if os.path.isfile(os.path.join(current_user_path + '/', newImageName)):
-        return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
-
     tff_lst = [os.path.join(current_user_path + '/', image) for image in images]
     print("requested image list:\n", tff_lst)
-    if len(tff_lst) > 0 and os.path.isfile(tff_lst[0]):
+    if (len(tff_lst) > 0 and os.path.isfile(tff_lst[0])):
+        if os.path.isfile(os.path.join(current_user_path + '/', newImageName)):
+            return FileResponse(os.path.join(current_user_path + '/', newImageName), media_type="image/tiff")
         tff = tifftools.read_tiff(tff_lst[0])
         for other in tff_lst[1:]:
             if os.path.isfile(other):
@@ -435,3 +442,39 @@ async def export_stitched_image() -> List[TileModelDB]:
     # with concurrent.futures.ProcessPoolExecutor() as pool:
     #     result = await loop.run_in_executor(pool, cpu_bound)  # wait result
     #     print(result)
+
+#############################################################################
+# Get Image Raw Data
+#############################################################################
+@router.get("/get_channel_states/{imageName}", 
+            response_description="Get Image Raw Data")
+async def get_image_raw_data(imageName: str, 
+            clear_previous: bool = Form(False),
+            current_user: UserModelDB = Depends(get_current_user),
+            db: AsyncIOMotorDatabase = Depends(get_database)):
+
+    expNames = [doc['expName'] async for doc in db['experiment'].find()]
+    if len(expNames) <= 0:
+        return JSONResponse({"success": False, "error": "Cannot find the experiment name"})
+
+    print("get_image_raw_data: ", expNames[0], imageName)
+
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    image_path = os.path.join(current_user_path + '/', expNames[0] + '/', imageName)
+    print("get_image_raw_data: ", image_path)
+    if not os.path.isfile(image_path):
+        return JSONResponse({"success": False, "error": "Cannot find the image"})
+
+    # logback.basic_config()
+    # image, scale = bioformats.load_image(image_path, rescale=False, wants_max_intensity=True)
+
+    # raw_data = []
+    # for r in range(0, image.shape[0]):
+    #     for c in range(0, image.shape[1]):
+    #         raw_data.append(image[r][c])
+
+    # return StreamingResponse(io.BytesIO(image.tobytes()), media_type="image/raw")
+
+    domain, contrastLimits = calculateImageStats(image_path)
+    return JSONResponse({"success": True, "domain": [int(domain[0]), int(domain[1])], 
+        "contrastLimits": [int(contrastLimits[0]), int(contrastLimits[1])]})
