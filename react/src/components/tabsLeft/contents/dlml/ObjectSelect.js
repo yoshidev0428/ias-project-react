@@ -1,40 +1,59 @@
 import React from 'react'
 import SmallCard from "../../../custom/SmallCard"
-// import CustomButton from "../../../custom/CustomButton"
+import CustomButton from "../../../custom/CustomButton"
 import {
     mdiLightbulbOutline,
     mdiLightbulb,
     mdiGestureTap,
     mdiLayersTriple,
-    mdiGestureTapButton,
-    mdiTrashCanOutline
+    mdiGestureTapButton, mdiPlayCircleOutline,
+    mdiTrashCanOutline, mdiCreation, mdiHandPointingUp,mdiKeyboardReturn,
+    mdiSquareRoundedOutline,
+    mdiPaletteOutline,
+    mdiPaletteSwatchOutline,
+    mdiCog
 } from '@mdi/js';
 import Icon from '@mdi/react';
 
 export default function ObjectSelect() {
 
     const onLight = () => {
-        console.log("Light");
+        console.log("Light")
     }
     const onBlack = () => {
-        console.log("Black");
+        console.log("Black")
     }
     const onObject = () => {
-        console.log("Object");
+        console.log("Object")
     }
     const onArea = () => {
-        console.log("Area");
+        console.log("Area")
     }
     const onBack = () => {
-        console.log("Back");
+        console.log("Back")
     }
     const onSet = () => {
-        console.log("Set");
+        console.log("Set")
+    }
+    const onAuto = () => {
+        console.log("Auto")
+    }
+    const onAdd = () => {
+        console.log("Add")
+    }
+    const onErase = () => {
+        console.log("Erase")
+    }
+    const onColor = () => {
+        console.log("onColor")
+    }
+    const onInt = () => {
+        console.log("onInt")
     }
 
     return (
         <div className='common-border'>
-            {/* <h6>Object Select</h6> */}
+            <h6>Object Select</h6>
             <SmallCard title="Object brightness" child={true} className="mb-2">
                 <button className="btn btn-light btn-sm w-50" onClick={onLight}>
                     <Icon size={0.8}
@@ -54,10 +73,7 @@ export default function ObjectSelect() {
                         path={mdiLightbulb}>
                     </Icon>BlackOB
                 </button>
-                {/* <CustomButton icon={mdiLightbulbOutline} label="LightOB" onClick={() => onLight()} />
-                <CustomButton icon={mdiLightbulb} label="BlackOB" onClick={() => onBlack()} /> */}
             </SmallCard>
-            {/* <div style={{ height: "12px" }}></div> */}
             <SmallCard title="Select target" child={true}>
             <button className="btn btn-light btn-sm w-25" onClick={onObject}>
                     <Icon size={0.7}
@@ -83,8 +99,8 @@ export default function ObjectSelect() {
                         vertical
                         rotate={180}
                         color="#212529"
-                        path={mdiGestureTapButton}>
-                    </Icon>BG
+                        path={mdiKeyboardReturn}>
+                    </Icon>Bk
                 </button>
                 <button className="btn btn-light btn-sm w-25" onClick={onSet}>
                     <Icon size={0.6}
@@ -92,13 +108,46 @@ export default function ObjectSelect() {
                         vertical
                         rotate={180}
                         color="#212529"
-                        path={mdiTrashCanOutline}>
-                    </Icon>
+                        path={mdiPlayCircleOutline}>
+                    </Icon>Set
                 </button>
-                {/* <CustomButton icon={mdiGestureTap} label="OB" onClick={() => onObject()} />
-                <CustomButton icon={mdiLayersTriple} label="Area" onClick={() => onArea()} />
-                <CustomButton icon={mdiGestureTapButton} label="BG" onClick={() => onBack()} />
-                <CustomButton icon={mdiTrashCanOutline} label="" onClick={() => onSet()} /> */}
+            </SmallCard>
+
+            <SmallCard title="ObjectClass" child={true}>
+                <button className="btn btn-light btn-sm w-33" onClick={onAuto}>
+                    <Icon size={0.6}
+                          horizontal
+                          vertical
+                          rotate={180}
+                          color="#212529"
+                          path={mdiCreation}>
+                    </Icon>Auto
+                </button>
+                <button className="btn btn-light btn-sm w-34" onClick={onAdd}>
+                    <Icon size={0.6}
+                          horizontal
+                          vertical
+                          rotate={180}
+                          color="#212529"
+                          path={mdiHandPointingUp}>
+                    </Icon>Add
+                </button>
+                <button className="btn btn-light btn-sm w-33" onClick={onErase}>
+                    <Icon size={0.6}
+                          horizontal
+                          vertical
+                          rotate={180}
+                          color="#212529"
+                          path={mdiTrashCanOutline}>
+                    </Icon>Erase
+                </button>
+            </SmallCard>
+
+            <SmallCard title="Class & Object Status">
+                <CustomButton icon={mdiSquareRoundedOutline} label="Area" onClick={() => onArea} />
+                <CustomButton icon={mdiPaletteOutline} label="Color" onClick={() => onColor()} />
+                <CustomButton icon={mdiPaletteSwatchOutline} label="Int" onClick={() => onInt()} />
+                <CustomButton icon={mdiCog} label="Set" onClick={() => onSet} />
             </SmallCard>
         </div>
     )
