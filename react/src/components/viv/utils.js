@@ -17,6 +17,7 @@ import store from '../../reducers';
 import {
     useViewerStore
 } from './state';
+import { api } from "../../api/base";
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 
@@ -81,7 +82,7 @@ async function getTotalImageCount(src, rootMeta, data) {
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
-export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, handleLoaderError) {
+export async function createLoader(urlOrFile, contents, tiff_names, handleOffsetsNotFound, handleLoaderError) {
     // If the loader fails to load, handle the error (show an error snackbar).
     // Otherwise load.
     try {
@@ -120,7 +121,7 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-            console.log("utils.js  loadMultiTiff ------- contents : ", contents, files);
+            console.log("utils.js  loadMultiTiff ------- contents, tiff_names, files : ", contents, tiff_names, files);
             let minC = -1, maxC = -1;
             let minZ = -1, maxZ = -1;
             for (let i = 0; i < contents.length; i++) {
@@ -140,6 +141,7 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
             // console.log("utils.js  loadMultiTiff ------- (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
             let multiTiffSources = [];
             let channelMap = [];
+            let tiffNames = [];
             for (let z = minZ; z <= maxZ; z++) {
                 let channel = 0;
                 for (let c = minC; c <= maxC; c++) {
@@ -147,6 +149,10 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
                         if (c === contents[i].channel && z === contents[i].z) {
                             // multiTiffSources.push([{t: 0, c: contents[i].channel - minC, z: contents[i].z - minZ}, files[i]]);
                             multiTiffSources.push([{t: 0, c: channel, z: contents[i].z - minZ}, files[i]]);
+                            tiff_names[i].time = 0;
+                            tiff_names[i].z = contents[i].z - minZ;
+                            tiff_names[i].channel = channel;
+                            tiffNames.push(tiff_names[i]);
                             if (z == minZ) {
                                 channelMap.push(contents[i].channel);
                             }
@@ -157,6 +163,7 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
                 }
             }
             useViewerStore.setState({ channelMap: channelMap });
+            useViewerStore.setState({ tiffNames: tiffNames });
             // for (let i = 0; i < files.length; i++) {
             //     multiTiffSources[i] = [{c: i, z: 0, t: 0}, files[i]];
             // }
@@ -175,7 +182,7 @@ export async function createLoader(urlOrFile, contents, handleOffsetsNotFound, h
             //         index_file = index_file + 1;
             //     }
             // }
-            console.log("utils.js  createLoader ------- 003: ", multiTiffSources, channelMap);
+            console.log("utils.js  createLoader ------- 003: ", multiTiffSources, channelMap, tiffNames);
             try {
                 const source = await loadMultiTiff(multiTiffSources);
                 // const source = await loadMultiTiff(multiTiffSources, { images: 'all', pool: false });
@@ -318,17 +325,38 @@ export function useWindowSize(isFull, scaleWidth, scaleHeight) {
     return getSize();
 }
 
-export async function getSingleSelectionStats2D({loader, selection}) {
+export async function getChannelStates(selection, tiff_names) {
+    let domain = [0,0];
+    let contrastLimits = [0, 0];
+    for (let i = 0; i < tiff_names.length; i++) {
+        if (selection.t == tiff_names[i].time && 
+            selection.c == tiff_names[i].channel && 
+            selection.z == tiff_names[i].z) {
+            let response = await api.get("image/tile/get_channel_states/" + tiff_names[i].filename);
+            // console.log("utils.js: getChannelStates: response", response);
+            if (response.data.success) {
+                console.log("utils.js: getChannelStates: domain, contrastLimits", response.data.domain, response.data.contrastLimits);
+                domain = response.data.domain;
+                contrastLimits = response.data.contrastLimits;
+            }
+        }
+    }
+    return {domain, contrastLimits};
+}
+
+export async function getSingleSelectionStats2D({loader, selection, tiff_names}) {
     const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
-    console.log("utils.js: getSingleSelectionStats2D: data = ", data, ", selection = ", selection);
-    const raster = await data.getRaster({selection});
+    console.log("utils.js: getSingleSelectionStats2D: data, selection, tiff_names", data, selection, tiff_names);
+    // const raster = await data.getRaster({selection});
     // console.log("utils.js: getSingleSelectionStats2D: raster = ", raster);
-    const selectionStats = getChannelStats(raster.data);
+    // const selectionStats = getChannelStats(raster.data);
+    const selectionStats = await getChannelStates(selection, tiff_names);
+    // console.log("utils.js: getSingleSelectionStats2D: selectionStats = ", selectionStats);
     const {domain, contrastLimits} = selectionStats;
     return {domain, contrastLimits};
 }
 
-export async function getSingleSelectionStats3D({loader, selection}) {
+export async function getSingleSelectionStats3D({loader, selection, tiff_names}) {
     console.log("utils.js: getSingleSelectionStats3D: selection = ", selection);
     const lowResSource = loader[loader.length - 1];
     const {shape, labels} = lowResSource;
@@ -343,9 +371,12 @@ export async function getSingleSelectionStats3D({loader, selection}) {
     const rasterTop = await lowResSource.getRaster({
         selection: {...selection, z: Math.max(0, sizeZ - 1)}
     });
-    const stats0 = getChannelStats(raster0.data);
-    const statsMid = getChannelStats(rasterMid.data);
-    const statsTop = getChannelStats(rasterTop.data);
+    // const stats0 = getChannelStats(raster0.data);
+    // const statsMid = getChannelStats(rasterMid.data);
+    // const statsTop = getChannelStats(rasterTop.data);
+    const stats0 = await getChannelStates(selection, tiff_names);
+    const statsMid = await getChannelStates(selection, tiff_names);
+    const statsTop = await getChannelStates(selection, tiff_names);
     return {
         domain: [
             Math.min(stats0.domain[0], statsMid.domain[0], statsTop.domain[0]),
@@ -366,15 +397,15 @@ export async function getSingleSelectionStats3D({loader, selection}) {
     };
 }
 
-export const getSingleSelectionStats = async ({loader, selection, use3d}) => {
+export const getSingleSelectionStats = async ({loader, selection, tiff_names, use3d}) => {
     const getStats = use3d ? getSingleSelectionStats3D : getSingleSelectionStats2D;
-    return getStats({loader, selection});
+    return getStats({loader, selection, tiff_names});
 };
 
-export const getMultiSelectionStats = async ({loader, selections, use3d}) => {
+export const getMultiSelectionStats = async ({loader, selections, tiff_names, use3d}) => {
     const stats = await Promise.all(
         selections.map(selection =>
-            getSingleSelectionStats({loader, selection, use3d})
+            getSingleSelectionStats({loader, selection, tiff_names, use3d})
         )
     );
     const domains = stats.map(stat => stat.domain);

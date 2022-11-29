@@ -93,6 +93,7 @@ const RoutedAvivator = (props) => {
 
             let nchannel_files = [];
             let nchannel_contents = [];
+            let nchannel_tiff_names = [];
             let requestCount = 0;
             for (let z = minZ; z <= maxZ; z++) {
                 for (let c = minC; c <= maxC; c++) {
@@ -123,6 +124,7 @@ const RoutedAvivator = (props) => {
                             } else {
                                 nchannel_files.push(newFile);
                                 nchannel_contents.push(sample);
+                                nchannel_tiff_names.push({...field_files[0]});
                             }
                         });
                         requestCount++;
@@ -137,9 +139,11 @@ const RoutedAvivator = (props) => {
                 }
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-            const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, is3dView: is3dView, description: ''};
-            console.log("index.js displayFiles : source = : ", imageSource);
-            setSource(imageSource);
+            if (requestCount > 0 && nchannel_files.length >= requestCount) {
+                const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, tiff_names: nchannel_tiff_names, is3dView: is3dView, description: ''};
+                console.log("index.js displayFiles : source = : ", imageSource);
+                setSource(imageSource);
+            }
 
             // let channels = [];
             // for (let i = 0; i < time_files.length; i++) {

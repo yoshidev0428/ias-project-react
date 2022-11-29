@@ -89,7 +89,6 @@ export const getMergedImage = async function(fileNames, newImageName, callback) 
 
     fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_merged_image", options)
         .then(response => {
-            // console.log("fetch.js->getMergedImage: response = ", response);
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
                 return response.json().then(data => {
@@ -103,6 +102,7 @@ export const getMergedImage = async function(fileNames, newImageName, callback) 
             }
         })
         .then(blob => {
+            console.log("fetch.js->getMergedImage: blob", blob);
             let file = new File([blob], newImageName, { type: "image/tiff" })
             file.path = newImageName
             callback(null, file)

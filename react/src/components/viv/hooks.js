@@ -22,8 +22,8 @@ import { COLOR_PALLETE, FILL_PIXEL_VALUE } from './constants';
 
 export const useImage = (source) => {
 
-    const [use3d, toggleUse3d, toggleIsOffsetsSnackbarOn, channelMap] = 
-        useViewerStore(store => [store.use3d, store.toggleUse3d, store.toggleIsOffsetsSnackbarOn, store.channelMap], shallow);
+    const [use3d, toggleUse3d, toggleIsOffsetsSnackbarOn, channelMap, tiffNames] = 
+        useViewerStore(store => [store.use3d, store.toggleUse3d, store.toggleIsOffsetsSnackbarOn, store.channelMap, store.tiffNames], shallow);
     const [lensEnabled, toggleLensEnabled] = useImageSettingsStore(store => [store.lensEnabled, store.toggleLensEnabled], shallow);
     const loader = useLoader();
     const metadata = useMetadata();
@@ -35,9 +35,9 @@ export const useImage = (source) => {
             useViewerStore.setState({ isViewerLoading: true });
             store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
-            const { urlOrFile, contents } = source;
-            // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader);
-            const newLoader = await createLoader(urlOrFile, contents, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
+            const { urlOrFile, contents, tiff_names} = source;
+            // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader, tiffNames);
+            const newLoader = await createLoader(urlOrFile, contents, tiff_names, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
             // console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
             let nextMeta;
             let nextLoader;
@@ -113,7 +113,7 @@ export const useImage = (source) => {
                 useViewerStore.setState({ useColormap: false, useLens: false });
             } else {
                 // console.log("-------- hook.js useEffect getMultiSelectionStats : ", loader, newSelections, source?.contents);
-                const stats = await getMultiSelectionStats({ loader, selections: newSelections, use3d: (use3d || source?.is3dView) });
+                const stats = await getMultiSelectionStats({ loader, selections: newSelections, tiff_names: tiffNames, use3d: (use3d || source?.is3dView) });
                 console.log("-------- hook.js useEffect getMultiSelectionStats newSelections = ", newSelections, ", stats = ", stats);
                 newDomains = stats.domains;
                 newContrastLimits = stats.contrastLimits;
