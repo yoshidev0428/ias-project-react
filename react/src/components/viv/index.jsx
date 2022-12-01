@@ -44,7 +44,6 @@ const RoutedAvivator = (props) => {
         // console.log("index.jsx : displayFiles : param : -------- : ", expName, contents, filesPath, row, col, z, time, is3dView);
         if (contents.length >= 1) {
             let hole_files = [];
-            // let layer_files = []; let layer_contents = []; let field_files = []; let field_contents = [];
             for (let i = 0; i < contents.length; i++) {
                 if (contents[i].row === row && contents[i].col === col && (is3dView || contents[i].z === z)) {
                     hole_files.push(contents[i]);
@@ -63,9 +62,6 @@ const RoutedAvivator = (props) => {
             // let times = []; 
             let time_files = [];
             for (let i = 0; i < hole_files.length; i++) {
-                // if (times.indexOf(hole_files[i].time) === -1) {
-                //     times.push(hole_files[i].time)
-                // }
                 if (min_time === hole_files[i].time) {
                     time_files.push(hole_files[i]);
                 }
@@ -145,64 +141,6 @@ const RoutedAvivator = (props) => {
                 console.log("index.js displayFiles : source = : ", imageSource);
                 setSource(imageSource);
             }
-
-            // let channels = [];
-            // for (let i = 0; i < time_files.length; i++) {
-            //     if (channels.indexOf(time_files[i].channel) === -1) {
-            //         channels.push(time_files[i].channel);
-            //     }
-            // }
-            // console.log("index.jsx : displayFiles : channels : -------- : ", channels);
-            // for (let i = 0; i < channels.length; i++) {
-            //     let hole_time_channel_files = time_files.filter(file => file.channel === channels[i]);
-            //     console.log("index.jsx : displayFiles : hole_time_channel_files : -------- : ", hole_time_channel_files);
-            //     if (hole_time_channel_files.length > 0) {
-            //         let sample = hole_time_channel_files[0];
-            //         let newNameArr;
-            //         if (!sample.dimensionChanged) {
-            //             newNameArr = [
-            //                 sample.series,
-            //                 "row" + sample.row,
-            //                 "col" + sample.col,
-            //                 "channel" + channels[i],
-            //                 "time" + sample.time,
-            //                 "z" + sample.z,
-            //             ]
-            //         } else {
-            //             newNameArr = [
-            //                 sample.series,
-            //                 "row" + sample.row,
-            //                 "col" + sample.col,
-            //                 "channel" + channels[i],
-            //                 "time" + sample.z,
-            //                 "z" + sample.time,
-            //             ]
-            //         }
-            //         let extension = sample.filename.split('.').pop();
-            //         let newImageName = newNameArr.join('_') + '.' + extension;
-            //         let getFullPathFromName = (name) => {
-            //             let res = filesPath.filter(path => path.indexOf(name) !== -1)
-            //             if(res.length === 1)
-            //                 return res[0]
-            //             else return false
-            //         }
-            //         getMergedImage([getFullPathFromName(sample.filename)], newImageName, (err, newFile) => {
-            //             if (err) {
-            //                 console.log("Error occured while merging files")
-            //                 return
-            //             } else {
-            //                 nchannel_files.push(newFile);
-            //                 nchannel_contents.push(sample);
-            //             }
-            //             if (i === channels.length - 1) {
-            //                 setTimeout(() => {
-            //                     console.log("index.js displayFiles : source = : ", {urlOrFile: nchannel_files, contents: nchannel_contents, description: ''});
-            //                     setSource({urlOrFile: nchannel_files, contents: nchannel_contents, description: ''});
-            //                 }, 1000);
-            //             }
-            //         });
-            //     }
-            // }
         }
     }
 
