@@ -18,6 +18,7 @@ import {
 } from '../state';
 import { useWindowSize } from '../utils';
 import { DEFAULT_OVERVIEW } from '../constants';
+import { getDefaultInitialViewState } from '@hms-dbmi/viv';
 
 
 const Viewer = (props) => {
@@ -60,7 +61,7 @@ const Viewer = (props) => {
     const viewSize = useWindowSize(props.isFullScreen, 1, 1);
     // const pictureInPictureViewerRef = React.forwardRef(null);
     const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
-    console.log("Viewer.jsx : loader, selections", loader, selections);
+    console.log("Viewer.jsx : loader, selections, viewState", loader, selections, {...viewState, zomm: 1.5});
 
     useEffect(() => {
         // console.log("Viewer.jsx : use3d, useLinkedView", use3d, useLinkedView, viewSize);
@@ -135,6 +136,7 @@ const Viewer = (props) => {
             // zoomLock={zoomLock}
             overview={DEFAULT_OVERVIEW}
             overviewOn={isOverviewOn}
+            // viewStates={{...viewState, zomm: 1.5}}
             hoverHooks={{ handleValue: v => useViewerStore.setState({ pixelValues: v }) }}
             lensSelection={lensSelection}
             lensEnabled={lensEnabled}
