@@ -16,6 +16,8 @@ from mainApi.app.images.sub_routers.tile.models import TileModelDB
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
 from mainApi.config import STATIC_PATH
+from mainApi.app.images.utils.convert import convert_to_ome_format
+
 
 async def save_upload_file(upload_file: UploadFile, destination: Path, chunk_size: int = 1024) -> None:
     async with aiofiles.open(destination, 'wb') as out_file:
@@ -37,21 +39,33 @@ async def add_image_tiles(path: Path,
     tiles: List[TileModelDB] = []
     filenames = []
     for each_file in files:
-        file_path = os.path.join(path, each_file.filename) 
+        file_name = each_file.filename
+        content_type = each_file.content_type
+
+        file_path = os.path.join(path, file_name) 
+        
         async with aiofiles.open(file_path, 'wb') as f:
             content = await each_file.read()
             await f.write(content)
-        filenames.append(each_file.filename)
-        width_px, height_px = PIL.Image.open(file_path).size
-        tile = TileModelDB(
-            user_id=PyObjectId(current_user.id),
-            absolute_path=str(path),
-            file_name=each_file.filename,
-            content_type=each_file.content_type,
-            width_px=width_px,
-            height_px=height_px
-        )
-        tiles.append(tile)
+            # convert to ome format
+            file_name = convert_to_ome_format(path, file_name)
+            file_path = os.path.join(path, file_name)
+
+        if file_name != "":
+            # print("add_image_tiles: ", path, file_name, content_type)
+            filenames.append(file_name)
+            width_px, height_px = PIL.Image.open(file_path).size
+            tile = TileModelDB(
+                user_id=PyObjectId(current_user.id),
+                absolute_path=str(path),
+                file_name=file_name,
+                content_type=content_type,
+                width_px=width_px,
+                height_px=height_px
+            )
+            tiles.append(tile)
+    
+    print("add_image_tiles: filenames", filenames)
     await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
     return {"Flag_3d": True, "N_images": len(filenames), "images": filenames}
     # cache_path = STATIC_PATH
