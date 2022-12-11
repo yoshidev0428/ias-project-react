@@ -1,61 +1,63 @@
-import React, {useState} from 'react';
-import {Row, Button, Col} from 'react-bootstrap';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import { useFlagsStore } from "../../../../state";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Grid from "@mui/material/Grid";
-import Slider from "@mui/material/Slider";
-import {styled} from "@mui/material/styles";
-import MuiInput from "@mui/material/Input";
-import DualListBox from 'react-dual-listbox';
-import 'react-dual-listbox/lib/react-dual-listbox.css';
+import React, {useState} from 'react'
+import {Row, Button, Col} from 'react-bootstrap'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import { useFlagsStore } from "../../../../state"
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft"
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight"
+import DeleteIcon from "@mui/icons-material/Delete"
+import Grid from "@mui/material/Grid"
+import Slider from "@mui/material/Slider"
+import {styled} from "@mui/material/styles"
+import MuiInput from "@mui/material/Input"
+import DualListBox from 'react-dual-listbox'
+import 'react-dual-listbox/lib/react-dual-listbox.css'
+import Draggable from "react-draggable"
+import Paper from "@mui/material/Paper"
 
 const Input = styled(MuiInput)`
   width: 42px;
-`;
+`
 
 const Filter3dDialog = () => {
 
-    const DialogFilter3dflag = useFlagsStore(store => store.DialogFilter3dflag);
+    const DialogFilter3dflag = useFlagsStore(store => store.DialogFilter3dflag)
 
     const close = () => {
-        useFlagsStore.setState({ DialogFilter3dflag: false });
-    };
+        useFlagsStore.setState({ DialogFilter3dflag: false })
+    }
 
     const action = () => {
-        console.log("flag Status---> Action");
-    };
+        console.log("flag Status---> Action")
+    }
 
     //slider changing
-    const [value, setValue] = useState(30);
+    const [value, setValue] = useState(30)
 
     const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
-    };
+        setValue(newValue)
+    }
 
     const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
-    };
+        setValue(event.target.value === '' ? '' : Number(event.target.value))
+    }
 
     const handleBlur = () => {
         if (value < 0) {
             setValue(0);
         } else if (value > 100) {
-            setValue(100);
+            setValue(100)
         }
-    };
+    }
 
     //item select
-    const [selected, setSelected] = useState([]);
+    const [selected, setSelected] = useState([])
 
     const onChange = (selected) => {
         setSelected(selected);
-    };
+    }
     const options = [
         {
             label: 'Convolution',
@@ -97,12 +99,24 @@ const Filter3dDialog = () => {
                 { value: 'Morphological', label: 'Morphological' },
             ],
         },
-    ];
+    ]
+
+    function PaperComponent(props) {
+        return (
+            <Draggable
+                handle="#draggable-dialog-title"
+                cancel={'[class*="MuiDialogContent-root"]'}
+            >
+                <Paper {...props} />
+            </Draggable>
+        );
+    }
 
 
     return (
         <>
-            <Dialog open={DialogFilter3dflag} onClose={close} maxWidth={"610"} >
+            <Dialog open={DialogFilter3dflag} onClose={close} maxWidth={"610"} PaperComponent={PaperComponent} hideBackdrop={true} onBackdropClick="false"
+                    disableScrollLock aria-labelledby="draggable-dialog-title">
                 <div className="d-flex border-bottom">
                     <DialogTitle>3D Filter</DialogTitle>
                     <button className="dialog-close-btn" color="primary" onClick={close}>&times;</button>
@@ -197,6 +211,6 @@ const Filter3dDialog = () => {
                 </div>
             </Dialog>
         </>
-    );
+    )
 }
-export default Filter3dDialog;
+export default Filter3dDialog
