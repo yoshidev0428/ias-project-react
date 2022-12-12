@@ -20,12 +20,15 @@ const CustomNameDialog = () => {
     const DialogCustomNameFlag = useFlagsStore(store => store.DialogCustomNameFlag)
 
     const close = () => {
+			useFlagsStore.setState({ DialogCellposeFlag: true })
         useFlagsStore.setState({ DialogCustomNameFlag: false })
         console.log("flag Status--->" + DialogCustomNameFlag)
     };
 
     const action = () => {
         console.log("flag Status---> Action")
+        useFlagsStore.setState({ DialogCustomNameFlag: false })
+				useFlagsStore.setState({ DialogCustomFlag: true })
     };
 
     return (

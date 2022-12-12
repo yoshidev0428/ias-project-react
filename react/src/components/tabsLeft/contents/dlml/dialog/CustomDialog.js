@@ -30,7 +30,7 @@ const CustomDialog = () => {
     const DialogCustomNameFlag = useFlagsStore(store => store.DialogCustomNameFlag);
 
     const showCustomNameDialog = () => {
-        useFlagsStore.setState({ DialogCustomNameFlag: true })
+			useFlagsStore.setState({ DialogCustomFlag: false })
     }
 
     const close = () => {

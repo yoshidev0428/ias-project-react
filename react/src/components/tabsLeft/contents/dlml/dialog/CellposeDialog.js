@@ -53,16 +53,19 @@ function valuetext(value) {
 const minDistance = 1;
 
 const CellposeDialog = () => {
-
+	  const DialogCustomNameFlag = useFlagsStore(store => store.DialogCustomNameFlag)
     const DialogCellposeFlag = useFlagsStore(store => store.DialogCellposeFlag)
 
     const close = () => {
+			useFlagsStore.setState({ DialogBasicFlag: true })
         useFlagsStore.setState({DialogCellposeFlag: false})
         console.log("flag Status--->" + DialogCellposeFlag)
     };
 
     const action = () => {
         console.log("flag Status---> Action")
+        useFlagsStore.setState({ DialogCellposeFlag: false })
+				useFlagsStore.setState({ DialogCustomNameFlag: true })
     };
 
     const viewOptions = [
@@ -412,12 +415,12 @@ const CellposeDialog = () => {
                         </Col>
                     </Row>
                 </div>
-                {/*<div className='border-top mt-2'>*/}
-                {/*    <DialogActions>*/}
-                {/*        <Button variant="contained" onClick={action}>Set</Button>*/}
-                {/*        <Button variant="contained" onClick={close}>Cancel</Button>*/}
-                {/*    </DialogActions>*/}
-                {/*</div>*/}
+                <div className='border-top mt-2'>
+                   <DialogActions>
+                       <Button variant="contained" onClick={action}>Set</Button>
+                       <Button variant="contained" onClick={close}>Cancel</Button>
+                   </DialogActions>
+                </div>
             </Dialog>
         </>
     )
