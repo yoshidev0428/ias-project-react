@@ -33,9 +33,11 @@ const CustomDialog = () => {
 			useFlagsStore.setState({ DialogCustomFlag: false })
     }
 
-    const close = () => {
+    const close = (event, reason) => {
+			if (reason != "backdropClick") {
         useFlagsStore.setState({ DialogCustomFlag: false })
         console.log("flag Status--->" + DialogCustomFlag)
+			}
     }
 
     const [rightTabVal, setRightTabVal] = useState(0)
@@ -43,9 +45,15 @@ const CustomDialog = () => {
         setRightTabVal(newValue);
     }
 
+		const handleBackdropClick = (e) => {
+			//these fail to keep the modal open
+			e.stopPropagation();
+			return false;
+		};
+
     return (
         <>
-            <Dialog open={DialogCustomFlag} onClose={close} maxWidth={"450"} >
+            <Dialog open={DialogCustomFlag} onClose={close} maxWidth={"450"} onBackdropClick={handleBackdropClick} >
                 <div className="d-flex border-bottom">
                     <DialogTitle>Method Select</DialogTitle>
                     <button className="dialog-close-btn" color="primary" onClick={close}>&times;</button>

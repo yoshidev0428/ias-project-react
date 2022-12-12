@@ -56,10 +56,12 @@ const CellposeDialog = () => {
 	  const DialogCustomNameFlag = useFlagsStore(store => store.DialogCustomNameFlag)
     const DialogCellposeFlag = useFlagsStore(store => store.DialogCellposeFlag)
 
-    const close = () => {
-			useFlagsStore.setState({ DialogBasicFlag: true })
+    const close = (event, reason) => {
+			if (reason != "backdropClick") {
+			  useFlagsStore.setState({ DialogBasicFlag: true })
         useFlagsStore.setState({DialogCellposeFlag: false})
         console.log("flag Status--->" + DialogCellposeFlag)
+			}
     };
 
     const action = () => {
@@ -141,10 +143,15 @@ const CellposeDialog = () => {
         );
     }
 
+		const handleBackdropClick = (e) => {
+			//these fail to keep the modal open
+			e.stopPropagation();
+			return false;
+		};
+
     return (
         <>
-            <Dialog open={DialogCellposeFlag} onClose={close} PaperComponent={PaperComponent} hideBackdrop={true} onBackdropClick="false"
-                    disableScrollLock aria-labelledby="draggable-dialog-title" maxWidth={"450"} maxHeight={"800"}>
+            <Dialog open={DialogCellposeFlag} onClose={close} PaperComponent={PaperComponent} hideBackdrop={true} onBackdropClick={handleBackdropClick} disableScrollLock aria-labelledby="draggable-dialog-title" maxWidth={"450"} maxheight={"800"}>
                 <div className="d-flex border-bottom">
                     <DialogTitle>Window Name</DialogTitle>
                     <button className="dialog-close-btn" color="primary" onClick={close}>&times;</button>
