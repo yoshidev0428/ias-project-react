@@ -35,6 +35,8 @@ from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 from mainApi.config import STATIC_PATH, CURRENT_STATIC
 import tifftools
+from mainApi.app.images.utils.convert import get_metadata
+
 
 import javabridge
 import bioformats
@@ -129,16 +131,23 @@ async def get_image(expName: str,
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     # tiles = await db['experiment'].find({'expName': "experiment_1"})
     all_tiles = [doc async for doc in db['experiment'].find()]
-    print(all_tiles)
+    #print(all_tiles)
 
     tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
-    print(tiles)
+    #print(tiles)
     if len(tiles) == 0:
         return JSONResponse({"success": False, "error": "Cannot find the experiment data"})
 
     experiment = tiles[0]
     files = experiment['fileNames']
-    return JSONResponse({"success": True, "data": files})
+
+    metadatas = []
+    for file in files:
+        metadata = get_metadata(file)
+        print("get_experiment_data:", file, metadata)
+        metadatas.append(metadata)
+
+    return JSONResponse({"success": True, "data": files, "metadata": metadatas})
 
 #############################################################################
 # Get Experiment names
