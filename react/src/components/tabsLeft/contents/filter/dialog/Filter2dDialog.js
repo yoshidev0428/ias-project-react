@@ -1,48 +1,50 @@
-import React, { useState } from 'react';
-import { Col, Row, Button } from 'react-bootstrap';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import DualListBox from 'react-dual-listbox';
-import 'react-dual-listbox/lib/react-dual-listbox.css';
+import React, { useState } from 'react'
+import { Col, Row, Button } from 'react-bootstrap'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import DualListBox from 'react-dual-listbox'
+import 'react-dual-listbox/lib/react-dual-listbox.css'
 
-import { styled } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import Slider from '@mui/material/Slider';
-import MuiInput from '@mui/material/Input';
+import { styled } from '@mui/material/styles'
+import Grid from '@mui/material/Grid'
+import Slider from '@mui/material/Slider'
+import MuiInput from '@mui/material/Input'
 
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-import DeleteIcon from '@mui/icons-material/Delete';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
+import DeleteIcon from '@mui/icons-material/Delete'
 
-import { useFlagsStore } from "../../../../state";
+import { useFlagsStore } from "../../../../state"
+import Draggable from "react-draggable";
+import Paper from "@mui/material/Paper";
 
 const Input = styled(MuiInput)`
   width: 42px;
-`;
+`
 
 const Filter2dDialog = () => {
 
-    const DialogFilter2dflag = useFlagsStore(store => store.DialogFilter2dflag);
+    const DialogFilter2dflag = useFlagsStore(store => store.DialogFilter2dflag)
 
     const close = () => {
-        useFlagsStore.setState({ DialogFilter2dflag: false });
-    };
+        useFlagsStore.setState({ DialogFilter2dflag: false })
+    }
 
     const action = () => {
-        console.log("flag Status---> Action");
-    };
+        console.log("flag Status---> Action")
+    }
 
     //slider changing
-    const [value, setValue] = useState(30);
+    const [value, setValue] = useState(30)
 
     const handleSliderChange = (event, newValue) => {
-        setValue(newValue);
-    };
+        setValue(newValue)
+    }
 
     const handleInputChange = (event) => {
-        setValue(event.target.value === '' ? '' : Number(event.target.value));
+        setValue(event.target.value === '' ? '' : Number(event.target.value))
     };
 
     const handleBlur = () => {
@@ -51,14 +53,14 @@ const Filter2dDialog = () => {
         } else if (value > 100) {
             setValue(100);
         }
-    };
+    }
 
     //item select
-    const [selected, setSelected] = React.useState([]);
+    const [selected, setSelected] = React.useState([])
 
     const onChange = (selected) => {
         setSelected(selected);
-    };
+    }
     const options = [
         {
             label: 'Emphasis',
@@ -115,12 +117,23 @@ const Filter2dDialog = () => {
                 { value: 'Edge-', label: 'Edge-' },
             ],
         },
-    ];
+    ]
 
+    function PaperComponent(props) {
+        return (
+            <Draggable
+                handle="#draggable-dialog-title"
+                cancel={'[class*="MuiDialogContent-root"]'}
+            >
+                <Paper {...props} />
+            </Draggable>
+        );
+    }
 
     return (
         <>
-            <Dialog open={DialogFilter2dflag} onClose={close} minWidth={"610"} >
+            <Dialog open={DialogFilter2dflag} onClose={close} minWidth={"610"} PaperComponent={PaperComponent} hideBackdrop={true} onBackdropClick="false"
+                    disableScrollLock aria-labelledby="draggable-dialog-title">
                 <div className="d-flex border-bottom">
                     <DialogTitle>2D Filter</DialogTitle>
                     <button className="dialog-close-btn" color="primary" onClick={close}>&times;</button>

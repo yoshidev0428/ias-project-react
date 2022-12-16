@@ -26,9 +26,13 @@ const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
  * @param {string | File} urlOrFile
  */
 function isOMETIFF(urlOrFile) {
-    if (Array.isArray(urlOrFile)) return false; // local Zarr is array of File Objects
-    const name = typeof urlOrFile === 'string' ? urlOrFile : urlOrFile.name;
-    return name.includes('ome.tiff') || name.includes('ome.tif');
+    const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
+    for (const filename of filenames) {
+        const lowerCaseName = filename.toLowerCase();
+        if (!(lowerCaseName.includes('.ome.tiff') || !lowerCaseName.includes('.ome.tif')))
+            return false;
+    }
+    return true;
 }
 
 function isMultiTiff(urlOrFile) {
@@ -90,13 +94,15 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
         if (isOMETIFF(urlOrFile)) {
             if (urlOrFile instanceof File) {
                 const source = await loadOmeTiff(urlOrFile, {images: 'all'});
+                console.log("utills.js-> createLoader: isOMETIFF: File: source ", source);
                 return source;
             }
-            const url = urlOrFile;
-            const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
-            const isOffsets404 = res.status === 404;
-            const offsets = !isOffsets404 ? await res.json() : undefined;
-            const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
+            // const url = urlOrFile;
+            // const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
+            // const isOffsets404 = res.status === 404;
+            // const offsets = !isOffsets404 ? await res.json() : undefined;
+            // const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
+            const source = await loadOmeTiff(urlOrFile, {images: 'all'});
             // Show a warning if the total number of channels/images exceeds a fixed amount.
             // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
             // built in to the format for them, hence the ternary.
@@ -105,9 +111,10 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
                 source.map(s => s.metadata),
                 source.map(s => s.data)
             );
-            if (isOffsets404 && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
-                handleOffsetsNotFound(true);
-            }
+            // if (isOffsets404 && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
+            //     handleOffsetsNotFound(true);
+            // }
+            console.log("utills.js-> createLoader: isOMETIFF: source ", source);
             return source;
         }
         // console.log("utils.js  createLoader ------- 000: ");

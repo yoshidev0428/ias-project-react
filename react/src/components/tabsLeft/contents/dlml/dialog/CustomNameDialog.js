@@ -19,18 +19,29 @@ const CustomNameDialog = () => {
 
     const DialogCustomNameFlag = useFlagsStore(store => store.DialogCustomNameFlag)
 
-    const close = () => {
+    const close = (event, reason) => {
+			if (reason != "backdropClick") {
+			  useFlagsStore.setState({ DialogCellposeFlag: true })
         useFlagsStore.setState({ DialogCustomNameFlag: false })
         console.log("flag Status--->" + DialogCustomNameFlag)
+			}
     };
 
     const action = () => {
         console.log("flag Status---> Action")
+        useFlagsStore.setState({ DialogCustomNameFlag: false })
+				useFlagsStore.setState({ DialogCustomFlag: true })
     };
+
+		const handleBackdropClick = (e) => {
+			//these fail to keep the modal open
+			e.stopPropagation();
+			return false;
+		};
 
     return (
         <>
-            <Dialog open={DialogCustomNameFlag} onClose={close} maxWidth={"450"} >
+            <Dialog open={DialogCustomNameFlag} onClose={close} maxWidth={"450"} onBackdropClick={handleBackdropClick} >
                 <div className="d-flex border-bottom">
                     <DialogTitle>Custom Name</DialogTitle>
                     <button className="dialog-close-btn" color="primary" onClick={close}>&times;</button>

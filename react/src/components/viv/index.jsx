@@ -106,7 +106,7 @@ const RoutedAvivator = (props) => {
                         newNameArr.push("time" + (sample.dimensionChanged ? sample.z : sample.time));
                         newNameArr.push("z" + (sample.dimensionChanged ? sample.time : sample.z));
                         let extension = sample.filename.split('.').pop();
-                        let newImageName = newNameArr.join('_') + '.' + extension;
+                        let newImageName = newNameArr.join('_') + '.OME.' + extension;
                         let getFullPathFromName = (name) => {
                             let res = filesPath.filter(path => path.indexOf(name) !== -1)
                             if(res.length === 1)
