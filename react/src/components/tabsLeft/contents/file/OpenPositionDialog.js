@@ -40,13 +40,15 @@ var acceptedFiles = [];
 const columns = [
     {headerName: "No", field: "id", sortable: false},
     {headerName: "FileName", field: "filename", sortable: false},
-    {headerName: "Series", field: "series", sortable: false},
-    {headerName: "Frame", field: "frame", sortable: false},
+    // {headerName: "Series", field: "series", sortable: false},
+    // {headerName: "Frame", field: "frame", sortable: false},
+    {headerName: "DimensionOrder", field: "dimension_order", sortable: false},
     {headerName: "SizeC", field: "size_c", sortable: false},
     {headerName: "SizeT", field: "size_t", sortable: false},
     {headerName: "SizeX", field: "size_x", sortable: false},
     {headerName: "SizeY", field: "size_y", sortable: false},
     {headerName: "SizeZ", field: "size_z", sortable: false},
+    {headerName: "Type", field: "type", sortable: false},
 ];
 
 const namePatternOrders = ["id", "filename", "series", "time", "z", "row", "col", "field", "channel"];
@@ -108,13 +110,13 @@ const ImageDropzone = (props) => {
 
     useEffect(() => {
         const bringFilesByName = async () => {
-            const {fileNames} = props;
+            const {fileNames, metaDatas} = props;
             // props.setLoading(true);
             // let incommingFiles = []
             // incommingFiles = await getImagesByNames(fileNames);
             // let filesPath = fileNames
             let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
-            await updateNew(filesName)
+            await updateNew(filesName, metaDatas)
             // await updateFilesNew(incommingFiles.map(file => {return {file: file}}), filesName)
         }
         bringFilesByName()
@@ -124,7 +126,7 @@ const ImageDropzone = (props) => {
         store.dispatch({type: "files_addFiles", content: {filesName: fileNames}});
     }
 
-    const updateNew = async (fileNames) => {
+    const updateNew = async (fileNames, metaDatas) => {
         let files = [];
         let newAcceptedFiles = [];
         for (let i = 0; i < fileNames.length; i++) {
@@ -138,12 +140,13 @@ const ImageDropzone = (props) => {
             }
             let f = new File([""], fileName, {type: "image/tiff"})
             f.path = fileName
+            f.metadata = metaDatas[i]
             newAcceptedFiles.push(f);
             files.push(f)
 
             if (i == fileNames.length - 1) {
-                console.log(files);
-                console.log(newAcceptedFiles);
+                // console.log(files);
+                // console.log(newAcceptedFiles);
                 if (newAcceptedFiles.length > 0) {
                     acceptedFiles = acceptedFiles.concat(newAcceptedFiles);
                     store.dispatch({type: "files_addFiles", content: {filesName: acceptedFiles.map(file => file.name), filesPath: fileNames}});
@@ -242,7 +245,7 @@ const ImageDropzone = (props) => {
 
 const DropzoneMetaData = (props) => {
     // Pagination
-    const [pageSize, setPageSize] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
     // Table Rows
     const [loading, setLoading] = useState(false);
     // Search
@@ -263,10 +266,22 @@ const DropzoneMetaData = (props) => {
 
     useEffect(() => {
         if (acceptedFiles) {
+            setSearchRows([]);
             for (let i = 0; i < acceptedFiles.length; i++) {
                 if (acceptedFiles[i]) {
-                    // filename: acceptedFiles[i].file["name"].toString()   acceptedFiles[i].file.name.toString()
-                    let current_file = {id: (i + 1).toString(), filename: acceptedFiles[i]["name"].toString(), series: "", frame: "", c: "", size_c: "", size_t: "", size_x: "", size_y: "", size_z: "", };
+                    let current_file = {
+                        id: (i + 1).toString(), 
+                        filename: acceptedFiles[i]["name"].toString(), 
+                        // series: "", 
+                        // frame: "", 
+                        dimension_order: acceptedFiles[i]["metadata"]["DimensionOrder"], 
+                        size_c: acceptedFiles[i]["metadata"]["SizeC"], 
+                        size_t: acceptedFiles[i]["metadata"]["SizeT"], 
+                        size_x: acceptedFiles[i]["metadata"]["SizeX"], 
+                        size_y: acceptedFiles[i]["metadata"]["SizeY"], 
+                        size_z: acceptedFiles[i]["metadata"]["SizeZ"], 
+                        type: acceptedFiles[i]["metadata"]["Type"], 
+                    };
                     setSearchRows(rows => [...rows, current_file]);
                 }
             }
@@ -709,6 +724,7 @@ const OpenPositionDialog = (props) => {
 
     const [expName, setExpName] = useState(null);
     const [fileNames, setFileNames] = useState([]);
+    const [metaDatas, setMetaDatas] = useState([]);
     const [contents, setContents] = useState([]);
 
     const onTabChange = (event, newValue) => {
@@ -751,6 +767,7 @@ const OpenPositionDialog = (props) => {
             let data = response.data
             if (data.success) {
                 setFileNames(data.data)
+                setMetaDatas(data.metadata)
             } else {
                 console.log(response.error)
             }
@@ -836,6 +853,7 @@ const OpenPositionDialog = (props) => {
                                 <ImageDropzone
                                     setLoading={(loading) => setIsLoading(loading)}
                                     fileNames={fileNames}
+                                    metaDatas={metaDatas}
                                     handleExperimentDialog={handleExperimentDialog}
                                 />
                             </TabContainer>
