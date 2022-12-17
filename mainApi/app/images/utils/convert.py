@@ -2,6 +2,7 @@ import os
 import javabridge
 import bioformats
 from bioformats import logback
+import xml.etree.ElementTree as ET
 
 
 javabridge.start_vm(class_path=bioformats.JARS,
@@ -22,10 +23,24 @@ def convert_to_ome_format(path, image_name):
             new_image_name = image_name[0:pos] + ".OME.TIF"
             new_image_path = os.path.join(path, new_image_name)
             bioformats.formatwriter.write_image(new_image_path, image, "uint16")
-            print("convert_to_ome_format: ", image_path, new_image_path)
+            #print("convert_to_ome_format: ", image_path, new_image_path)
             return new_image_name
         return image_name
     return ""
+
+def get_metadata(image_path):
+    logback.basic_config()
+
+    omexml_metadata = bioformats.get_omexml_metadata(image_path)
+    #print(omexml_metadata)
+    xmlroot = ET.fromstring(omexml_metadata)
+    for x in xmlroot[0]:
+        if 'Pixels' in x.tag:
+            metadata = x.attrib
+            print(metadata)
+            return metadata
+    return ""
+
 
 def write_image(pathname, pixels, pixel_type,
                 c = 0, z = 0, t = 0,
