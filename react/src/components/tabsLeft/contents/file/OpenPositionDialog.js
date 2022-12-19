@@ -107,6 +107,7 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
+    console.log("ImageDropzone:", acceptedFiles)
 
     useEffect(() => {
         const bringFilesByName = async () => {
@@ -129,6 +130,7 @@ const ImageDropzone = (props) => {
     const updateNew = async (fileNames, metaDatas) => {
         let files = [];
         let newAcceptedFiles = [];
+        acceptedFiles = [];
         for (let i = 0; i < fileNames.length; i++) {
             let fileName = fileNames[i]
             function hex2a(hexx) {
@@ -267,6 +269,7 @@ const DropzoneMetaData = (props) => {
     useEffect(() => {
         if (acceptedFiles) {
             setSearchRows([]);
+            console.log("DropzoneMetaData:", acceptedFiles)
             for (let i = 0; i < acceptedFiles.length; i++) {
                 if (acceptedFiles[i]) {
                     let current_file = {
