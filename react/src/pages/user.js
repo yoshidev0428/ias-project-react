@@ -21,7 +21,7 @@ import {
   ListItemAvatar,
   ListItemText
 } from '@mui/material';
-import {AccountProfile} from './user/account-profile'
+import AccountProfile from './user/account-profile'
 
 const UserPage = (props) => {
 	return (

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import {AccountProfile} from './user/account-profile'
+import AccountProfile from './user/account-profile'
 import {AccountProfileDetails} from './user/account-profile-details'
 
 
