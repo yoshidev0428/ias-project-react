@@ -233,7 +233,15 @@ const MainFrame = () => {
                             {leftTabVal === 3 && <TabContainer><FileTab /></TabContainer>}
                         </div>
                     </Col>
-                    <Col xs={8} ref={imageViewAreaRef} style={{backgroundColor: "#ddd", height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}> {/* Central Panel, Viv Image Viewer */}
+                    <Col xs={8} ref={imageViewAreaRef} style={{
+                        backgroundColor: "#ddd", 
+                        height: (height - fixedBarHeight).toString() + "px", 
+                        overflowY: "auto",
+                        display: 'flex',
+                        justifyContent:'center',
+                        alignItems: 'center'
+                    }}
+                    > {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
                         {vivPage && <RoutedAvivator />}

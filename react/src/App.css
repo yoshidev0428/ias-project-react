@@ -138,3 +138,19 @@
     animation    : moveToRight 2s infinite linear;
     border-radius: 8px;
 }
+
+#account-check-tree ol:first-child>li {
+    border: 1px solid gray;
+}
+
+#account-check-tree ol>li>ol>li {
+    border-top: 1px solid gray;
+}
+
+#account-check-tree ol>li>ol>li span.rct-checkbox {
+    visibility: hidden;
+}
+
+#account-check-tree ol ol {
+    padding-left: 0px;
+}
