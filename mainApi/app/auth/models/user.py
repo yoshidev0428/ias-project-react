@@ -49,7 +49,6 @@ class UserModelDB(BaseModel):
     is_active: bool
     created_at: str
     last_login: str
-    avatar_url: str
 
     class Config:
         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
