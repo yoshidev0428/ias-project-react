@@ -88,9 +88,11 @@ async def delete_images(request: Request,
     files = data.get("images").split(',')
     for filePath in files:
         if not os.path.exists(filePath):
-            return JSONResponse({error: "You are attemting to delete non-existing file"})
+            #return JSONResponse({error: "You are attemting to delete non-existing file"})
+            continue
         if not os.path.isfile(filePath): 
-            return JSONResponse({error: "You are attemting to delete folder, not file"})
+            #return JSONResponse({error: "You are attemting to delete folder, not file"})
+            continue
         os.remove(filePath)
 
     for f in os.listdir(current_user_path):
