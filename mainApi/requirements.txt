@@ -27,3 +27,4 @@ jsons
 tifftools
 # histomicstk
 # tifffile
+mysql.connector
