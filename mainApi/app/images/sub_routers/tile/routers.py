@@ -494,3 +494,21 @@ async def get_image_raw_data(
     domain, contrastLimits = calculateImageStats(image_path)
     return JSONResponse({"success": True, "domain": [int(domain[0]), int(domain[1])], 
         "contrastLimits": [int(contrastLimits[0]), int(contrastLimits[1])]})
+
+# for test
+@router.get("/purchase", response_description="List purchase", response_model=List[str])
+async def list_purchase(max_entries: int = None,
+                     current_user: UserModelDB = Depends(get_current_user),
+                     db: AsyncIOMotorDatabase = Depends(get_database)):
+    if max_entries is None:
+        max_entries = 1000
+
+    #for test
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="admin",
+        password="123456"
+    )
+    print(mydb)
+
+    return mydb
