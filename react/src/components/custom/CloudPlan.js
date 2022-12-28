@@ -1,9 +1,15 @@
-import * as React from "react";
+//import * as React from "react";
+import React, {useState, useEffect, useRef} from "react";
 import * as ReactDOM from "react-dom";
 import { Avatar, Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
-
 import CloudInfo from './cloud/CloudInfo';
+import { api } from "../../api/base";
+
+export const getPurchaseList = async () => {
+  let response = await api.get("/purchase")
+  return response
+}
 
 export const TasksProgress = (props) => (
   <Card
@@ -54,6 +60,21 @@ export const TasksProgress = (props) => (
 );
 
 const CloudPlan = (props) => {
+  useEffect(() => {
+    const getPurchase = async () => {
+      let response = await getPurchaseList()
+      console.log("CloudPlan:", response)
+      let data = response.data
+      // if(data.error) {
+      //     console.log("Error occured while invoking getImageTree api")
+      //     //alert("Error occured while getting the tree")
+      // } else {
+      //     store.dispatch({type: "set_experiment_data", content: data.data});
+      // }
+    }
+    getPurchase();
+  }, [])
+
 	return (
     <>
   		<TasksProgress />	

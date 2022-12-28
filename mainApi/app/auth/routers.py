@@ -169,7 +169,7 @@ async def list_users(max_entries: int = None,
     return users
 
 
-@router.get("/admin/purchase", response_description="List purchase", response_model=List[str])
+@router.get("/purchase", response_description="List purchase", response_model=List[str])
 async def list_purchase(max_entries: int = None,
                      current_user: UserModelDB = Depends(get_current_user),
                      db: AsyncIOMotorDatabase = Depends(get_database)):
