@@ -31,6 +31,7 @@ from datetime import datetime, timedelta
 from mainApi.app.auth.models.user import UserModelDB, ShowUserModel, UpdateUserModel, CreateUserModel, \
     CreateUserReplyModel, LoginUserReplyModel, ChangeUserPasswordModel, UpdateUserAdminModel, to_camel
 from mainApi.app.db.mongodb import get_database
+import mysql.connector
 
 router = APIRouter(
     prefix="/auth",
@@ -166,6 +167,24 @@ async def list_users(max_entries: int = None,
     users = [ShowUserModel.parse_obj(user) for user in users]
 
     return users
+
+
+@router.get("/admin/purchase", response_description="List purchase", response_model=List[str])
+async def list_purchase(max_entries: int = None,
+                     current_user: UserModelDB = Depends(get_current_user),
+                     db: AsyncIOMotorDatabase = Depends(get_database)):
+    if max_entries is None:
+        max_entries = 1000
+
+    #for test
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="admin",
+        password="123456"
+    )
+    print(mydb)
+
+    return mydb
 
 
 @router.put("/admin/{user_id}", response_description="Update a user", response_model=ShowUserModel)
