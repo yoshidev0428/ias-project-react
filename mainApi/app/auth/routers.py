@@ -182,7 +182,7 @@ async def list_purchase(max_entries: int = None,
             host="localhost",
             user="wordpress",
             password="JbeT67wU5ArydL",
-            database="customer_purchases",
+            database="wordpress",
         ) as connection:
             print(connection)
             with connection.cursor() as cursor:
