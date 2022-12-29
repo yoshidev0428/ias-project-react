@@ -31,7 +31,7 @@ from datetime import datetime, timedelta
 from mainApi.app.auth.models.user import UserModelDB, ShowUserModel, UpdateUserModel, CreateUserModel, \
     CreateUserReplyModel, LoginUserReplyModel, ChangeUserPasswordModel, UpdateUserAdminModel, to_camel
 from mainApi.app.db.mongodb import get_database
-import mysql.connector
+from mysql.connector import connect, Error
 
 router = APIRouter(
     prefix="/auth",
@@ -176,15 +176,26 @@ async def list_purchase(max_entries: int = None,
     if max_entries is None:
         max_entries = 1000
 
-    #for test
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="admin",
-        password="123456"
-    )
-    print(mydb)
+    purchase_info = []
+    try:
+        with connect(
+            host="localhost",
+            user="wordpress",
+            password="JbeT67wU5ArydL",
+            database="customer_purchases",
+        ) as connection:
+            print(connection)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM customer_purchases")
+                result = cursor.fetchall()
+                for row in result:
+                    print(row)
+                    purchase_info.append(row)
+    except Error as e:
+        print(e)
+        return JSONResponse({"success": False, "error": ""})
 
-    return mydb
+    return JSONResponse({"success": True, "data": purchase_info})
 
 
 @router.put("/admin/{user_id}", response_description="Update a user", response_model=ShowUserModel)
