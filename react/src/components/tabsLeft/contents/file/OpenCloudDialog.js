@@ -264,7 +264,7 @@ const OpenCloudDialog = (props) => {
                             <input
                                 ref={fileInput}
                                 style={{ display: 'none' }}
-                                accept="image/*"
+                                accept=""
                                 id="contained-button-file"
                                 type="file"
                                 multiple
