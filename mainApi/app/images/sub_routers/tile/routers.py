@@ -317,7 +317,7 @@ async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB
 
 @router.get("/align_tiles_ashlar",
             response_description="Align Tiles",
-            # response_model=List[AlignedTiledModel],
+            response_model=List[AlignedTiledModel],
             status_code=status.HTTP_200_OK)
 async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list)) -> any:
     """
