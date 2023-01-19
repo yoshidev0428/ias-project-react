@@ -29,7 +29,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
-import SupportChatSlack from "../components/supportChatSlack/SupportChatSlack";
+import SupportChatSlack from "../components/slackChat/SupportChatSlack";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";
 import AdjustTab from "../components/tabsLeft/AdjustTab";
@@ -170,9 +170,9 @@ const MainFrame = () => {
                                         path={mdiChatQuestionOutline}>
                                     </Icon>
                                 </button>
-                                {/* {
+                                {
                                     showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
-                                } */}
+                                }
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
