@@ -170,9 +170,9 @@ const MainFrame = () => {
                                         path={mdiChatQuestionOutline}>
                                     </Icon>
                                 </button>
-                                {
+                                {/* {
                                     showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
-                                }
+                                } */}
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
