@@ -73,7 +73,7 @@ const OpenExperimentDialog = (props) => {
             }
         }
         fetchExperimentNames()
-    }, [])
+    }, [props.cloudDialogClose])
 
     const handleListItemClick = (expName) => {
         props.handleExpNameChange(expName)
