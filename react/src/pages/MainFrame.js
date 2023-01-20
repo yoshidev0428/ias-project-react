@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import Icon from "@mdi/react";
 import Avatar from '@mui/material/Avatar';
 import Logout from '@mui/icons-material/Logout';
 import {ThemeProvider, createTheme} from '@mui/material/styles';
@@ -28,7 +29,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
-import FooterContent from "../components/footer/FooterContent";
+import SupportChatSlack from "../components/slackChat/SupportChatSlack";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";
 import AdjustTab from "../components/tabsLeft/AdjustTab";
@@ -43,11 +44,11 @@ import SettingsTab from "../components/tabsRight/SettingsTab";
 import store from "../reducers";
 import {connect} from "react-redux";
 import {getWindowDimensions} from "../components/helpers";
+import {mdiChatQuestionOutline} from "@mdi/js";
 import logo75 from "../assets/images/logo75.png";
 
 import UserPage from "./user"
 import AccountPage from "./account"
-
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -135,6 +136,9 @@ const MainFrame = () => {
     }, [imageViewAreaRef]);
 
     const HeaderContent = () => {
+
+        const [showChatFlag, setShowChatFlag] = useState(false);
+        
         return (
             <Box sx={{flexGrow: 1, height: "65px"}}>
                 <ThemeProvider theme={darkTheme}>
@@ -157,6 +161,18 @@ const MainFrame = () => {
                                 />
                             </Typography>
                             <div>
+                                <button className="btn btn-sm pt-0 pb-0" style={{marginRight: 70}} onClick={() => setShowChatFlag(!showChatFlag)}>
+                                    <Icon size={1}
+                                        horizontal
+                                        vertical
+                                        rotate={180}
+                                        color="#EFEFEF"
+                                        path={mdiChatQuestionOutline}>
+                                    </Icon>
+                                </button>
+                                {/* {
+                                    showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
+                                } */}
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
@@ -265,7 +281,6 @@ const MainFrame = () => {
                     </Col>
                 </Row>
             </Container>
-            <FooterContent />
         </>
     );
 };

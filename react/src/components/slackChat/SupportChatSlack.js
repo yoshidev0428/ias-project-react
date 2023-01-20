@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 // import TextField from "@mui/material/TextField";
 import {submit_message} from "../../api/auth";
 // import {ReactSlackChat} from "react-slack-chat";
-import ReactSlackChat from "../slackChat/ReactSlackChat";
+import ReactSlackChat from "./ReactSlackChat";
 
 const mapStateToProps = (state) => ({
     user: state.auth.user
