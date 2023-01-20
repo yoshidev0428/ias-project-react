@@ -54,7 +54,8 @@ async def add_image_tiles(path: Path,
         if file_name != "":
             # print("add_image_tiles: ", path, file_name, content_type)
             filenames.append(file_name)
-            width_px, height_px = PIL.Image.open(file_path).size
+            with PIL.Image.open(file_path) as im:
+                width_px, height_px = im.size
             tile = TileModelDB(
                 user_id=PyObjectId(current_user.id),
                 absolute_path=str(path),

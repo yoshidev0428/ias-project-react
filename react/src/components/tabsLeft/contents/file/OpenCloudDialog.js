@@ -82,8 +82,8 @@ const DeleteSureDialog = (props) => {
 const OpenCloudDialog = (props) => {
     const fileInput = React.useRef();
 
-    const expName = "experiement_" + new Date().toISOString()
-    const upFName = "upload_" + new Date().toISOString()
+    const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
     const [experimentName, setExperimentName] = useState(expName);
     const [uploadFolderName, setUploadFolderName] = useState(upFName);
@@ -150,8 +150,8 @@ const OpenCloudDialog = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString()
-        const upFName = "upload_" + new Date().toISOString()
+        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
         setExperimentName(expName)
         setUploadFolderName(upFName)

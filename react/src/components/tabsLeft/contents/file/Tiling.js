@@ -530,7 +530,7 @@ const Tiling = (props) => {
                 <Col xs={5} className="p-0 h-100" >
                     {/*  Tiling Preview  */}
                     <div style={{flexDirection: "column"}}>
-                        <div className="row m-0" style={{backgroundColor: "#ddd", height: "420px", width: "480px", overflowY: "auto"}} >
+                        <div className="row m-0" style={{backgroundColor: "#ddd", height: "380px", width: "380px", overflowY: "auto"}} >
                             <RoutedAvivator type={"tiling"} />
                             {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
                             <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}

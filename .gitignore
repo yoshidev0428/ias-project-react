@@ -150,3 +150,7 @@ ENV/
 /datasets/
 /_tmp/
 #*.sh
+
+
+/celery_tasks
+/shared_utils
