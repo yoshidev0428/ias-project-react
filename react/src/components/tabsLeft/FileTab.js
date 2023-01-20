@@ -118,6 +118,7 @@ const FileTab = (props) => {
     const [folderDialog, setfolderDialog] = useState(false);
     const [selectTab, setSelectTab] = useState(0);
     const [positionDialog, setpositionDialog] = useState(false);
+    const [cloudDialogClose, setCloudDialogClose] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState([]);
     const [treeData, setTreeData] = useState([]);
 
@@ -126,13 +127,15 @@ const FileTab = (props) => {
     }
     const setCloudDialog = () => {
         setcloudDialog(true);
+        setCloudDialogClose(false);
     }
 
     const handleClose = () => {
         setpositionDialog(false);
     }
     const handleCloudClose = () => {
-        setcloudDialog(false)
+        setcloudDialog(false);
+        setCloudDialogClose(true);
     }
 
     const inputFile = useRef(null);
@@ -169,7 +172,6 @@ const FileTab = (props) => {
         getImageTree()
             .catch(console.error)
     }, [])
-
     return (
         <TabItem title="File/Edit">
             <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }} />
@@ -183,7 +185,7 @@ const FileTab = (props) => {
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
-                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} selectTab={selectTab}/>}
+                {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} cloudDialogClose={cloudDialogClose} selectTab={selectTab}/>}
             </SmallCard>
             <Divider />
             <SmallCard title="Save / Load">

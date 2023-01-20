@@ -919,6 +919,7 @@ const OpenPositionDialog = (props) => {
                 {
                     <OpenExperimentDialog
                         onOpen={experimentDialog}
+                        cloudDialogClose = {props.cloudDialogClose}
                         setCloudDialog={props.setCloudDialog}
                         setDialogStatus={setDialogStatus}
                         handleExpNameChange={handleExpNameChange}
