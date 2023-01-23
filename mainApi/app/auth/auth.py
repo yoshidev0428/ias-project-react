@@ -13,10 +13,10 @@ import pyotp
 from datetime import datetime, timedelta
 from typing import Optional
 
-from mainApi.app.auth.models.user import UserModelDB, CreateUserModel, CreateUserReplyModel, ShowUserModel, \
+from app.auth.models.user import UserModelDB, CreateUserModel, CreateUserReplyModel, ShowUserModel, \
     LoginUserReplyModel, UpdateUserModel, UpdateUserAdminModel, to_camel
 
-from mainApi.app.db.mongodb import get_database
+from app.db.mongodb import get_database
 import qrcode
 import qrcode.image.svg
 # CRUD
@@ -180,7 +180,7 @@ async def get_user_by_id(user_id: str or ObjectId, db: AsyncIOMotorClient) -> Us
 
 # END OF CRUD
 
-async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorClient) -> LoginUserReplyModel:
+async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorClient, otp_code: str) -> LoginUserReplyModel:
     """
         Login route, returns Bearer Token.
         SWAGGER FRIENDLY.
@@ -191,12 +191,14 @@ async def login_swagger(form_data: OAuth2PasswordRequestForm, db: AsyncIOMotorCl
         TODO find way to modify swagger to let me add otp separately, no login2 needed
     """
     print(form_data.username, form_data.password)
-    password = form_data.password[:-6]  # exclude the last 6 digits
-    otp = form_data.password[-6:]  # include only the last 6 digits
-
+    # password = form_data.password[:-6]  # exclude the last 6 digits
+    # otp = form_data.password[-6:]  # include only the last 6 digits
+    otp_code_len = len(otp_code)
+    password = form_data.password[:-otp_code_len]  # exclude the last 6 digits
+    print('password is ', password, ' otp is ', otp_code)
     # username is email
     user: UserModelDB = await get_user_by_email(form_data.username, db)
-    is_user_auth = authenticate_user(user, password=password, otp=otp)
+    is_user_auth = authenticate_user(user, password=password, otp_code=otp_code)
     if not is_user_auth:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -229,7 +231,7 @@ async def login(form_data: OAuth2PasswordRequestForm, otp: str, db: AsyncIOMotor
         Prettier than the /token function since the requirement of otp is made clear
         """
     form_data.password += otp  # adds the otp to the end of the password to fit the login method
-    return await login_swagger(form_data=form_data, db=db)
+    return await login_swagger(form_data=form_data, db=db, otp_code=otp)
 
 
 def get_password_hash(password):
@@ -238,25 +240,30 @@ def get_password_hash(password):
 
 def verify_password(plain_password, hashed_password):
     # print("-----------------------------------------------");
-    # print(plain_password);
-    # print(hashed_password);
+    print('plain_password', plain_password)
+    print('hashed_password', hashed_password)
+    print('pwd_conte', pwd_context.verify(plain_password, hashed_password))
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def authenticate_email_password(user: UserModelDB or None, password) -> bool:
+def authenticate_email_password(user: UserModelDB or None, password, otp_code) -> bool:
     # async def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends()) -> UserModel or None:
     # user: UserModelDB = await get_user_by_email(email, db)
+    print('password is ', password),
     if user is None:
         return False
+    if otp_code != user.otp_secret:
+        False
     if not verify_password(password, user.hashed_password):
         return False
 
     return True
 
 
-def authenticate_user(user: UserModelDB or None, password, otp: str) -> bool:
+def authenticate_user(user: UserModelDB or None, password, otp_code) -> bool:
 
-    email_password_authenticated = authenticate_email_password(user, password)
+    email_password_authenticated = authenticate_email_password(user, password, otp_code)
+    # return True
     if email_password_authenticated is False:
         return False
 
