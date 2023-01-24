@@ -315,23 +315,23 @@ async def _align_tiles_naive(request: AlignNaiveRequest, tiles: List[TileModelDB
         aligned_tiles = await loop.run_in_executor(pool, align_tiles_naive, request, tiles)
         return aligned_tiles
 
-@router.get("/align_tiles_ashlar",
-            response_description="Align Tiles",
-            # response_model=List[AlignedTiledModel],
-            status_code=status.HTTP_200_OK)
-async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list)) -> any:
-    """
-        performs a naive aligning of the tiles simply based on the given rows and method.
-        does not perform any advanced stitching or pixel checking
+# @router.get("/align_tiles_ashlar",
+#             response_description="Align Tiles",
+#             # response_model=List[AlignedTiledModel],
+#             status_code=status.HTTP_200_OK)
+# async def _align_tiles_ashlar(tiles: List[TileModelDB] = Depends(get_tile_list)) -> any:
+#     """
+#         performs a naive aligning of the tiles simply based on the given rows and method.
+#         does not perform any advanced stitching or pixel checking
 
-        Called using concurrent.futures to make it async
-    """
+#         Called using concurrent.futures to make it async
+#     """
 
-    loop = asyncio.get_event_loop()
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        # await result
-        aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles, "img_r{row:03}_c{col:03}.tif")
-        return aligned_tiles
+#     loop = asyncio.get_event_loop()
+#     with concurrent.futures.ProcessPoolExecutor() as pool:
+#         # await result
+#         aligned_tiles = await loop.run_in_executor(pool, align_ashlar, tiles, "img_r{row:03}_c{col:03}.tif")
+#         return aligned_tiles
 
 # Update Name and File - Name&&File Functions
 @router.post("/update",
