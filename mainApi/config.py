@@ -20,6 +20,7 @@ if not MONGODB_URL:
     MONGO_PORT = int(os.getenv("MONGO_PORT", 27017))
     MONGO_USER = os.getenv("MONGO_USER", "user")
     MONGO_PASS = os.getenv("MONGO_PASSWORD", "pass")
+    
 
     if os.getenv("IS_PRODUCTION") and os.getenv("IS_PRODUCTION") == 'true':
         MONGO_DB_NAME = os.getenv("MONGO_DB", "db")
