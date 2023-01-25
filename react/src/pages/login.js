@@ -116,7 +116,7 @@ const Login = (props) => {
                     </Form.Group>
                     <Button type="button" className="link-button" onClick={showForgetPassword}>Forget Password?</Button>
                     <Button variant="primary" type="primary" block style={{ width: "100%", height: "40px", color: "white", marginBottom: "5px", marginTop:"5px", background: "#007bff", borderRadius: "2px" }}>
-                        Log Insssss
+                        Log In
                     </Button>
                 </Form>
                 <Button type="button" className="link-button" onClick={showRegistration}>Switch to register</Button>

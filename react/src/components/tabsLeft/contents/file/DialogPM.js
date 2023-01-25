@@ -31,7 +31,7 @@ const DialogPM = () => {
   return (
     <>
       <div className="text-center">
-        <Dialog maxWidth='500' fullWidth={true} open={showDialog} >
+        <Dialog maxWidth='500' open={showDialog}>
           <DialogContent>
             <Card> 
               <CardHeader className="text-h5 grey lighten-2" title="Pattern Matching" />

@@ -13,6 +13,7 @@ export const uploadExperimentData = params => {
 };
 
 export const getImageTree = async () => {
+    
     let response = await api.get("image/tile/get_image_tree")
     return response
 }

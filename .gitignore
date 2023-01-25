@@ -155,3 +155,4 @@ ENV/
 /celery_tasks
 /shared_utils
 react/.env
+storage-credential

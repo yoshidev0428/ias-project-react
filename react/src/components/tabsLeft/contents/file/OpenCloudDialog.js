@@ -80,6 +80,7 @@ const DeleteSureDialog = (props) => {
 }
 
 const OpenCloudDialog = (props) => {
+    console.log("Open cloud Dialog is called!")
     const fileInput = React.useRef();
 
     const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
@@ -95,6 +96,7 @@ const OpenCloudDialog = (props) => {
     const [sureDialog, setSureDialog] = useState(false);
 
     const getTree = async () => {
+        console.log("Get Tree is called!");
         let response = await api_experiment.getImageTree()
         let data = response.data
         if(data.error) {
@@ -105,6 +107,7 @@ const OpenCloudDialog = (props) => {
         }
         setUploading(false)
     }
+    console.log(props.experiments)
     const deleteFiles = async () => {
         setUploading(true)
         try {
@@ -183,6 +186,7 @@ const OpenCloudDialog = (props) => {
 
     const handleSelectFile = async (e) => {
         if (e.target.files.length > 0) {
+            console.log("ddddddd", e.target.files)
             setUploading(true)
 
             const incommingFiles = [...e.target.files];
@@ -204,6 +208,7 @@ const OpenCloudDialog = (props) => {
             }
 
             if (newAcceptedFiles.length > 0) {
+                console.log("acceptfile",newAcceptedFiles)
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
                 getTree()
