@@ -38,12 +38,12 @@ import tifftools
 from mainApi.app.images.utils.convert import get_metadata
 
 
-import javabridge
-import bioformats
-from bioformats import logback
+# import javabridge
+# import bioformats
+# from bioformats import logback
 from mainApi.app.images.utils.contrastlimits import calculateImageStats
 
-javabridge.start_vm(class_path=bioformats.JARS)
+# javabridge.start_vm(class_path=bioformats.JARS)
 
 
 router = APIRouter(
