@@ -25,7 +25,7 @@ const SimpleDialog = (props) => {
     };    
     return (
         <>
-            <Dialog open={true} onClose={props.click} fullWidth="md" maxWidth="md" >
+            <Dialog open={true} onClose={props.click} fullWidth={true} maxWidth="md" >
                 <DialogTitle>{props.title}</DialogTitle>
                 <DialogContent style={{padding: "0px 24px"}}>
                     <div>{props.children}</div>

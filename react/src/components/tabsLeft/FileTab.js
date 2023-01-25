@@ -3,7 +3,8 @@ import TabItem from '../custom/TabItem';
 import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
-import OpenCloudDialog from "./contents/file/OpenCloudDialog";
+import OpenCloudDialog from "./contents/file/OpenCloudDialog";  
+import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import * as api_experiment from "../../api/experiment";
 import {
@@ -116,6 +117,7 @@ const FileTab = (props) => {
 
     const [cloudDialog, setcloudDialog] = useState(false);
     const [folderDialog, setfolderDialog] = useState(false);
+    const [fileDialog, setFileDialog] = useState(false);
     const [selectTab, setSelectTab] = useState(0);
     const [positionDialog, setpositionDialog] = useState(false);
     const [cloudDialogClose, setCloudDialogClose] = useState(false);
@@ -179,10 +181,13 @@ const FileTab = (props) => {
             <SmallCard title="Open">
                 <CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={() => setCloudDialog(true)} />
                 {
-                    cloudDialog && <OpenCloudDialog handleClose={handleCloudClose} // treeData={treeData}
+                    cloudDialog && <OpenCloudDialog handleClose={handleCloudClose} treeData={treeData}
                     />
                 }
-                <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { OpenFileDialog() }} />
+                <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { setFileDialog(true) }} />
+                {
+                    fileDialog && <OpenFileDialogForUpload handleClose={handleCloudClose} treeData={treeData} />
+                }
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
                 {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} cloudDialogClose={cloudDialogClose} selectTab={selectTab}/>}
