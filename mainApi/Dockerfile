@@ -36,11 +36,8 @@ RUN pip install --upgrade -r /app/requirements.txt
 EXPOSE 8000
 
 COPY ./mainApi /app/mainApi/
-
 RUN mkdir -p /app/mainApi/app/static
-
 RUN chmod -R 777 /app/mainApi/app/static
-
 ## Copy shared
 COPY ./docker_compose_libs/shared_utils/ /app/shared_utils/
 COPY ./docker_compose_libs/celery_tasks/ /app/celery_tasks/
