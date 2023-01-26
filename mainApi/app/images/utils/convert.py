@@ -5,12 +5,12 @@ from bioformats import logback
 import xml.etree.ElementTree as ET
 
 
-# javabridge.start_vm(class_path=bioformats.JARS,
-#                     run_headless=True)
+javabridge.start_vm(class_path=bioformats.JARS,
+                    run_headless=True)
 
 def convert_to_ome_format(path, image_name):
-    javabridge.start_vm(class_path=bioformats.JARS,
-                        run_headless=True)
+    # javabridge.start_vm(class_path=bioformats.JARS,
+    #                     run_headless=True)
     logback.basic_config()
 
     image_path = os.path.join(path, image_name) 
@@ -28,9 +28,9 @@ def convert_to_ome_format(path, image_name):
             javabridge.kill_vm()
             #print("convert_to_ome_format: ", image_path, new_image_path)
             return new_image_name
-        javabridge.kill_vm()
+        # javabridge.kill_vm()
         return image_name
-    javabridge.kill_vm()
+    # javabridge.kill_vm()
     return ""
 
 def get_metadata(image_path):
