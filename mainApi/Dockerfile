@@ -37,6 +37,8 @@ EXPOSE 8000
 
 COPY ./mainApi /app/mainApi/
 
+RUN mkdir -p /app/mainApi/app/static
+
 RUN chmod -R 777 /app/mainApi/app/static
 
 ## Copy shared

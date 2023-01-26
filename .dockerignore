@@ -11,3 +11,4 @@ docker-compose.yml
 
 .DS_Store
 ./env_files
+./mainApi/app/static

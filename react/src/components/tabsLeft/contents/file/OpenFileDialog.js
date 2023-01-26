@@ -224,11 +224,11 @@ const OpenFileDialogForUpload = (props) => {
     const registerExperiment = () => {
         registerExperimentData()
     }
-    console.log(props.experiments)
+    // console.log(props.experiments)
     return (
         <>
             <SimpleDialog
-                title="Cloud"
+                title="File"
                 singleButton={false}
                 fullWidth={true}
                 okTitle="REGISTER EXPERIMENT"
@@ -247,7 +247,7 @@ const OpenFileDialogForUpload = (props) => {
                     />
                 </div>
                 <div>
-                    <Typography component="div" className="mb-1">View your cloud data</Typography>
+                    <Typography component="div" className="mb-1">View your Uploaded data</Typography>
                     {props.experiments.length ?
                         <CheckboxTree
                             nodes={props.experiments}

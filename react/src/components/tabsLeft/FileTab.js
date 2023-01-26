@@ -5,6 +5,8 @@ import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
 import OpenCloudDialog from "./contents/file/OpenCloudDialog";  
 import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
+
+import OpenFolderDialogForUpload from './contents/file/OpenFolderDialog';
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import * as api_experiment from "../../api/experiment";
 import {
@@ -116,11 +118,13 @@ const FileTab = (props) => {
     }
 
     const [cloudDialog, setcloudDialog] = useState(false);
-    const [folderDialog, setfolderDialog] = useState(false);
-    const [fileDialog, setFileDialog] = useState(false);
+    const [folderDialog, setFolderDialog] = useState(false);
+    const [fileDialog, setfileDialog] = useState(false);
     const [selectTab, setSelectTab] = useState(0);
     const [positionDialog, setpositionDialog] = useState(false);
     const [cloudDialogClose, setCloudDialogClose] = useState(false);
+    const [fileDialogClose, setfileDialogClose] = useState(false);
+    const [folderDialogClose, setFolderDialogClose] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState([]);
     const [treeData, setTreeData] = useState([]);
 
@@ -138,6 +142,22 @@ const FileTab = (props) => {
     const handleCloudClose = () => {
         setcloudDialog(false);
         setCloudDialogClose(true);
+    }
+    const setFileDialog = () => {
+        setfileDialog(true);
+        setfileDialogClose(false);
+    }
+    const handleFileClose = () => {
+        setfileDialog(false);
+        setfileDialogClose(true);
+    }
+    const setfolderDialog = () => {
+        setFolderDialog(true);
+        setFolderDialogClose(false);
+    }
+    const handleFolderClose = () => {
+        setFolderDialog(false);
+        setFolderDialogClose(true);
     }
 
     const inputFile = useRef(null);
@@ -186,9 +206,12 @@ const FileTab = (props) => {
                 }
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { setFileDialog(true) }} />
                 {
-                    fileDialog && <OpenFileDialogForUpload handleClose={handleCloudClose} treeData={treeData} />
+                    fileDialog && <OpenFileDialogForUpload handleClose={handleFileClose} treeData={treeData} />
                 }
-                <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { OpenFolderDialog() }} />
+                <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { setFolderDialog(true) }} />
+                {
+                    folderDialog && <OpenFolderDialogForUpload handleClose={handleFolderClose} treeData={treeData} />
+                }
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
                 {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} cloudDialogClose={cloudDialogClose} selectTab={selectTab}/>}
             </SmallCard>
