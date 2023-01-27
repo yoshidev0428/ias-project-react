@@ -11,18 +11,15 @@ import Stack from '@mui/material/Stack'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 const SimpleDialog = (props) => {
-
-
     const [imageSrc, setImageSrc] = useState(null)
-    // useEffect(() => {
-    //     
-    // })
     const selectedImg = useSelector(state => state.files.selectedImage)
     const auth = useSelector(state => state.auth)
+    console.log(auth)
     useEffect(() => {
         if (selectedImg!=null) {
-            const imgsrc = "http://34.72.210.99:8000/image/tile/get_image/upload" + selectedImg[0].split("upload")[1]
+            const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image" + selectedImg[0].split(auth.user._id)[1]
             setImageSrc(imgsrc)
+            console.log(imgsrc)
             fetch(imgsrc, {
             method: "GET",
             headers: { Authorization: auth.tokenType + ' ' + auth.token }
