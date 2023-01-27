@@ -166,7 +166,7 @@ const Tiling = (props) => {
         console.log(" Selected Image : ", index);
         if (fileNames.length > 0) {
             setSelectedImageFileIndex(index);
-            let file = await getImageByUrl(fileNames[index]);
+            let file = await getImageByUrl(props.folerName, fileNames[index]);
             if (file !== null) {
                 // store.dispatch({type: "tiling_selectedFile", content: file});
             }
@@ -238,11 +238,12 @@ const Tiling = (props) => {
 
     useEffect(() => {
         console.log(TAG, " props.files.length : ", props.fileNames.length);
+        console.log('folderName is ', props.folderName);
         if (props.fileNames.length > 0) {
             const fetchData = async () => {
                 setFileNames(props.fileNames);
                 setSelectedImageFileIndex(0);
-                let file = await getImageByUrl(props.fileNames[0]);
+                let file = await getImageByUrl(props.folderName, props.fileNames[0]);
                 if (file !== null) {
                     // store.dispatch({type: "tiling_selectedFile", content: file});
                 }
