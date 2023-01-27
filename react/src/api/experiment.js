@@ -8,7 +8,6 @@ import store from '../reducers';
 // GRAY: `${API_URL}gray`,
 export const uploadExperimentData = params => {
 
-    console.log(params)
     return api.post("/experiment/upload_experiment_data", params);
 };
 

@@ -8,6 +8,7 @@ const DEFAULT_PARAMS = {
     content: null,
     isImageLoading: false,
     experimentName: null,
+    selectedImage: null
 };
 
 const initState = {
@@ -17,6 +18,9 @@ const initState = {
 //action redux
 const files = (state = initState, action) => {
     switch (action.type) {
+        case "Select_Image": 
+            state.selectedImage = action.payload
+            break;
         case "content_addContent":
             state.content = action.content;
             state.isContentAvailable = true;

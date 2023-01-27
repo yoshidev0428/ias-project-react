@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
-import {connect} from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import PropTypes from "prop-types";
 import SimpleDialog from "../../../custom/SimpleDialog";
 import { styled } from "@mui/material/styles";
@@ -16,6 +16,7 @@ import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_tiles from "../../../../api/tiles";
 import * as api_experiment from "../../../../api/experiment"
 import store from "../../../../reducers";
+import { selectImage } from "../../../../reducers/actions/filesAction";
 
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -36,9 +37,7 @@ import {
   MdFolderOpen,
   MdInsertDriveFile
 } from "react-icons/md";
-import { useDispatch, useSelector} from "react-redux";
-import { get } from "lodash";
-import { mdiConsolidate } from "@mdi/js";
+
 
 function LinearProgressWithLabel(props) {
     return (
@@ -81,6 +80,26 @@ const DeleteSureDialog = (props) => {
         </>
     )
 }
+const SuccessDialog = (props) => {
+    const handleClose = () => {
+        props.setsuccessStatus(false)
+    };
+        return (
+        <>
+            <Dialog open={props.open}>
+                <DialogTitle>Uploading files </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Uploading is Successful
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleClose}>Ok</Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    )
+}
 
 const OpenFileDialogForUpload = (props) => {
     const fileInput = React.useRef();
@@ -96,16 +115,24 @@ const OpenFileDialogForUpload = (props) => {
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [sureDialog, setSureDialog] = useState(false);
-    const tree = useSelector(state => state.experiment)
-    // console.log(tree)
+    const [successDialog, setsuccessDialog] = useState(false);
+    const [photo123, setphoto123] = useState(null);
+    const [image, setFiles] = useState([])
+
+    const dispatch = useDispatch()
+    const handleInputChange = (event) => {
+      setphoto123(URL.createObjectURL(event.target.files[0]));
+      setFiles(event.target.files)
+    }
     const getTree = async () => {
+        console.log("Get Tree is called!");
         let response = await api_experiment.getImageTree()
-        let data = response.data.data
+        let data = response.data
         if(data.error) {
             console.log("Error occured while invoking getImageTree api")
             //alert("Error occured while getting the tree")
         } else {
-            store.dispatch({type: "set_experiment_data", content: data});
+            store.dispatch({type: "set_experiment_data", content: data.data});
         }
         setUploading(false)
     }
@@ -150,7 +177,14 @@ const OpenFileDialogForUpload = (props) => {
         //     alert(data.data.length)
         // }
     }
-
+    // console.log(props.experiments)
+    const onsetChecked = (e) => {
+        const length_checked = e.length;
+        const ch =[]
+        ch.push(e[length_checked-1])
+        dispatch(selectImage(ch))
+        setChecked(ch)
+    }
     useEffect(() => {
         setUploading(true)
 
@@ -159,6 +193,7 @@ const OpenFileDialogForUpload = (props) => {
 
         setExperimentName(expName)
         setUploadFolderName(upFName)
+
         getTree()
         setUploading(false)
     }, [])
@@ -184,11 +219,11 @@ const OpenFileDialogForUpload = (props) => {
       leaf: <MdInsertDriveFile className="rct-icon rct-icon-leaf-close" />
     };
 
-    const handleSelectFile = async (e) => {
-        if (e.target.files.length > 0) {
+    const handleSelectFile = async () => {
+        if (image.length > 0) {
             setUploading(true)
 
-            const incommingFiles = [...e.target.files];
+            const incommingFiles = [...image];
             let files = [];
             let newAcceptedFiles = [];
             let acceptedFileCount = 0;
@@ -209,6 +244,10 @@ const OpenFileDialogForUpload = (props) => {
             if (newAcceptedFiles.length > 0) {
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
+                if (resUpload.status==200)
+                setsuccessDialog(true)
+                setFiles([])
+                setphoto123(null)
                 getTree()
             }
             // setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10));
@@ -224,11 +263,11 @@ const OpenFileDialogForUpload = (props) => {
     const registerExperiment = () => {
         registerExperimentData()
     }
-    // console.log(props.experiments)
     return (
         <>
             <SimpleDialog
-                title="File"
+                title="Cloud"
+                checked={checked}
                 singleButton={false}
                 fullWidth={true}
                 okTitle="REGISTER EXPERIMENT"
@@ -247,17 +286,47 @@ const OpenFileDialogForUpload = (props) => {
                     />
                 </div>
                 <div>
-                    <Typography component="div" className="mb-1">View your Uploaded data</Typography>
-                    {props.experiments.length ?
-                        <CheckboxTree
-                            nodes={props.experiments}
-                            checked={checked}
-                            expanded={expanded}
-                            onCheck={checked => setChecked(checked)}
-                            onExpand={expanded => setExpanded(expanded)}
-                            icons={icons}
-                        /> : <label>No data found, please upload..</label>
-                    }
+                <Typography component="div" className="mb-1">View your files</Typography>
+                    <div className="row">
+                        <div className="col-sm-7">
+                        {props.experiments.length ?
+                            <CheckboxTree
+                                nodes={props.experiments}
+                                checked={checked}
+                                expanded={expanded}
+                                onCheck={checked => onsetChecked(checked)}
+                                onExpand={expanded => setExpanded(expanded)}
+                                icons={icons}
+                            /> : <label>No data found, please upload..</label>
+                        }
+                            </div>
+                        <div className="col-sm-5">
+                            { photo123!=null && <img src={photo123} className="rounded" alt="Cinque Terre" width="70%" height="70%" /> }
+                            { photo123==null?
+                                    <Button
+                                    label="Click Here"
+                                    variant="outlined"
+                                    color="success"
+                                    fullWidth
+                                    value={fileName}
+                                    onClick={() => fileInput.current.click()}
+                                >
+                                    Select Image
+                                </Button>:<Button
+                                    label="Click Here"
+                                    variant="outlined"
+                                    color="primary"
+                                    className="mt-3"
+                                    fullWidth
+                                    onClick={() => setphoto123(null)}
+                                >
+                                    Cancel
+                                </Button>
+                                }
+                            </div>
+                        </div>
+                    
+                                        
                 </div>
                 <div className="mt-2 mb-2">
                     {uploading && <LinearProgress />}
@@ -272,23 +341,26 @@ const OpenFileDialogForUpload = (props) => {
                                 id="contained-button-file"
                                 type="file"
                                 multiple
-                                onChange={handleSelectFile}
+                                onChange={handleInputChange}
                             />
+                            {photo123!=null &&
                             <Button
                                 label="Click Here"
                                 variant="outlined"
                                 color="success"
+                                className=""
                                 fullWidth
                                 value={fileName}
-                                onClick={() => fileInput.current.click()}
+                                onClick={handleSelectFile}
                             >
                                 UPLOAD FILES
-                            </Button>
+                            </Button>}
                         </label>
-                        
+                        {checked.length!=0 &&
                         <Button variant="outlined" color="error" onClick={removeImage}>
                             Remove
                         </Button>
+                        }
                     </div>
                     <TextField
                         label="New upload foldername"
@@ -304,6 +376,10 @@ const OpenFileDialogForUpload = (props) => {
                 setDialogStatus={setSureDialog}
                 sureDelete={sureDelete}
                 selectedNum={checked.length}
+            />
+            <SuccessDialog 
+                open={successDialog}
+                setsuccessStatus={setsuccessDialog}
             />
         </>
     );
