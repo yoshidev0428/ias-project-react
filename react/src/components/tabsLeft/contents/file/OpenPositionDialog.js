@@ -729,7 +729,6 @@ const OpenPositionDialog = (props) => {
     const [fileNames, setFileNames] = useState([]);
     const [metaDatas, setMetaDatas] = useState([]);
     const [contents, setContents] = useState([]);
-
     const onTabChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
@@ -815,14 +814,6 @@ const OpenPositionDialog = (props) => {
                     </button>
                 </div>
                 <DialogContent className="p-0" style={{width: "1100px", display: "flex", flexDirection: "row"}}>
-                    <Button
-                        className="cloud-btn"
-                        variant="contained"
-                        onClick={handleExperimentDialog}
-                        color="primary"
-                        style={{height: "fit-content", margin: "10px", marginTop: "50px"}}>
-                        Cloud
-                    </Button>
                     <div style={{width: "100%"}}>
                         <Tabs
                             className="border"
@@ -853,17 +844,27 @@ const OpenPositionDialog = (props) => {
                         </Tabs>
                         {selectedTab === 0 && (
                             <TabContainer>
-                                <ImageDropzone
-                                    setLoading={(loading) => setIsLoading(loading)}
-                                    fileNames={fileNames}
-                                    metaDatas={metaDatas}
-                                    handleExperimentDialog={handleExperimentDialog}
-                                />
+                                <div className="d-flex">
+                                    <Button
+                                        className="cloud-btn"
+                                        variant="contained"
+                                        onClick={handleExperimentDialog}
+                                        color="primary"
+                                        style={{height: "fit-content", margin: "10px", marginTop: "50px"}}>
+                                        Cloud
+                                    </Button>
+                                    <ImageDropzone
+                                        setLoading={(loading) => setIsLoading(loading)}
+                                        fileNames={fileNames}
+                                        metaDatas={metaDatas}
+                                        handleExperimentDialog={handleExperimentDialog}
+                                    />
+                                </div>
                             </TabContainer>
                         )}
                         {selectedTab === 1 && (
                             <TabContainer>
-                                <Tiling fileNames={acceptedFiles.map(file => file.name)} />
+                                <Tiling folderName={expName.includes('experiement') ? expName.replace('experiement', 'upload') : null } fileNames={acceptedFiles.map(file => file.name)} />
                             </TabContainer>
                         )}
                         {selectedTab === 2 && (

@@ -220,13 +220,13 @@ async def upload_images(folder_name: str,
             response_description="Get Image Tiles",
             response_model=List[TileModelDB])
 async def get_image(image: str,
-                    folder : str, 
+                    folder: str,
                     clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     print('image get', folder, image)
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    return FileResponse(os.path.join(current_user_path + '/' + folder, image))
+    return FileResponse(os.path.join(current_user_path + '/' + folder, image), media_type="image/tiff")
 
 # Return Image tree
 @router.get("/get_image_tree", 
