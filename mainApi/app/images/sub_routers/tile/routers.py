@@ -8,6 +8,7 @@ from tokenize import String
 from PIL import Image
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
+from starlette.responses import StreamingResponse
 from fastapi import (
     Request,
     Response,
@@ -215,15 +216,17 @@ async def upload_images(folder_name: str,
     return JSONResponse(result)
 
 # Return one Image file
-@router.get("/get_image/{image}", 
+@router.get("/get_image/{folder}/{image}", 
             response_description="Get Image Tiles",
             response_model=List[TileModelDB])
 async def get_image(image: str,
+                    folder : str, 
                     clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+    print('image get', folder, image)
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    return FileResponse(os.path.join(current_user_path + '/', image), media_type="image/tiff")
+    return FileResponse(os.path.join(current_user_path + '/' + folder, image))
 
 # Return Image tree
 @router.get("/get_image_tree", 
