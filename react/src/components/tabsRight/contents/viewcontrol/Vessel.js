@@ -150,7 +150,7 @@ const Vessel = (props) => {
 
         <Card ref={ref}>
             <div className="d-flex align-items-center common-border">
-                <button className='btn btn-light btn-sm' style={{width: "50%"}} onClick={() => changeVesselSeries(false)}>
+                {/* <button className='btn btn-light btn-sm' style={{width: "50%"}} onClick={() => changeVesselSeries(false)}>
                     <Icon size={0.9}
                         horizontal
                         vertical
@@ -167,7 +167,11 @@ const Vessel = (props) => {
                         color="#212529"
                         path={mdiChevronRight}>
                     </Icon>
-                </button>
+                </button> */}
+                <div>
+                    <h6 className='pl-4 pr-1'>Slide quater</h6>
+                </div>
+                <input type="number" className='w-10' style={{width: "30%"}}></input>
             </div>
             <div className="d-flex common-border">
                 <h6 className='mb-0'> {currentVessel.title} - {currentVessel.type}</h6>

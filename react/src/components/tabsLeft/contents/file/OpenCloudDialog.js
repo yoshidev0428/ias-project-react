@@ -178,9 +178,13 @@ const OpenCloudDialog = (props) => {
     const onsetChecked = (e) => {
         const length_checked = e.length;
         const ch =[]
+        if (e.length==0) {
+            setChecked([])
+        } else {
         ch.push(e[length_checked-1])
         dispatch(selectImage(ch))
         setChecked(ch)
+        }
     }
     useEffect(() => {
         setUploading(true)
