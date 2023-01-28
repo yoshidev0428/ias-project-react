@@ -12,6 +12,11 @@ import Typography from "@mui/material/Typography";
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import CheckboxTree from 'react-checkbox-tree';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_tiles from "../../../../api/tiles";
 import * as api_experiment from "../../../../api/experiment"
@@ -117,11 +122,12 @@ const OpenFolderDialogForUpload = (props) => {
     const [successDialog, setsuccessDialog] = useState(false);
     const [photo123, setphoto123] = useState(null);
     const [image, setFiles] = useState([])
-
+    const [selectedFolder, setSelectedFolder] = useState('');
     const dispatch = useDispatch()
-
     const inputFolder = useRef(null);
-    
+    const handleChangeFolder = (event) => {
+        setSelectedFolder(event.target.value);
+      };
     const getTree = async () => {
         let response = await api_experiment.getImageTree()
         let data = response.data
@@ -149,9 +155,16 @@ const OpenFolderDialogForUpload = (props) => {
             throw err;
         }
     }
+    let registerData = [];
+    if (selectedFolder!='') {
+        const data = props.experiments.filter(experiment => experiment.label == selectedFolder)[0];
+        data.children.map ( item => {
+            registerData.push(item.value)
+        })
+    }
     const registerExperimentData = async () => {
         try {
-            let response = await api_experiment.registerExperiment(experimentName, checked)
+            let response = await api_experiment.registerExperiment(experimentName, registerData)
             let data = response.data
 
             if(data.success) {
@@ -261,6 +274,9 @@ const OpenFolderDialogForUpload = (props) => {
     const OpenFolderDialog = () => {
         inputFolder.current.click();
     };
+    
+    console.log(props.experiments)
+    
     return (
         <>
             <SimpleDialog
@@ -287,17 +303,25 @@ const OpenFolderDialogForUpload = (props) => {
                 <Typography component="div" className="mb-1">View your cloud data</Typography>
                     <div className="row">
                         <div className="col-sm-7">
-                        {props.experiments.length ?
-                            <CheckboxTree
-                                nodes={props.experiments}
-                                checked={checked}
-                                expanded={expanded}
-                                onCheck={checked => onsetChecked(checked)}
-                                onExpand={expanded => setExpanded(expanded)}
-                                icons={icons}
-                            /> : <label>No data found, please upload..</label>
+                        {
+                            props.experiments.length ? 
+                            <FormControl>
+                                <RadioGroup
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    name="radio-buttons-group"
+                                    value={selectedFolder}
+                                    onChange={handleChangeFolder}
+                                >
+                                    {
+                                        props.experiments.map (
+                                            experiment =>  <FormControlLabel value={experiment.label} control={<Radio />} label={experiment.label} />                                    
+                                        )
+                                    }
+                                </RadioGroup>
+                            </FormControl> : <label>No data found, please upload..</label>
                         }
-                            </div>
+                        
+                        </div>
                         <div className="col-sm-5">
                         </div>
                     </div>

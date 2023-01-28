@@ -151,6 +151,7 @@ const OpenCloudDialog = (props) => {
             throw err;
         }
     }
+    console.log("This is test for check", checked)
     const registerExperimentData = async () => {
         try {
             let response = await api_experiment.registerExperiment(experimentName, checked)
