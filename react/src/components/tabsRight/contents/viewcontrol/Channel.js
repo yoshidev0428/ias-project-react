@@ -146,18 +146,18 @@ const Channel = (props) => {
                         <Button className="py-0" onClick={(e) => onColorMono()} variant="contained" color="primary" size="small">Color/Mono</Button>
                     </div>
                 </div>
-                <div className="d-flex justify-space-between align-center">
-                    <div>
+                <div >
+                    {/* <div>
                         <button>+</button>
                         <button>+</button>
-                    </div>
+                    </div> */}
                     <SmallCard>
                         {renderItems(channels)}
                     </SmallCard>
-                    <div>
+                    {/* <div>
                         <button>+</button>
                         <button>+</button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>
