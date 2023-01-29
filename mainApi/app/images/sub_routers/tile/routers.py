@@ -115,6 +115,7 @@ async def delete_images(request: Request,
                          current_user: UserModelDB = Depends(get_current_user),
                          db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    print(request)
     data = await request.form()
 
     files = data.get("images").split(',')

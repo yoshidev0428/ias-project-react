@@ -151,6 +151,7 @@ const OpenCloudDialog = (props) => {
             throw err;
         }
     }
+    console.log("This is test for check", checked)
     const registerExperimentData = async () => {
         try {
             let response = await api_experiment.registerExperiment(experimentName, checked)
@@ -178,9 +179,13 @@ const OpenCloudDialog = (props) => {
     const onsetChecked = (e) => {
         const length_checked = e.length;
         const ch =[]
+        if (e.length==0) {
+            setChecked([])
+        } else {
         ch.push(e[length_checked-1])
         dispatch(selectImage(ch))
         setChecked(ch)
+        }
     }
     useEffect(() => {
         setUploading(true)

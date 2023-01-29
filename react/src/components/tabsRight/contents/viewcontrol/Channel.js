@@ -104,7 +104,6 @@ const Channel = (props) => {
     }
     
     const renderItems = (channels) => {
-        // console.log("renderItems", colors, ids, channelsVisible);
         let current_channels = channels;
         let isLoading = false;
         let rgbColor = toRgb(colormap, [0, 0, 0]);
@@ -147,10 +146,18 @@ const Channel = (props) => {
                         <Button className="py-0" onClick={(e) => onColorMono()} variant="contained" color="primary" size="small">Color/Mono</Button>
                     </div>
                 </div>
-                <div>
+                <div >
+                    {/* <div>
+                        <button>+</button>
+                        <button>+</button>
+                    </div> */}
                     <SmallCard>
                         {renderItems(channels)}
                     </SmallCard>
+                    {/* <div>
+                        <button>+</button>
+                        <button>+</button>
+                    </div> */}
                 </div>
             </div>
         </>
