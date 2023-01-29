@@ -262,7 +262,7 @@ const ImageDropzone = (props) => {
             label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
-                <div key={index} style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}}>
+                <div style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}} key={index}>
                     <FileIcon extension={file.name.split('.').pop()} {...defaultStyles.tif} />
                     <label style={{overflow: "hidden"}}>{file.name}</label>
                 </div>
@@ -943,12 +943,13 @@ const OpenPositionDialog = (props) => {
                     } else if (rows == 2 ) {
                         if (columns == 2) return "4 Well Plate"
                         if (columns == 3) return "6 Well Plate"
-                    }
-                    if (rows == 3 && columns == 4) return "12 Well Plate"
-                    if (rows == 4 && columns == 6) return "24 Well Plate"
-                    if (rows == 6 && columns == 8) return "48 Well Plate"
-                    if (rows == 8 && columns == 12) return "96 Well Plate"
-                    if (rows == 16 && columns == 24) return "384 Well Plate"
+                    } 
+                    else if (rows == 3 && columns == 4) return "12 Well Plate"
+                    else if(rows == 4 && columns == 6) return "24 Well Plate"
+                    else if (rows == 6 && columns == 8) return "48 Well Plate"
+                    else if (rows == 8 && columns == 12) return "96 Well Plate"
+                    else if (rows == 16 && columns == 24) return "384 Well Plate"
+                    return '';
                 }
 
                 let object_model = '', NA = 0, WD = 0;
@@ -998,14 +999,10 @@ const OpenPositionDialog = (props) => {
                         console.log("column width----", min_x, min_y, max_x, max_y);
                         if (max_x==0) rows = 1;
                         if (max_y==0) columns = 1;
-                        rows = (max_x/min_x) + 1;
-                        columns = (max_y/min_y) + 1;
+                        rows = parseInt(max_x/min_x) + 1;
+                        columns = parseInt(max_y/min_y) + 1;
                         console.log(columns, rows)
-                        if (rows == 1 && columns == 1) vessel = "slide single";
-                        if (rows == 1 && columns > 1) vessel = "slide quater";
-                        if (4 > rows > 1 && 4 > columns > 1) vessel = "well 4well";
-                        if (9 > rows > 3 && 13 > columns > 3) vessel = "well 96well";
-                        if (rows > 9 && columns > 12) vessel = "Wafer 150mm";
+                        vessel = await getVesselInfo(rows, columns)
                         console.log('vessel-----', vessel)
 
                     }
