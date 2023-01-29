@@ -105,6 +105,7 @@ TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
 };
 const ImageDropzone = (props) => {
+    console.log('props', props);
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
     console.log("ImageDropzone:", acceptedFiles)
@@ -116,7 +117,20 @@ const ImageDropzone = (props) => {
             // let incommingFiles = []
             // incommingFiles = await getImagesByNames(fileNames);
             // let filesPath = fileNames
-            let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
+            
+            let fileRoutes = [];
+            let filesName = [];
+            let imgRoute = '';
+            if (fileNames.length > 0) {
+                fileRoutes = fileNames[0].split('\\');
+                imgRoute = String(fileRoutes[4] + '\\' + fileRoutes[5]);
+                console.log('imgRoute is ', imgRoute);
+                filesName.push(imgRoute);
+            } 
+            console.log('filesName is ', filesName);
+            
+            // let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
+            // console.log('gfilename is ', filesName);
             await updateNew(filesName, metaDatas)
             // await updateFilesNew(incommingFiles.map(file => {return {file: file}}), filesName)
         }
@@ -229,6 +243,7 @@ const ImageDropzone = (props) => {
 
     return (
         <Dropzone
+            key='choose_cloud'
             onChange={(incommingFiles) => updateFiles(incommingFiles)}
             onClick={(e) => clickDrop(e)}
             onReset={() => {setFiles([])}}
@@ -236,7 +251,7 @@ const ImageDropzone = (props) => {
             label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
-                <div style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}}>
+                <div style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}} key={index}>
                     <FileIcon extension={file.name.split('.').pop()} {...defaultStyles.tif} />
                     <label style={{overflow: "hidden"}}>{file.name}</label>
                 </div>
@@ -612,9 +627,9 @@ const DropzoneNamesFiles = (props) => {
                             value={selectedFileName}
                             onChange={(event) => updateNativeSelect(event)}
                             style={{border: "none"}}>
-                            {contents.map((c) => {
+                            {contents.map((c, index) => {
                                 return (
-                                    <option key={c.filename} value={c.filename}>
+                                    <option key={index} value={c.filename}>
                                         {c.filename}
                                     </option>
                                 );
@@ -725,7 +740,7 @@ const OpenPositionDialog = (props) => {
     const [cloudDialog, setCloudDialog] = useState(false);
     const [experimentDialog, setExperimentDialog] = useState(false);
 
-    const [expName, setExpName] = useState(null);
+    const [expName, setExpName] = useState('');
     const [fileNames, setFileNames] = useState([]);
     const [metaDatas, setMetaDatas] = useState([]);
     const [contents, setContents] = useState([]);
@@ -864,7 +879,7 @@ const OpenPositionDialog = (props) => {
                         )}
                         {selectedTab === 1 && (
                             <TabContainer>
-                                <Tiling folderName={expName.includes('experiement') ? expName.replace('experiement', 'upload') : null } fileNames={acceptedFiles.map(file => file.name)} />
+                                <Tiling folderName={expName.includes('experiement') ?? expName.replace('experiement', 'upload')} fileNames={acceptedFiles.map(file => file.name)} />
                             </TabContainer>
                         )}
                         {selectedTab === 2 && (

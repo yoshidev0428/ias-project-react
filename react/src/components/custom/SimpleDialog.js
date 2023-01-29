@@ -21,7 +21,7 @@ const SimpleDialog = (props) => {
     const auth = useSelector(state => state.auth)
     useEffect(() => {
         if (selectedImg!=null) {
-            const imgsrc = "http://34.72.210.99:8000/image/tile/get_image/upload" + selectedImg[0].split("upload")[1]
+            const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/upload" + selectedImg[0].split("upload")[1]
             setImageSrc(imgsrc)
             fetch(imgsrc, {
             method: "GET",

@@ -78,6 +78,7 @@ const Tiling = (props) => {
     const [checked, setChecked] = useState(true);
     const [scale, setScale] = useState(100);
     const [loadImageSource, setLoadImageSource] = useState(null);
+    const [displayImg, setDisplayImg] = useState('');
 
     const tiling_bonding_patternMatch = false;
     const alignButtonImage = (index) => {return `../../../assets/images/pos_align_${index}.png`;};
@@ -162,29 +163,33 @@ const Tiling = (props) => {
         setScale(event.target.value);
     };
 
-    const handleListContentItemClick = async (index) => {
+    const handleListContentItemClick = async (event, index) => {
         console.log(" Selected Image : ", index);
         if (fileNames.length > 0) {
             setSelectedImageFileIndex(index);
-            let file = await getImageByUrl(props.folerName, fileNames[index]);
+            let file = await getImageByUrl(fileNames[index]);
             if (file !== null) {
                 // store.dispatch({type: "tiling_selectedFile", content: file});
+                // displayImage(file);
             }
         }
     };
 
-    // const displayImage = async (file) => {
-    //     console.log(file, "ddd");
-    //     let type = file.type.toString();
-    //     try {
-    //         if (type === "tiff") {
-    //             displayTiff(file);
-    //         }
-    //     }
-    //     catch (err) {
-    //         console.log(" error : Tiling.js useEffect : ", err);
-    //     }
-    // }
+    const displayImage = async (file) => {
+        console.log(file, "ddd");
+        let type = file.type.toString();
+        try {
+            if (type === "tiff") {
+                displayTiff(file);
+            }
+            if (type === "image/tiff") {
+                displayTiff(file);
+            }
+        }
+        catch (err) {
+            console.log(" error : Tiling.js useEffect : ", err);
+        }
+    }
 
     // const displayResponse = async (response) => {
     //     try {
@@ -213,39 +218,42 @@ const Tiling = (props) => {
     //     ctx.putImageData(imageData, 0, 0);
     // };
 
-    // function displayTiff(fileDisplay) {
-    //     fileDisplay.arrayBuffer().then((fileBuffer) => {
-    //         let ifds = UTIF.decode(fileBuffer);
-    //         UTIF.decodeImage(fileBuffer, ifds[0])
-    //         var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
-    //         let firstPageOfTif = ifds[0];
-    //         let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
-    //         let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
-    //         setWidthImage(imageWidth);
-    //         setHeightImage(imageHeight);
-    //         const cnv = document.getElementById("canvas");
-    //         cnv.width = imageWidth;
-    //         cnv.height = imageHeight;
-    //         const ctx = cnv.getContext("2d");
-    //         let imageData = ctx.createImageData(imageWidth, imageHeight);
-    //         console.log(imageData[0], rgba[0], "imageData[0], ");
-    //         for (let i = 0; i < rgba.length; i++) {
-    //             imageData.data[i] = rgba[i];
-    //         }
-    //         ctx.putImageData(imageData, 0, 0);
-    //     })
-    // }
+    function displayTiff(fileDisplay) {
+        console.log('display');
+        fileDisplay.arrayBuffer().then((fileBuffer) => {
+            let ifds = UTIF.decode(fileBuffer);
+            UTIF.decodeImage(fileBuffer, ifds[0])
+            var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
+            let firstPageOfTif = ifds[0];
+            let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
+            let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
+            setWidthImage(imageWidth);
+            setHeightImage(imageHeight);
+            const cnv = document.getElementById("canvas");
+            cnv.width = imageWidth;
+            cnv.height = imageHeight;
+            const ctx = cnv.getContext("2d");
+            // console.log('ctx is ', ctx);
+            let imageData = ctx.createImageData(imageWidth, imageHeight);
+            // let imageData = ctx.drawImage(image, 0, 0, 380, 380);
+            console.log(imageData[0], rgba[0], "imageData[0], ");
+            for (let i = 0; i < rgba.length; i++) {
+                imageData.data[i] = rgba[i];
+            }
+            ctx.putImageData(imageData, 0, 0);
+        })
+    }
 
     useEffect(() => {
         console.log(TAG, " props.files.length : ", props.fileNames.length);
-        console.log('folderName is ', props.folderName);
         if (props.fileNames.length > 0) {
             const fetchData = async () => {
                 setFileNames(props.fileNames);
                 setSelectedImageFileIndex(0);
-                let file = await getImageByUrl(props.folderName, props.fileNames[0]);
+                let file = await getImageByUrl(props.fileNames[0]);
                 if (file !== null) {
                     // store.dispatch({type: "tiling_selectedFile", content: file});
+                    setDisplayImg(process.env.REACT_APP_BASE_API_URL + 'image/tile/get_image/' + file.path);
                 }
             }
             // call the function
@@ -532,9 +540,9 @@ const Tiling = (props) => {
                     {/*  Tiling Preview  */}
                     <div style={{flexDirection: "column"}}>
                         <div className="row m-0" style={{backgroundColor: "#ddd", height: "380px", width: "380px", overflowY: "auto"}} >
-                            <RoutedAvivator type={"tiling"} />
-                            {/* <img id="canvas" className="canvas m-auto" style={{ cursor: "grab" }} />
-                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}
+                            {/* <RoutedAvivator type={"tiling"} /> */}
+                            <img id="displayCanvas" className="canvas m-auto w-100" style={{ cursor: "grab" }} src={displayImg} />
+                            {/* <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}
                         </div>
                         <div className="row m-0">
                             <div className="col p-0">

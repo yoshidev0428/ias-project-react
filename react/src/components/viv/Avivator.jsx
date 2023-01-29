@@ -94,6 +94,7 @@ const Avivator = function (props) {
                 </div>}
                 <div className="bg-light h-100 w-100">
                     {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} viewType={containerType}/>}
+                    
                     {/* <DropzoneWrapper>
                         {!isViewerLoading && <Viewer mouseFlag={mouseFlag} isFullScreen={isFullScreen} />}
                     </DropzoneWrapper> */}
