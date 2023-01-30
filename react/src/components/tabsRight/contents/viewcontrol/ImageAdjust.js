@@ -8,6 +8,9 @@ import TextField from '@mui/material/TextField';
 import Icon from '@mdi/react';
 import {
     mdiBrightness5,
+    mdiPlus,
+    mdiMenuUp,
+    mdiMenuDown,
     mdiCircleHalfFull,
     mdiWeatherSunny
 } from '@mdi/js';

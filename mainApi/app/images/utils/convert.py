@@ -24,7 +24,7 @@ def convert_to_ome_format(path, image_name):
             os.remove(image_path)
             new_image_name = image_name[0:pos] + ".OME.TIF"
             new_image_path = os.path.join(path, new_image_name)
-            bioformats.formatwriter.write_image(new_image_path, image, "uint16")
+
             # javabridge.kill_vm()
             #print("convert_to_ome_format: ", image_path, new_image_path)
             return new_image_name
@@ -39,8 +39,16 @@ def get_metadata(image_path):
     logback.basic_config()
 
     omexml_metadata = bioformats.get_omexml_metadata(image_path)
+    # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
+    # rdr.setOriginalMetadataPopulated(True)
+    # rdr.setFlattenedResolutions(False)
+    # rdr.setId(image_path)
+    # print("Series Count", rdr.getSeriesCount())
+    # print("Image Count", rdr.getImageCount())
+    # print("Res Count", rdr.getResolutionCount())
+    # rdr.setResolution(2)
     # javabridge.kill_vm()
-    #print(omexml_metadata)
+    # print(omexml_metadata)
     xmlroot = ET.fromstring(omexml_metadata)
     for x in xmlroot[0]:
         if 'Pixels' in x.tag:
