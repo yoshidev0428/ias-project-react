@@ -1,5 +1,6 @@
 const DEFAULT_PARAMS = {
     experiments: [],
+    metainfo: null,
     uploading: false
 };
 
@@ -11,6 +12,9 @@ const experiment = (state = initState, action) => {
     switch (action.type) {
         case "set_experiment_data":
             state.experiments = action.content;
+            break;
+        case "setMetaInfo":
+            state.metainfo = action.content;
             break;
         default:
             break
