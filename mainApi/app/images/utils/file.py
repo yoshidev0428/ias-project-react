@@ -13,6 +13,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId, ShowUserModel
 from mainApi.app.images.sub_routers.tile.models import NamePattenModel
 from mainApi.app.images.sub_routers.tile.models import TileModelDB
+from mainApi.app.images.sub_routers.tile.models import FileModelDB
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
 from mainApi.config import STATIC_PATH
@@ -28,7 +29,7 @@ async def add_image_tiles(path: Path,
                         files: List[UploadFile],
                         clear_previous: bool,
                         current_user: UserModelDB or ShowUserModel,
-                        db: AsyncIOMotorDatabase) -> List[TileModelDB]:
+                        db: AsyncIOMotorDatabase) -> List[FileModelDB]:
     """
     Saves the uploaded tiles to the cache-storage folder/volume under the user_id of the current_user
 
@@ -36,7 +37,7 @@ async def add_image_tiles(path: Path,
     No validation is done in the backend
     """
     
-    tiles: List[TileModelDB] = []
+    tiles: List[FileModelDB] = []
     filenames = []
     for each_file in files:
         file_name = each_file.filename
@@ -48,21 +49,21 @@ async def add_image_tiles(path: Path,
             content = await each_file.read()
             await f.write(content)
             # convert to ome format
-            file_name = convert_to_ome_format(path, file_name)
-            file_path = os.path.join(path, file_name)
+            # file_name = convert_to_ome_format(path, file_name)
+            # file_path = os.path.join(path, file_name)
 
-        if file_name != "":
-            # print("add_image_tiles: ", path, file_name, content_type)
-            filenames.append(file_name)
-            with PIL.Image.open(file_path) as im:
-                width_px, height_px = im.size
-            tile = TileModelDB(
+        # if file_name != "":
+        #     # print("add_image_tiles: ", path, file_name, content_type)
+        #     filenames.append(file_name)
+        #     with PIL.Image.open(file_path) as im:
+        #         width_px, height_px = im.size
+            tile = FileModelDB(
                 user_id=PyObjectId(current_user.id),
                 absolute_path=str(path),
                 file_name=file_name,
                 content_type=content_type,
-                width_px=width_px,
-                height_px=height_px
+                # width_px=width_px,
+                # height_px=height_px
             )
             tiles.append(tile)
     

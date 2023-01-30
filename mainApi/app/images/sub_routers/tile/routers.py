@@ -26,7 +26,7 @@ import jsons
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
-from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel
+from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, FileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
 from mainApi.app.images.utils.experiment import add_experiment, get_experiment_data
@@ -134,7 +134,7 @@ async def get_image(expName: str,
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     # tiles = await db['experiment'].find({'expName': "experiment_1"})
-    all_tiles = [doc async for doc in db['experiment'].find()]
+    # all_tiles = [doc async for doc in db['experiment'].find()]
     #print(all_tiles)
 
     tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
@@ -184,19 +184,16 @@ async def merge_image(merge_req_body: str = Body(embed=True),
 #############################################################################
 # New Upload Image file
 @router.post("/upload_images/{folder_name}",
-             response_description="Upload Image Tiles",
+             response_description="Upload Files",
              status_code=status.HTTP_201_CREATED,
-             response_model=List[TileModelDB])
+             response_model=List[FileModelDB])
 async def upload_images(folder_name: str,
-                             files: List[UploadFile] = File(...),
-                             clear_previous: bool = Form(False),
-                             current_user: UserModelDB = Depends(get_current_user),
-                             db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                        files: List[UploadFile] = File(...),
+                        clear_previous: bool = Form(False),
+                        current_user: UserModelDB = Depends(get_current_user),
+                        db: AsyncIOMotorDatabase = Depends(get_database)) -> List[FileModelDB]:
                              
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    print(folder_name)
-    print(current_user_path)
-
     # Make user directory   
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
@@ -232,10 +229,10 @@ async def get_image(image: str,
 # Return Image tree
 @router.get("/get_image_tree", 
             response_description="Get Image Tiles",
-            response_model=List[TileModelDB])
+            response_model=List[FileModelDB])
 async def get_image(clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
-                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[FileModelDB]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
 
     if os.path.isdir(current_user_path) == False:
