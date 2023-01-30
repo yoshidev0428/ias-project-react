@@ -30,7 +30,7 @@ export const uploadImages = (files, folderName) => {
         let f = files[i];
         formData.append("files", f);
     }
-
+    console.log("this is file uploading data----- ", folderName, formData)
     return api.post("image/tile/upload_images/" + folderName, formData, {
         headers: {
             "Access-Control-Allow-Origin": "*",

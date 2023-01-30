@@ -38,7 +38,6 @@ export const registerExperiment = async (expName, images) => {
     const formData = new FormData();
     formData.append("images", images)
     formData.append("expName", expName)
-
     return api.post("image/tile/register_experiment", formData, {
         headers: {
             "Access-Control-Allow-Origin": "*",

@@ -177,7 +177,7 @@ const OpenFileDialogForUpload = (props) => {
         //     alert(data.data.length)
         // }
     }
-    // console.log(props.experiments)
+    // console.log("this is upload file data --------------------", image);
     const onsetChecked = (e) => {
         const length_checked = e.length;
         const ch =[]
@@ -243,6 +243,7 @@ const OpenFileDialogForUpload = (props) => {
             }
 
             if (newAcceptedFiles.length > 0) {
+                // console.log(newAcceptedFiles)
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
                 if (resUpload.status==200)
@@ -267,7 +268,7 @@ const OpenFileDialogForUpload = (props) => {
     return (
         <>
             <SimpleDialog
-                title="Cloud"
+                title="File"
                 checked={checked}
                 singleButton={false}
                 fullWidth={true}
@@ -312,7 +313,7 @@ const OpenFileDialogForUpload = (props) => {
                                     value={fileName}
                                     onClick={() => fileInput.current.click()}
                                 >
-                                    Select Image
+                                    Select File
                                 </Button>:<Button
                                     label="Click Here"
                                     variant="outlined"
