@@ -138,7 +138,7 @@ const OpenCloudDialog = (props) => {
     const deleteFiles = async () => {
         setUploading(true)
         try {
-            console.log(checked)
+            // console.log(checked)
             let response = await api_experiment.deleteImageFiles(checked)
             let data = response.data
             if(data.success) {
