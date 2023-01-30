@@ -303,7 +303,6 @@ const OpenFileDialogForUpload = (props) => {
                         }
                             </div>
                         <div className="col-sm-5">
-                            {/* { photo123!=null && <img src={photo123} className="rounded" alt="Cinque Terre" width="70%" height="70%" /> } */}
                             { photo123==null?
                                     <Button
                                     label="Click Here"
