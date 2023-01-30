@@ -182,6 +182,7 @@ const OpenFileDialogForUpload = (props) => {
         const length_checked = e.length;
         const ch =[]
         ch.push(e[length_checked-1])
+        console.log("sssssssss", ch)
         dispatch(selectImage(ch))
         setChecked(ch)
     }

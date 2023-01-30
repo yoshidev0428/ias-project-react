@@ -2,6 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import {connect} from "react-redux";
 // import { useDropzone } from "react-dropzone"
 // import { borderBottom } from "@mui/system";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -35,6 +36,12 @@ import {
     mdiCloudDownloadOutline
 } from '@mdi/js';
 import {FileIcon, defaultStyles} from "react-file-icon";
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from "@mui/material/Divider";
+import ListItemButton from '@mui/material/ListItemButton'
 var acceptedFiles = [];
 
 const columns = [
@@ -107,11 +114,12 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
     const state = store.getState();
     const [files, setFiles] = useState(acceptedFiles);
-    console.log("ImageDropzone:", acceptedFiles)
+    // console.log("ImageDropzone:", acceptedFiles)
 
     useEffect(() => {
         const bringFilesByName = async () => {
             const {fileNames, metaDatas} = props;
+            console.log("metadtas----------",metaDatas)
             // props.setLoading(true);
             // let incommingFiles = []
             // incommingFiles = await getImagesByNames(fileNames);
@@ -265,11 +273,11 @@ const DropzoneMetaData = (props) => {
         requestSearch(searched);
     };
     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-
+    const exp_meta_info = useSelector( state => state.experiment.metainfo);
     useEffect(() => {
         if (acceptedFiles) {
             setSearchRows([]);
-            console.log("DropzoneMetaData:", acceptedFiles)
+            // console.log("DropzoneMetaData:", acceptedFiles)
             for (let i = 0; i < acceptedFiles.length; i++) {
                 if (acceptedFiles[i]) {
                     let current_file = {
@@ -293,41 +301,89 @@ const DropzoneMetaData = (props) => {
     }, []);
 
     return (
-        <div style={{minHeight: "200px"}}>
-            {/* <input {...getInputProps()} /> */}
-            {acceptedFiles.length === 0 ? (
-                <div className="d-flex align-center justify-center pt-5">
-                    {backgroundText}
-                </div>
-            ) : (
-                <Card>
-                    <CardContent>
-                        <SearchBar
-                            value={searched}
-                            onChange={(searchVal) => requestSearch(searchVal)}
-                            onCancelSearch={() => cancelSearch()}
-                        />
-                    </CardContent>
-                    <div className="" style={{height: "380px", width: "100%", border: "2px solid gray"}}>
-                        <DataGrid
-                            className="cell--textCenter"
-                            style={{textAlign: "center", width: "100%"}}
-                            rows={searchrows}
-                            columns={columns}
-                            pageSize={pageSize}
-                            onPageSizeChange={(newPageSize) => {
-                                if (isNaN(newPageSize)) {
-                                    setPageSize(acceptedFiles.length);
-                                } else {
-                                    setPageSize(newPageSize);
-                                }
-                            }}
-                            rowsPerPageOptions={[2, 5, 10, 20, 25]}
-                            pagination
-                        />
-                    </div>
-                </Card>
-            )}
+        // <div style={{minHeight: "200px"}}>
+        //     {/* <input {...getInputProps()} /> */}
+        //     {acceptedFiles.length === 0 ? (
+        //         <div className="d-flex align-center justify-center pt-5">
+        //             {backgroundText}
+        //         </div>
+        //     ) : (
+        //         <Card>
+        //             <CardContent>
+        //                 <SearchBar
+        //                     value={searched}
+        //                     onChange={(searchVal) => requestSearch(searchVal)}
+        //                     onCancelSearch={() => cancelSearch()}
+        //                 />
+        //             </CardContent>
+        //             <div className="" style={{height: "380px", width: "100%", border: "2px solid gray"}}>
+        //                 <DataGrid
+        //                     className="cell--textCenter"
+        //                     style={{textAlign: "center", width: "100%"}}
+        //                     rows={searchrows}
+        //                     columns={columns}
+        //                     pageSize={pageSize}
+        //                     onPageSizeChange={(newPageSize) => {
+        //                         if (isNaN(newPageSize)) {
+        //                             setPageSize(acceptedFiles.length);
+        //                         } else {
+        //                             setPageSize(newPageSize);
+        //                         }
+        //                     }}
+        //                     rowsPerPageOptions={[2, 5, 10, 20, 25]}
+        //                     pagination
+        //                 />
+        //             </div>
+        //         </Card>
+        //     )}
+        // </div>
+        <div>
+        {exp_meta_info == null ? (
+            <div className="d-flex align-center justify-center pt-5">
+                        {backgroundText}
+            </div>):
+        (<Box sx={{width: '60%'}} >
+            <h6 className="p-2">.tif File</h6>
+            <nav className="border">
+                <List>
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`VesselNum: ${exp_meta_info.vesselnum}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`Vessel: ${exp_meta_info.vessel}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`object: ${exp_meta_info.object}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`channel: ${exp_meta_info.channel.toString()}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`Zposition: ${exp_meta_info.zposition}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                    <ListItem disablePadding>
+                        <ListItemButton>
+                            <ListItemText primary={`TimeLine: ${exp_meta_info.timeline}`}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                </List>
+            </nav>
+        </Box>)}
         </div>
     );
 };
@@ -443,7 +499,7 @@ const DropzoneNamesFiles = (props) => {
                         }
                     }
                     setNamePatterns(namePatternsPrimaryValue);
-                    console.log("OpenPositionDialog : onChangePattern : namepatterns", namePatterns);
+                    // console.log("OpenPositionDialog : onChangePattern : namepatterns", namePatterns);
                 }
             }
         }
@@ -525,11 +581,54 @@ const DropzoneNamesFiles = (props) => {
         // console.log("OpenPositionDialog.js nameFile updateNameType : ", contents);
         let old_content = [...contents];
         let old_content_p = JSON.parse(JSON.stringify(old_content));
+        let channels = []
+        let maxcol='01', maxrow='A', zposition=0, maxTimeLine='p00';
         for (let i = 0; i < old_content.length; i++) {
             let result = getNamePatternPerFileForProcessing(old_content_p[i]);
             new_content.push(result[1]);
             new_content_processing.push(result[0]);
+            // console.log(result[0].channel)
+            if (channels.length == 0) {
+                channels.push(result[1].channel)
+            } else {
+                if (channels.findIndex(channel => channel==result[1].channel)==-1){
+                    channels.push(result[1].channel)
+                }          
+            }
+
+            if (maxTimeLine.localeCompare(result[1].time) == 1)
+                maxTimeLine = result[1].time;
+            if (maxcol.localeCompare(result[1].col) == -1)
+                maxcol = result[1].col;
+            if (maxrow.localeCompare(result[1].row) == -1)
+                maxrow = result[1].row;
+            if (zposition < result[1].z )
+                zposition = result[1].z
         }
+        console.log(maxcol, maxrow)
+        let vessel = 'Wafer 150mm';
+        if (maxcol=='01' && maxrow=='A') {
+            vessel = 'Slide Single';
+        } else if (maxrow=='A') {
+            vessel = 'Slide Quattour';
+        } else if (maxrow=='B') {
+            vessel = 'Well 4well'
+        } else if (maxrow.localeCompare('B')==1&&maxrow.localeCompare('H')==-1||maxrow.localeCompare('H')==0) {
+            vessel = "Well 96well"
+        }
+
+        const metainfo = {
+            vesselnum: 1,
+            vessel: vessel,
+            object: new_content[0].series,
+            channel: channels,
+            zposition: zposition,
+            timeline: maxTimeLine
+        }
+        store.dispatch({type: "setMetaInfo", content: metainfo});
+        // console.log("metainfo----", metainfo)
+        // console.log("ggggggggggg", new_content_processing)
+        // console.log("dddddddd", new_content)
         // console.log("OpenPositionDialog.js nameFile updateNameType : ", JSON.parse(JSON.stringify(new_content_processing)));
         props.setContents(JSON.parse(JSON.stringify(new_content_processing)))
         setSearchRows(JSON.parse(JSON.stringify(new_content)));
@@ -762,7 +861,7 @@ const OpenPositionDialog = (props) => {
             namePatternsPrimary[i].end = 0;
         }
     };
-
+    // console.log("experiments data----", fileNames, metaDatas)
     const getExperimentData = async (name) => {
         try {
             let response = await api_experiment.getExperimentData(name)
@@ -788,7 +887,8 @@ const OpenPositionDialog = (props) => {
             acceptedFiles = [];
         }
     };
-
+    const exp_meta_info = useSelector( state => state.experiment.metainfo);
+    console.log(exp_meta_info);
     useEffect(() => { 
         if ( props.selectTab === 3 ) {
 

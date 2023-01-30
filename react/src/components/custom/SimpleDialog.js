@@ -14,7 +14,7 @@ const SimpleDialog = (props) => {
     const [imageSrc, setImageSrc] = useState(null)
     const selectedImg = useSelector(state => state.files.selectedImage)
     const auth = useSelector(state => state.auth)
-    console.log(auth)
+    console.log("ssssssss", selectedImg)
     useEffect(() => {
         if (selectedImg!=null) {
             const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image" + selectedImg[0].split(auth.user._id)[1]
