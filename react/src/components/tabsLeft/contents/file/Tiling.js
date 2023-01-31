@@ -38,6 +38,12 @@ import ZPosition from "../../../tabsRight/contents/viewcontrol/ZPosition";
 import Timeline from "../../../tabsRight/contents/viewcontrol/Timeline";
 import store from "../../../../reducers";
 import UTIF from "utif";
+import Align0 from  '../../../../assets/images/pos_align_1.png';
+import Align1 from '../../../../assets/images/pos_align_1.png'
+import Align2 from '../../../../assets/images/pos_align_2.png'
+import Align3 from '../../../../assets/images/pos_align_3.png'
+import Align4 from '../../../../assets/images/pos_align_4.png'
+import Align5 from '../../../../assets/images/pos_align_5.png'
 
 const tilingMenus = [
     "Edit",
@@ -56,6 +62,15 @@ const tilingAlignButtons = [
     "By XYZ",
     "By Columns",
     "By Rows"
+];
+
+const AlignImages = [
+    Align0,
+    Align1,
+    Align2,
+    Align3,
+    Align4,
+    Align5
 ];
 
 const TAG = "Tiling : ";
@@ -79,9 +94,10 @@ const Tiling = (props) => {
     const [scale, setScale] = useState(100);
     const [loadImageSource, setLoadImageSource] = useState(null);
     const [displayImg, setDisplayImg] = useState('');
+    const state = store.getState();
 
     const tiling_bonding_patternMatch = false;
-    const alignButtonImage = (index) => {return `../../../assets/images/pos_align_${index}.png`;};
+    const alignButtonImage = (index) => {return AlignImages[index]};
     const canvasElement = useRef(null);
 
     // Change text fields
@@ -102,34 +118,36 @@ const Tiling = (props) => {
         console.log("ok")
     };
 
-    const handleListItemClick = (index) => {
+    const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
+        console.log(index)
     };
 
     const handleAlignment = (event) => {
-        // // console.log(" handleAlignment", fileObjs.length, event.target.value);
-        // if (fileObjs.length > 0) {
-        //     let method = event.target.value;
-        //     if (tilingAlignButtons.includes(method)) {
-        //         api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
-        //     }
-        // }
+        console.log(" handleAlignment", fileObjs.length, event.target.value);
+        if (fileObjs.length > 0) {
+            let method = event.target.value;
+            if (tilingAlignButtons.includes(method)) {
+                api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
+            }
+        }
     };
 
-    // const handleApi = (response, status) => {
-    //     if (status) {
-    //         console.log("handleAlignTilesApi : response :", response);
-    //         displayResponse(response);
-    //     } else {
-    //         console.log("handleAlignTilesApi : error :", response);
-    //     }
-    // }
+    const handleApi = (response, status) => {
+        if (status) {
+            console.log("handleAlignTilesApi : response :", response);
+            displayResponse(response);
+        } else {
+            console.log("handleAlignTilesApi : error :", response);
+        }
+    }
 
     const handleChange = (event) => {
-        // setChecked(event.target.checked);
-        // if (fileObjs.length > 0) {
-        //     api_tiles.listTiles(handleApi);
-        // }
+        setChecked(event.target.checked);
+        console.log('checked --->event ', event);
+        if (fileObjs.length > 0) {
+            api_tiles.listTiles(handleApi);
+        }
     };
 
     const autoPatternMathing = () => {
@@ -167,11 +185,17 @@ const Tiling = (props) => {
         console.log(" Selected Image : ", index);
         if (fileNames.length > 0) {
             setSelectedImageFileIndex(index);
-            let file = await getImageByUrl(fileNames[index]);
+            let file = await getImageByUrl(state.tiling.folderName, fileNames[index]);
+            console.log('handleListContentItemClick file is ', file);
             if (file !== null) {
                 // store.dispatch({type: "tiling_selectedFile", content: file});
-                // displayImage(file);
+                displayImage(file);
             }
+        }
+        if (fileObjs.length > 0) {
+            setSelectedImageFileIndex(index);
+            console.log('fileObjs file is ', fileObjs);
+            displayImage(fileObjs[index]);
         }
     };
 
@@ -191,42 +215,49 @@ const Tiling = (props) => {
         }
     }
 
-    // const displayResponse = async (response) => {
-    //     try {
-    //         displayAlignment(response);
-    //     }
-    //     catch (err) {
-    //         console.log(" error : Tiling.js useEffect : ", err);
-    //     }
-    // }
+    const displayResponse = async (response) => {
+        try {
+            displayAlignment(response);
+        }
+        catch (err) {
+            console.log(" error : Tiling.js useEffect : ", err);
+        }
+    }
 
-    // function displayAlignment(response) {
-    //     var rgba = UTIF.toRGBA8(response[0]);  // Uint8Array with RGBA pixels
-    //     const firstPageOfTif = response[0];
-    //     const imageWidth = firstPageOfTif.width;
-    //     const imageHeight = firstPageOfTif.height;
-    //     setWidthImage(imageWidth);
-    //     setHeightImage(imageHeight);
-    //     const cnv = document.getElementById("canvas");
-    //     cnv.width = imageWidth;
-    //     cnv.height = imageHeight;
-    //     const ctx = cnv.getContext("2d");
-    //     const imageData = ctx.createImageData(imageWidth, imageHeight);
-    //     for (let i = 0; i < rgba.length; i++) {
-    //         imageData.data[i] = rgba[i];
-    //     }
-    //     ctx.putImageData(imageData, 0, 0);
-    // };
+    function displayAlignment(response) {
+        console.log('display image alignmenet ', response);
+        var rgba = UTIF.toRGBA8(response[0]);  // Uint8Array with RGBA pixels
+        const firstPageOfTif = response[0];
+        const imageWidth = firstPageOfTif.width;
+        const imageHeight = firstPageOfTif.height;
+        setWidthImage(imageWidth);
+        setHeightImage(imageHeight);
+        const cnv = document.getElementById("canvas");
+        cnv.width = imageWidth;
+        cnv.height = imageHeight;
+        const ctx = cnv.getContext("2d");
+        const imageData = ctx.createImageData(imageWidth, imageHeight);
+        for (let i = 0; i < rgba.length; i++) {
+            imageData.data[i] = rgba[i];
+        }
+        ctx.putImageData(imageData, 0, 0);
+    };
 
     function displayTiff(fileDisplay) {
-        console.log('display');
+        console.log('display', fileDisplay);
         fileDisplay.arrayBuffer().then((fileBuffer) => {
+            console.log('buffer is ', fileBuffer);
             let ifds = UTIF.decode(fileBuffer);
+            console.log('ifds is ', ifds);
             UTIF.decodeImage(fileBuffer, ifds[0])
             var rgba = UTIF.toRGBA8(ifds[0]);  // Uint8Array with RGBA pixels
             let firstPageOfTif = ifds[0];
-            let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
-            let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
+            // let imageWidth = firstPageOfTif.width * Math.pow(100 / scale);
+            // let imageHeight = firstPageOfTif.height * Math.pow(100 / scale);
+            let imageWidth = 360;
+            let imageHeight = 360;
+            console.log('imageWidth is ', imageWidth);
+            console.log('imageWidth is ', imageWidth);
             setWidthImage(imageWidth);
             setHeightImage(imageHeight);
             const cnv = document.getElementById("canvas");
@@ -245,21 +276,40 @@ const Tiling = (props) => {
     }
 
     useEffect(() => {
-        console.log(TAG, " props.files.length : ", props.fileNames.length);
+        
+        console.log(TAG, " props.files.length : ", props);
         if (props.fileNames.length > 0) {
             const fetchData = async () => {
                 setFileNames(props.fileNames);
                 setSelectedImageFileIndex(0);
-                let file = await getImageByUrl(props.fileNames[0]);
+                // let file = await getImageByUrl(props.fileNames[0]);
+                console.log('props.fileNames is ', props.fileNames);
+                let fileNameUrl = props.fileNames.map(fileNameUrl => fileNameUrl);
+                console.log('fileNameUrl is ', fileNameUrl);
+                let file = await getImageByUrl(state.tiling.folderName, props.fileNames[0]);
+                console.log('file is ', file);
                 if (file !== null) {
                     // store.dispatch({type: "tiling_selectedFile", content: file});
-                    setDisplayImg(process.env.REACT_APP_BASE_API_URL + 'image/tile/get_image/' + file.path);
+                    // setDisplayImg(process.env.REACT_APP_BASE_API_URL + 'image/tile/get_image/' + file.path);
                 }
             }
             // call the function
             fetchData();
         }
     }, [props.fileNames])
+
+    // useEffect(() => {
+    //     console.log('props is ', props.fileNames[0]);
+    //     if (props.fileNames.length > 0) {
+    //         console.log("props.fileNames.length : ", props.fileNames);
+    //         setFileObjs(props.fileNames);
+    //         setSelectedImageFileIndex(0);
+            
+    //         // if (props.fileNames[0].type.includes("image/tiff")) {
+    //             displayImage(props.fileNames[0], "tiff");
+    //         // }
+    //     }
+    // }, [props.fileNames])
 
     return (
         <>
@@ -540,9 +590,9 @@ const Tiling = (props) => {
                     {/*  Tiling Preview  */}
                     <div style={{flexDirection: "column"}}>
                         <div className="row m-0" style={{backgroundColor: "#ddd", height: "380px", width: "380px", overflowY: "auto"}} >
-                            {/* <RoutedAvivator type={"tiling"} /> */}
-                            <img id="displayCanvas" className="canvas m-auto w-100" style={{ cursor: "grab" }} src={displayImg} />
-                            {/* <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} /> */}
+                            <RoutedAvivator type={"tiling"} />
+                            {/* <img id="displayCanvas" className="canvas m-auto w-100" style={{ cursor: "grab" }} src={displayImg} /> */}
+                            <canvas id="canvas" className="canvas m-auto" ref={canvasElement} style={{cursor: "grab"}} />
                         </div>
                         <div className="row m-0">
                             <div className="col p-0">

@@ -11,11 +11,11 @@ const makeFormBody = (details) => {
     return formBody
 }
 
-export const getImageByUrl = async function(imgName) {
+export const getImageByUrl = async function(folderName, imgName) {
     try {
         const state = store.getState();
         
-        let response = await fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/" + imgName, {
+        let response = await fetch(process.env.REACT_APP_BASE_API_URL + "image/tile/get_image/" + folderName + "/" + imgName, {
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",

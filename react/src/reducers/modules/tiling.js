@@ -9,6 +9,7 @@ const DEFAULT_PARAMS = {
 
 const initState = {
     ...DEFAULT_PARAMS,
+    folderName: "",
 }
 
 //action redux
@@ -16,6 +17,10 @@ const tiling = (state = initState, action) => {
     switch (action.type) {
         case "tiling_selectedFile":
             state.tiling_selectedFile = action.content;
+            break
+
+        case "SET_FOLDER_NAME":
+            state.folderName = action.payload;
             break
         // case "vessel_selectedVesselHole":
         //     state.selectedVesselHole = action.content;
