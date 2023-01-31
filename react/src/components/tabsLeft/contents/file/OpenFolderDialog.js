@@ -280,7 +280,7 @@ const OpenFolderDialogForUpload = (props) => {
     return (
         <>
             <SimpleDialog
-                title="Cloud"
+                title="Folder"
                 checked={checked}
                 singleButton={false}
                 fullWidth={true}
@@ -300,7 +300,7 @@ const OpenFolderDialogForUpload = (props) => {
                     />
                 </div>
                 <div>
-                <Typography component="div" className="mb-1">View your cloud data</Typography>
+                <Typography component="div" className="mb-1">View your Folder data</Typography>
                     <div className="row">
                         <div className="col-sm-7">
                         {

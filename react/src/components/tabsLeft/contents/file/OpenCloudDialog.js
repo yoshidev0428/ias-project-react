@@ -138,6 +138,7 @@ const OpenCloudDialog = (props) => {
     const deleteFiles = async () => {
         setUploading(true)
         try {
+            // console.log(checked)
             let response = await api_experiment.deleteImageFiles(checked)
             let data = response.data
             if(data.success) {
@@ -246,6 +247,7 @@ const OpenCloudDialog = (props) => {
             if (newAcceptedFiles.length > 0) {
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
+                
                 if (resUpload.status==200)
                 setsuccessDialog(true)
                 setFiles([])
@@ -302,7 +304,6 @@ const OpenCloudDialog = (props) => {
                         }
                             </div>
                         <div className="col-sm-5">
-                            { photo123!=null && <img src={photo123} className="rounded" alt="Cinque Terre" width="70%" height="70%" /> }
                             { photo123==null?
                                     <Button
                                     label="Click Here"
@@ -312,7 +313,7 @@ const OpenCloudDialog = (props) => {
                                     value={fileName}
                                     onClick={() => fileInput.current.click()}
                                 >
-                                    Select Image
+                                    Select file
                                 </Button>:<Button
                                     label="Click Here"
                                     variant="outlined"
