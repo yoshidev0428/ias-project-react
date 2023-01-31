@@ -122,23 +122,25 @@ const ImageDropzone = (props) => {
     useEffect(() => {
         const bringFilesByName = async () => {
             const {fileNames, metaDatas} = props;
+
+            let fileRoutes = '';
+            let imgRoute = '';
+            if (fileNames.length > 0) {
+                fileRoutes = fileNames[0].split('\\');
+                imgRoute = String(fileRoutes[4]);
+                console.log('imgRoute is ', imgRoute);
+                dispatch(setFolderName(imgRoute));
+            }           
+
+            console.log("metadtas----------",metaDatas)
             // props.setLoading(true);
             // let incommingFiles = []
             // incommingFiles = await getImagesByNames(fileNames);
             // let filesPath = fileNames
             
-            // let fileRoutes = [];
-            // let filesName = [];
-            // let imgRoute = '';
-            // if (fileNames.length > 0) {
-            //     fileRoutes = fileNames[0].split('\\');
-            //     imgRoute = String(fileRoutes[4] + '\\' + fileRoutes[5]);
-            //     console.log('imgRoute is ', imgRoute);
-            //     filesName.push(imgRoute);
-            // } 
+             
             // console.log('filesName is ', filesName);
-            
-            let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''))
+            let filesName = fileNames.map(fileName => fileName.replace(/^.*[\\\/]/, ''));
             // console.log('gfilename is ', filesName);
             await updateNew(filesName, metaDatas)
             // await updateFilesNew(incommingFiles.map(file => {return {file: file}}), filesName)
