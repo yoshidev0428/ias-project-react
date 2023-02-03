@@ -5,7 +5,7 @@ services:
             context: .
             dockerfile: ./mainApi/Dockerfile
         ports:
-            - 8000:8000
+            - "8000:8000"
         env_file:
             - ./env_files/fastApi.env
             - ./env_files/mongoDB_connect.env
@@ -43,7 +43,7 @@ services:
         image: mongo-express
         restart: unless-stopped
         ports:
-            - 8081:8081
+            - "8081:8081"
         env_file:
             - ./env_files/mongo-express.env
         depends_on:
@@ -53,8 +53,8 @@ services:
         env_file:
             - ./env_files/celery_tasks.env
         ports:
-            - 5672:5672
-            - 15672:15672 # management
+            - "5672:5672"
+            - "15672:15672" # management
         restart: unless-stopped
         deploy:
             replicas: 1
@@ -67,7 +67,7 @@ services:
         env_file:
             - ./env_files/celery_tasks.env
         ports:
-            - 5555:5555
+            - "5555:5555"
         depends_on:
             - rabbitmq
     ## stitching worker
