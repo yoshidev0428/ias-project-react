@@ -1,7 +1,16 @@
 const DEFAULT_PARAMS = {
     experiments: [],
     metainfo: null,
-    uploading: false
+    uploading: false,
+    viewinfo: {
+        filetype: null,
+        vessel: null,
+        objective: null,
+        channels: [],
+        imagead: null,
+        zposition: null,
+        timeline: null
+    }
 };
 
 const initState = {
@@ -16,6 +25,14 @@ const experiment = (state = initState, action) => {
         case "setMetaInfo":
             state.metainfo = action.content;
             break;
+        case "INIT_VIEW":
+            state.viewinfo.vessel = 'Single-Slide';
+            state.viewinfo.objective = 4;
+            state.viewinfo.channels = [0];
+            state.viewinfo.zposition = 1;
+            state.viewinfo.timeline = 1;
+        case "SET_NULL_VIEW":
+            state.viewinfo.channels = [];
         default:
             break
     }

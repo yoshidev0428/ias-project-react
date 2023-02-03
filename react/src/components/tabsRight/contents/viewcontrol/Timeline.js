@@ -16,6 +16,7 @@ import {
 } from '@mdi/js';
 import {connect} from 'react-redux';
 import StepRangeSlider from 'react-step-range-slider';
+import { useSelector } from 'react-redux';
 
 import store from "../../../../reducers";
 
@@ -97,7 +98,7 @@ const Timeline = (props) => {
             setIsLoading(true);
         }
     };
-
+    const getTimeLine = useSelector( state => state.experiment.viewinfo.timeline)
     useEffect(() => {
         if (props.selectedVesselHole && props.content) {
             console.log(" ==== timeline.js useEffect props.selectedVesselHole : ", props.selectedVesselHole);

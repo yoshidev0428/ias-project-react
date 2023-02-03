@@ -262,7 +262,7 @@ const ImageDropzone = (props) => {
             label={<div>Choose from the experiment - Cloud</div>}
             value={files}>
             {files.map((file, index) => (
-                <div style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}} key={index}>
+                <div key={index} style={{width: "20%", display: "flex", flexDirection: "column", padding: "20px"}}>
                     <FileIcon extension={file.name.split('.').pop()} {...defaultStyles.tif} />
                     <label style={{overflow: "hidden"}}>{file.name}</label>
                 </div>
@@ -361,13 +361,13 @@ const DropzoneMetaData = (props) => {
                         {backgroundText}
             </div>):
         (<Box sx={{width: '60%'}} >
-            <h6 className="p-2">.tif File</h6>
+            <h6 className="p-2">.{exp_meta_info.filetype} File</h6>
             <nav className="border">
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        {/* <ListItemButton>
                             <ListItemText primary={`VesselNum: ${exp_meta_info.vesselnum}`}></ListItemText>
-                        </ListItemButton>
+                        </ListItemButton> */}
                     </ListItem>
                     <Divider />
                     <ListItem disablePadding>
@@ -390,13 +390,13 @@ const DropzoneMetaData = (props) => {
                     <Divider />
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemText primary={`Zposition: ${exp_meta_info.zposition}`}></ListItemText>
+                            <ListItemText primary={`Zposition: number${exp_meta_info.zposition} space${exp_meta_info.z_space} ${exp_meta_info.PhysicalSizeZUnit}`}></ListItemText>
                         </ListItemButton>
                     </ListItem>
                     <Divider />
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemText primary={`TimeLine: ${exp_meta_info.timeline}`}></ListItemText>
+                            <ListItemText primary={`TimeLine: number${exp_meta_info.timeline}`}></ListItemText>
                         </ListItemButton>
                     </ListItem>
                 </List>
@@ -884,12 +884,198 @@ const OpenPositionDialog = (props) => {
         try {
             let response = await api_experiment.getExperimentData(name)
             let data = response.data
+            console.log('This is metadata for setting vessel info------', response.data)
+            let columns, rows, object = '', filetype = '', PhysicalSizeZUnit = '', z_space = 0, channels = [], Zposition = 0, maxTimeLine = 0,vessel, planeX = [], planeY = [];
             if (data.success) {
+                const new_metadata = [];
+                let new_channels = [];
+                data.metadata.map(item => { 
+                    new_metadata.push(item.metadata) 
+                    new_channels = new_channels.concat(item.channels)
+                })
+                console.log("This is new channels------", new_channels)
+                
                 setFileNames(data.data)
-                setMetaDatas(data.metadata)
-            } else {
-                console.log(response.error)
+                setMetaDatas(new_metadata)
+                let comingData = new_metadata;
+                console.log(comingData)
+                for (let i = 0; i < new_channels.length; i++) {
+                    if (channels.length == 0) {
+                        if (new_channels[i].Name) {
+                            channels.push(new_channels[i].Name)
+                        } else {
+                            if (comingData[i]) channels.push(comingData[i].SizeC)
+                        }
+                    } else {
+                        if (new_channels[i].Name) {
+                            if (channels.findIndex(channel => channel==new_channels[i].Name)==-1){
+                                channels.push(new_channels[i].Name)
+                            } 
+                        } else {
+                            if (comingData[i]) {
+                                if (channels.findIndex(channel => channel==comingData[i].SizeC)==-1){
+                                    channels.push(comingData[i].SizeC)
+                                } 
+                            }
+                            
+                        }
+                                 
+                    }
+                }
+
+                let filenames = data.data[0];
+                filetype = filenames.split(".");
+                z_space = new_metadata[0].PhysicalSizeZ;
+                PhysicalSizeZUnit = new_metadata[0].PhysicalSizeZUnit;
+
+                for (let i = 0; i < comingData.length; i++) {
+                    if (maxTimeLine<(comingData[i].SizeT))
+                        maxTimeLine = comingData[i].SizeT;
+                    if (Zposition < comingData[i].SizeZ )
+                        Zposition = comingData[i].SizeZ
+                }
+                console.log('ffffff-----------------', filetype)
+                const getVesselInfo = (rows, columns) => {
+                    if (rows == 1) {
+                        if (columns == 1) return "Single"
+                        if (columns == 2) return "Double"
+                        if (columns == 4) return "Quater"
+                    } else if (rows == 2 ) {
+                        if (columns == 2) return "4 Well Plate"
+                        if (columns == 3) return "6 Well Plate"
+                    }
+                    if (rows == 3 && columns == 4) return "12 Well Plate"
+                    if (rows == 4 && columns == 6) return "24 Well Plate"
+                    if (rows == 6 && columns == 8) return "48 Well Plate"
+                    if (rows == 8 && columns == 12) return "96 Well Plate"
+                    if (rows == 16 && columns == 24) return "384 Well Plate"
+                }
+
+                let object_model = '', NA = 0, WD = 0;
+                console.log('this is objective', data.metadata[0])
+                if (data.metadata[0].microscope != {}) {
+                    if (data.metadata[0].microscope.Model!=undefined) object_model = data.metadata[0].microscope.Model;
+                    if (data.metadata[0].objective.length!=0) {
+                        if (data.metadata[0].objective[0].LensNA!=undefined) NA = data.metadata[0].objective[0].LensNA;
+                        if (data.metadata[0].objective[0].WorkingDistance!=undefined) WD = data.metadata[0].objective[0].WorkingDistance;
+                        if (NA!=0 || WD!=0) object = object_model + ' ' + ' NA' + NA + ' WD' + WD;;
+                    }
+                    
+                }
+                if (data.metadata[0].plates=={}) {
+                    console.log("calculate columns and rows from plane");
+                    if (data.metadata[0].planes.length!=0) {
+                        await data.metadata.map(item => {
+                            planeX.push(item.planes[0].PositionX);
+                            planeY.push(item.planes[0].PositionY);
+                        })
+                        let max_x = 0, max_y = 0, min_x = 999999999, min_y = 999999999;
+                        for (let i = 0; i <= planeX.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeX[i] - planeX[j]) < min_x)
+                                    min_x = Math.abs(planeX[i] - planeX[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeY.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeY[i] - planeY[j]) < min_y)
+                                    min_y = Math.abs(planeY[i] - planeY[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeX.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeX[i] - planeX[j]) > max_x)
+                                    max_x = Math.abs(planeX[i] - planeX[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeY.length -1; i++) {
+                            for (let j = i + 1; j <= planeY.length; j++) {
+                                if ( Math.abs(planeY[i] - planeY[j]) > max_y)
+                                    max_y = Math.abs(planeY[i] - planeY[j]);
+                            }
+                        }
+                        console.log("column and position", planeX, planeY)
+                        console.log("column width----", min_x, min_y, max_x, max_y);
+                        if (max_x==0) rows = 1;
+                        if (max_y==0) columns = 1;
+                        rows = (max_x/min_x) + 1;
+                        columns = (max_y/min_y) + 1;
+                        console.log(columns, rows)
+                        if (rows == 1 && columns == 1) vessel = "slide single";
+                        if (rows == 1 && columns > 1) vessel = "slide quater";
+                        if (4 > rows > 1 && 4 > columns > 1) vessel = "well 4well";
+                        if (9 > rows > 3 && 13 > columns > 3) vessel = "well 96well";
+                        if (rows > 9 && columns > 12) vessel = "Wafer 150mm";
+                        console.log('vessel-----', vessel)
+
+                    }
+                } else {
+                    console.log("calculate from plate");
+                    rows = data.metadata[0].plates.Rows;
+                    columns = data.metadata[0].plates.Columns;
+                    vessel = await getVesselInfo(rows, columns)
+                    
+                }
+
+                const metainfo = {
+                    filetype: filetype[1],
+                    z_space: z_space,
+                    // vesselnum: vesselNum==0?'undefined': vesselNum,
+                    vessel: vessel,
+                    object: object==''?'undefined': object,
+                    channel: channels,
+                    zposition: Zposition,
+                    timeline: maxTimeLine,
+                    PhysicalSizeZUnit: PhysicalSizeZUnit
+
+                }
+                console.log(metainfo)
+                store.dispatch({type: "setMetaInfo", content: metainfo});
             }
+            // if (data.success) {
+            //     setFileNames(data.data)
+            //     setMetaDatas(data.metadata)
+            //     let comingData = data.metadata;
+            //     let channels = [];
+            //     let maxcol = '0' , maxrow = '0', zposition = 0, maxTimeLine = 0, vesselNum = 0 , Vessel, object = '';
+            
+            //     for (let i = 0; i < comingData.length; i++) {
+                   
+            //         if (channels.length == 0) {
+            //             channels.push(comingData[i].SizeC)
+            //         } else {
+            //             if (channels.findIndex(channel => channel==comingData[i].SizeC)==-1){
+            //                 channels.push(comingData[i].SizeC)
+            //             }          
+            //         }
+
+            //         if (maxTimeLine<(comingData[i].SizeT))
+            //             maxTimeLine = comingData[i].SizeT;
+            //         if (zposition < comingData[i].SizeZ )
+            //             zposition = comingData[i].SizeZ
+            //     }
+   
+
+            //     const metainfo = {
+            //         filetype: filetype[1],
+            //         vesselnum: vesselNum==0?'undefined': vesselNum,
+            //         vessel: vessel,
+            //         object: object==''?'undefined': object,
+            //         channel: channels,
+            //         zposition: zposition,
+            //         timeline: maxTimeLine
+            //     }
+
+            //     store.dispatch({type: "setMetaInfo", content: metainfo});
+                // console.log("This is metainfo for view type------", metainfo);
+                // data.metadata.map(item => {
+                //     if (item.vessel) {
+
+                //     }
+                // })
+            // } else {
+            //     console.log(response.error)
+            // }
         } catch (err) {
             console.log("Error occured while getting experiment data")
             throw err;
@@ -900,6 +1086,7 @@ const OpenPositionDialog = (props) => {
         if (contents !== [] && contents !== null && contents !== undefined) {
             // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
+            console.log('This is vessel info ----------', contents)
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
             props.handleClose();
             acceptedFiles = [];
