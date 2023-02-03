@@ -361,13 +361,13 @@ const DropzoneMetaData = (props) => {
                         {backgroundText}
             </div>):
         (<Box sx={{width: '60%'}} >
-            <h6 className="p-2">.tif File</h6>
+            <h6 className="p-2">.{exp_meta_info.filetype} File</h6>
             <nav className="border">
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        {/* <ListItemButton>
                             <ListItemText primary={`VesselNum: ${exp_meta_info.vesselnum}`}></ListItemText>
-                        </ListItemButton>
+                        </ListItemButton> */}
                     </ListItem>
                     <Divider />
                     <ListItem disablePadding>
@@ -390,13 +390,13 @@ const DropzoneMetaData = (props) => {
                     <Divider />
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemText primary={`Zposition: ${exp_meta_info.zposition}`}></ListItemText>
+                            <ListItemText primary={`Zposition: number${exp_meta_info.zposition} space${exp_meta_info.z_space} ${exp_meta_info.PhysicalSizeZUnit}`}></ListItemText>
                         </ListItemButton>
                     </ListItem>
                     <Divider />
                     <ListItem disablePadding>
                         <ListItemButton>
-                            <ListItemText primary={`TimeLine: ${exp_meta_info.timeline}`}></ListItemText>
+                            <ListItemText primary={`TimeLine: number${exp_meta_info.timeline}`}></ListItemText>
                         </ListItemButton>
                     </ListItem>
                 </List>
@@ -884,7 +884,17 @@ const OpenPositionDialog = (props) => {
         try {
             let response = await api_experiment.getExperimentData(name)
             let data = response.data
+            console.log('This is metadata for setting vessel info------', response.data)
+            let columns, rows, object = '', filetype = '', PhysicalSizeZUnit = '', z_space = 0, channels = [], Zposition = 0, maxTimeLine = 0,vessel, planeX = [], planeY = [];
             if (data.success) {
+                const new_metadata = [];
+                let new_channels = [];
+                data.metadata.map(item => { 
+                    new_metadata.push(item.metadata) 
+                    new_channels = new_channels.concat(item.channels)
+                })
+                console.log("This is new channels------", new_channels)
+                
                 setFileNames(data.data)
                 setMetaDatas(data.metadata)
             } else {
@@ -900,6 +910,7 @@ const OpenPositionDialog = (props) => {
         if (contents !== [] && contents !== null && contents !== undefined) {
             // console.log("OpenPositionDialog.js handleSetSetting : ", JSON.parse(JSON.stringify(contents)));
             await api_tiles.updateNameFile(JSON.parse(JSON.stringify(contents)));
+            console.log('This is vessel info ----------', contents)
             store.dispatch({type: "content_addContent", content: JSON.parse(JSON.stringify(contents))});
             props.handleClose();
             acceptedFiles = [];

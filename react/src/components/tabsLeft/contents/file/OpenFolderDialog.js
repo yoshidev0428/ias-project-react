@@ -314,7 +314,8 @@ const OpenFolderDialogForUpload = (props) => {
                                 >
                                     {
                                         props.experiments.map (
-                                            experiment =>  <FormControlLabel value={experiment.label} control={<Radio />} label={experiment.label} />                                    
+                                            experiment =>  
+                                            <FormControlLabel value={experiment.label} control={<Radio />} label={experiment.label} />                                    
                                         )
                                     }
                                 </RadioGroup>

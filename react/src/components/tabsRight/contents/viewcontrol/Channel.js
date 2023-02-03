@@ -18,7 +18,7 @@ import {
 import SmallCard from '../../../custom/SmallCard';
 import {COLORMAP_SLIDER_CHECKBOX_COLOR} from '../../../constant/constants';
 import { DropdownButton } from 'react-bootstrap';
-
+import { useSelector } from 'react-redux';
 
 const toRgb = (on, arr) => {
     const color = on ? COLORMAP_SLIDER_CHECKBOX_COLOR : arr;
@@ -54,6 +54,8 @@ const Channel = (props) => {
         ],
         shallow
     );
+    const SelectedChannel = useSelector( state => state.experiment.viewinfo.channels)
+    console.log("ggggggggggggggggggggggggggg", SelectedChannel)
     // const loader = useLoader();
     // const [channelOptions, useLinkedView, use3d, useColormap, useLens, isChannelLoading, setIsChannelLoading, removeIsChannelLoading, pixelValues, isViewerLoading
     // ] = useViewerStore(
@@ -135,8 +137,8 @@ const Channel = (props) => {
                 <div key={i} className="d-flex flex-column channel-box text-center">
                     <Checkbox
                         onChange={() => {toggleIsOn(channel.current_id)}}
-                        checked={channel.channelsVisible}
-                        disabled={channel.disabled}
+                        checked={channel.id==SelectedChannel[0]}
+                        disabled={SelectedChannel!=null}
                         size="small"
                         // checked={channelsArray.lenght > 0 ? channelsArray.includes(i) : false}
                         sx={{color: isLoading ? rgbColor : channel.color, padding: 0, '&.Mui-checked': {color: isLoading ? rgbColor : channel.color, }}} />

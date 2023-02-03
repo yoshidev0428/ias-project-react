@@ -224,6 +224,8 @@ async def get_image(image: str,
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[TileModelDB]:
     print('image get', folder, image)
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    metadata_for_single_img = get_metadata(os.path.join(current_user_path + '/' + folder, image))
+    print('This metadata for single data--------', metadata_for_single_img)
     return FileResponse(os.path.join(current_user_path + '/' + folder, image), media_type="image/tiff")
 
 # Return Image tree

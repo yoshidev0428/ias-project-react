@@ -37,8 +37,16 @@ def get_metadata(image_path):
     # javabridge.start_vm(class_path=bioformats.JARS,
     #                     run_headless=True)
     logback.basic_config()
+    reader = bioformats.ImageReader(image_path)
+    info = reader.rdr
 
+    # omeMeta = bioformats.metadatatools.createOMEXMLMetadata()
+    # reader.setMetadataStore(omeMeta)
+    # reader.get(image_path)
+    
+    
     omexml_metadata = bioformats.get_omexml_metadata(image_path)
+
     # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
     # rdr.setOriginalMetadataPopulated(True)
     # rdr.setFlattenedResolutions(False)
@@ -50,13 +58,44 @@ def get_metadata(image_path):
     # javabridge.kill_vm()
     # print(omexml_metadata)
     xmlroot = ET.fromstring(omexml_metadata)
-    for x in xmlroot[0]:
-        if 'Pixels' in x.tag:
-            metadata = x.attrib
-            print(metadata)
-            return metadata
-    return ""
-
+    # 
+    plate_data = {}
+    channels = []
+    planes = []
+    stage = {}
+    microscope = {}
+    objective = []
+    for x in xmlroot:
+        print('tag val', x.tag)
+        if 'Instrument' in x.tag:
+            for y in x:
+                if 'Microscope' in y.tag:
+                    microscope = y.attrib
+                if 'Objective' in y.tag:
+                    objective.append(y.attrib)
+        if 'Plate' in x.tag:
+            print('plate data', x.attrib)
+            plate_data =  x.attrib 
+        if 'Image' in x.tag:
+            # metadata = x.attrib
+            # print('image data', metadata)
+            print('subdata', x[0])
+            
+            for y in x:
+                if 'StageLabel' in y.tag:
+                    stage = y.attrib
+                if 'Pixels' in y.tag :
+                    metadata = y.attrib
+                    print('pixel data', metadata)
+                    for z in y:
+                        if 'Channel' in z.tag:
+                            channels.append(z.attrib)
+                        if 'Plane' in z.tag:
+                            planes.append(z.attrib)
+                    return {"objective": objective, "microscope": microscope, "metadata": metadata, "channels": channels, "planes": planes, "stage": stage, "plates": plate_data}
+                    # return metadata
+                   
+            break
 
 def write_image(pathname, pixels, pixel_type,
                 c = 0, z = 0, t = 0,

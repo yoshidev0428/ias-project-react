@@ -10,28 +10,36 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { initView } from '../../reducers/actions/vesselAction';
 const SimpleDialog = (props) => {
-    const [imageSrc, setImageSrc] = useState(null)
-    const selectedImg = useSelector(state => state.files.selectedImage)
-    const auth = useSelector(state => state.auth)
-    console.log("ssssssss", selectedImg)
-    useEffect(() => {
-        if (selectedImg!=null) {
-            const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image" + selectedImg[0].split(auth.user._id)[1]
-            setImageSrc(imgsrc)
-            console.log(imgsrc)
-            fetch(imgsrc, {
-            method: "GET",
-            headers: { Authorization: auth.tokenType + ' ' + auth.token }
-        }).then((response) => {
-            console.log('image data', response.body)
-            // const data = `data:${response.headers['content-type']};base64,${new Buffer(response.data).toString('base64')}`;
-            // setImageSrc(response.body)
-        });
-        }
+    // const [imageSrc, setImageSrc] = useState(null)
+    // const selectedImg = useSelector(state => state.files.selectedImage)
+    // const auth = useSelector(state => state.auth)
+    // console.log("ssssssss", selectedImg)
+    // useEffect(() => {
+    //     if (selectedImg!=null) {
+    //         const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image" + selectedImg.split(auth.user._id)[1];
+    //         setImageSrc(imgsrc);
+    //         console.log(imgsrc);
+    //         fetch(imgsrc, {
+    //         method: "GET",
+    //         headers: { Authorization: auth.tokenType + ' ' + auth.token }
+    //     }).then((response) => {
+    //         console.log('image data', response.body)
+    //         // const data = `data:${response.headers['content-type']};base64,${new Buffer(response.data).toString('base64')}`;
+    //         // setImageSrc(response.body)
+    //     });
+    //     }
 
-    })
-   
+    // })
+    const dispatch = useDispatch()
+    const setView = () => {
+        dispatch(initView())
+    }
+    const onCancel = (props) => {
+        dispatch(initView())
+        props.onCancel()
+    }
     const handleClose = () => {
         console.log("click outside ok");
     };
@@ -56,11 +64,11 @@ const SimpleDialog = (props) => {
                 </DialogContent>
                 <DialogActions style={{ padding: "12px 24px" }}>
                     <div className="spacer"></div>
-                    {props.checked.length != 0 && <div className='w-10' style={{width:"10%"}}
-                    >
-                        <img src={imageSrc} width="80%" height="80%"/>
-                        {/* {props.checked} */}
-                    </div>}
+                    {props.checked.length != 0 && 
+                        <Button variant="contained" color="info" onClick={setView}>
+                            Set
+                        </Button>
+                    }
                     {props.newButton && <Button variant="contained" color="info" onClick={newed}
                         disabled={props.newDisable}
                     >
