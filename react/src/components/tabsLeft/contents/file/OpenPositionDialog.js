@@ -887,14 +887,6 @@ const OpenPositionDialog = (props) => {
             console.log('This is metadata for setting vessel info------', response.data)
             let columns, rows, object = '', filetype = '', PhysicalSizeZUnit = '', z_space = 0, channels = [], Zposition = 0, maxTimeLine = 0,vessel, planeX = [], planeY = [];
             if (data.success) {
-                const new_metadata = [];
-                let new_channels = [];
-                data.metadata.map(item => { 
-                    new_metadata.push(item.metadata) 
-                    new_channels = new_channels.concat(item.channels)
-                })
-                console.log("This is new channels------", new_channels)
-                
                 setFileNames(data.data)
                 setMetaDatas(new_metadata)
                 let comingData = new_metadata;
