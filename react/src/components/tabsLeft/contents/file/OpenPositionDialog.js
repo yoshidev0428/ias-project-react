@@ -896,10 +896,183 @@ const OpenPositionDialog = (props) => {
                 console.log("This is new channels------", new_channels)
                 
                 setFileNames(data.data)
-                setMetaDatas(data.metadata)
-            } else {
-                console.log(response.error)
+                setMetaDatas(new_metadata)
+                let comingData = new_metadata;
+                console.log(comingData)
+                for (let i = 0; i < new_channels.length; i++) {
+                    if (channels.length == 0) {
+                        if (new_channels[i].Name) {
+                            channels.push(new_channels[i].Name)
+                        } else {
+                            if (comingData[i]) channels.push(comingData[i].SizeC)
+                        }
+                    } else {
+                        if (new_channels[i].Name) {
+                            if (channels.findIndex(channel => channel==new_channels[i].Name)==-1){
+                                channels.push(new_channels[i].Name)
+                            } 
+                        } else {
+                            if (comingData[i]) {
+                                if (channels.findIndex(channel => channel==comingData[i].SizeC)==-1){
+                                    channels.push(comingData[i].SizeC)
+                                } 
+                            }
+                            
+                        }
+                                 
+                    }
+                }
+
+                let filenames = data.data[0];
+                filetype = filenames.split(".");
+                z_space = new_metadata[0].PhysicalSizeZ;
+                PhysicalSizeZUnit = new_metadata[0].PhysicalSizeZUnit;
+
+                for (let i = 0; i < comingData.length; i++) {
+                    if (maxTimeLine<(comingData[i].SizeT))
+                        maxTimeLine = comingData[i].SizeT;
+                    if (Zposition < comingData[i].SizeZ )
+                        Zposition = comingData[i].SizeZ
+                }
+                console.log('ffffff-----------------', filetype)
+                const getVesselInfo = (rows, columns) => {
+                    if (rows == 1) {
+                        if (columns == 1) return "Single"
+                        if (columns == 2) return "Double"
+                        if (columns == 4) return "Quater"
+                    } else if (rows == 2 ) {
+                        if (columns == 2) return "4 Well Plate"
+                        if (columns == 3) return "6 Well Plate"
+                    } 
+                    else if (rows == 3 && columns == 4) return "12 Well Plate"
+                    else if(rows == 4 && columns == 6) return "24 Well Plate"
+                    else if (rows == 6 && columns == 8) return "48 Well Plate"
+                    else if (rows == 8 && columns == 12) return "96 Well Plate"
+                    else if (rows == 16 && columns == 24) return "384 Well Plate"
+                    return '';
+                }
+
+                let object_model = '', NA = 0, WD = 0;
+                console.log('this is objective', data.metadata[0])
+                if (data.metadata[0].microscope != {}) {
+                    if (data.metadata[0].microscope.Model!=undefined) object_model = data.metadata[0].microscope.Model;
+                    if (data.metadata[0].objective.length!=0) {
+                        if (data.metadata[0].objective[0].LensNA!=undefined) NA = data.metadata[0].objective[0].LensNA;
+                        if (data.metadata[0].objective[0].WorkingDistance!=undefined) WD = data.metadata[0].objective[0].WorkingDistance;
+                        if (NA!=0 || WD!=0) object = object_model + ' ' + ' NA' + NA + ' WD' + WD;;
+                    }
+                    
+                }
+                if (data.metadata[0].plates=={}) {
+                    console.log("calculate columns and rows from plane");
+                    if (data.metadata[0].planes.length!=0) {
+                        await data.metadata.map(item => {
+                            planeX.push(item.planes[0].PositionX);
+                            planeY.push(item.planes[0].PositionY);
+                        })
+                        let max_x = 0, max_y = 0, min_x = 999999999, min_y = 999999999;
+                        for (let i = 0; i <= planeX.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeX[i] - planeX[j]) < min_x)
+                                    min_x = Math.abs(planeX[i] - planeX[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeY.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeY[i] - planeY[j]) < min_y)
+                                    min_y = Math.abs(planeY[i] - planeY[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeX.length -1; i++) {
+                            for (let j = i + 1; j <= planeX.length; j++) {
+                                if ( Math.abs(planeX[i] - planeX[j]) > max_x)
+                                    max_x = Math.abs(planeX[i] - planeX[j]);
+                            }
+                        }
+                        for (let i = 0; i <= planeY.length -1; i++) {
+                            for (let j = i + 1; j <= planeY.length; j++) {
+                                if ( Math.abs(planeY[i] - planeY[j]) > max_y)
+                                    max_y = Math.abs(planeY[i] - planeY[j]);
+                            }
+                        }
+                        console.log("column and position", planeX, planeY)
+                        console.log("column width----", min_x, min_y, max_x, max_y);
+                        if (max_x==0) rows = 1;
+                        if (max_y==0) columns = 1;
+                        rows = parseInt(max_x/min_x) + 1;
+                        columns = parseInt(max_y/min_y) + 1;
+                        console.log(columns, rows)
+                        vessel = await getVesselInfo(rows, columns)
+                        console.log('vessel-----', vessel)
+
+                    }
+                } else {
+                    console.log("calculate from plate");
+                    rows = data.metadata[0].plates.Rows;
+                    columns = data.metadata[0].plates.Columns;
+                    vessel = await getVesselInfo(rows, columns)
+                    
+                }
+
+                const metainfo = {
+                    filetype: filetype[1],
+                    z_space: z_space,
+                    // vesselnum: vesselNum==0?'undefined': vesselNum,
+                    vessel: vessel,
+                    object: object==''?'undefined': object,
+                    channel: channels,
+                    zposition: Zposition,
+                    timeline: maxTimeLine,
+                    PhysicalSizeZUnit: PhysicalSizeZUnit
+
+                }
+                console.log(metainfo)
+                store.dispatch({type: "setMetaInfo", content: metainfo});
             }
+            // if (data.success) {
+            //     setFileNames(data.data)
+            //     setMetaDatas(data.metadata)
+            //     let comingData = data.metadata;
+            //     let channels = [];
+            //     let maxcol = '0' , maxrow = '0', zposition = 0, maxTimeLine = 0, vesselNum = 0 , Vessel, object = '';
+            
+            //     for (let i = 0; i < comingData.length; i++) {
+                   
+            //         if (channels.length == 0) {
+            //             channels.push(comingData[i].SizeC)
+            //         } else {
+            //             if (channels.findIndex(channel => channel==comingData[i].SizeC)==-1){
+            //                 channels.push(comingData[i].SizeC)
+            //             }          
+            //         }
+
+            //         if (maxTimeLine<(comingData[i].SizeT))
+            //             maxTimeLine = comingData[i].SizeT;
+            //         if (zposition < comingData[i].SizeZ )
+            //             zposition = comingData[i].SizeZ
+            //     }
+   
+
+            //     const metainfo = {
+            //         filetype: filetype[1],
+            //         vesselnum: vesselNum==0?'undefined': vesselNum,
+            //         vessel: vessel,
+            //         object: object==''?'undefined': object,
+            //         channel: channels,
+            //         zposition: zposition,
+            //         timeline: maxTimeLine
+            //     }
+
+            //     store.dispatch({type: "setMetaInfo", content: metainfo});
+                // console.log("This is metainfo for view type------", metainfo);
+                // data.metadata.map(item => {
+                //     if (item.vessel) {
+
+                //     }
+                // })
+            // } else {
+            //     console.log(response.error)
+            // }
         } catch (err) {
             console.log("Error occured while getting experiment data")
             throw err;
