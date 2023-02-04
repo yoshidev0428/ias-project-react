@@ -162,9 +162,26 @@ async def get_image(expName: str,
 async def get_image(clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[str]:
-    expNames = [doc['expName'] async for doc in db['experiment'].find()]
+    expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id': current_user.id})]
     print(expNames)
     return JSONResponse({"success": True, "data": expNames})
+
+#############################################################################
+# Get Experiment datas
+#############################################################################
+@router.get("/get_experiments_datas", 
+            response_description="Get Experiments",
+            response_model=List[ExperimentModel])
+async def get_experiments(clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    print("this is current user", current_user)
+    tiles = [doc['fileNames'] async for doc in db['experiment'].find({'user_id': current_user.id})]
+    expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id':current_user.id})]
+    
+    return JSONResponse({"success": True, "data": tiles, "expName": expNames})
+
+    
 
 #############################################################################
 # Get Image By its full path

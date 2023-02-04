@@ -23,7 +23,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from '@mui/material/DialogContentText';
-import { setNullView } from "../../../../reducers/actions/vesselAction";
+import { setNullView, initView } from "../../../../reducers/actions/vesselAction";
 
 import CloudPlan from '../../../custom/CloudPlan'
 
@@ -306,6 +306,11 @@ const OpenFileDialogForUpload = (props) => {
     }
     const cancelBtn = () => {
         props.handleClose()
+        dispatch(setNullView())
+    }
+    const setItem = () => {
+        console.log("clicked setbtn")
+        dispatch(initView())
     }
     return (
         <>
@@ -317,8 +322,9 @@ const OpenFileDialogForUpload = (props) => {
                 okTitle="REGISTER EXPERIMENT"
                 closeTitle="CANCEL"
                 newTitle=""
-                onCancel={props.handleClose}
+                onCancel={cancelBtn}
                 onOK = {registerExperiment}
+                set = {setItem}
             >
                 <div className="mt-2 mb-4">
                     <TextField

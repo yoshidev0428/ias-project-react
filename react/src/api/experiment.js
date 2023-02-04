@@ -58,3 +58,9 @@ export const getExperimentNames = async () => {
     let response = await api.get("image/tile/get_experiment_names")
     return response
 }
+
+export const getExperimentDatas = async () => {
+    const state = store.getState();
+    let response = await api.get("image/tile/get_experiments_datas")
+    return response
+}

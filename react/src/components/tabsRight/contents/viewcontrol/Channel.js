@@ -54,8 +54,8 @@ const Channel = (props) => {
         ],
         shallow
     );
-    const SelectedChannel = useSelector( state => state.experiment.viewinfo.channels)
-    console.log("ggggggggggggggggggggggggggg", SelectedChannel)
+    const SelectedChannel = useSelector( state => state.vessel.channels)
+    
     // const loader = useLoader();
     // const [channelOptions, useLinkedView, use3d, useColormap, useLens, isChannelLoading, setIsChannelLoading, removeIsChannelLoading, pixelValues, isViewerLoading
     // ] = useViewerStore(

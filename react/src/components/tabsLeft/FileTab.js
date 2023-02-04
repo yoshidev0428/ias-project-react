@@ -3,7 +3,7 @@ import TabItem from '../custom/TabItem';
 import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
-import OpenCloudDialog from "./contents/file/OpenCloudDialog";  
+import OpenCloudDialogExp from "./contents/file/OpenCloudDialog";  
 import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
 
 import OpenFolderDialogForUpload from './contents/file/OpenFolderDialog';
@@ -201,7 +201,7 @@ const FileTab = (props) => {
             <SmallCard title="Open">
                 <CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={() => setCloudDialog(true)} />
                 {
-                    cloudDialog && <OpenCloudDialog handleClose={handleCloudClose} treeData={treeData}
+                    cloudDialog && <OpenCloudDialogExp handleClose={handleCloudClose} treeData={treeData}
                     />
                 }
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { setFileDialog(true) }} />
