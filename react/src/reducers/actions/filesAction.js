@@ -15,6 +15,10 @@ export const selectImage = (image) => ({
     payload: image
 })
 
+export const cancelImage = () => ({
+    type: "Cancel_Image"
+})
+
 export const setFolderName = (folderName) => ({
     type: "SET_FOLDER_NAME",
     payload: folderName,

@@ -19,7 +19,10 @@ const initState = {
 const files = (state = initState, action) => {
     switch (action.type) {
         case "Select_Image": 
-            state.selectedImage = action.payload
+            state.selectedImage = action.payload;
+            break;
+        case "Cancel_Image":
+            state.selectedImage = null;
             break;
         case "content_addContent":
             state.content = action.content;

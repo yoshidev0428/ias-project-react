@@ -16,7 +16,7 @@ import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_tiles from "../../../../api/tiles";
 import * as api_experiment from "../../../../api/experiment"
 import store from "../../../../reducers";
-import { selectImage } from "../../../../reducers/actions/filesAction";
+import { selectImage, cancelImage } from "../../../../reducers/actions/filesAction";
 import { useSelector } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -330,6 +330,7 @@ const OpenCloudDialogExp = (props) => {
         registerExperimentData()
     }
     const cancelBtn = () => {
+        dispatch(cancelImage())
         props.handleClose()
         dispatch(setNullView())
         setImageSrc(null)
