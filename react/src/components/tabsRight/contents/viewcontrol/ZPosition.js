@@ -156,7 +156,7 @@ const ZPosition = (props) => {
                         <Button className="py-0" variant="contained" style = {is3dView ? {backgroundColor:'#1976D2'} : {backgroundColor:'#C8CCCA'}} size="small" onClick={on3DView}>3-D View</Button>
                     </div>
                 </div>
-                <Container fluid={true} className="px-0 py-0" >
+                <Container fluid={true} className="px-0 py-0 mt-4" >
                     <Grid container spacing={1} alignItems="left">
                         <Grid item xs={2}>
                             <Icon path={mdiSwapVertical} size={1} />

@@ -3,7 +3,9 @@ const DEFAULT_PARAMS = {
     selectedVesselHole: { row: 0, col: 1},
     selectedVesselZ: 0,
     selectedVesselTime: 0,
+    channels: [],
     viewConfigsObj: {},
+    object: 10
 };
 
 const initState = {
@@ -27,6 +29,17 @@ const vessel = (state = initState, action) => {
             break;
         case "vessel_setViewConfigsObj":
             state.viewConfigsObj = action.data;
+            break;
+        case "INIT_VIEW":
+            state.currentVesselType= 'Single-Slide';
+            state.channels = [0];
+            state.selectedVesselZ = 1;
+            state.selectedVesselTime = 1;
+            state.object = 0;
+            break;
+        case "SET_NULL_VIEW":
+            state.channels = [];
+            state.object = 10;
             break;
         default:
             break;

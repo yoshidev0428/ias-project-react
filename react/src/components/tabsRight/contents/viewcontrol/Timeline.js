@@ -173,18 +173,18 @@ const Timeline = (props) => {
                         <IconButton color="primary" size="small" onClick={onSetting}><Icon path={mdiCog} size={1} /></IconButton>
                     </div>
                 </div>
-                <Container fluid={true} className="px-0 py-0">
+                <Container fluid={true} className="px-0 py-0 mt-2">
                     <Grid container spacing={1} alignItems="left">
                         <Grid item xs={2}>
                             <Icon path={mdiPlay} size={1} />
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={6} m>
                             <StepRangeSlider
                                 value={value}
                                 range={range}
                                 onChange={(value) => {SliderChange(value)}}
                                 disabled={!isLoading || isImageLoading}
-                                className="color-blue mr-5"
+                                className="color-blue"
                             />
                         </Grid>
                         <Grid item xs={4}>
@@ -202,7 +202,7 @@ const Timeline = (props) => {
                             />
                         </Grid>
                     </Grid>
-                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop: "-18px"}}>
+                    <div className="d-flex justify-center pa-0 ma-0" style={{marginTop: "-28px"}}>
                         <Col md={4}>
                             <Input
                                 value={minSlider}

@@ -17,12 +17,13 @@ import * as api_tiles from "../../../../api/tiles";
 import * as api_experiment from "../../../../api/experiment"
 import store from "../../../../reducers";
 import { selectImage } from "../../../../reducers/actions/filesAction";
-
+import { useSelector } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from '@mui/material/DialogContentText';
+import { setNullView , initView } from "../../../../reducers/actions/vesselAction";
 
 import CloudPlan from '../../../custom/CloudPlan'
 
@@ -37,6 +38,7 @@ import {
   MdFolderOpen,
   MdInsertDriveFile
 } from "react-icons/md";
+import { mdiChevronDoubleLeft } from "@mdi/js";
 
 
 function LinearProgressWithLabel(props) {
@@ -80,6 +82,17 @@ const DeleteSureDialog = (props) => {
         </>
     )
 }
+const ShowTreeList = (props) => {
+    return (
+        <div>
+            <span style={{cursor:'pointer'}} className={props.data.value==props.showMother?'border border-info rounded':''} onClick={props.onsetShowMother} id={props.data.label}><MdFolderOpen />{props.data.label}</span>
+            <ul style={{listStyleType: 'none'}}>
+                {props.data.label==props.showMother&&props.data.children.map((item, index) => <li style={{cursor:'pointer'}} onClick={props.checked} id={item.value} key={index}><input type='checkbox' checked={item.value==props.checkedfile} /> <MdInsertDriveFile /> {item.label}</li>)}
+            </ul>
+           
+        </div>
+    )
+}
 const SuccessDialog = (props) => {
     const handleClose = () => {
         props.setsuccessStatus(false)
@@ -101,7 +114,7 @@ const SuccessDialog = (props) => {
     )
 }
 
-const OpenCloudDialog = (props) => {
+const OpenCloudDialogExp = (props) => {
     const fileInput = React.useRef();
 
     const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
@@ -110,7 +123,7 @@ const OpenCloudDialog = (props) => {
     const [experimentName, setExperimentName] = useState(expName);
     const [uploadFolderName, setUploadFolderName] = useState(upFName);
     const [fileName, setFileName] = useState(null);
-    const [checked, setChecked] = useState([]);
+    const [checked, setChecked] = useState('');
     const [expanded, setExpanded] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -118,27 +131,63 @@ const OpenCloudDialog = (props) => {
     const [successDialog, setsuccessDialog] = useState(false);
     const [photo123, setphoto123] = useState(null);
     const [image, setFiles] = useState([])
-
+    const [showMother, setShowMother] = useState('')
+    const [imageSrc, setImageSrc] = useState(null)
+    const selectedImg = useSelector(state => state.files.selectedImage)
+    const auth = useSelector(state => state.auth)
     const dispatch = useDispatch()
     const handleInputChange = (event) => {
       setphoto123(URL.createObjectURL(event.target.files[0]));
       setFiles(event.target.files)
     }
     const getTree = async () => {
-        let response = await api_experiment.getImageTree()
+        let response = await api_experiment.getExperimentDatas()
         let data = response.data
+        // if (data.expName.length!=0) {
+
+        // }
         if(data.error) {
             console.log("Error occured while invoking getImageTree api")
             //alert("Error occured while getting the tree")
         } else {
-            store.dispatch({type: "set_experiment_data", content: data.data});
+            let content = [];
+            if (data.expName.length!=0) {
+                for (let i=0; i<=data.expName.length-1; i++ ) {
+                    let content_children = [];
+                    for (let j=0; j<=data.data[i].length -1; j++) {
+                        let filename = '';
+                        let _label = data.data[i][j].split(auth.user._id)[1];
+                        if (_label) {
+                            filename = _label.split('/')[2];
+                        }
+                        content_children.push({
+                            value: data.data[i][j],
+                            label: filename
+                        })
+                    }
+                    content.push({
+                        label: data.expName[i],
+                        children: content_children,
+                        value: '/app/mainApi'
+                    })
+                }
+            }
+            console.log(content)
+            store.dispatch({type: "set_experiment_data", content: content});
         }
         setUploading(false)
+    }
+    const onSetShowMother = (e) => {
+        if (showMother == e.target.id) {
+            setShowMother('')
+        } else {
+            setShowMother(e.target.id)
+        }
+        
     }
     const deleteFiles = async () => {
         setUploading(true)
         try {
-            // console.log(checked)
             let response = await api_experiment.deleteImageFiles(checked)
             let data = response.data
             if(data.success) {
@@ -152,7 +201,6 @@ const OpenCloudDialog = (props) => {
             throw err;
         }
     }
-    console.log("This is test for check", checked)
     const registerExperimentData = async () => {
         try {
             let response = await api_experiment.registerExperiment(experimentName, checked)
@@ -174,20 +222,35 @@ const OpenCloudDialog = (props) => {
         // let data = response.data
 
         // if(data.success) {
+        //     console.log(data.data)
         //     alert(data.data.length)
         // }
     }
+    // console.log("this is upload file data --------------------", image);
     const onsetChecked = (e) => {
-        const length_checked = e.length;
-        const ch =[]
-        if (e.length==0) {
-            setChecked([])
-        } else {
-        ch.push(e[length_checked-1])
-        dispatch(selectImage(ch))
-        setChecked(ch)
-        }
+        // const length_checked = e.length;
+        // const ch =[]
+        // ch.push(e[length_checked-1])
+        // console.log("sssssssss", ch)
+        dispatch(selectImage(e.target.id))
+        setChecked(e.target.id)
     }
+    useEffect(() => {
+        if (selectedImg!=null) {
+            const imgsrc = process.env.REACT_APP_BASE_API_URL + "image/tile/get_image" + selectedImg.split(auth.user._id)[1];
+            setImageSrc(imgsrc);
+            console.log(imgsrc);
+            fetch(imgsrc, {
+            method: "GET",
+            headers: { Authorization: auth.tokenType + ' ' + auth.token }
+        }).then((response) => {
+            console.log('image data', response.body)
+            // const data = `data:${response.headers['content-type']};base64,${new Buffer(response.data).toString('base64')}`;
+            // setImageSrc(response.body)
+        });
+        }
+
+    }, [selectedImg, setImageSrc])
     useEffect(() => {
         setUploading(true)
 
@@ -245,9 +308,9 @@ const OpenCloudDialog = (props) => {
             }
 
             if (newAcceptedFiles.length > 0) {
+                // console.log(newAcceptedFiles)
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
-                
                 if (resUpload.status==200)
                 setsuccessDialog(true)
                 setFiles([])
@@ -266,6 +329,14 @@ const OpenCloudDialog = (props) => {
     const registerExperiment = () => {
         registerExperimentData()
     }
+    const cancelBtn = () => {
+        props.handleClose()
+        dispatch(setNullView())
+    }
+    const setItem = () => {
+        console.log("clicked setbtn")
+        dispatch(initView())
+    }
     return (
         <>
             <SimpleDialog
@@ -276,8 +347,8 @@ const OpenCloudDialog = (props) => {
                 okTitle="REGISTER EXPERIMENT"
                 closeTitle="CANCEL"
                 newTitle=""
-                onCancel={props.handleClose}
-                onOK = {registerExperiment}
+                onCancel={cancelBtn}
+                set = {setItem}
             >
                 <div className="mt-2 mb-4">
                     <TextField
@@ -289,21 +360,24 @@ const OpenCloudDialog = (props) => {
                     />
                 </div>
                 <div>
-                <Typography component="div" className="mb-1">View your cloud data</Typography>
-                    <div className="row">
+                <Typography component="div" className="mb-2"><h6>View your files</h6></Typography>
+                    <div className="row p-1">
                         <div className="col-sm-7">
                         {props.experiments.length ?
-                            <CheckboxTree
-                                nodes={props.experiments}
-                                checked={checked}
-                                expanded={expanded}
-                                onCheck={checked => onsetChecked(checked)}
-                                onExpand={expanded => setExpanded(expanded)}
-                                icons={icons}
-                            /> : <label>No data found, please upload..</label>
+                            // <CheckboxTree
+                            //     nodes={props.experiments}
+                            //     checked={checked}
+                            //     expanded={expanded}
+                            //     onCheck={checked => onsetChecked(checked)}
+                            //     onExpand={expanded => setExpanded(expanded)}
+                            //     icons={icons}
+                            // /> 
+                            props.experiments.map((item, index) => <ShowTreeList showMother={showMother} onsetShowMother={onSetShowMother} checkedfile={checked} key={index} checked={onsetChecked} data={item}/>)
+                            : <label>No data found, please upload..</label>
                         }
                             </div>
                         <div className="col-sm-5">
+                        {imageSrc!=null&&<img src={imageSrc} className="rounded mb-3" alt="Cinque Terre" width="70%" height="220px"/>}
                             { photo123==null?
                                     <Button
                                     label="Click Here"
@@ -313,7 +387,7 @@ const OpenCloudDialog = (props) => {
                                     value={fileName}
                                     onClick={() => fileInput.current.click()}
                                 >
-                                    Select file
+                                    Select File
                                 </Button>:<Button
                                     label="Click Here"
                                     variant="outlined"
@@ -345,6 +419,7 @@ const OpenCloudDialog = (props) => {
                                 multiple
                                 onChange={handleInputChange}
                             />
+
                             {photo123!=null &&
                             <Button
                                 label="Click Here"
@@ -391,7 +466,7 @@ const mapStateToProps = (state) => ({
     experiments: state.experiment.experiments,
     uploading: state.experiment.uploading,
 });
-OpenCloudDialog.propTypes = {handleClose: PropTypes.func.isRequired};
+OpenCloudDialogExp.propTypes = {handleClose: PropTypes.func.isRequired};
 
-export default connect(mapStateToProps)(OpenCloudDialog);
+export default connect(mapStateToProps)(OpenCloudDialogExp);
 
