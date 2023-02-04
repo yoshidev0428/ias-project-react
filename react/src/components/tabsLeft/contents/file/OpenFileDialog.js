@@ -307,6 +307,7 @@ const OpenFileDialogForUpload = (props) => {
     const cancelBtn = () => {
         props.handleClose()
         dispatch(setNullView())
+        setImageSrc(null)
     }
     const setItem = () => {
         console.log("clicked setbtn")
