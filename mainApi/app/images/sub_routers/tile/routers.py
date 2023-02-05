@@ -122,6 +122,26 @@ async def delete_images(request: Request,
     expName = data.get('expName')
     result = await add_experiment(expName, files, clear_previous=clear_previous, current_user=current_user, db=db)
     return JSONResponse({"success": result})
+    
+#############################################################################
+# Register Experiment Name
+#############################################################################
+# @router.post("/register_experiment_name",
+#              response_description="Register Experiment_Name",
+#              status_code=status.HTTP_201_CREATED,
+#              response_model=List[ExperimentModel])
+# async def delete_images(request: Request,
+#                          clear_previous: bool = Form(False),
+#                          current_user: UserModelDB = Depends(get_current_user),
+#                          db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+#     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+#     print("This is requests----", request)
+#     data = await request.form()
+
+#     expName = data.get('expName')
+    
+#     result = await add_experiment_name(expName, clear_previous=clear_previous, current_user=current_user, db=db)
+#     return JSONResponse({"success": result})
 
 #############################################################################
 # Get Experiment data by name

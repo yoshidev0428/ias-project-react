@@ -36,6 +36,21 @@ async def add_experiment(expName: str, fileNames: List[str],
 	await db['experiment'].insert_one(experiment.dict(exclude={'id'}))
 	return True
 
+# async def add_experiment_name(expName: str,
+# 						clear_previous: bool,
+# 					    current_user: UserModelDB or ShowUserModel,
+# 					    db: AsyncIOMotorDatabase) -> ExperimentModel:
+# 	tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
+# 	if len(tiles) > 0:
+# 		return False
+
+# 	experiment = ExperimentModel(
+# 		user_id=PyObjectId(current_user.id),
+# 		expName=expName
+# 	)
+# 	await db['experiment'].insert_one(experiment.dict(exclude={'id'}))
+# 	return True
+
 async def get_experiment_data(expName: str, user_id: str,
 							clear_previous: bool,
 						    current_user: UserModelDB or ShowUserModel,

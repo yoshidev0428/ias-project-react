@@ -24,8 +24,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from '@mui/material/DialogContentText';
 import { setNullView , initView } from "../../../../reducers/actions/vesselAction";
-
-import CloudPlan from '../../../custom/CloudPlan'
+import Dropzone from "react-dropzone";
+import { useDropzone } from "react-dropzone";
+import CloudPlan from '../../../custom/CloudPlan';
+import Previews from '../../../custom/Previews';
 
 import {
   MdCheckBox,
@@ -117,10 +119,10 @@ const SuccessDialog = (props) => {
 const OpenCloudDialogExp = (props) => {
     const fileInput = React.useRef();
 
-    const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
-    const [experimentName, setExperimentName] = useState(expName);
+    const [experimentName, setExperimentName] = useState('');
     const [uploadFolderName, setUploadFolderName] = useState(upFName);
     const [fileName, setFileName] = useState(null);
     const [checked, setChecked] = useState('');
@@ -217,15 +219,25 @@ const OpenCloudDialogExp = (props) => {
             console.log("Error occured while registering experiment")
             throw err
         }
-
-        // let response = await api_experiment.getExperimentData("experiement_2022-10-20T17:33:15.282Z")
-        // let data = response.data
-
-        // if(data.success) {
-        //     console.log(data.data)
-        //     alert(data.data.length)
-        // }
     }
+
+    // const registerExperimentData = async () => {
+    //     try {
+    //         let response = await api_experiment.registerExperiment(experimentName, checked)
+    //         let data = response.data
+
+    //         if(data.success) {
+    //             alert("Successfully registered")
+    //         } else {
+    //             alert("Failed to register")
+    //         }
+    //         props.handleClose()
+    //     } catch(err) {
+    //         props.handleClose()
+    //         console.log("Error occured while registering experiment")
+    //         throw err
+    //     }
+    // }
     // console.log("this is upload file data --------------------", image);
     const onsetChecked = (e) => {
         // const length_checked = e.length;
@@ -257,8 +269,8 @@ const OpenCloudDialogExp = (props) => {
         const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
-        setExperimentName(expName)
-        setUploadFolderName(upFName)
+        setExperimentName('')
+        setUploadFolderName('')
 
         getTree()
         setUploading(false)
@@ -339,6 +351,7 @@ const OpenCloudDialogExp = (props) => {
         console.log("clicked setbtn")
         dispatch(initView())
     }
+    
     return (
         <>
             <SimpleDialog
@@ -349,106 +362,211 @@ const OpenCloudDialogExp = (props) => {
                 okTitle="REGISTER EXPERIMENT"
                 closeTitle="CANCEL"
                 newTitle=""
+                register={registerExperiment}
                 onCancel={cancelBtn}
                 set = {setItem}
             >
-                <div className="mt-2 mb-4">
-                    <TextField
-                        label="Experiment name"
-                        variant="standard"
-                        fullWidth
-                        value={experimentName}
-                        onChange={e => setExperimentName(e.target.value)}
-                    />
-                </div>
-                <div>
-                <Typography component="div" className="mb-2"><h6>View your files</h6></Typography>
-                    <div className="row p-1">
-                        <div className="col-sm-7">
-                        {props.experiments.length ?
-                            // <CheckboxTree
-                            //     nodes={props.experiments}
-                            //     checked={checked}
-                            //     expanded={expanded}
-                            //     onCheck={checked => onsetChecked(checked)}
-                            //     onExpand={expanded => setExpanded(expanded)}
-                            //     icons={icons}
-                            // /> 
-                            props.experiments.map((item, index) => <ShowTreeList showMother={showMother} onsetShowMother={onSetShowMother} checkedfile={checked} key={index} checked={onsetChecked} data={item}/>)
-                            : <label>No data found, please upload..</label>
-                        }
+                <div className="container border">
+                    <div className="row">
+                        <div className="col-6 border">
+                            <h6 className="mt-2">Upload Data Select</h6>
+                            <div className="mt-2 mb-4">
+                                <p className="mt-4">New Experiment Name</p>
+                                <div className="row">
+                                    <div className="col-4">
+                                    </div>
+                                    <div className="col-8">
+                                        <TextField
+                                            variant="outlined"
+                                            label="Experiment Name"
+                                            size="small"
+                                            fullWidth
+                                            value={experimentName}
+                                            onChange={e => setExperimentName(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                        <div className="col-sm-5">
-                        {imageSrc!=null&&<img src={imageSrc} className="rounded mb-3" alt="Cinque Terre" width="70%" height="220px"/>}
-                            { photo123==null?
+                            <div className="mt-2 mb-4">
+                                <p className="mt-4">Select Upload Data</p>
+                                <Dropzone onDrop={files => console.log(files)}>
+                                {({getRootProps, getInputProps}) => (
+                                    <div className="container">
+                                    <div
+                                        {...getRootProps({
+                                        className: 'dropzone',
+                                        onDrop: event => event.stopPropagation()
+                                        })}
+                                    >
+                                        <input {...getInputProps()} />
+                                        <div className="border rounded p-4 text-center">
+                                            <p>Upload Here or Selete Btn</p>
+                                        </div>
+                                        
+                                    </div>
+                                    </div>
+                                )}
+                                </Dropzone>
+                                <div className="row">
+                                    <div className="col-3">
+                                    </div>
+                                    <div className="col-3">
+                                        <Button
+                                            label="Click Here"
+                                            variant="outlined"
+                                            color="success"
+                                            className="mt-3"
+                                            fullWidth
+                                            value={fileName}
+                                            // onClick={() => fileInput.current.click()}
+                                        >
+                                            Select
+                                        </Button>
+                                    </div>
+                                    <div className="col-1">
+
+                                    </div>
+                                    <div className="col-3">
                                     <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="primary"
+                                        className="mt-3"
+                                        fullWidth
+                                        // onClick={() => setphoto123(null)}
+                                    >
+                                        Eraze
+                                    </Button>
+                                    </div>
+                                    <div className="col-2">
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            <div className="row mt-5 mb-3">
+                                <div className="col-2">
+                                </div>
+                                <div className="col-4">
+                                    <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="error"
+                                        className="mt-3"
+                                        fullWidth
+                                        value={fileName}
+                                        // onClick={() => fileInput.current.click()}
+                                    >
+                                        Upload
+                                    </Button>
+                                </div>
+                                <div className="col-1">
+
+                                </div>
+                                <div className="col-4">
+                                <Button
                                     label="Click Here"
                                     variant="outlined"
-                                    color="success"
-                                    fullWidth
-                                    value={fileName}
-                                    onClick={() => fileInput.current.click()}
-                                >
-                                    Select File
-                                </Button>:<Button
-                                    label="Click Here"
-                                    variant="outlined"
-                                    color="primary"
+                                    color="info"
                                     className="mt-3"
                                     fullWidth
-                                    onClick={() => setphoto123(null)}
+                                    // onClick={() => setphoto123(null)}
                                 >
                                     Cancel
                                 </Button>
-                                }
+                                </div>
+                                <div className="col-1">
+                                </div>
+                                
                             </div>
+                            
                         </div>
-                    
-                                        
+                        <div className="col-6 border">
+                        <div>
+                            <Typography component="div" className="mb-2 p-2"><h6>View your files</h6></Typography>
+                                    {props.experiments.length ?
+                                        // <CheckboxTree
+                                        //     nodes={props.experiments}
+                                        //     checked={checked}
+                                        //     expanded={expanded}
+                                        //     onCheck={checked => onsetChecked(checked)}
+                                        //     onExpand={expanded => setExpanded(expanded)}
+                                        //     icons={icons}
+                                        // /> 
+                                        props.experiments.map((item, index) => <ShowTreeList showMother={showMother} onsetShowMother={onSetShowMother} checkedfile={checked} key={index} checked={onsetChecked} data={item}/>)
+                                        : <label>No data found, please upload..</label>
+                                    }
+                                    {/* {imageSrc!=null&&<img src={imageSrc} className="rounded mb-3" alt="Cinque Terre" width="70%" height="220px"/>}
+                                        { photo123==null?
+                                                <Button
+                                                label="Click Here"
+                                                variant="outlined"
+                                                color="success"
+                                                fullWidth
+                                                value={fileName}
+                                                onClick={() => fileInput.current.click()}
+                                            >
+                                                Select File
+                                            </Button>:<Button
+                                                label="Click Here"
+                                                variant="outlined"
+                                                color="primary"
+                                                className="mt-3"
+                                                fullWidth
+                                                onClick={() => setphoto123(null)}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            } */}
+                                    
+                            </div>
+                            {/* <div className="mt-2 mb-4">
+                                <div style={{display: 'flex', justifyContent:'flex-end'}}>
+                                    <label htmlFor="contained-button-file" className="mr-2 mb-0">
+                                        <input
+                                            ref={fileInput}
+                                            style={{ display: 'none' }}
+                                            accept=""
+                                            id="contained-button-file"
+                                            type="file"
+                                            multiple
+                                            onChange={handleInputChange}
+                                        />
+
+                                        {photo123!=null &&
+                                        <Button
+                                            label="Click Here"
+                                            variant="outlined"
+                                            color="success"
+                                            className=""
+                                            fullWidth
+                                            value={fileName}
+                                            onClick={handleSelectFile}
+                                        >
+                                            UPLOAD FILES
+                                        </Button>}
+                                    </label>
+                                    {checked.length!=0 &&
+                                    <Button variant="outlined" color="error" onClick={removeImage}>
+                                        Remove
+                                    </Button>
+                                    }
+                                </div>
+                                <TextField
+                                    label="New upload foldername"
+                                    variant="standard"
+                                    fullWidth
+                                    value={uploadFolderName}
+                                    onChange={e => setUploadFolderName(e.target.value)}
+                                />
+                            </div> */}
+                        </div>
+                    </div>
                 </div>
+                
                 <div className="mt-2 mb-2">
                     {uploading && <LinearProgress />}
                 </div>
-                <div className="mt-2 mb-4">
-                    <div style={{display: 'flex', justifyContent:'flex-end'}}>
-                        <label htmlFor="contained-button-file" className="mr-2 mb-0">
-                            <input
-                                ref={fileInput}
-                                style={{ display: 'none' }}
-                                accept=""
-                                id="contained-button-file"
-                                type="file"
-                                multiple
-                                onChange={handleInputChange}
-                            />
-
-                            {photo123!=null &&
-                            <Button
-                                label="Click Here"
-                                variant="outlined"
-                                color="success"
-                                className=""
-                                fullWidth
-                                value={fileName}
-                                onClick={handleSelectFile}
-                            >
-                                UPLOAD FILES
-                            </Button>}
-                        </label>
-                        {checked.length!=0 &&
-                        <Button variant="outlined" color="error" onClick={removeImage}>
-                            Remove
-                        </Button>
-                        }
-                    </div>
-                    <TextField
-                        label="New upload foldername"
-                        variant="standard"
-                        fullWidth
-                        value={uploadFolderName}
-                        onChange={e => setUploadFolderName(e.target.value)}
-                    />
-                </div>
+                
             </SimpleDialog>
             <DeleteSureDialog 
                 open={sureDialog}

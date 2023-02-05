@@ -49,6 +49,21 @@ export const registerExperiment = async (expName, images) => {
     });
 }
 
+export const registerExperimentName = async (expName) => {
+    const state = store.getState();
+    const formData = new FormData();
+    formData.append("expName", expName);
+    return api.post("image/tile/register_experiment_name", formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            "Content-Type": "application/json",
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+}
+
 export const getExperimentData = async (expName) => {
     let response = await api.get("image/tile/get_experiment_data/" + expName)
     return response
@@ -60,7 +75,9 @@ export const getExperimentNames = async () => {
 }
 
 export const getExperimentDatas = async () => {
-    const state = store.getState();
+    // const state = store.getState();
     let response = await api.get("image/tile/get_experiments_datas")
     return response
+    // let response = await api.get("image/tile/get_experiment_names")
+    // return response
 }
