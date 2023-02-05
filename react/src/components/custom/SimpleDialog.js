@@ -64,11 +64,11 @@ const SimpleDialog = (props) => {
                 </DialogContent>
                 <DialogActions style={{ padding: "12px 24px" }}>
                     <div className="spacer"></div>
-                    {props.checked.length != 0 && 
+                    {/* {props.checked.length != 0 && 
                         <Button variant="contained" color="info" onClick={setView}>
                             Set
                         </Button>
-                    }
+                    } */}
                     {props.newButton && <Button variant="contained" color="info" onClick={newed}
                         disabled={props.newDisable}
                     >
@@ -76,25 +76,7 @@ const SimpleDialog = (props) => {
                     </Button>}
                     
 
-                    {props.updateButton && <Button variant="contained" color="info" onClick={updated}
-                        disabled={props.updateDisable}
-                    >
-                        {props.updateTitle}
-                    </Button>}
-                    {props.removeButton && <Button variant="contained" color="warning" onClick={removed}
-                        disabled={props.removeDisable}
-                    >
-                        {/* {props.removeTitle} */}
-                    </Button>}
-                    <Button variant="contained" color="success" onClick={props.onOK}
-                        disabled={props.selectDisable}
-                    >
-                        {props.okTitle}
-                    </Button>
-                    {!props.singleButton && <Button variant="contained" color="primary" onClick={props.onCancel}
-                    >
-                        {props.closeTitle}
-                    </Button>}
+                   
                 </DialogActions>
             </Dialog>
         </>
