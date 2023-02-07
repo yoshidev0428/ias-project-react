@@ -36,7 +36,7 @@ async def add_image_tiles(path: Path,
     Front end should include a validator that checks if the file has already been uploaded and then reject it.
     No validation is done in the backend
     """
-    
+    print(files)
     tiles: List[FileModelDB] = []
     filenames = []
     for each_file in files:

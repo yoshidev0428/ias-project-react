@@ -29,7 +29,7 @@ from mainApi.app.db.mongodb import get_database
 from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, FileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
-from mainApi.app.images.utils.experiment import add_experiment, get_experiment_data
+from mainApi.app.images.utils.experiment import add_experiment, get_experiment_data, add_experiment_with_folder
 import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
@@ -196,10 +196,14 @@ async def get_experiments(clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     print("this is current user", current_user)
-    tiles = [doc['fileNames'] async for doc in db['experiment'].find({'user_id': current_user.id})]
-    expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id':current_user.id})]
+    userId = str(PyObjectId(current_user.id))
+    print(userId)
+    exp_datas = [doc async for doc in db['experiment'].find({'user_id': userId}, {'_id': 0, 'date': 0})]
+    print(exp_datas)
+    # exp_datas = [doc async for doc in db['experiment'].find({'user_id': str(PyObjectId(current_user.id))})]
+    # expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id':current_user.id})]
     
-    return JSONResponse({"success": True, "data": tiles, "expName": expNames})
+    return JSONResponse({"success": True, "data": exp_datas})
 
     
 
@@ -220,6 +224,7 @@ async def merge_image(merge_req_body: str = Body(embed=True),
 
 #############################################################################
 # New Upload Image file
+
 @router.post("/upload_images/{folder_name}",
              response_description="Upload Files",
              status_code=status.HTTP_201_CREATED,
@@ -247,6 +252,54 @@ async def upload_images(folder_name: str,
         res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
         result = await add_image_tiles(path = path, files=files, clear_previous=clear_previous, current_user=current_user, db=db)
         result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
+
+    return JSONResponse(result)
+
+#############################################################################
+# New Upload Experiment with Folder
+
+@router.post("/set_experiment",
+             response_description="Register Experiment",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def register_experiment_with_folder(
+                        request: Request,
+                        files: List[UploadFile] = File(...),
+                        clear_previous: bool = Form(False),
+                        current_user: UserModelDB = Depends(get_current_user),
+                        db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    data = await request.form()
+    # files = data.get('images')
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    new_experiment_path = os.path.join(current_user_path, data.get('expName'))
+    new_folder_path = os.path.join(new_experiment_path, data.get('folderName'))
+
+    print("This is user path", current_user_path)
+    print("This is experiment path", new_experiment_path)
+    print("This is folder path", new_folder_path)
+    # Make user directory   
+    if not os.path.exists(current_user_path):
+        os.makedirs(current_user_path)
+
+    # # Check if the folder exists, if not make a new one
+    # path = os.path.join(current_user_path, folder_name)
+    # print(path)
+    if os.path.isdir(new_experiment_path):
+        result = {}
+        result["exp_error"] = "Experiment name is already exist"
+        return JSONResponse(result)
+    else:
+        os.mkdir(new_experiment_path)
+
+    if os.path.isdir(new_folder_path):
+        result = {}
+        result["folder_error"] = "Folder name is already exist"
+        return JSONResponse(result)
+    else:
+        os.mkdir(new_folder_path)
+        # res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
+        result = await add_experiment_with_folder(folderPath=new_experiment_path, expName=data.get('expName'), folderName=data.get('folderName'), files=files, clear_previous=clear_previous, current_user=current_user, db=db)
+    #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
 
