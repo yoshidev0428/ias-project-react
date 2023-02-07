@@ -61,8 +61,6 @@ async def add_experiment_with_folder (folderPath: str,
 				}],
 				'date': datetime.now()
 			}
-
-
 	print("success")
 	await db['experiment'].insert_one(experimentData)
 	return True
