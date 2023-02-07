@@ -20,6 +20,7 @@ services:
             - ./docker_compose_libs/shared_utils:/app/shared_utils:rw,shared
             - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rw,shared
         command: [ "sh", "./mainApi/start.sh" ]
+        restart: always
     # nginx:
     #   depends_on: 
     #       - mainApi
@@ -32,7 +33,7 @@ services:
     #   restart: always
     mongo:
         image: mongo:latest
-        restart: unless-stopped
+        restart: always
         ports:
             - 27017
         volumes:
@@ -41,7 +42,7 @@ services:
             - ./env_files/mongoDb.env
     mongo-express:
         image: mongo-express
-        restart: unless-stopped
+        restart: always
         ports:
             - "8081:8081"
         env_file:
@@ -55,7 +56,7 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672" # management
-        restart: unless-stopped
+        restart: always
         deploy:
             replicas: 1
             restart_policy:
@@ -63,7 +64,7 @@ services:
     ## celery monitor
     flower:
         image: zoomeranalytics/flower:0.9.1-4.0.2
-        restart: "no"
+        restart: always
         env_file:
             - ./env_files/celery_tasks.env
         ports:
@@ -75,7 +76,7 @@ services:
         build:
             context: .
             dockerfile: ./stitching/Dockerfile
-        restart: "no"
+        restart: always
         env_file:
             - ./env_files/celery_tasks.env
         command:
