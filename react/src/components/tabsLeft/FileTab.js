@@ -8,7 +8,7 @@ import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
 import OpenFolderUpload from './contents/file/OpenFolderUpload';
 import OpenFolderDialogForUpload from './contents/file/OpenFolderDialog';
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
-import * as api_experiment from "../../api/experiment";
+// import * as api_experiment from "../../api/experiment";
 import {
     mdiCloudDownloadOutline,
     mdiEmailNewsletter,
