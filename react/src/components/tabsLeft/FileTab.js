@@ -5,7 +5,7 @@ import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
 import OpenCloudDialogExp from "./contents/file/OpenCloudDialog";  
 import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
-
+import OpenFolderUpload from './contents/file/OpenFolderUpload';
 import OpenFolderDialogForUpload from './contents/file/OpenFolderDialog';
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
 import * as api_experiment from "../../api/experiment";
@@ -179,21 +179,21 @@ const FileTab = (props) => {
         showPositionDialog(true)
     }
 
-    useEffect(() => {
-        const getImageTree = async () => {
-            let response = await api_experiment.getImageTree()
-            let data = response.data
-            if(data.error) {
-                setTreeData([])
-                console.log("Error occured while invoking getImageTree api");
-                // alert("Error occured while getting the tree");
-            } else {
-                setTreeData(data.data);
-            }
-        }
-        getImageTree()
-            .catch(console.error)
-    }, [])
+    // useEffect(() => {
+    //     const getImageTree = async () => {
+    //         let response = await api_experiment.getImageTree()
+    //         let data = response.data
+    //         if(data.error) {
+    //             setTreeData([])
+    //             console.log("Error occured while invoking getImageTree api");
+    //             // alert("Error occured while getting the tree");
+    //         } else {
+    //             setTreeData(data.data);
+    //         }
+    //     }
+    //     getImageTree()
+    //         .catch(console.error)
+    // }, [])
     return (
         <TabItem title="File/Edit">
             <input type="file" id="file" ref={inputFile} onChange={onFileChangeCapture} style={{ display: "none" }} />
@@ -210,7 +210,7 @@ const FileTab = (props) => {
                 }
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { setFolderDialog(true) }} />
                 {
-                    folderDialog && <OpenFolderDialogForUpload handleClose={handleFolderClose} treeData={treeData} />
+                    folderDialog && <OpenFolderUpload handleClose={handleFolderClose} treeData={treeData} />
                 }
                 <CustomButton icon={mdiDotsGrid} label="Position" click={() => showPositionDialog(true)} />
                 {positionDialog && <OpenPositionDialog title=" " handleClose={handleClose} setCloudDialog={setCloudDialog} cloudDialogClose={cloudDialogClose} selectTab={selectTab}/>}

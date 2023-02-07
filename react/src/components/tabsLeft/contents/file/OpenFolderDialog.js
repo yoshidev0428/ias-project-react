@@ -131,13 +131,14 @@ const OpenFolderDialogForUpload = (props) => {
     const getTree = async () => {
         let response = await api_experiment.getImageTree()
         let data = response.data
-        if(data.error) {
-            console.log("Error occured while invoking getImageTree api")
-            //alert("Error occured while getting the tree")
-        } else {
-            store.dispatch({type: "set_experiment_data", content: data.data});
-        }
-        setUploading(false)
+        console.log(data)
+        // if(data.error) {
+        //     console.log("Error occured while invoking getImageTree api")
+        //     //alert("Error occured while getting the tree")
+        // } else {
+        //     store.dispatch({type: "set_experiment_data", content: data.data});
+        // }
+        // setUploading(false)
     }
     const deleteFiles = async () => {
         setUploading(true)
@@ -249,6 +250,7 @@ const OpenFolderDialogForUpload = (props) => {
             }
 
             if (newAcceptedFiles.length > 0) {
+                console.log(newAcceptedFiles)
                 //************************************************************************** */
                 let resUpload = await api_tiles.uploadImages(newAcceptedFiles, uploadFolderName);
                 if (resUpload.status==200)
