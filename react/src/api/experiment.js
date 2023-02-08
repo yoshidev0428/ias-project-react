@@ -36,8 +36,8 @@ export const deleteImageFiles = async (images) => {
 export const registerExperiment = async (expName, images) => {
     const state = store.getState();
     const formData = new FormData();
-    formData.append("images", images)
-    formData.append("expName", expName)
+    formData.append("images", images);
+    formData.append("expName", expName);
     return api.post("image/tile/register_experiment", formData, {
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -48,7 +48,27 @@ export const registerExperiment = async (expName, images) => {
         }
     });
 }
-
+export const setExperiment = async (experimentName, addFolderName, addedFiles) => {
+    const state = store.getState();
+    const formData = new FormData();
+    // formData.append("images", addedFiles);
+    formData.append("expName", experimentName);
+    console.log(addedFiles)
+    for (let i in addedFiles) {
+        let f = addedFiles[i];
+        formData.append("files", f);
+    }
+    formData.append("folderName", addFolderName)
+    return api.post("image/tile/set_experiment", formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            'content-Type': 'multipart/form-data',
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+}
 export const registerExperimentName = async (expName) => {
     const state = store.getState();
     const formData = new FormData();

@@ -6,6 +6,7 @@ from pydantic import BaseModel, validator, Field
 
 from mainApi.app.auth.models.user import PyObjectId, to_camel
 from typing import List
+from datetime import datetime
 
 class AlignMethodEnum(str, Enum):
     byRow = "byRow"
@@ -17,14 +18,30 @@ class MergeImgModel(BaseModel):
 
 class ExperimentModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    user_id: PyObjectId = Field(default_factory=PyObjectId)
+    user_id: str
     expName: str
-    fileNames: List[str]
+    date: datetime = datetime.now()
+    folders: List[object]
+    files: List[object]
+
     class Config:
         allow_population_by_field_name = True
         json_encoders = {ObjectId: str}
         alias_generator = to_camel
-
+# class FilesModel (ExperimentModel):
+#     fileName: str
+#     path: str
+#     class Config:
+#         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
+#         allow_population_by_field_name = True
+#         alias_generator = to_camel
+# class FolderExpModel (ExperimentModel):
+#     folderName: str
+#     files: List(str)
+#     class Config:
+#         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
+#         allow_population_by_field_name = True
+#         alias_generator = to_camel
 class TileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     # reference to the user who uploaded the tile
