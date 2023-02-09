@@ -28,6 +28,7 @@ import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import CloudPlan from '../../../custom/CloudPlan';
 import Previews from '../../../custom/Previews';
+import TreeViewFoldersExp from "./TreeViewFolders";
 import TreeView from '@mui/lab/TreeView'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -45,6 +46,9 @@ import {
   MdInsertDriveFile
 } from "react-icons/md";
 import { mdiAlertRemove, mdiChevronDoubleLeft } from "@mdi/js";
+import { $CombinedState } from "redux";
+import TreeViewFolders from "./TreeViewFolders";
+import { amber } from "@mui/material/colors";
 
 
 function LinearProgressWithLabel(props) {
@@ -89,10 +93,46 @@ const DeleteSureDialog = (props) => {
     )
 }
 const ShowTreeList = (props) => {
+    console.log(props.data.folders)
+    let treeFolder = []
+    let max_deep = 0
+    let treeShowFolder = []
+    props.data.folders.map(item => {
+        for (let i = 1; i < item.folder.length - 1; i++) {
+            console.log(item)
+            if (treeFolder.findIndex(node => node.id == item.folder[1] +'/' + i + item.folder[i]) == -1)
+                if (i == item.folder.length - 2) {
+                    treeFolder.push(
+                        {   id: item.folder[1] +'/' + i + item.folder[i],
+                            folderName: item.folder[i],
+                            files: item.files,
+                            deep: i
+                    })
+                } else {
+                    treeFolder.push(
+                        {   id: item.folder[1] +'/' + i + item.folder[i],
+                            folderName: item.folder[i],
+                            deep: i
+                    })
+                }
+        }
+        if (max_deep < item.folder.length) max_deep = item.folder.length - 1                
+    })
+    for(let j = 1; j < max_deep; j++) {
+        let nodes;
+        nodes = treeFolder.filter(treenode => treenode.deep == j)
+        treeShowFolder.push({
+            deep: j,
+            folders: nodes
+        })
+    }
+    console.log("This is treefolder", treeShowFolder, max_deep)
     return (
         <TreeItem nodeId={props.data.expName} label={props.data.expName}>
-            {props.data.folders.map((folder, index) => <ShowTreeFolder key={index} expName={props.data.expName} folder={folder}/>)}
-            {/* <TreeItem nodeId={props} label="Calendar" /> */}
+            {props.data.folders&&props.data.folders.map((folder, index) => <ShowTreeFolder key={index} checkedfolder={props.checkedfolder} checked={props.checked} expName={props.data.expName} folder={folder}/>)}
+            {props.data.files&&props.data.files.map((item, index) => 
+                  <TreeItem className="pl-0" key={index} label={item} nodeId={props.data.expName + item} />
+            )}
         </TreeItem>
     )
 }
@@ -100,7 +140,7 @@ const ShowTreeFolder = (props) => {
     return (
     <div className="row">
         <div className="col-1">
-            <input type="checkbox"></input>
+            <input type="checkbox" id={props.expName + '/' + props.folder.folderName} onChange={props.checked} checked={props.expName + '/' + props.folder.folderName == props.checkedfolder}></input>
         </div>
         <div className="col-11 pl-0">
             <TreeItem nodeId={props.folder.folderName + props.expName} label={props.folder.folderName}>
@@ -132,6 +172,41 @@ const SuccessDialog = (props) => {
         </>
     )
 }
+const RenderTree = (props) => {
+    // console.log(props.data.folders);
+    const makeTree = (originData) => {
+        let treeData = {
+            id: props.data.expName,
+            label: props.data.expName,
+            children: []
+        };
+        
+        originData.forEach((data) => {
+            let tree = treeData.children;
+            let path = props.data.expName;
+            for (let i = 1; i < data.folder.length - 1; i++) {
+                path = path + "/" + data.folder[i];
+                const existingNode = tree.find((node) => node.label === data.folder[i]);
+                if (existingNode) {
+                    tree = existingNode.children;
+                    continue;
+                }
+                const item = {
+                    id: path,
+                    label: data.folder[i],
+                    children: [],
+                };
+                tree.push(item);
+                tree = item.children;
+            }
+            data.files.forEach((file) => tree.push({ id:path + "/" + file, label: file }));
+        });
+        return treeData
+    }
+    const node_datas = makeTree(props.data.folders)
+    
+    return <TreeViewFoldersExp data={node_datas} />
+}
 
 const OpenFolderUpload = (props) => {
     const fileInput = React.useRef();
@@ -154,6 +229,7 @@ const OpenFolderUpload = (props) => {
     const [imageSrc, setImageSrc] = useState(null);
     const [addFolderName, setAddFolderName] = useState(null);
     const [addedFiles, setAddedFiles] = useState([]);
+    const [addedFolder, setAddedFolder] = useState([]);
 
     const selectedImg = useSelector(state => state.files.selectedImage);
     const auth = useSelector(state => state.auth);
@@ -167,40 +243,10 @@ const OpenFolderUpload = (props) => {
         let response = await api_experiment.getExperimentDatas()
         let data = response.data;
 
-
-
-        console.log("tree datas", data)
-        // if (data.expName.length!=0) {
-
-        // }
         if(data.error) {
             console.log("Error occured while invoking getImageTree api")
             //alert("Error occured while getting the tree")
         } else {
-            let content = [];
-            console.log(data.data)
-            // if (data.data.length!=0) {
-            //     for (let i=0; i<=data.data.length-1; i++ )                 {
-            //         let content_children = [];
-            //         for (let j=0; j<=data.data[i].length -1; j++) {
-            //             let filename = '';
-            //             let _label = data.data[i][j].split(auth.user._id)[1];
-            //             if (_label) {
-            //                 filename = _label.split('/')[2];
-            //             }
-            //             content_children.push({
-            //                 value: data.data[i][j],
-            //                 label: filename
-            //             })
-            //         }
-            //         content.push({
-            //             label: data.expName[i],
-            //             children: content_children,
-            //             value: '/app/mainApi'
-            //         })
-            //     }
-            // }
-            // console.log(content)
             store.dispatch({type: "set_experiment_data", content: data.data});
         }
         setUploading(false)
@@ -266,10 +312,6 @@ const OpenFolderUpload = (props) => {
     // }
     // console.log("this is upload file data --------------------", image);
     const onsetChecked = (e) => {
-        // const length_checked = e.length;
-        // const ch =[]
-        // ch.push(e[length_checked-1])
-        // console.log("sssssssss", ch)
         // dispatch(selectImage(e.target.id))
         setChecked(e.target.id)
     }
@@ -379,36 +421,48 @@ const OpenFolderUpload = (props) => {
     }
 
     const addFiles = (files) => {
-        let folderName = "";
         console.log("this is selected files", files)
+        
         if (files.length == 0) {
             alert("choose at least one file");
         } else {
             setAddedFiles(files);
-            folderName = files[0].path.split("/");
-            setAddFolderName(folderName[0]);
         }
     }
 
-    const folderInput = useRef(null);
+    const onClickSelectBtn = () => {
+        document.getElementById('folder_upload').click();
+    }
+   
     const uploadExpData = async () => {
-        if (experimentName==''||addFolderName==null) {
-            alert("Selet experiment and folder")
+        if (experimentName==''||addedFiles.length==0) {
+            alert("Select experiment and folder")
         } else {
             setUploading(true)
-            console.log("This is upload expdatas---",experimentName, addFolderName, addedFiles);
-            let response = await api_experiment.setExperiment(experimentName, addFolderName, addedFiles);
-            if (response.status==200) {
+            let response = await api_experiment.setExperiment_folder(experimentName, addedFiles)
+            console.log("This is uploading result", response)
+            if (response.status==200 && response.data==true) {
                 setUploading(false)
                 setsuccessDialog(true)
                 setAddedFiles([])
                 setExperimentName('')
-                setAddFolderName(null)
+               
                 getTree()
+            } else if (response.data.error) {
+                alert(response.data.error)
+                setUploading(false)
+            } else if (response.status!=200) {
+                alert("Server connection is error")
+                setUploading(false)
             }
         }
     }
     
+    const eraseFolder = () => {
+        setAddedFiles([]);
+    }
+
+    console.log("addedFolder---", addedFolder)
     return (
         <>
             <SimpleDialog
@@ -445,22 +499,14 @@ const OpenFolderUpload = (props) => {
                             <div className="mt-2 mb-4">
                                 <p className="mt-4">Select Upload Data</p>
                                 <Dropzone onDrop={files => addFiles(files)}>
-                                {({getRootProps, getInputProps}) => (
-                                    <div className="container">
-                                    <div
-                                        {...getRootProps({
-                                        className: 'dropzone',
-                                        onDrop: event => event.stopPropagation()
-                                        })}
-                                    >
-                                        <input {...getInputProps()} ref={folderInput}  directory="" webkitdirectory="" type="file" />
-                                        <div className="border rounded p-4 text-center">
-                                            {addFolderName==null?<p>Upload Here or Selete Btn</p>:<h6>Selected Folder Name : {addFolderName}</h6>}
+                                    {({getRootProps, getInputProps}) => (
+                                        <div {...getRootProps()}>
+                                            <input {...getInputProps()} id="folder_upload"  directory="" webkitdirectory="" multiple/>
+                                            {
+                                                addedFiles.length==0?<p className="border rounded p-4 text-center">Drag 'n' drop some files here, or click to select files</p>:<p className="border rounded p-4 text-center">Selected {addedFiles.length} files</p>
+                                            }
                                         </div>
-                                        
-                                    </div>
-                                    </div>
-                                )}
+                                    )}
                                 </Dropzone>
                                 <div className="row">
                                     <div className="col-3">
@@ -473,7 +519,7 @@ const OpenFolderUpload = (props) => {
                                             className="mt-3 mb-3"
                                             fullWidth
                                             value={fileName}
-                                            onClick={() => folderInput.current.click()}
+                                            onClick={onClickSelectBtn}
                                         >
                                             Select
                                         </Button>
@@ -482,16 +528,28 @@ const OpenFolderUpload = (props) => {
 
                                     </div>
                                     <div className="col-3">
-                                    <Button
-                                        label="Click Here"
-                                        variant="outlined"
-                                        color="primary"
-                                        className="mt-3 mb-3"
-                                        fullWidth
-                                        onClick={() => setAddFolderName(null)}
-                                    >
+                                    {addedFiles.length!=0? 
+                                        <Button
+                                            label="Click Here"
+                                            variant="outlined"
+                                            color="primary"
+                                            className="mt-3 mb-3"
+                                            fullWidth
+                                            onClick={eraseFolder}
+                                        >
+                                            Eraze
+                                        </Button>:
+                                        <Button
+                                            label="Click Here"
+                                            disabled
+                                            variant="outlined"
+                                            color="primary"
+                                            className="mt-3 mb-3"
+                                            fullWidth
+                                        >
                                         Eraze
-                                    </Button>
+                                        </Button>
+                                    }
                                     </div>
                                     <div className="col-2">
                                     </div>
@@ -511,74 +569,13 @@ const OpenFolderUpload = (props) => {
                                     sx={{ height: 440, flexGrow: 1, maxWidth: 400, overflowY: 'auto', overflowX: 'hidden' }}
                                     >
                                     {props.experiments.length ?
-                                        props.experiments.map((item, index) => <ShowTreeList showMother={showMother} onsetShowMother={onSetShowMother} checkedfile={checked} key={index} checked={onsetChecked} data={item}/>)
+                                        props.experiments.map((item, index) => 
+                                            <RenderTree data={item} key={index} />   
+                                        )
                                         : <label>No data found, please upload..</label>
                                     }
                                 </TreeView>
-                                    {/* {imageSrc!=null&&<img src={imageSrc} className="rounded mb-3" alt="Cinque Terre" width="70%" height="220px"/>}
-                                        { photo123==null?
-                                                <Button
-                                                label="Click Here"
-                                                variant="outlined"
-                                                color="success"
-                                                fullWidth
-                                                value={fileName}
-                                                onClick={() => fileInput.current.click()}
-                                            >
-                                                Select File
-                                            </Button>:<Button
-                                                label="Click Here"
-                                                variant="outlined"
-                                                color="primary"
-                                                className="mt-3"
-                                                fullWidth
-                                                onClick={() => setphoto123(null)}
-                                            >
-                                                Cancel
-                                            </Button>
-                                            } */}
-                                    
                             </div>
-                            {/* <div className="mt-2 mb-4">
-                                <div style={{display: 'flex', justifyContent:'flex-end'}}>
-                                    <label htmlFor="contained-button-file" className="mr-2 mb-0">
-                                        <input
-                                            ref={fileInput}
-                                            style={{ display: 'none' }}
-                                            accept=""
-                                            id="contained-button-file"
-                                            type="file"
-                                            multiple
-                                            onChange={handleInputChange}
-                                        />
-
-                                        {photo123!=null &&
-                                        <Button
-                                            label="Click Here"
-                                            variant="outlined"
-                                            color="success"
-                                            className=""
-                                            fullWidth
-                                            value={fileName}
-                                            onClick={handleSelectFile}
-                                        >
-                                            UPLOAD FILES
-                                        </Button>}
-                                    </label>
-                                    {checked.length!=0 &&
-                                    <Button variant="outlined" color="error" onClick={removeImage}>
-                                        Remove
-                                    </Button>
-                                    }
-                                </div>
-                                <TextField
-                                    label="New upload foldername"
-                                    variant="standard"
-                                    fullWidth
-                                    value={uploadFolderName}
-                                    onChange={e => setUploadFolderName(e.target.value)}
-                                />
-                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -602,7 +599,7 @@ const OpenFolderUpload = (props) => {
                                     value={fileName}
                                     onClick={uploadExpData}
                                 >
-                                    Upload
+                                    Set
                                 </Button>
                             </div>
                             <div className="col-1">
@@ -626,8 +623,6 @@ const OpenFolderUpload = (props) => {
                         </div>
                     </div>
                 </div>
-                
-                
             </SimpleDialog>
             <DeleteSureDialog 
                 open={sureDialog}

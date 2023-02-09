@@ -92,7 +92,66 @@ const DeleteSureDialog = (props) => {
         </>
     )
 }
-
+const ShowTreeList = (props) => {
+    console.log(props.data.folders)
+    let treeFolder = []
+    let max_deep = 0
+    let treeShowFolder = []
+    props.data.folders.map(item => {
+        for (let i = 1; i < item.folder.length - 1; i++) {
+            console.log(item)
+            if (treeFolder.findIndex(node => node.id == item.folder[1] +'/' + i + item.folder[i]) == -1)
+                if (i == item.folder.length - 2) {
+                    treeFolder.push(
+                        {   id: item.folder[1] +'/' + i + item.folder[i],
+                            folderName: item.folder[i],
+                            files: item.files,
+                            deep: i
+                    })
+                } else {
+                    treeFolder.push(
+                        {   id: item.folder[1] +'/' + i + item.folder[i],
+                            folderName: item.folder[i],
+                            deep: i
+                    })
+                }
+        }
+        if (max_deep < item.folder.length) max_deep = item.folder.length - 1                
+    })
+    for(let j = 1; j < max_deep; j++) {
+        let nodes;
+        nodes = treeFolder.filter(treenode => treenode.deep == j)
+        treeShowFolder.push({
+            deep: j,
+            folders: nodes
+        })
+    }
+    console.log("This is treefolder", treeShowFolder, max_deep)
+    return (
+        <TreeItem nodeId={props.data.expName} label={props.data.expName}>
+            {props.data.folders&&props.data.folders.map((folder, index) => <ShowTreeFolder key={index} checkedfolder={props.checkedfolder} checked={props.checked} expName={props.data.expName} folder={folder}/>)}
+            {props.data.files&&props.data.files.map((item, index) => 
+                  <TreeItem className="pl-0" key={index} label={item} nodeId={props.data.expName + item} />
+            )}
+        </TreeItem>
+    )
+}
+const ShowTreeFolder = (props) => {
+    return (
+    <div className="row">
+        <div className="col-1">
+            <input type="checkbox" id={props.expName + '/' + props.folder.folderName} onChange={props.checked} checked={props.expName + '/' + props.folder.folderName == props.checkedfolder}></input>
+        </div>
+        <div className="col-11 pl-0">
+            <TreeItem nodeId={props.folder.folderName + props.expName} label={props.folder.folderName}>
+                {props.folder.files.map((file, index) => 
+                    <TreeItem nodeId={props.folder.folderName + props.expName + file} key={index} label={file.split('/')[1]} />
+                    )}
+            </TreeItem>
+        </div>
+    </div>
+    )
+}
 const SuccessDialog = (props) => {
     const handleClose = () => {
         props.setsuccessStatus(false)
@@ -119,7 +178,6 @@ const RenderTree = (props) => {
         let treeData = {
             id: props.data.expName,
             label: props.data.expName,
-            checked: false,
             children: []
         };
         
@@ -136,13 +194,12 @@ const RenderTree = (props) => {
                 const item = {
                     id: path,
                     label: data.folder[i],
-                    checked: false,
                     children: [],
                 };
                 tree.push(item);
                 tree = item.children;
             }
-            data.files.forEach((file) => tree.push({ id:path + "/" + file, label: file, checked: false }));
+            data.files.forEach((file) => tree.push({ id:path + "/" + file, label: file }));
         });
         return treeData
     }
@@ -151,7 +208,7 @@ const RenderTree = (props) => {
     return <TreeViewFoldersExp data={node_datas} />
 }
 
-const OpenFileDialog = (props) => {
+const OpenCloudUploadNew = (props) => {
     const fileInput = React.useRef();
 
     // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
@@ -374,7 +431,7 @@ const OpenFileDialog = (props) => {
     }
 
     const onClickSelectBtn = () => {
-        document.getElementById('file_upload').click();
+        document.getElementById('folder_upload').click();
     }
    
     const uploadExpData = async () => {
@@ -405,10 +462,11 @@ const OpenFileDialog = (props) => {
         setAddedFiles([]);
     }
 
+    console.log("addedFolder---", addedFolder)
     return (
         <>
             <SimpleDialog
-                title="Files"
+                title="Cloud"
                 checked={checked}
                 singleButton={false}
                 fullWidth={true}
@@ -443,7 +501,7 @@ const OpenFileDialog = (props) => {
                                 <Dropzone onDrop={files => addFiles(files)}>
                                     {({getRootProps, getInputProps}) => (
                                         <div {...getRootProps()}>
-                                            <input {...getInputProps()} id="file_upload" multiple/>
+                                            <input {...getInputProps()} id="folder_upload"  directory="" webkitdirectory="" multiple/>
                                             {
                                                 addedFiles.length==0?<p className="border rounded p-4 text-center">Drag 'n' drop some files here, or click to select files</p>:<p className="border rounded p-4 text-center">Selected {addedFiles.length} files</p>
                                             }
@@ -498,7 +556,41 @@ const OpenFileDialog = (props) => {
                                    
                                 </div>
                             </div>
-                            
+                            <div className="row mt-5 mb-3">
+                                <div className="col-2">
+                                </div>
+                                <div className="col-4">
+                                    <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="error"
+                                        className="mt-3"
+                                        fullWidth
+                                        value={fileName}
+                                        onClick={uploadExpData}
+                                    >
+                                        Upload
+                                    </Button>
+                                </div>
+                                <div className="col-1">
+
+                                </div>
+                                <div className="col-4">
+                                <Button
+                                    label="Click Here"
+                                    variant="outlined"
+                                    color="info"
+                                    className="mt-3"
+                                    fullWidth
+                                    onClick={() => props.handleClose()}
+                                >
+                                    Cancel
+                                </Button>
+                                </div>
+                                <div className="col-1">
+                                </div>
+                                
+                            </div>
                             
                         </div>
                         <div className="col-6 border">
@@ -523,45 +615,11 @@ const OpenFileDialog = (props) => {
                 </div>
                 <div className="row">
                     <div className="col-6">
-                        <div className="mt-2 mb-2">
-                            {uploading && <LinearProgress />}
-                        </div>
+                        
                     </div>
                     <div className="col-6">
-                        <div className="row mt-2 mb-2">
-                            <div className="col-2">
-                            </div>
-                            <div className="col-4">
-                                <Button
-                                    label="Click Here"
-                                    variant="outlined"
-                                    color="error"
-                                    className="mt-3"
-                                    fullWidth
-                                    value={fileName}
-                                    onClick={uploadExpData}
-                                >
-                                    Set
-                                </Button>
-                            </div>
-                            <div className="col-1">
-
-                            </div>
-                            <div className="col-4">
-                            <Button
-                                label="Click Here"
-                                variant="outlined"
-                                color="info"
-                                className="mt-3"
-                                fullWidth
-                                onClick={() => props.handleClose()}
-                            >
-                                Cancel
-                            </Button>
-                            </div>
-                            <div className="col-1">
-                            </div>
-                            
+                    <div className="mt-2 mb-2">
+                            {uploading && <LinearProgress />}
                         </div>
                     </div>
                 </div>
@@ -584,7 +642,7 @@ const mapStateToProps = (state) => ({
     experiments: state.experiment.experiments,
     uploading: state.experiment.uploading,
 });
-OpenFileDialog.propTypes = {handleClose: PropTypes.func.isRequired};
+OpenCloudUploadNew.propTypes = {handleClose: PropTypes.func.isRequired};
 
-export default connect(mapStateToProps)(OpenFileDialog);
+export default connect(mapStateToProps)(OpenCloudUploadNew);
 

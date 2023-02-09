@@ -69,6 +69,49 @@ export const setExperiment = async (experimentName, addFolderName, addedFiles) =
         }
     });
 }
+
+export const setExperiment_file = async (experimentName, addedFiles) => {
+    const state = store.getState();
+    const formData = new FormData();
+    // formData.append("images", addedFiles);
+    formData.append("expName", experimentName);
+    console.log(addedFiles)
+    for (let i in addedFiles) {
+        let f = addedFiles[i];
+        formData.append("files", f);
+    }
+    return api.post("image/tile/set_experiment_with_files", formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            'content-Type': 'multipart/form-data',
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+}
+
+export const setExperiment_folder = async (experimentName, addedFiles) => {
+    const state = store.getState();
+    const formData = new FormData();
+    let pathArray = [];
+    formData.append("expName", experimentName);
+    for (let i in addedFiles) {
+        let f = addedFiles[i];
+        formData.append("files", f);
+        pathArray.push(f.path);   
+     }
+    formData.append("path", pathArray);
+    return api.post("image/tile/set_experiment_with_folders", formData, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+            'content-Type': 'multipart/form-data',
+            "Authorization": state.auth.tokenType + " " + state.auth.token,
+        }
+    });
+}
 export const registerExperimentName = async (expName) => {
     const state = store.getState();
     const formData = new FormData();
