@@ -4,10 +4,11 @@ import SmallCard from "../custom/SmallCard";
 import CustomButton from "../custom/CustomButton";
 import Divider from '@mui/material/Divider';
 import OpenCloudDialogExp from "./contents/file/OpenCloudDialog";  
-import OpenFileDialogForUpload from './contents/file/OpenFileDialog';
+import OpenFileDialog from './contents/file/OpenFileDialog';
 import OpenFolderUpload from './contents/file/OpenFolderUpload';
 import OpenFolderDialogForUpload from './contents/file/OpenFolderDialog';
 import OpenPositionDialog from "./contents/file/OpenPositionDialog";
+import OpenCloudUploadNew from "./contents/file/OpenCloudUpload"
 // import * as api_experiment from "../../api/experiment";
 import {
     mdiCloudDownloadOutline,
@@ -161,9 +162,9 @@ const FileTab = (props) => {
     }
 
     const inputFile = useRef(null);
-    const OpenFileDialog = () => {
-        inputFile.current.click();
-    };
+    // const OpenFileDialog = () => {
+    //     inputFile.current.click();
+    // };
     const onFileChangeCapture = (e) => {
         console.log("FileTab.js onFolderChangeCapture : file information : ", e.target.files);
     };
@@ -201,12 +202,12 @@ const FileTab = (props) => {
             <SmallCard title="Open">
                 <CustomButton icon={mdiCloudDownloadOutline} label="Cloud" click={() => setCloudDialog(true)} />
                 {
-                    cloudDialog && <OpenCloudDialogExp handleClose={handleCloudClose} treeData={treeData}
+                    cloudDialog && <OpenCloudUploadNew handleClose={handleCloudClose} treeData={treeData}
                     />
                 }
                 <CustomButton icon={mdiEmailNewsletter} label="File" click={() => { setFileDialog(true) }} />
                 {
-                    fileDialog && <OpenFileDialogForUpload handleClose={handleFileClose} treeData={treeData} />
+                    fileDialog && <OpenFileDialog handleClose={handleFileClose} treeData={treeData} />
                 }
                 <CustomButton icon={mdiFolderOpenOutline} label="Folder" click={() => { setFolderDialog(true) }} />
                 {

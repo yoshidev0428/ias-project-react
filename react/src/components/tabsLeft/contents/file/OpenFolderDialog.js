@@ -336,7 +336,7 @@ const OpenFolderDialogForUpload = (props) => {
                     <div style={{display: 'flex', justifyContent:'flex-end'}}>
                         <label htmlFor="contained-button-file" className="mr-2 mb-0">
                             <input
-                                directory="" 
+                                directory=""
                                 webkitdirectory=""                                 
                                 ref={inputFolder} 
                                 onChange={onFolderChangeCapture}
