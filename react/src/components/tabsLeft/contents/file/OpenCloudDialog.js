@@ -455,7 +455,7 @@ const OpenCloudDialogExp = (props) => {
                                         fullWidth
                                         // onClick={() => setphoto123(null)}
                                     >
-                                        Eraze
+                                        Erase
                                     </Button>
                                     </div>
                                     <div className="col-2">

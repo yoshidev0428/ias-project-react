@@ -537,7 +537,7 @@ const OpenCloudUploadNew = (props) => {
                                             fullWidth
                                             onClick={eraseFolder}
                                         >
-                                            Eraze
+                                            Erase
                                         </Button>:
                                         <Button
                                             label="Click Here"
@@ -547,7 +547,7 @@ const OpenCloudUploadNew = (props) => {
                                             className="mt-3 mb-3"
                                             fullWidth
                                         >
-                                        Eraze
+                                        Erase
                                         </Button>
                                     }
                                     </div>
