@@ -498,7 +498,41 @@ const OpenFileDialog = (props) => {
                                    
                                 </div>
                             </div>
-                            
+                            <div className="row mt-5 mb-3">
+                                <div className="col-2">
+                                </div>
+                                <div className="col-4">
+                                    <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="error"
+                                        className="mt-3"
+                                        fullWidth
+                                        value={fileName}
+                                        onClick={uploadExpData}
+                                    >
+                                        Upload
+                                    </Button>
+                                </div>
+                                <div className="col-1">
+
+                                </div>
+                                <div className="col-4">
+                                <Button
+                                    label="Click Here"
+                                    variant="outlined"
+                                    color="info"
+                                    className="mt-3"
+                                    fullWidth
+                                    onClick={() => props.handleClose()}
+                                >
+                                    Cancel
+                                </Button>
+                                </div>
+                                <div className="col-1">
+                                </div>
+                                
+                            </div>
                             
                         </div>
                         <div className="col-6 border">
@@ -528,7 +562,7 @@ const OpenFileDialog = (props) => {
                         </div>
                     </div>
                     <div className="col-6">
-                        <div className="row mt-2 mb-2">
+                        {/* <div className="row mt-2 mb-2">
                             <div className="col-2">
                             </div>
                             <div className="col-4">
@@ -562,7 +596,7 @@ const OpenFileDialog = (props) => {
                             <div className="col-1">
                             </div>
                             
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </SimpleDialog>
