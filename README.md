@@ -35,7 +35,7 @@ Please run the reset.sh script and once that has finished running you can run st
 - [http://localhost:8000/docs]() to see the backend documentation
 
 
-- [http://localhost:8081/devDB/]() to see the database
+- [http://localhost:8081/devDB/]() to see the database (mongo-express)
 
 ### Monitoring
 To monitor the celery worker tasks / microservices. Go to [http://localhost:5555/]()
@@ -55,7 +55,14 @@ Apache License 2.0
 - The backend was configurated as docker container
 1. mainApi is fastAPI framework backend to provider api to the frontend ( ias-project-react-mainapi)
 2. Database docker container ( mongo )
-3. Backend database server container ( mongo-express ) 
+3. Backend database server container ( mongo-express )
+ ```
+ Basic Auth
+ URL: [http://localhost:8081/devDB/]()
+ username: user
+ password: #C2Y8YqvV
+ Please change env_files/mongo-express.env if you don't want to enter user and password.
+ ```
 4. Others are image processing module working as docker container.
 So main point is to install docker environment as perfectly to prepare development environment.
 - Backend Development Environment
