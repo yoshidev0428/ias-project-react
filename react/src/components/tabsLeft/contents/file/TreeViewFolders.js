@@ -11,10 +11,17 @@ const TreeViewFoldersExp = (props) => {
         <div key={nodes.id} className="d-flex">
             {/* {!Array.isArray(nodes.children)?"":<div className="position-absolute top-0 start-0"><input type="checkbox" /></div>} */}
             {/* <div className="position-absolute top-0 start-0"><input type="checkbox" /></div> */}
-            <TreeItem nodeId={nodes.id} label={nodes.label} className="ml-2">
-            {Array.isArray(nodes.children)
-                ? nodes.children.map((node) => renderTree(node))
-                : null}
+            <TreeItem nodeId={nodes.id} label={
+                    <FormControlLabel
+                        control={
+                            <Checkbox />
+                        }
+                        label={<>{nodes.label}</>}
+                    />
+                } className="ml-2">
+                {Array.isArray(nodes.children)
+                    ? nodes.children.map((node) => renderTree(node))
+                    : null}
             </TreeItem>
         </div>
         
