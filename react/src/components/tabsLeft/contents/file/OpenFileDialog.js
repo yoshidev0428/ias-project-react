@@ -11,12 +11,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import CheckboxTree from 'react-checkbox-tree';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_tiles from "../../../../api/tiles";
 import * as api_experiment from "../../../../api/experiment"
 import store from "../../../../reducers";
-import { selectImage, cancelImage } from "../../../../reducers/actions/filesAction";
+import { cancelImage } from "../../../../reducers/actions/filesAction";
 import { useSelector } from "react-redux";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -376,7 +375,10 @@ const OpenFileDialog = (props) => {
     const onClickSelectBtn = () => {
         document.getElementById('file_upload').click();
     }
-   
+
+    const onClickTreeSelectBtn = () => {
+    }
+
     const uploadExpData = async () => {
         if (experimentName==''||addedFiles.length==0) {
             alert("Select experiment and folder")
@@ -546,10 +548,20 @@ const OpenFileDialog = (props) => {
                                     >
                                     {props.experiments.length ?
                                         props.experiments.map((item, index) => 
-                                            <RenderTree data={item} key={index} />   
+                                            <RenderTree data={item} key={index} />
                                         )
                                         : <label>No data found, please upload..</label>
                                     }
+                                    <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="success"
+                                        className="mt-3 mb-3"
+                                        fullWidth
+                                        onClick={onClickTreeSelectBtn}
+                                    >
+                                    SELECT
+                                    </Button>
                                 </TreeView>
                             </div>
                         </div>

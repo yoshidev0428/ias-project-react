@@ -608,6 +608,15 @@ const OpenFolderUpload = (props) => {
                                         )
                                         : <label>No data found, please upload..</label>
                                     }
+                                    <Button
+                                        label="Click Here"
+                                        variant="outlined"
+                                        color="success"
+                                        className="mt-3 mb-3"
+                                        fullWidth
+                                    >
+                                    SELECT
+                                    </Button>
                                 </TreeView>
                             </div>
                         </div>
