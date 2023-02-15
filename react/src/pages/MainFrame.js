@@ -29,6 +29,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
+import Avivator from "../components/viv/Avivator";
 import SupportChatSlack from "../components/slackChat/SupportChatSlack";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";
@@ -260,7 +261,8 @@ const MainFrame = () => {
                     > {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
-                        {vivPage && <RoutedAvivator />}
+                        {/*{vivPage && <RoutedAvivator />*/}
+                        {vivPage && <Avivator />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>
@@ -277,7 +279,7 @@ const MainFrame = () => {
                             {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
                             {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
                             {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
-                        </div>                        
+                        </div>
                     </Col>
                 </Row>
             </Container>

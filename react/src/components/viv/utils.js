@@ -45,6 +45,50 @@ function isMultiTiff(urlOrFile) {
     return true;
 }
 
+/**
+ * Turns an input string of one or many urls, file, or file array into a uniform array.
+ * @param {string | File | File[]} urlOrFiles
+ */
+async function generateMultiTiffFileArray(urlOrFiles) {
+  if (Array.isArray(urlOrFiles)) {
+    return urlOrFiles;
+  } else if (urlOrFiles instanceof File) {
+    return [urlOrFiles];
+  } else {
+    return urlOrFiles.split(',');
+  }
+}
+
+/**
+ * Gets the basic image count for a TIFF using geotiff's getImageCount.
+ * @param {string | File} src
+ */
+async function getTiffImageCount(src) {
+  const from = typeof src === 'string' ? fromUrl : fromBlob;
+  const tiff = await from(src);
+  return tiff.getImageCount();
+}
+
+/**
+ * Guesses whether string URL or File is one or multiple standard TIFF images.
+ * @param {string | File | File[]} urlOrFiles
+ */
+async function generateMultiTiffSources(urlOrFiles) {
+  const multiTiffFiles = await generateMultiTiffFileArray(urlOrFiles);
+  const sources = [];
+  let c = 0;
+  for (const tiffFile of multiTiffFiles) {
+    const selections = [];
+    const numImages = await getTiffImageCount(tiffFile);
+    for (let i = 0; i < numImages; i++) {
+      selections.push({ c, z: 0, t: 0 });
+      c += 1;
+    }
+    sources.push([selections, tiffFile]);
+  }
+  return sources;
+}
+
 class UnsupportedBrowserError extends Error {
     constructor(message) {
         super(message);
@@ -122,6 +166,14 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
         // // Multiple flat tiffs
         // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
         if (isMultiTiff(urlOrFile)) {
+            if (!contents) {
+                const mutiTiffSources = await generateMultiTiffSources(urlOrFile);
+                const source = await loadMultiTiff(mutiTiffSources, {
+                    images: 'all',
+                    pool: false
+                });
+                return source;
+            }
             const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
             console.log("utils.js  loadMultiTiff ------- contents, tiff_names, files : ", contents, tiff_names, files);
             let minC = -1, maxC = -1;
