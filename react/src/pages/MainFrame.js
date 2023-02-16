@@ -50,6 +50,7 @@ import logo75 from "../assets/images/logo75.png";
 
 import UserPage from "./user"
 import AccountPage from "./account"
+import {useSelector} from 'react-redux'
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -82,6 +83,9 @@ const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)
     const [vivPage, setVivPage] = useState(true)
+    const selectedImage = useSelector((state) =>
+        state.files.selectedImage);
+    console.log(selectedImage);
 
     const imageViewAreaRef = useRef(null);
     const [height, setHeight] = useState(100);
@@ -262,7 +266,7 @@ const MainFrame = () => {
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
                         {/*{vivPage && <RoutedAvivator />*/}
-                        {vivPage && <Avivator />}
+                        {vivPage && <Avivator source={{urlOrFile: selectedImage}} />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>

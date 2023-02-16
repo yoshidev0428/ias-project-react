@@ -377,6 +377,10 @@ const OpenFileDialog = (props) => {
     }
 
     const onClickTreeSelectBtn = () => {
+        console.log(props.experiments);
+        const selectedImage = process.env.REACT_APP_BASE_API_URL + "static/" + auth.user._id + "/";
+        store.dispatch({type: "Select_Image", content: selectedImage})
+        props.handleClose()
     }
 
     const uploadExpData = async () => {
