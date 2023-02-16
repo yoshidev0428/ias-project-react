@@ -29,6 +29,7 @@ import EngineeringIcon from '@mui/icons-material/Engineering';
 // import Box from '@mui/material/Box';
 // import Toolbar from '@mui/material/Toolbar';
 import RoutedAvivator from "../components/viv";
+import Avivator from "../components/viv/Avivator";
 import SupportChatSlack from "../components/slackChat/SupportChatSlack";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";
@@ -49,6 +50,7 @@ import logo75 from "../assets/images/logo75.png";
 
 import UserPage from "./user"
 import AccountPage from "./account"
+import {useSelector} from 'react-redux'
 function TabContainer(props) {
     return (
         <Typography component="div" style={{padding: 0}}>
@@ -81,6 +83,9 @@ const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)
     const [vivPage, setVivPage] = useState(true)
+    const selectedImage = useSelector((state) =>
+        state.files.selectedImage);
+    console.log(selectedImage);
 
     const imageViewAreaRef = useRef(null);
     const [height, setHeight] = useState(100);
@@ -260,7 +265,8 @@ const MainFrame = () => {
                     > {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
-                        {vivPage && <RoutedAvivator />}
+                        {/*{vivPage && <RoutedAvivator />*/}
+                        {vivPage && <Avivator source={{urlOrFile: selectedImage}} />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>
@@ -277,7 +283,7 @@ const MainFrame = () => {
                             {rightTabVal === 1 && <TabContainer><MeasureTab /></TabContainer>}
                             {rightTabVal === 2 && <TabContainer><ReportTab /></TabContainer>}
                             {rightTabVal === 3 && <TabContainer><SettingsTab /></TabContainer>}
-                        </div>                        
+                        </div>
                     </Col>
                 </Row>
             </Container>

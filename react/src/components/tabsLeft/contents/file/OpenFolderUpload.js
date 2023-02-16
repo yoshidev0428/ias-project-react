@@ -433,6 +433,10 @@ const OpenFolderUpload = (props) => {
     const onClickSelectBtn = () => {
         document.getElementById('folder_upload').click();
     }
+
+    const onClickTreeSelectBtn = () => {
+        props.handleClose()
+    }
    
     const uploadExpData = async () => {
         if (experimentName==''||addedFiles.length==0) {
@@ -614,6 +618,7 @@ const OpenFolderUpload = (props) => {
                                         color="success"
                                         className="mt-3 mb-3"
                                         fullWidth
+                                        onClick={onClickTreeSelectBtn}
                                     >
                                     SELECT
                                     </Button>
