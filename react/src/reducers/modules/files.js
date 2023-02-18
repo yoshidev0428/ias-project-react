@@ -8,7 +8,9 @@ const DEFAULT_PARAMS = {
     content: null,
     isImageLoading: false,
     experimentName: null,
-    selectedImage: null
+    selectedImage: null,
+    imagePathForAvivator: null,
+    imagePathForTree: null
 };
 
 const initState = {
@@ -43,6 +45,12 @@ const files = (state = initState, action) => {
             break;
         case "register_experiment_name":
             state.experimentName = action.content
+            break;
+        case "set_image_path_for_avivator":
+            state.imagePathForAvivator = action.content
+            break;
+        case "set_image_path_for_tree":
+            state.imagePathForTree = action.content
             break;
         default:
             break;

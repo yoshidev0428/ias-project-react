@@ -83,9 +83,8 @@ const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)
     const [vivPage, setVivPage] = useState(true)
-    const selectedImage = useSelector((state) =>
-        state.files.selectedImage);
-    console.log(selectedImage);
+    const imagePathForAvivator = useSelector((state) =>
+        state.files.imagePathForAvivator);
 
     const imageViewAreaRef = useRef(null);
     const [height, setHeight] = useState(100);
@@ -265,8 +264,7 @@ const MainFrame = () => {
                     > {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
-                        {/*{vivPage && <RoutedAvivator />*/}
-                        {vivPage && <Avivator source={{urlOrFile: selectedImage}} />}
+                        {vivPage && <Avivator source={typeof imagePathForAvivator === 'string' ? {urlOrFile: imagePathForAvivator} : null} />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>
