@@ -27,6 +27,7 @@ import * as api_tiles from "../../../../api/tiles";
 import {getMergedImage, getImagesByNames} from '../../../../api/fetch';
 import * as api_experiment from "../../../../api/experiment"
 import OpenCloudDialog from "./OpenCloudDialog";
+import OpenCloudUploadNew from "./OpenCloudUpload";
 import OpenExperimentDialog from "./OpenExperimentDialog";
 import Tiling from "./Tiling";
 import image from '../../../../reducers/modules/image';
@@ -1219,7 +1220,7 @@ const OpenPositionDialog = (props) => {
                         Cancel
                     </Button>
                 </DialogActions>
-                {
+                {/*
                     <OpenExperimentDialog
                         onOpen={experimentDialog}
                         cloudDialogClose = {props.cloudDialogClose}
@@ -1227,7 +1228,8 @@ const OpenPositionDialog = (props) => {
                         setDialogStatus={setDialogStatus}
                         handleExpNameChange={handleExpNameChange}
                     />
-                }
+                */}
+                {experimentDialog && <OpenCloudUploadNew />}
             </Dialog>
         </>
     );

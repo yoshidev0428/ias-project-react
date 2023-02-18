@@ -172,41 +172,6 @@ const SuccessDialog = (props) => {
         </>
     )
 }
-const RenderTree = (props) => {
-    // console.log(props.data.folders);
-    const makeTree = (originData) => {
-        let treeData = {
-            id: props.data.expName,
-            label: props.data.expName,
-            children: []
-        };
-        
-        originData.forEach((data) => {
-            let tree = treeData.children;
-            let path = props.data.expName;
-            for (let i = 1; i < data.folder.length - 1; i++) {
-                path = path + "/" + data.folder[i];
-                const existingNode = tree.find((node) => node.label === data.folder[i]);
-                if (existingNode) {
-                    tree = existingNode.children;
-                    continue;
-                }
-                const item = {
-                    id: path,
-                    label: data.folder[i],
-                    children: [],
-                };
-                tree.push(item);
-                tree = item.children;
-            }
-            data.files.forEach((file) => tree.push({ id:path + "/" + file, label: file }));
-        });
-        return treeData
-    }
-    const node_datas = makeTree(props.data.folders)
-    
-    return <TreeViewFoldersExp data={node_datas} />
-}
 
 const OpenCloudUploadNew = (props) => {
     const fileInput = React.useRef();
@@ -603,9 +568,7 @@ const OpenCloudUploadNew = (props) => {
                                     sx={{ height: 440, flexGrow: 1, maxWidth: 400, overflowY: 'auto', overflowX: 'hidden' }}
                                     >
                                     {props.experiments.length ?
-                                        props.experiments.map((item, index) => 
-                                            <RenderTree data={item} key={index} />   
-                                        )
+                                        <TreeViewFoldersExp data={props.experiments} />
                                         : <label>No data found, please upload..</label>
                                     }
                                 </TreeView>
