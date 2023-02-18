@@ -21,6 +21,8 @@ from mainApi.config import STATIC_PATH
 # from mainApi.app.images.utils import file
 # import logging
 # from fastapi.logger import logger as fastapi_logger
+import javabridge
+import bioformats
 
 
 # gunicorn_error_logger = logging.getLogger("gunicorn.error")
@@ -65,8 +67,18 @@ if not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["*"]
 
 
-app.add_event_handler("startup", connect_to_mongo)
-app.add_event_handler("shutdown", close_mongo_connection)
+# app.add_event_handler("startup", connect_to_mongo)
+# app.add_event_handler("shutdown", close_mongo_connection)
+@app.on_event("startup")
+async def startup_event():
+    await connect_to_mongo()
+    javabridge.start_vm(class_path=bioformats.JARS,
+                        run_headless=True)
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    javabridge.kill_vm()
+    close_mongo_connection()
 
 # ================= Routers  ===============
 app.include_router(auth_router)
