@@ -49,7 +49,6 @@ import { $CombinedState } from "redux";
 import TreeViewFolders from "./TreeViewFolders";
 import { amber } from "@mui/material/colors";
 
-
 function LinearProgressWithLabel(props) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -339,10 +338,26 @@ const OpenFileDialog = (props) => {
         document.getElementById('file_upload').click();
     }
 
+    const imagePathForTree = useSelector((state) => state.files.imagePathForTree);
     const onClickTreeSelectBtn = () => {
-        console.log(props.experiments);
-        const selectedImage = process.env.REACT_APP_BASE_API_URL + "static/" + auth.user._id + "/";
-        store.dispatch({type: "Select_Image", content: selectedImage})
+        if(imagePathForTree.length <= 0) {
+            store.dispatch({type: "set_image_path_for_avivator", content: null})
+            props.handleClose()
+            return;
+        }
+        let imagePathForAvivator = '';
+        const prefix = process.env.REACT_APP_BASE_API_URL + "static/" + auth.user._id + "/";
+        const imagePathList = imagePathForTree.split(',');
+        imagePathList.forEach((imagePath) => {
+            if(imagePath.length > 0) {
+                if(imagePathForAvivator.length > 0)
+                    imagePathForAvivator = imagePathForAvivator.concat(',')
+                imagePathForAvivator = imagePathForAvivator.concat(prefix + imagePath);
+            }
+        })
+        if(imagePathForAvivator.length <= 0)
+            imagePathForAvivator = null;
+        store.dispatch({type: "set_image_path_for_avivator", content: imagePathForAvivator})
         props.handleClose()
     }
 

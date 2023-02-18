@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import TreeItem from '@mui/lab/TreeItem';
 import { FormControlLabel, Checkbox } from '@mui/material';
+import store from "../../../../reducers";
 
 const TreeViewFoldersExp = (props) => {
     const experiments = props.data
@@ -10,7 +11,8 @@ const TreeViewFoldersExp = (props) => {
             id: experiment.expName,
             label: experiment.expName,
             checked: false,
-            children: []
+            children: [],
+            type: "experiment"
         };
 
         experiment.folders.forEach((data) => {
@@ -28,11 +30,17 @@ const TreeViewFoldersExp = (props) => {
                     label: data.folder[i],
                     checked: false,
                     children: [],
+                    type: "folder"
                 };
                 tree.push(item);
                 tree = item.children;
             }
-            data.files.forEach((file) => tree.push({ id:path + "/" + file, label: file, checked: false }));
+            data.files.forEach((file) => tree.push({
+                id: path + "/" + file,
+                label: file,
+                checked: false,
+                type: "file"
+            }));
         });
         return treeData
     }
@@ -43,6 +51,19 @@ const TreeViewFoldersExp = (props) => {
         root_node.push(experiment_node);
     })
 
+    let checkedFile = '';
+    const handleChange = (e => {
+        const path = e.target.id;
+        if(path.indexOf('.') < 0) return;
+        if(e.target.checked){
+            checkedFile = checkedFile.concat(',' + path);
+            store.dispatch({type: "set_image_path_for_tree", content: checkedFile});
+            return;
+        }
+        checkedFile = checkedFile.replaceAll(',' + path, '');
+        store.dispatch({type: "set_image_path_for_tree", content: checkedFile});
+    });
+
     const renderTree = (node) => (
         <div key={node.id} className="d-flex">
             {/* {!Array.isArray(node.children)?"":<div className="position-absolute top-0 start-0"><input type="checkbox" /></div>} */}
@@ -50,7 +71,9 @@ const TreeViewFoldersExp = (props) => {
             <TreeItem nodeId={node.id} label={
                     <FormControlLabel
                         control={
-                            <Checkbox />
+                            <Checkbox
+                                id={node.id}
+                                onChange={handleChange}/>
                         }
                         label={<>{node.label}</>}
                     />
