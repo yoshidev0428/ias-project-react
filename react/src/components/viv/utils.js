@@ -29,7 +29,7 @@ function isOMETIFF(urlOrFile) {
     const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
     for (const filename of filenames) {
         const lowerCaseName = filename.toLowerCase();
-        if (!(lowerCaseName.includes('.ome.tiff') || !lowerCaseName.includes('.ome.tif')))
+        if (!(lowerCaseName.includes('.ome.tiff') || lowerCaseName.includes('.ome.tif')))
             return false;
     }
     return true;
