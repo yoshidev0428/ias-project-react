@@ -264,7 +264,7 @@ const MainFrame = () => {
                     > {/* Central Panel, Viv Image Viewer */}
                         {userPage && <UserPage />}
                         {accountPage && <AccountPage />}
-                        {vivPage && <Avivator source={typeof imagePathForAvivator === 'string' ? {urlOrFile: imagePathForAvivator} : null} />}
+                        {vivPage && <Avivator source={imagePathForAvivator} />}
                     </Col>
                     <Col xs={2} className='border-left p-2' style={{height: (height - fixedBarHeight).toString() + "px", overflowY: "auto"}}>
                         <div className='card border'>

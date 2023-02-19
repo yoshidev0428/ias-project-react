@@ -26,7 +26,9 @@ const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
  * @param {string | File} urlOrFile
  */
 function isOMETIFF(urlOrFile) {
-    const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
+    // TODO: support_tiling
+    // const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
+    const filenames = urlOrFile instanceof File ? [urlOrFile.name] : urlOrFile.split(',');
     for (const filename of filenames) {
         const lowerCaseName = filename.toLowerCase();
         if (!(lowerCaseName.includes('.ome.tiff') || lowerCaseName.includes('.ome.tif')))
@@ -262,6 +264,8 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
 export async function getChannelStates(selection, tiff_names, expName) {
     let domain = [0,0];
     let contrastLimits = [0, 0];
+    // TODO: support_tiling
+    if(tiff_names){
     for (let i = 0; i < tiff_names.length; i++) {
         if (selection.t == tiff_names[i].time && 
             selection.c == tiff_names[i].channel && 
@@ -275,6 +279,7 @@ export async function getChannelStates(selection, tiff_names, expName) {
                 contrastLimits = response.data.contrastLimits;
             }
         }
+    }
     }
     return {domain, contrastLimits};
 }

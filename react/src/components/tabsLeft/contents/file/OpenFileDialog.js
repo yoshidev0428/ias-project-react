@@ -64,6 +64,27 @@ function LinearProgressWithLabel(props) {
     );
   }
 
+const getImageByUrl = async function(imagePath) {
+    try {
+        const state = store.getState();
+
+        const response = await fetch(process.env.REACT_APP_BASE_API_URL + "static/" + state.auth.user._id + "/" + imagePath, {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+                "Authorization": state.auth.tokenType + " " + state.auth.token,
+            }
+        });
+        const blob = await response.blob();
+        const file = new File([blob], imagePath, {type: "image/tiff"});
+        file.path = imagePath;
+        return file;
+    } catch (err) {
+        return null
+    }
+}
+
 const DeleteSureDialog = (props) => {
     const handleClose = () => {
         props.setDialogStatus(false)
@@ -339,22 +360,20 @@ const OpenFileDialog = (props) => {
     }
 
     const imagePathForTree = useSelector((state) => state.files.imagePathForTree);
-    const onClickTreeSelectBtn = () => {
+    const onClickTreeSelectBtn = async () => {
         if(imagePathForTree.length <= 0) {
             store.dispatch({type: "set_image_path_for_avivator", content: null})
             props.handleClose()
             return;
         }
-        let imagePathForAvivator = '';
-        const prefix = process.env.REACT_APP_BASE_API_URL + "static/" + auth.user._id + "/";
         const imagePathList = imagePathForTree.split(',');
-        imagePathList.forEach((imagePath) => {
-            if(imagePath.length > 0) {
-                if(imagePathForAvivator.length > 0)
-                    imagePathForAvivator = imagePathForAvivator.concat(',')
-                imagePathForAvivator = imagePathForAvivator.concat(prefix + imagePath);
+        const imagePathForAvivator = [];
+        for (const imagePath of imagePathList) {
+            if(imagePath.length > 0){
+                const file = await getImageByUrl(imagePath);
+                if(file) imagePathForAvivator.push(file);
             }
-        })
+        }
         if(imagePathForAvivator.length <= 0)
             imagePathForAvivator = null;
         store.dispatch({type: "set_image_path_for_avivator", content: imagePathForAvivator})

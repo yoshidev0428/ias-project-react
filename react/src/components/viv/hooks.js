@@ -35,8 +35,14 @@ export const useImage = (source) => {
             useViewerStore.setState({ isViewerLoading: true });
             store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
-            const { urlOrFile, contents, tiff_names, expName} = source;
-            useViewerStore.setState({ experimentName: expName });
+            // TODO support_tiling
+            // const { urlOrFile, contents, tiff_names, expName} = source;
+            const urlOrFile = Array.isArray(source) ? source[0] : source;
+            const contents = null;
+            const tiff_names = null;
+            const expName = null;
+            // TODO support_tiling
+            // useViewerStore.setState({ experimentName: expName });
             // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader, tiffNames, expName);
             const newLoader = await createLoader(urlOrFile, contents, tiff_names, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
             // console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
@@ -135,8 +141,11 @@ export const useImage = (source) => {
             }
             console.log("-------- hook.js useEffect newColors : ", newColors);
             let channelMapSelections = [];
+            // TODO: support_tiling
+            if(channelMap){
             for (let i = 0; i < newSelections.length; i++) {
                 channelMapSelections.push([{...newSelections[i], 'c': channelMap[newSelections[i]['c']]}]);
+            }
             }
             newSelections = channelMapSelections;
             useChannelsStore.setState({
