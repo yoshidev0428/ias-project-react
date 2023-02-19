@@ -26,6 +26,9 @@ Please run the reset.sh script and once that has finished running you can run st
   
   # this will install all modules and could take some time (case: npm -v < 9.0.0)
   $ npm install 
+
+  # (case: npm -v >= 9.0.0)
+  $ npm install --legacy-peer-deps
   
   # this will build and serve the project.
   $ npm start 
