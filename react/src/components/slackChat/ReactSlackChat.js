@@ -182,32 +182,42 @@ class ReactSlackChat extends Component {
         );
     }
 
-    connectBot() {
-        return Promise.all([
-            getChannels({
+    async connectBot() {
+
+        try {
+            let channelData = await getChannels({
                 apiToken: this.apiToken,
                 bot: this.bot,
                 channelFilter: this.props.channels,
                 defaultChannel: this.props.defaultChannel,
-            }),
-            getUsers({
+            });
+    
+            let teamData = await getUsers({
                 apiToken: this.apiToken,
                 bot: this.bot,
-            }),
-        ]).then(([channelData, teamData]) => {
+            });
+    
             console.log('got channel and team data ==== ', channelData, teamData);
-            const {channels, activeChannel} = channelData;
-            const {onlineUsers} = teamData;
+            let {channels, activeChannel} = channelData;
+            let {onlineUsers} = teamData;
             if (activeChannel != "") {
                 this.activeChannel = activeChannel;
             } else {
                 this.activeChannel = channels[0];
             }
             this.onlineUsers = onlineUsers;
-            return {channels, onlineUsers};
-        }).catch((error) => {
-            console.log(" connectBot : ", error);
-        });
+            // return {channels, onlineUsers};
+
+            this.setState({
+                onlineUsers: onlineUsers,
+                channels: channels,
+            });
+
+        } catch (e) {
+            console.log(" connectBot : ", e);
+            debugLog('could not intialize slack bot', e);
+            this.setState({failed: true, });
+        }
     }
 
     postMyMessage() {
@@ -475,6 +485,7 @@ class ReactSlackChat extends Component {
 
     closeChatBox(e) {
         // stop propagation so we can prevent any other click events from firing
+        console.log('close-chat-box');
         e.stopPropagation();
         // Close Chat box only if not already open
         if (this.state.chatbox.active) {
@@ -500,19 +511,21 @@ class ReactSlackChat extends Component {
             })
             .catch((err) => debugLog(`Cant initiate emoji library ${err}`));
         // Connect bot
-        this.connectBot()
-            .then((data) => {
-                // debugLog('CONNECTED!', 'got data', data);
-                this.setState({
-                    onlineUsers: data.onlineUsers,
-                    channels: data.channels,
-                });
-            })
-            .catch((err) => {
-                console.log("ReactSlackChat  componentDidMount connectBot");
-                debugLog('could not intialize slack bot', err);
-                this.setState({failed: true, });
-            });
+        // this.connectBot()
+        //     .then((data) => {
+        //         // debugLog('CONNECTED!', 'got data', data);
+        //         this.setState({
+        //             onlineUsers: data.onlineUsers,
+        //             channels: data.channels,
+        //         });
+        //     })
+        //     .catch((err) => {
+        //         console.log("ReactSlackChat  componentDidMount connectBot");
+        //         debugLog('could not intialize slack bot', err);
+        //         this.setState({failed: true, });
+        //     });
+
+        this.connectBot();
 
         // Look if custom color / theme is needed
         // If yes, change backgrounds

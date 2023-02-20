@@ -1,34 +1,32 @@
 import {debugLog} from '../utils';
 
-export default ({apiToken, bot, channelFilter = [], defaultChannel}) => {
-    return bot.conversations
-        .list({
-            token: apiToken,
-        })
-        .then((payload) => {
-            // console.log("slack-utils  get channels");
-            debugLog(payload);
-            // get the channels we need
-            const channels = [];
-            const activeChannel = '';
+export default async ({apiToken, bot, channelFilter = [], defaultChannel}) => {
 
-            payload.channels.map((channel) => {
-                channelFilter.forEach((channelObject) => {
-                    // If this channel is exactly as requested
-                    if (
-                        channelObject.name === channel.name ||
-                        channelObject.id === channel.id
-                    ) {
-                        if (defaultChannel === channel.name) {
-                            activeChannel = channelObject;
-                        }
-                        channel.icon = channelObject.icon; // Add on the icon property to the channel list
-                        channels.push(channel);
-                    }
-                });
-            });
-            return {channels, activeChannel};
-        }).catch((error) => {
-            // console.log(" bot.conversations : error = ", error);
-        });
+    let payload = await bot.conversations.list({token: apiToken});
+
+    console.log("slack-utils  get channelsasdfasdfasdfds");
+    debugLog(payload);
+    // get the channels we need
+    let channels = [];
+    let activeChannel = '';
+
+    for (let i = 0; i < payload.channels.length; i ++) {
+        let channel = payload.channels[i];
+
+        for (let j = 0; j < channelFilter.length; j ++) {
+            let channelObject = channelFilter[j];
+            if (
+                channelObject.name === channel.name ||
+                channelObject.id === channel.id
+            ) {
+                if (defaultChannel === channel.name) {
+                    activeChannel = channelObject;
+                }
+                channel.icon = channelObject.icon; // Add on the icon property to the channel list
+                channels.push(channel);
+            }
+        }
+    }
+
+    return {channels, activeChannel};
 };
