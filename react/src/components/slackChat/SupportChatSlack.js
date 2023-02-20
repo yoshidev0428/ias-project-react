@@ -31,7 +31,7 @@ const SupportChatSlack = (props) => {
                 </div>                
             </div> */}
             <ReactSlackChat
-                closeChatButton={true}
+                closeChatButton={false}
                 botName={"support-ias-react-bot"} // VisitorID, CorpID, Email, IP address etc.
                 // botName='pragmatismer666@gmail.com' // VisitorID, CorpID, Email, IP address etc.
                 apiToken={"xoxb-4841592794769-4831515153300-QREMtS00lL8v4xjkZf12vuVl"}
