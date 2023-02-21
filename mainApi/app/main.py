@@ -60,7 +60,8 @@ def get_value():
     global st_abs_file_path
     return st_abs_file_path
 
-
+if not os.path.isdir(st_abs_file_path):
+    os.makedirs(st_abs_file_path)
 app.mount("/static", StaticFiles(directory=st_abs_file_path), name="static")
 
 if not ALLOWED_HOSTS:
