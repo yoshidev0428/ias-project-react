@@ -83,6 +83,7 @@ const MainFrame = () => {
     const [userPage, setUserPage] = useState(false)
     const [accountPage, setAccountPage] = useState(false)
     const [vivPage, setVivPage] = useState(true)
+    const [showChatFlag, setShowChatFlag] = useState(false);
     const imagePathForAvivator = useSelector((state) =>
         state.files.imagePathForAvivator);
 
@@ -141,7 +142,7 @@ const MainFrame = () => {
 
     const HeaderContent = () => {
 
-        const [showChatFlag, setShowChatFlag] = useState(false);
+        // const [showChatFlag, setShowChatFlag] = useState(false);
         
         return (
             <Box sx={{flexGrow: 1, height: "65px"}}>
@@ -165,18 +166,7 @@ const MainFrame = () => {
                                 />
                             </Typography>
                             <div>
-                                <button className="btn btn-sm pt-0 pb-0" style={{marginRight: 70}} onClick={() => setShowChatFlag(!showChatFlag)}>
-                                    <Icon size={1}
-                                        horizontal
-                                        vertical
-                                        rotate={180}
-                                        color="#EFEFEF"
-                                        path={mdiChatQuestionOutline}>
-                                    </Icon>
-                                </button>
-                                {/* {
-                                    showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
-                                } */}
+
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
@@ -223,7 +213,28 @@ const MainFrame = () => {
             </Box>
         );
     }
-
+    const FooterContent = () => {
+        return (
+            <>
+            {/* <SupportChatSlack /> */}
+            <Box style={{bottom: "0px", backgroundColor: "#212529", display: "flex"}}>
+                <button className="btn btn-sm pt-0 pb-0" style={{marginLeft: "auto", marginRight: "280px"}} onClick={() => {console.log('set-show-chat:', showChatFlag); setShowChatFlag(!showChatFlag)}}>
+                    <Icon size={1}
+                        horizontal
+                        vertical
+                        rotate={180}
+                        color="#EFEFEF"
+                        path={mdiChatQuestionOutline}>
+                    </Icon>
+                </button>
+                {
+                    showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
+                }
+            </Box>
+            </>
+        )
+        
+    }
     return (
         <>
             <HeaderContent />
@@ -285,6 +296,7 @@ const MainFrame = () => {
                     </Col>
                 </Row>
             </Container>
+            <FooterContent />
         </>
     );
 };
