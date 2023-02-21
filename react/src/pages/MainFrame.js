@@ -217,7 +217,7 @@ const MainFrame = () => {
         return (
             <>
             {/* <SupportChatSlack /> */}
-            <Box style={{bottom: "0px", backgroundColor: "#212529", display: "flex"}}>
+            <Box style={{bottom: "0px", backgroundColor: "#212529", display: "flex", position:"fixed", width:"100%"}}>
                 <button className="btn btn-sm pt-0 pb-0" style={{marginLeft: "auto", marginRight: "280px"}} onClick={() => {console.log('set-show-chat:', showChatFlag); setShowChatFlag(!showChatFlag)}}>
                     <Icon size={1}
                         horizontal
@@ -227,13 +227,9 @@ const MainFrame = () => {
                         path={mdiChatQuestionOutline}>
                     </Icon>
                 </button>
-                {
-                    showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
-                }
             </Box>
             </>
         )
-        
     }
     return (
         <>
@@ -296,6 +292,9 @@ const MainFrame = () => {
                     </Col>
                 </Row>
             </Container>
+            {
+                showChatFlag && <SupportChatSlack updateShowFlag={() => {setShowChatFlag(false)}} />
+            }
             <FooterContent />
         </>
     );
