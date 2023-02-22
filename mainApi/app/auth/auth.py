@@ -254,6 +254,7 @@ def authenticate_email_password(user: UserModelDB or None, password, otp_code) -
         return False
 
 
+
     totp = pyotp.TOTP(user.otp_secret)
     if not totp.verify(otp_code):
         return False
