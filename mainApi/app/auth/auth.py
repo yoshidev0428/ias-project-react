@@ -253,10 +253,7 @@ def authenticate_email_password(user: UserModelDB or None, password, otp_code) -
     if user is None:
         return False
 
-    # otp_uri = pyotp.totp.TOTP(user.otp_secret).provisioning_uri(
-    #     name=user.email, issuer_name='IAS App')
 
-    # totp1 = pyotp.parse_uri(otp_uri)
 
     totp = pyotp.TOTP(user.otp_secret)
     if not totp.verify(otp_code):

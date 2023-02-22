@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SlackBot from 'slack';
 import {load as emojiLoader, parse as emojiParser} from 'gh-emoji';
-
+import Avatar from '../../assets/images/avatar.png';
 import defaultChannelIcon from './assets/team.svg';
 // Chat Functions
 import {
@@ -153,16 +153,18 @@ class ReactSlackChat extends Component {
         const mentioned = wasIMentioned(message, this.props.botName);
 
         const textHasEmoji = hasEmoji(messageText);
+        const messageFlag = message.bot_id ? true : false;
+        // console.log("message ----- ", messageFlag, message);
         // check if emoji library is enabled
         if (this.messageFormatter.emoji && textHasEmoji) {
             // parse plain text to emoji
             messageText = emojiParser(messageText);
         }
         return (
-            <div className={`chat__msgRow ${myMessage ? "mine" : "notMine"}`} key={message.ts} >
-                {myMessage ? (
+            <div className={`chat__msgRow ${messageFlag ? "mine" : "notMine"}`} key={message.ts} >
+                {messageFlag ? (
                     // show customer image
-                    <img src={this.props.userImage} className="user__contact__photo" alt="userIcon" />
+                    <img src={Avatar} className="user__contact__photo" alt="userIcon" />
                 ) : null}
                 {textHasEmoji ? (
                     // dangerouslySetInnerHTML only if text has Emoji
@@ -176,7 +178,7 @@ class ReactSlackChat extends Component {
                 )}
                 {
                     // Show remote users image only if message isn't customers
-                    !myMessage ? this.getUserImg(message) : null
+                    !messageFlag ? this.getUserImg(message) : null
                 }
             </div>
         );
@@ -347,18 +349,17 @@ class ReactSlackChat extends Component {
         });
         const imageToReturn = image ? (
             // Found backend user
-            <img src={image} className="chat__contact__photo" alt="mentionedUserImg"
-            />
+            <img src={image} className="chat__contact__photo" alt="mentionedUserImg"/>
         ) : // Check admin or client user?
             isAdmin(message) ? (
-                <img src={`https://robohash.org/${userId}?set=set2`} className="chat__contact__photo" alt={userId}
+                <img src={Avatar} className="chat__contact__photo" alt={userId}
                 />
             ) : // Check system message or client user?
                 isSystemMessage(message) ? (
-                    <img src={`https://robohash.org/${userId}?set=set3`} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
                 ) : (
                     // Regular browser client user
-                    <img src={`https://robohash.org/${userId}`} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
                 );
         return imageToReturn;
     }
@@ -414,7 +415,12 @@ class ReactSlackChat extends Component {
                 },
                 messages: [],
             });
-            this.activeChannel = [];
+            this.activeChannel = [
+                {
+                    name: 'ias-support-chat',
+                    id: 'C04H9NKCKR6',
+                }
+            ];
             // Clear load messages time interval
             if (this.activeChannelInterval) {
                 clearInterval(this.activeChannelInterval);
@@ -581,7 +587,7 @@ class ReactSlackChat extends Component {
                     </div> */}
                     <div className="chat">
                         <div className="chatHeader">
-                            <span className="chat__back" onClick={this.goToChannelView} />
+                            {/* <span className="chat__back" onClick={this.goToChannelView} /> */}
                             <div className="chat__person">
                                 <span className="chat__status">status</span>
                                 <span className="chat__online active" />
