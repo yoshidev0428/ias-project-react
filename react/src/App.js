@@ -24,8 +24,7 @@ const App = (props) => {
 
     return (
       <>
-        <MainFrame />
-        {/* {props.isShowAuthPage ? <Auth /> : <MainFrame />} */}
+        {props.isShowAuthPage ? <Auth /> : <MainFrame />}
       </>
     );
 }
