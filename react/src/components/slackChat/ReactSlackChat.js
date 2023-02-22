@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import SlackBot from 'slack';
 import {load as emojiLoader, parse as emojiParser} from 'gh-emoji';
-
+import Avatar from '../../assets/images/avatar.png';
 import defaultChannelIcon from './assets/team.svg';
 // Chat Functions
 import {
@@ -349,16 +349,19 @@ class ReactSlackChat extends Component {
             // Found backend user
             <img src={image} className="chat__contact__photo" alt="mentionedUserImg"
             />
+
+
+
         ) : // Check admin or client user?
             isAdmin(message) ? (
-                <img src={`https://robohash.org/${userId}?set=set2`} className="chat__contact__photo" alt={userId}
+                <img src={Avatar} className="chat__contact__photo" alt={userId}
                 />
             ) : // Check system message or client user?
                 isSystemMessage(message) ? (
-                    <img src={`https://robohash.org/${userId}?set=set3`} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
                 ) : (
                     // Regular browser client user
-                    <img src={`https://robohash.org/${userId}`} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
                 );
         return imageToReturn;
     }
@@ -414,7 +417,12 @@ class ReactSlackChat extends Component {
                 },
                 messages: [],
             });
-            this.activeChannel = [];
+            this.activeChannel = [
+                {
+                    name: 'ias-support-chat',
+                    id: 'C04H9NKCKR6',
+                }
+            ];
             // Clear load messages time interval
             if (this.activeChannelInterval) {
                 clearInterval(this.activeChannelInterval);
@@ -581,7 +589,7 @@ class ReactSlackChat extends Component {
                     </div> */}
                     <div className="chat">
                         <div className="chatHeader">
-                            <span className="chat__back" onClick={this.goToChannelView} />
+                            {/* <span className="chat__back" onClick={this.goToChannelView} /> */}
                             <div className="chat__person">
                                 <span className="chat__status">status</span>
                                 <span className="chat__online active" />
