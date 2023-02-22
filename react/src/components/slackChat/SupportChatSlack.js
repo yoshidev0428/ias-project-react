@@ -34,11 +34,11 @@ const SupportChatSlack = (props) => {
                 closeChatButton={true}
                 botName={"support-ias-react-bot"} // VisitorID, CorpID, Email, IP address etc.
                 // botName='pragmatismer666@gmail.com' // VisitorID, CorpID, Email, IP address etc.
-                apiToken={"xoxb-2644799806533-4302683320614-a1yu6RWQtv22sAEIME1BiqCU"}
+                apiToken={"xoxb-4841592794769-4831515153300-QREMtS00lL8v4xjkZf12vuVl"}
                 channels={[
                     {
-                        name: 'support-ias-react',
-                        id: 'C048A88FX5Z',
+                        name: 'create-chat-bot',
+                        id: 'C04QA0Q2P6H',
                     },
                     // {
                     //     name: 'test',
@@ -54,6 +54,7 @@ const SupportChatSlack = (props) => {
                 helpText='Support Chat - Need Help?'
                 themeColor='#856090'
                 userImage='http://www.iconshock.com/img_vista/FLAT/mail/jpg/robot_icon.jpg'
+                defaultChannel='create-chat-bot'
                 debugMode={true}
                 hooks={[
                     {

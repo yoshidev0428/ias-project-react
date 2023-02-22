@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@chiragrupani/fullscreen-react": "^1.2.1",
+    "@chiragrupani/fullscreen-react": "^1.2.5",
     "@dropzone-ui/react": "^6.7.1",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",

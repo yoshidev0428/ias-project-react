@@ -249,11 +249,20 @@ def verify_password(plain_password, hashed_password):
 def authenticate_email_password(user: UserModelDB or None, password, otp_code) -> bool:
     # async def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends()) -> UserModel or None:
     # user: UserModelDB = await get_user_by_email(email, db)
-    print('password is ', password),
+    print('user_opt_secret is', user.otp_secret)
     if user is None:
         return False
-    if otp_code != user.otp_secret:
-        False
+
+    # otp_uri = pyotp.totp.TOTP(user.otp_secret).provisioning_uri(
+    #     name=user.email, issuer_name='IAS App')
+
+    # totp1 = pyotp.parse_uri(otp_uri)
+
+    totp = pyotp.TOTP(user.otp_secret)
+    if not totp.verify(otp_code):
+        return False
+    #if otp_code != user.otp_secret:
+    #    return False
     if not verify_password(password, user.hashed_password):
         return False
 
@@ -263,7 +272,7 @@ def authenticate_email_password(user: UserModelDB or None, password, otp_code) -
 def authenticate_user(user: UserModelDB or None, password, otp_code) -> bool:
 
     email_password_authenticated = authenticate_email_password(user, password, otp_code)
-    return True
+    # return True
     if email_password_authenticated is False:
         return False
 
