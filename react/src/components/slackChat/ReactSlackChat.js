@@ -153,16 +153,18 @@ class ReactSlackChat extends Component {
         const mentioned = wasIMentioned(message, this.props.botName);
 
         const textHasEmoji = hasEmoji(messageText);
+        const messageFlag = message.bot_id ? true : false;
+        // console.log("message ----- ", messageFlag, message);
         // check if emoji library is enabled
         if (this.messageFormatter.emoji && textHasEmoji) {
             // parse plain text to emoji
             messageText = emojiParser(messageText);
         }
         return (
-            <div className={`chat__msgRow ${myMessage ? "mine" : "notMine"}`} key={message.ts} >
-                {myMessage ? (
+            <div className={`chat__msgRow ${messageFlag ? "mine" : "notMine"}`} key={message.ts} >
+                {messageFlag ? (
                     // show customer image
-                    <img src={this.props.userImage} className="user__contact__photo" alt="userIcon" />
+                    <img src={Avatar} className="user__contact__photo" alt="userIcon" />
                 ) : null}
                 {textHasEmoji ? (
                     // dangerouslySetInnerHTML only if text has Emoji
@@ -176,7 +178,7 @@ class ReactSlackChat extends Component {
                 )}
                 {
                     // Show remote users image only if message isn't customers
-                    !myMessage ? this.getUserImg(message) : null
+                    !messageFlag ? this.getUserImg(message) : null
                 }
             </div>
         );
@@ -347,11 +349,7 @@ class ReactSlackChat extends Component {
         });
         const imageToReturn = image ? (
             // Found backend user
-            <img src={image} className="chat__contact__photo" alt="mentionedUserImg"
-            />
-
-
-
+            <img src={image} className="chat__contact__photo" alt="mentionedUserImg"/>
         ) : // Check admin or client user?
             isAdmin(message) ? (
                 <img src={Avatar} className="chat__contact__photo" alt={userId}
