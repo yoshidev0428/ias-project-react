@@ -1,0 +1,6 @@
+https://api.slack.com/apps?new_app=1&manifest_name=do_everything_bot&return_to=%2Ftutorials%2Ftracks%2Fgetting-a-token
+
+-create new App.
+-set the permission scope.
+-install to workspace.
+-using your token.
