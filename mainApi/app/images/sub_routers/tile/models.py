@@ -19,10 +19,10 @@ class MergeImgModel(BaseModel):
 class ExperimentModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: str
-    expName: str
-    date: datetime = datetime.now()
-    folders: List[object]
-    files: List[object]
+    experiment_name: str
+    update_time: datetime = datetime.now()
+    experiment_data: List[object]
+    # files: List[object]
 
     class Config:
         allow_population_by_field_name = True

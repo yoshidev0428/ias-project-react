@@ -115,8 +115,8 @@ async def delete_images(request: Request,
     data = await request.form()
 
     files = data.get("images").split(',')
-    expName = data.get('expName')
-    result = await add_experiment(expName, files, clear_previous=clear_previous, current_user=current_user, db=db)
+    experiment_name = data.get('experiment_name')
+    result = await add_experiment(experiment_name, files, clear_previous=clear_previous, current_user=current_user, db=db)
     return JSONResponse({"success": result})
     
 #############################################################################
@@ -134,26 +134,26 @@ async def delete_images(request: Request,
 #     print("This is requests----", request)
 #     data = await request.form()
 
-#     expName = data.get('expName')
+#     experiment_name = data.get('experiment_name')
     
-#     result = await add_experiment_name(expName, clear_previous=clear_previous, current_user=current_user, db=db)
+#     result = await add_experiment_name(experiment_name, clear_previous=clear_previous, current_user=current_user, db=db)
 #     return JSONResponse({"success": result})
 
 #############################################################################
 # Get Experiment data by name
 #############################################################################
-@router.get("/get_experiment_data/{expName}", 
+@router.get("/get_experiment_data/{experiment_name}", 
             response_description="Get Experiment Data",
             response_model=List[ExperimentModel])
-async def get_image(expName: str,
+async def get_image(experiment_name: str,
                     clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
-    # tiles = await db['experiment'].find({'expName': "experiment_1"})
+    # tiles = await db['experiment'].find({'experiment_name': "experiment_1"})
     # all_tiles = [doc async for doc in db['experiment'].find()]
     #print(all_tiles)
 
-    tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
+    tiles = [doc async for doc in db['experiment'].find({'experiment_name': experiment_name, 'user_id': current_user.id})]
     #print(tiles)
     if len(tiles) == 0:
         return JSONResponse({"success": False, "error": "Cannot find the experiment data"})
@@ -178,9 +178,9 @@ async def get_image(expName: str,
 async def get_image(clear_previous: bool = Form(False),
                     current_user: UserModelDB = Depends(get_current_user),
                     db: AsyncIOMotorDatabase = Depends(get_database)) -> List[str]:
-    expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id': current_user.id})]
-    print(expNames)
-    return JSONResponse({"success": True, "data": expNames})
+    experiment_names = [doc['experiment_name'] async for doc in db['experiment'].find({'user_id': current_user.id})]
+    print(experiment_names)
+    return JSONResponse({"success": True, "data": experiment_names})
 
 #############################################################################
 # Get Experiment datas
@@ -194,10 +194,10 @@ async def get_experiments(clear_previous: bool = Form(False),
     # print("this is current user", current_user)
     userId = str(PyObjectId(current_user.id))
     # print(userId)
-    exp_datas = [doc async for doc in db['experiment'].find({'user_id': userId}, {'_id': 0, 'date': 0})]
-    # print(exp_datas)
+    exp_datas = [doc async for doc in db['experiment'].find({'user_id': userId}, {'_id': 0, 'update_time': 0})]
+    print(exp_datas)
     # exp_datas = [doc async for doc in db['experiment'].find({'user_id': str(PyObjectId(current_user.id))})]
-    # expNames = [doc['expName'] async for doc in db['experiment'].find({'user_id':current_user.id})]
+    # experiment_names = [doc['experiment_name'] async for doc in db['experiment'].find({'user_id':current_user.id})]
     
     return JSONResponse({"success": True, "data": exp_datas})
 
@@ -267,7 +267,7 @@ async def register_experiment_with_folder(
     data = await request.form()
     # files = data.get('images')
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    new_experiment_path = os.path.join(current_user_path, data.get('expName'))
+    new_experiment_path = os.path.join(current_user_path, data.get('experiment_name'))
     new_folder_path = os.path.join(new_experiment_path, data.get('folderName'))
 
     print("This is user path", current_user_path)
@@ -294,7 +294,7 @@ async def register_experiment_with_folder(
     else:
         os.mkdir(new_folder_path)
         # res = await db['tile-image-cache'].delete_many({"user_id": PyObjectId(current_user.id)})
-        result = await add_experiment_with_folder(folderPath=new_experiment_path, expName=data.get('expName'), folderName=data.get('folderName'), files=files, clear_previous=clear_previous, current_user=current_user, db=db)
+        result = await add_experiment_with_folder(folderPath=new_experiment_path, experiment_name=data.get('experiment_name'), folderName=data.get('folderName'), files=files, clear_previous=clear_previous, current_user=current_user, db=db)
     #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
@@ -312,7 +312,7 @@ async def register_experiment_with_folder(
     data = await request.form()
     # files = data.get('images')
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    new_experiment_path = os.path.join(current_user_path, data.get('expName'))
+    new_experiment_path = os.path.join(current_user_path, data.get('experiment_name'))
 
     print("This is user path", current_user_path)
     print("This is experiment path", new_experiment_path)
@@ -326,7 +326,7 @@ async def register_experiment_with_folder(
         return JSONResponse(result)
     else:
         os.mkdir(new_experiment_path)
-        result = await add_experiment_with_files(folderPath=new_experiment_path, expName=data.get('expName'), files=files, clear_previous=clear_previous, current_user=current_user, db=db)
+        result = await add_experiment_with_files(folderPath=new_experiment_path, experiment_name=data.get('experiment_name'), files=files, clear_previous=clear_previous, current_user=current_user, db=db)
     #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
@@ -344,12 +344,12 @@ async def register_experiment_with_folders(
                         current_user: UserModelDB = Depends(get_current_user),
                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     data = await request.form()
-    expName = data.get('expName')
+    experiment_name = data.get('experiment_name')
     paths = data.get('path')
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    new_experiment_path = os.path.join(current_user_path, data.get('expName'))
+    new_experiment_path = os.path.join(current_user_path, data.get('experiment_name'))
     print("This is uploaded data", paths)
-    print("this is new epxeriment path", new_experiment_path)
+    print("this is new epxeriment path", new_experiment_path, current_user_path)
 
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
@@ -360,7 +360,7 @@ async def register_experiment_with_folders(
         return JSONResponse(result)
     else:
         os.mkdir(new_experiment_path)
-        result = await add_experiment_with_folders(folderPath=new_experiment_path, expName=data.get('expName'), files=files, paths=paths, clear_previous=clear_previous, current_user=current_user, db=db)
+        result = await add_experiment_with_folders(folderPath=new_experiment_path, experiment_name=data.get('experiment_name'), files=files, paths=paths, clear_previous=clear_previous, current_user=current_user, db=db)
     #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
@@ -619,18 +619,18 @@ async def get_image_raw_data(
             current_user: UserModelDB = Depends(get_current_user),
             db: AsyncIOMotorDatabase = Depends(get_database)):
 
-    # expNames = [doc['expName'] async for doc in db['experiment'].find()]
-    # if len(expNames) <= 0:
+    # experiment_names = [doc['experiment_name'] async for doc in db['experiment'].find()]
+    # if len(experiment_names) <= 0:
     #     return JSONResponse({"success": False, "error": "Cannot find the experiment name"})
-    # expName = expNames[0]
+    # experiment_name = experiment_names[0]
 
     pos = concatedName.find('&')
-    expName = concatedName[(pos + 1 - len(concatedName)):]
+    experiment_name = concatedName[(pos + 1 - len(concatedName)):]
     imageName = concatedName[0:pos]
-    print("get_image_raw_data: ", concatedName, expName, imageName)
+    print("get_image_raw_data: ", concatedName, experiment_name, imageName)
 
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    image_path = os.path.join(current_user_path + '/', expName+ '/', imageName)
+    image_path = os.path.join(current_user_path + '/', experiment_name+ '/', imageName)
     print("get_image_raw_data: ", image_path)
     if not os.path.isfile(image_path):
         return JSONResponse({"success": False, "error": "Cannot find the image"})

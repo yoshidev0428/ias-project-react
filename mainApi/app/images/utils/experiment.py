@@ -20,30 +20,30 @@ import pydantic
 from pydantic import BaseModel
 from datetime import datetime
 
-async def add_experiment(expName: str, fileNames: List[str],
+async def add_experiment(experiment_name: str, fileNames: List[str],
 						clear_previous: bool,
 					    current_user: UserModelDB or ShowUserModel,
 					    db: AsyncIOMotorDatabase) -> ExperimentModel:
-	tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
+	tiles = [doc async for doc in db['experiment'].find({'experiment_name': experiment_name, 'user_id': current_user.id})]
 	if len(tiles) > 0:
 		return False
 
 	experiment = ExperimentModel(
 		user_id=PyObjectId(current_user.id),
-		expName=expName,
+		experiment_name=experiment_name,
 		fileNames=fileNames
 	)
 	await db['experiment'].insert_one(experiment.dict(exclude={'id'}))
 	return True
 
 async def add_experiment_with_folder (folderPath: str,
-									expName: str,
+									experiment_name: str,
 									folderName: str,
 									files: List[UploadFile],
 									clear_previous: bool,
 									current_user: UserModelDB or ShowUserModel,
 									db: AsyncIOMotorDatabase) -> ExperimentModel:
-	print("This is experiment part", folderName, expName, folderPath)	
+	print("This is experiment part", folderName, experiment_name, folderPath)	
 	print(files)
 	setfiles = []						  
 	for each_file_folder in files:
@@ -55,18 +55,18 @@ async def add_experiment_with_folder (folderPath: str,
 			await f.write(content_folder)
 	experimentData = {
                 'user_id': str(PyObjectId(current_user.id)),
-                'expName': expName,
-                'folders': [{
-					'folderName': folderName,
+                'experiment_name': experiment_name,
+                'experiment_data': [{
+					'folder_name': folderName,
 					'files': setfiles
 				}],
-				'date': datetime.now()
+				'update_time': datetime.now()
 			}
 	print("success")
 	await db['experiment'].insert_one(experimentData)
 	return True
 async def add_experiment_with_folders (folderPath: str,
-									expName: str,
+									experiment_name: str,
 									files: List[UploadFile],
 									paths: List[str],
 									clear_previous: bool,
@@ -76,43 +76,72 @@ async def add_experiment_with_folders (folderPath: str,
 	folders = []
 	files_in_folder = []
 	files_in_experiment = []
-	print("This is folder path------------>", folderPath)
+	print("This is folder path------------>", folderPath, experiment_name, files, paths, clear_previous, current_user, db)
 	edited_paths = paths.split(",")
+
+	folderName = ''
+	make_new_folder = ''
+	if '/' not in edited_paths[0]:
+		make_new_folder = folderPath
+	else:
+		if not edited_paths[0][0]=='/':
+			edited_paths[0]='/' + edited_paths[0]
+		directory = edited_paths[0].split('/')
+		directory_length = len(directory)
+		make_new_folder = folderPath
+		for i in range(directory_length-2):
+			make_new_folder = make_new_folder + '/' + directory[i+1]
+			folderName += '/' + directory[i+1]
+			if not os.path.exists(make_new_folder):
+				os.makedirs(make_new_folder)
+
+
+
 	for each_file_folder in files:
 		index = index + 1
-		directory = []
-		print(index)
-		print("--------------------------->")
-		if '/' not in edited_paths[index-1]:
-			print("this is file")
-			folders.append({
-						"folder": edited_paths[index-2].split('/'),
-						"files": files_in_folder
-					})
-			make_new_folder = folderPath
-			files_in_folder = []
-			files_in_experiment.append(each_file_folder.filename)
-		else:
-			if not edited_paths[index-1][0]=='/':
-				edited_paths[index-1]='/' + edited_paths[index-1]
-			directory = edited_paths[index-1].split('/')
-			directory_length = len(directory)
-			make_new_folder = folderPath
-			is_not_exist = False
-			for i in range(directory_length-2):
-				print("this is sub directory", directory[i+1])
-				make_new_folder = make_new_folder + '/' + directory[i+1]
-				if not os.path.exists(make_new_folder):
-					os.makedirs(make_new_folder)
-					is_not_exist = True
-			if is_not_exist:
-				if index > 1:
-					folders.append({
-						"folder": edited_paths[index-2].split('/'),
-						"files": files_in_folder
-					})
-					folder_name = make_new_folder
-					files_in_folder = []
+		# directory = []
+		# print(index)
+		# print("--------------------------->", folderPath, files_in_folder)
+		# if '/' not in edited_paths[index-1]:
+		# 	print("this is file")
+		# 	# folders.append({
+		# 	# 			"folder": edited_paths[index-2].split('/'),
+		# 	# 			"files": files_in_folder
+		# 	# 		})
+		# 	folders.append({
+		# 				"folder": experiment_name,
+		# 				"files": files_in_folder
+		# 			})
+		# 	make_new_folder = folderPath
+		# 	files_in_folder = []
+		# 	files_in_experiment.append(each_file_folder.filename)
+		# else:
+		# 	if not edited_paths[index-1][0]=='/':
+		# 		edited_paths[index-1]='/' + edited_paths[index-1]
+		# 	directory = edited_paths[index-1].split('/')
+		# 	directory_length = len(directory)
+		# 	make_new_folder = folderPath
+		# 	folderName = ''
+		# 	is_not_exist = False
+		# 	for i in range(directory_length-2):
+		# 		make_new_folder = make_new_folder + '/' + directory[i+1]
+		# 		folderName += '/' + directory[i+1]
+		# 		if not os.path.exists(make_new_folder):
+		# 			os.makedirs(make_new_folder)
+		# 			is_not_exist = True
+
+		# 	if is_not_exist:
+		# 		if index > 1:
+		# 			# folders.append({
+		# 			# 	"folder": edited_paths[index-2].split('/'),
+		# 			# 	"files": files_in_folder
+		# 			# })
+		# 			folders.append({
+		# 				"folder": folderName,
+		# 				"files": files_in_folder
+		# 			})
+		# 			folder_name = make_new_folder
+		# 			files_in_folder = []
 		
 		if '/' in each_file_folder.filename:
 			new_folder_path = folderPath + '/' + each_file_folder.filename
@@ -124,8 +153,12 @@ async def add_experiment_with_folders (folderPath: str,
 		print("this is folder name", make_new_folder)
 		print("this is filename", each_file_folder.filename)
 		if index == len(files):
+			# folders.append({
+			# 		"folder": edited_paths[index-1].split('/'),
+			# 		"files": files_in_folder
+			# 	})
 			folders.append({
-					"folder": edited_paths[index-1].split('/'),
+					"folder": folderName,
 					"files": files_in_folder
 				})
 			
@@ -135,21 +168,21 @@ async def add_experiment_with_folders (folderPath: str,
 		
 	experimentData = {
                 'user_id': str(PyObjectId(current_user.id)),
-                'expName': expName,
-                'folders': folders,
-				'date': datetime.now()
+                'experiment_name': experiment_name,
+                'experiment_data': folders,
+				'update_time': datetime.now()
 			}
 	print("success")
 	await db['experiment'].insert_one(experimentData)
 	return True
 
 async def add_experiment_with_files (folderPath: str,
-									expName: str,
+									experiment_name: str,
 									files: List[UploadFile],
 									clear_previous: bool,
 									current_user: UserModelDB or ShowUserModel,
 									db: AsyncIOMotorDatabase) -> ExperimentModel:
-	print("This is experiment part", expName, folderPath)	
+	print("This is experiment part", experiment_name, folderPath)	
 	print(files)
 	setfiles = []						  
 	for each_file_folder in files:
@@ -161,34 +194,34 @@ async def add_experiment_with_files (folderPath: str,
 			await f.write(content_folder)
 	experimentData = {
                 'user_id': str(PyObjectId(current_user.id)),
-                'expName': expName,
-                'files': setfiles,
-				'date': datetime.now()
+                'experiment_name': experiment_name,
+                'experiment_data': setfiles,
+				'update_time': datetime.now()
 			}
 	print("success")
 	await db['experiment'].insert_one(experimentData)
 	return True
 
-# async def add_experiment_name(expName: str,
+# async def add_experiment_name(experiment_name: str,
 # 						clear_previous: bool,
 # 					    current_user: UserModelDB or ShowUserModel,
 # 					    db: AsyncIOMotorDatabase) -> ExperimentModel:
-# 	tiles = [doc async for doc in db['experiment'].find({'expName': expName, 'user_id': current_user.id})]
+# 	tiles = [doc async for doc in db['experiment'].find({'experiment_name': experiment_name, 'user_id': current_user.id})]
 # 	if len(tiles) > 0:
 # 		return False
 
 # 	experiment = ExperimentModel(
 # 		user_id=PyObjectId(current_user.id),
-# 		expName=expName
+# 		experiment_name=experiment_name
 # 	)
 # 	await db['experiment'].insert_one(experiment.dict(exclude={'id'}))
 # 	return True
 
-async def get_experiment_data(expName: str, user_id: str,
+async def get_experiment_data(experiment_name: str, user_id: str,
 							clear_previous: bool,
 						    current_user: UserModelDB or ShowUserModel,
 						    db: AsyncIOMotorDatabase) -> List[str]:
-	cursor = await db['experiment'].find_one({"expName": expName, "user_id": user_id})
+	cursor = await db['experiment'].find_one({"experiment_name": experiment_name, "user_id": user_id})
 	experiment = pydantic.parse_obj_as(ExperimentModel, cursor)
 
 	if experiment is None:

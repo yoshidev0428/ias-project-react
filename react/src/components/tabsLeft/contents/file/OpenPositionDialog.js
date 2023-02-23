@@ -843,7 +843,7 @@ const OpenPositionDialog = (props) => {
     const [cloudDialog, setCloudDialog] = useState(false);
     const [experimentDialog, setExperimentDialog] = useState(false);
 
-    const [expName, setExpName] = useState('');
+    const [experiment_name, setexperiment_name] = useState('');
     const [fileNames, setFileNames] = useState([]);
     const [metaDatas, setMetaDatas] = useState([]);
     const [contents, setContents] = useState([]);
@@ -863,10 +863,10 @@ const OpenPositionDialog = (props) => {
         setExperimentDialog(open)
     }
 
-    const handleExpNameChange = (name) => {
-        setExpName(name)
+    const handleexperiment_nameChange = (name) => {
+        setexperiment_name(name)
         store.dispatch({type: "register_experiment_name", content: name});
-        console.log("OpenPositionDialog: handleExpNameChange : register experiment name = ", name);
+        console.log("OpenPositionDialog: handleexperiment_nameChange : register experiment name = ", name);
         getExperimentData(name)
         setExperimentDialog(false)
     }
@@ -1167,7 +1167,7 @@ const OpenPositionDialog = (props) => {
                         )}
                         {selectedTab === 1 && (
                             <TabContainer>
-                                <Tiling folderName={expName.includes('experiement') ?? expName.replace('experiement', 'upload')} fileNames={acceptedFiles.map(file => file.name)} />
+                                <Tiling folderName={experiment_name.includes('experiement') ?? experiment_name.replace('experiement', 'upload')} fileNames={acceptedFiles.map(file => file.name)} />
                             </TabContainer>
                         )}
                         {selectedTab === 2 && (
@@ -1226,7 +1226,7 @@ const OpenPositionDialog = (props) => {
                         cloudDialogClose = {props.cloudDialogClose}
                         setCloudDialog={props.setCloudDialog}
                         setDialogStatus={setDialogStatus}
-                        handleExpNameChange={handleExpNameChange}
+                        handleexperiment_nameChange={handleexperiment_nameChange}
                     />
                 */}
                 {experimentDialog && <OpenCloudUploadNew />}

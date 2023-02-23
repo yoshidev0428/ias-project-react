@@ -136,7 +136,7 @@ const SuccessDialog = (props) => {
 const OpenFileDialog = (props) => {
     const fileInput = React.useRef();
 
-    // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    // const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
     const [experimentName, setExperimentName] = useState('');
@@ -259,7 +259,7 @@ const OpenFileDialog = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
         setExperimentName('')

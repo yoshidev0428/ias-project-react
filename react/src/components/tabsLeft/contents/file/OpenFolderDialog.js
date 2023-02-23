@@ -108,10 +108,10 @@ const SuccessDialog = (props) => {
 
 const OpenFolderDialogForUpload = (props) => {
 
-    const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
-    const [experimentName, setExperimentName] = useState(expName);
+    const [experimentName, setExperimentName] = useState(experiment_name);
     const [uploadFolderName, setUploadFolderName] = useState(upFName);
     const [fileName, setFileName] = useState(null);
     const [checked, setChecked] = useState([]);
@@ -197,10 +197,10 @@ const OpenFolderDialogForUpload = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
-        setExperimentName(expName)
+        setExperimentName(experiment_name)
         setUploadFolderName(upFName)
 
         getTree()

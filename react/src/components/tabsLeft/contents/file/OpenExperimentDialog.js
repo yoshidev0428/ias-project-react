@@ -31,9 +31,9 @@ const OpenExperimentDialog = (props) => {
         { value: 'vanilla', label: 'Vanilla' }
       ]
 
-    const [expName, setExpName] = useState(null)
+    const [experiment_name, setexperiment_name] = useState(null)
     const [experiments, setExperiments] = useState(sampleExp)
-    const [expNames, setExpNames] = useState([])
+    const [experiment_names, setexperiment_names] = useState([])
 
     const handleClickOpen = () => {
       props.setDialogStatus(true)
@@ -42,11 +42,11 @@ const OpenExperimentDialog = (props) => {
         props.setDialogStatus(false)
     };
     const handleChange = (obj) => {
-        setExpName(obj.value)
+        setexperiment_name(obj.value)
     }
     const handleSelect = () => {
         props.setDialogStatus(false)
-        props.handleExpNameChange(expName)
+        props.handleexperiment_nameChange(experiment_name)
     }
 
     //change to use reducer, style should be like this
@@ -58,10 +58,10 @@ const OpenExperimentDialog = (props) => {
                 let data = response.data
                 if(data.success && data.data) {
                     console.log(data.data)
-                    setExpNames(data.data)
-                    setExperiments(data.data.map(expName => 
+                    setexperiment_names(data.data)
+                    setExperiments(data.data.map(experiment_name => 
                         {
-                            return {value: expName, label: expName}
+                            return {value: experiment_name, label: experiment_name}
                         }
                     ))
                 } else {
@@ -75,8 +75,8 @@ const OpenExperimentDialog = (props) => {
         fetchExperimentNames()
     }, [props.cloudDialogClose])
 
-    const handleListItemClick = (expName) => {
-        props.handleExpNameChange(expName)
+    const handleListItemClick = (experiment_name) => {
+        props.handleexperiment_nameChange(experiment_name)
     };
     
     const handleAddNewExperimentClick = () => {
@@ -92,13 +92,13 @@ const OpenExperimentDialog = (props) => {
                         Each experiment might include the materials of image source/data
                     </DialogContentText>
                     <List sx={{ pt: 0 }} style={{padding: "20px 0px"}}>
-                        {expNames.map((expName) => (
-                          <ListItem style={{padding: "10px 0px"}} button onClick={() => handleListItemClick(expName)} key={expName}
+                        {experiment_names.map((experiment_name) => (
+                          <ListItem style={{padding: "10px 0px"}} button onClick={() => handleListItemClick(experiment_name)} key={experiment_name}
                               >
                             <ListItemIcon>
                               <InboxIcon />
                             </ListItemIcon>
-                            <ListItemText primary={expName} />
+                            <ListItemText primary={experiment_name} />
                           </ListItem>
                         ))}
                         <ListItem style={{padding: "10px 0px"}} autoFocus button onClick={() => handleAddNewExperimentClick()}>

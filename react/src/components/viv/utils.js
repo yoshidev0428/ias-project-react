@@ -261,7 +261,7 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
     }
 }
 
-export async function getChannelStates(selection, tiff_names, expName) {
+export async function getChannelStates(selection, tiff_names, experiment_name) {
     let domain = [0,0];
     let contrastLimits = [0, 0];
     // TODO: support_tiling
@@ -270,7 +270,7 @@ export async function getChannelStates(selection, tiff_names, expName) {
         if (selection.t == tiff_names[i].time && 
             selection.c == tiff_names[i].channel && 
             selection.z == tiff_names[i].z) {
-            const url = "image/tile/get_channel_states/" + tiff_names[i].filename + "&" + expName;
+            const url = "image/tile/get_channel_states/" + tiff_names[i].filename + "&" + experiment_name;
             // console.log("utils.js: getChannelStates: url", url);
             let response = await api.get(url);
             if (response.data.success) {
@@ -284,19 +284,19 @@ export async function getChannelStates(selection, tiff_names, expName) {
     return {domain, contrastLimits};
 }
 
-export async function getSingleSelectionStats2D({loader, selection, tiff_names, expName}) {
+export async function getSingleSelectionStats2D({loader, selection, tiff_names, experiment_name}) {
     const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
     console.log("utils.js: getSingleSelectionStats2D: data, selection, tiff_names", data, selection, tiff_names);
     // const raster = await data.getRaster({selection});
     // console.log("utils.js: getSingleSelectionStats2D: raster = ", raster);
     // const selectionStats = getChannelStats(raster.data);
-    const selectionStats = await getChannelStates(selection, tiff_names, expName);
+    const selectionStats = await getChannelStates(selection, tiff_names, experiment_name);
     // console.log("utils.js: getSingleSelectionStats2D: selectionStats = ", selectionStats);
     const {domain, contrastLimits} = selectionStats;
     return {domain, contrastLimits};
 }
 
-export async function getSingleSelectionStats3D({loader, selection, tiff_names, expName}) {
+export async function getSingleSelectionStats3D({loader, selection, tiff_names, experiment_name}) {
     console.log("utils.js: getSingleSelectionStats3D: selection = ", selection);
     const lowResSource = loader[loader.length - 1];
     const {shape, labels} = lowResSource;
@@ -314,9 +314,9 @@ export async function getSingleSelectionStats3D({loader, selection, tiff_names, 
     // const stats0 = getChannelStats(raster0.data);
     // const statsMid = getChannelStats(rasterMid.data);
     // const statsTop = getChannelStats(rasterTop.data);
-    const stats0 = await getChannelStates(selection, tiff_names, expName);
-    const statsMid = await getChannelStates(selection, tiff_names, expName);
-    const statsTop = await getChannelStates(selection, tiff_names, expName);
+    const stats0 = await getChannelStates(selection, tiff_names, experiment_name);
+    const statsMid = await getChannelStates(selection, tiff_names, experiment_name);
+    const statsTop = await getChannelStates(selection, tiff_names, experiment_name);
     return {
         domain: [
             Math.min(stats0.domain[0], statsMid.domain[0], statsTop.domain[0]),
@@ -337,15 +337,15 @@ export async function getSingleSelectionStats3D({loader, selection, tiff_names, 
     };
 }
 
-export const getSingleSelectionStats = async ({loader, selection, tiff_names, expName, use3d}) => {
+export const getSingleSelectionStats = async ({loader, selection, tiff_names, experiment_name, use3d}) => {
     const getStats = use3d ? getSingleSelectionStats3D : getSingleSelectionStats2D;
-    return getStats({loader, selection, tiff_names, expName});
+    return getStats({loader, selection, tiff_names, experiment_name});
 };
 
-export const getMultiSelectionStats = async ({loader, selections, tiff_names, expName, use3d}) => {
+export const getMultiSelectionStats = async ({loader, selections, tiff_names, experiment_name, use3d}) => {
     const stats = await Promise.all(
         selections.map(selection =>
-            getSingleSelectionStats({loader, selection, tiff_names, expName, use3d})
+            getSingleSelectionStats({loader, selection, tiff_names, experiment_name, use3d})
         )
     );
     const domains = stats.map(stat => stat.domain);

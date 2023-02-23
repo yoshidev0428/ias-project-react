@@ -40,8 +40,8 @@ const RoutedAvivator = (props) => {
     const [source, setSource] = useState(null);
     const [avivatorType, setAvivatorType] = useState("mainFrame");
 
-    const displayFiles = async (expName, contents, filesPath, row, col, z, time, is3dView) => {
-        // console.log("index.jsx : displayFiles : param : -------- : ", expName, contents, filesPath, row, col, z, time, is3dView);
+    const displayFiles = async (experiment_name, contents, filesPath, row, col, z, time, is3dView) => {
+        // console.log("index.jsx : displayFiles : param : -------- : ", experiment_name, contents, filesPath, row, col, z, time, is3dView);
         if (contents.length >= 1) {
             let hole_files = [];
             for (let i = 0; i < contents.length; i++) {
@@ -110,7 +110,7 @@ const RoutedAvivator = (props) => {
                         let getFullPathFromName = (name) => {
                             let res = filesPath.filter(path => path.indexOf(name) !== -1)
                             if(res.length === 1)
-                                return expName + "/" + res[0]
+                                return experiment_name + "/" + res[0]
                             else return ""
                         }
                         getMergedImage([getFullPathFromName(sample.filename)], newImageName, (err, newFile) => {
@@ -137,7 +137,7 @@ const RoutedAvivator = (props) => {
             }
             if (requestCount > 0 && nchannel_files.length >= requestCount) {
                 const imageSource = {urlOrFile: nchannel_files, contents: nchannel_contents, tiff_names: nchannel_tiff_names, 
-                    expName: expName, is3dView: is3dView, description: ''};
+                    experiment_name: experiment_name, is3dView: is3dView, description: ''};
                 console.log("index.js displayFiles : source = : ", imageSource);
                 setSource(imageSource);
             }
