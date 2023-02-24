@@ -129,10 +129,10 @@ export const useImage = (source) => {
                     newColors = [[255, 255, 255]];
                 } else {
                     for (let i = 0; i < newDomains.length; i++) {
-                        newColors.push(COLOR_PALLETE[source?.contents[i].channel]);
+                        newColors.push(COLOR_PALLETE[i]);
                     }
                 }
-                newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[channelMap[i]]);
+                newColors = newDomains.length === 1 ? [[255, 255, 255]] : newDomains.map((_, i) => COLOR_PALLETE[i]);
                 // console.log("hook.js useEffect newColors", newColors);
                 useViewerStore.setState({
                     useLens: channelOptions.length !== 1,
