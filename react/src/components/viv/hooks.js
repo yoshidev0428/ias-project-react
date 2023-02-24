@@ -140,14 +140,6 @@ export const useImage = (source) => {
                 });
             }
             console.log("-------- hook.js useEffect newColors : ", newColors);
-            let channelMapSelections = [];
-            // TODO: support_tiling
-            if(channelMap){
-            for (let i = 0; i < newSelections.length; i++) {
-                channelMapSelections.push([{...newSelections[i], 'c': channelMap[newSelections[i]['c']]}]);
-            }
-            }
-            newSelections = channelMapSelections;
             useChannelsStore.setState({
                 ids: newDomains.map(() => String(Math.random())),
                 selections: newSelections,
