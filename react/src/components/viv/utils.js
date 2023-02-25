@@ -287,10 +287,10 @@ export async function getChannelStates(selection, tiff_names, expName) {
 export async function getSingleSelectionStats2D({loader, selection, tiff_names, expName}) {
     const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
     console.log("utils.js: getSingleSelectionStats2D: data, selection, tiff_names", data, selection, tiff_names);
-    // const raster = await data.getRaster({selection});
+    const raster = await data.getRaster({selection});
     // console.log("utils.js: getSingleSelectionStats2D: raster = ", raster);
-    // const selectionStats = getChannelStats(raster.data);
-    const selectionStats = await getChannelStates(selection, tiff_names, expName);
+    const selectionStats = getChannelStats(raster.data);
+    // const selectionStats = await getChannelStates(selection, tiff_names, expName);
     // console.log("utils.js: getSingleSelectionStats2D: selectionStats = ", selectionStats);
     const {domain, contrastLimits} = selectionStats;
     return {domain, contrastLimits};
