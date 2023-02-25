@@ -23,4 +23,3 @@ const SmallCard = (props) => {
 }
 
 export default SmallCard; // connect wrapper function in use 
-

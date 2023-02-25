@@ -56,6 +56,7 @@ export const SelectDialog = (props) => {
 
     const handleTabChange = (event, newValue) => {
         setTab(newValue);
+        console.log(newValue)
     };
 
     const handleClose = () => {
