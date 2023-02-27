@@ -13,7 +13,8 @@ import bioformats.omexml as OME
 class TestFormatWriter(unittest.TestCase):
     path = 'mainApi/tests/test_image_convert/temp'
     files = []
-    imgPath = 'mainApi/tests/test_image_convert/LotA_pointA.JPG'
+    # imgPath = 'mainApi/tests/test_image_convert/LotA_pointA.JPG'
+    imgPath = 'mainApi/tests/test_image_convert/LotA_pointA_greyscale.JPG'
     # def get_tempfilename(self, suffix):
     #     fd, name = tempfile.mkstemp(suffix, self.path)
     #     self.files.append(name)
