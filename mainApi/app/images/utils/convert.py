@@ -42,6 +42,8 @@ class TestFormatWriter(unittest.TestCase):
         if not os.path.isdir(self.path):
             os.makedirs(self.path)
         path = self.path + "/" + "result.ome.tif"
+        if os.path.isfile(path):
+            os.remove(path)
 
         W.write_image(path, img, OME.PT_UINT8)
         # result = load_using_bioformats(path, rescale=False)
