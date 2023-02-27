@@ -147,7 +147,6 @@ const Vessel = (props) => {
     }
 
     return (
-
         <Card ref={ref}>
             <div className="d-flex align-items-center common-border">
                 <button className='btn btn-light btn-sm' style={{width: "50%"}} onClick={() => changeVesselSeries(false)}>

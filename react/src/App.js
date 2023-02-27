@@ -23,10 +23,10 @@ const App = (props) => {
     }, []);
 
     return (
-        <>
-            {props.isShowAuthPage ? <Auth /> : <MainFrame />}
-        </>
-    )
+      <>
+        {props.isShowAuthPage ? <Auth /> : <MainFrame />}
+      </>
+    );
 }
 
 export default connect(mapStateToProps)(App);
