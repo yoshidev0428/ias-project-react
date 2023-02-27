@@ -11,28 +11,38 @@ from bioformats.formatreader import load_using_bioformats, get_omexml_metadata
 import bioformats.omexml as OME
 
 class TestFormatWriter(unittest.TestCase):
-    def __init__(self, imgPath):
-        self.path = 'imgs'
-        self.files = []
-        self.imgPath = imgPath
+    path = 'mainApi/tests/test_image_convert/temp'
+    files = []
+    imgPath = 'mainApi/tests/test_image_convert/LotA_pointA.JPG'
+    # def get_tempfilename(self, suffix):
+    #     fd, name = tempfile.mkstemp(suffix, self.path)
+    #     self.files.append(name)
+    #     os.close(fd)
+    #     return name
 
-    def get_tempfilename(self, suffix):
-        fd, name = tempfile.mkstemp(suffix, self.path)
-        self.files.append(name)
-        os.close(fd)
-        return name
+    def setUp(self):
+        javabridge.start_vm(class_path=bioformats.JARS,
+                            run_headless=True)
 
     def tearDown(self):
+        javabridge.kill_vm()
         for filename in self.files:
-            os.remove(filename)
-        os.rmdir(self.path)
+            try:
+                os.remove(filename)
+            except:
+                continue
+        # os.rmdir(self.path)
 
     def test_01_01_write_monochrome_8_bit_tif(self):
         r = np.random.RandomState()
         r.seed(101)
         # img = r.randint(0, 256, (11, 33)).astype(np.uint8)
         img, _ = bioformats.load_image(self.imgPath, rescale=False, wants_max_intensity=True)
-        path = self.get_tempfilename(".ome.tif")
+        # path = self.get_tempfilename(".ome.tif")
+        if not os.path.isdir(self.path):
+            os.makedirs(self.path)
+        path = self.path + "/" + "result.ome.tif"
+
         W.write_image(path, img, OME.PT_UINT8)
         # result = load_using_bioformats(path, rescale=False)
         return path
@@ -40,7 +50,7 @@ class TestFormatWriter(unittest.TestCase):
 def convert_to_ome_format(imgFullPath):
     logback.basic_config()
     image_path = os.path.join(imgFullPath) 
-    testObject = TestFormatWriter(image_path)
+    testObject = TestFormatWriter()
     path = testObject.test_01_01_write_monochrome_8_bit_tif()
 
     return path
