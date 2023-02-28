@@ -3,6 +3,7 @@ import { VESSEL_WELLPLATE_RATIO, VESSEL_WELLPLATE_MAX_HEIGHT, VESSEL_WELLPLATE_M
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import store from "../../../../../../reducers";
+import zIndex from '@mui/material/styles/zIndex';
 
 const mapStateToProps = state => ({
     isFilesAvailable: state.files.isFilesAvailable,
@@ -10,6 +11,8 @@ const mapStateToProps = state => ({
 
 
 const WellPlates = (props) => {
+
+    const areaRatio = props.areaPercentage * 0.01;
 
     var calculateDRect = {};
     var activeHolesNumbers = [];
@@ -179,50 +182,85 @@ const WellPlates = (props) => {
 
     const renderWellPlates = () => {
         return (
-            <div style={{ width: rect.width, height: rect.height }} className="d-flex flex-column">
-                {
-                    showName && (
-                        <div className='d-inline-flex align-center justify-space-around pa-0 ma-0' style={{ width: rect.width }}>
-                            {
-                                [...Array(cols + 1)].map((x, i) =>
-                                    <div key={'col' + i} style={{ width: radious, fontSize: fontSize }} className="pa-0 ma-0 text-center">
-                                        {i === 0 ? '' : i}
-                                    </div>
-                                )
-                            }
-                        </div>
-                    )
-                }
-                <div className='d-flex flex-column align-center justify-space-around pa-0 ma-0' style={{ width: rect.width, flex: 1 }}>
-                    {
-                        [...Array(rows)].map((x, r) =>
-                            <div key={'row' + r} className='d-inline-flex align-center justify-space-around pa-0 ma-0' style={{ width: rect.width }}>
-                                {
-                                    showName && (
-                                        <div style={{ width: radious, height: radious, fontSize: fontSize }} className="pa-0 ma-0 text-center">
-                                            {String.fromCharCode(64 + r + 1)}
-                                        </div>
-                                    )
-                                }
-                                {
-                                    [...Array(cols)].map((x, c) =>
-                                        <div onClick={e => handleVesselClick(e, holeNumber(r, c), r, c)}
-                                            key={"circle" + holeNumber(r, c)}
-                                            style={{ width: radious, height: radious }}
-                                            className={classnames({
-                                                "d-flex justify-content-center align-items-center border border-dark rounded-circle cursor-pointer": true,
-                                                "hole-blue": activeHoles.includes(holeNumber(r, c)),
-                                                "hole-purple": holeNumber(r, c) === holeClicked && activeHoles.includes(holeNumber(r, c))
-                                            })}>
-                                            <span className='primary--text'>{showNumber ? holeNumber(r, c) : ''}</span>
-                                        </div>
-                                    )
-                                }
-                            </div>
-                        )
-                    }
+          <div
+            style={{ width: rect.width, height: rect.height }}
+            className="d-flex flex-column"
+          >
+            {showName && (
+              <div
+                className="d-inline-flex align-center justify-space-around pa-0 ma-0"
+                style={{ width: rect.width }}
+              >
+                {[...Array(cols + 1)].map((x, i) => (
+                  <div
+                    key={"col" + i}
+                    style={{ width: radious, fontSize: fontSize }}
+                    className="pa-0 ma-0 text-center"
+                  >
+                    {i === 0 ? "" : i}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div
+              className="d-flex flex-column align-center justify-space-around pa-0 ma-0"
+              style={{ width: rect.width, flex: 1 }}
+            >
+              {[...Array(rows)].map((x, r) => (
+                <div
+                  key={"row" + r}
+                  className="d-inline-flex align-center justify-space-around pa-0 ma-0"
+                  style={{ width: rect.width }}
+                >
+                  {showName && (
+                    <div
+                      style={{
+                        width: radious,
+                        height: radious,
+                        fontSize: fontSize,
+                      }}
+                      className="pa-0 ma-0 text-center"
+                    >
+                      {String.fromCharCode(64 + r + 1)}
+                    </div>
+                  )}
+                  {[...Array(cols)].map((x, c) => (
+                    <>
+                      <div
+                      onClick={(e) =>
+                        handleVesselClick(e, holeNumber(r, c), r, c)
+                      }
+                      key={"circle" + holeNumber(r, c)}
+                      style={{ width: radious, height: radious, zIndex: "100", position: "relative" }}
+                      className={classnames({
+                        "d-flex justify-content-center align-items-center border border-dark rounded-circle cursor-pointer": true,
+                        "hole-blue": activeHoles.includes(holeNumber(r, c)),
+                        "hole-purple":
+                          holeNumber(r, c) === holeClicked &&
+                          activeHoles.includes(holeNumber(r, c)),
+                      })}
+                    >
+                      {props.showHole && (
+                        <div
+                          style={{
+                            width: radious * areaRatio,
+                            height: radious * areaRatio,
+                            backgroundColor: "#00a0e9",
+                            position: "absolute",
+                            zIndex: "1"
+                          }}
+                        ></div>
+                      )}
+                      <span className="primary--text">
+                        {showNumber ? holeNumber(r, c) : ""}
+                      </span>
+                    </div>
+                    </>
+                  ))}
                 </div>
+              ))}
             </div>
+          </div>
         );
     }
 
