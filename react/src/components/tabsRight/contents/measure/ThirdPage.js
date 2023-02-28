@@ -1,6 +1,11 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import SmallCard from "../../../custom/SmallCard";
+import MeasureItemDialog from '../itemSetting/MeasureItemDialog';
+import { DataGrid } from "@mui/x-data-grid";
+import Box from "@mui/material/Box";
+import {classSettingColumns, classSettingRows} from '../../../constant/class-setting';
+import SortAreaDialog from "../itemSetting/SortAreaDialog";
 // import Divider from '@mui/material/Divider';
 // import CustomButton from "../../../custom/CustomButton";
 // import {
@@ -13,6 +18,9 @@ import SmallCard from "../../../custom/SmallCard";
 // } from '@mdi/js'
 
 export default function FourthPage() {
+  const [showMeasureItemDialog, setShowMeasureItemDialog] = useState(false);
+  const [showSortAreaDialog, setShowSortAreaDialog] = useState(false);
+
   const onClick1 = () => {
     console.log("onClick Measure Item");
   };
@@ -46,9 +54,50 @@ export default function FourthPage() {
 
   return (
     <>
-      <p>Measure Setting</p>
+      <SmallCard title="Class Setting">
+        <Box sx={{ height: 320, width: "100%" }}>
+          <DataGrid
+            rows={classSettingRows}
+            columns={classSettingColumns}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            // checkboxSelection
+            disableSelectionOnClick
+          />
+        </Box>
+      </SmallCard>
       <SmallCard title="Measure Contents">
-        <Button className="btn btn-light btn-sm w-16" onClick={onClick1}>
+        {showMeasureItemDialog && (
+          <MeasureItemDialog
+            open={showMeasureItemDialog}
+            closeDialog={() => {
+              setShowMeasureItemDialog(false);
+            }}
+          />
+        )}
+        {showSortAreaDialog && (
+          <SortAreaDialog
+            open={showSortAreaDialog}
+            closeDialog={() => {
+              setShowSortAreaDialog(false);
+            }}
+          />
+        )}
+        <Button
+          className="btn btn-light btn-sm"
+          style={{ width: "49%" }}
+          onClick={() => setShowMeasureItemDialog(true)}
+        >
+          Measure item
+        </Button>
+        <Button
+          className="btn btn-light btn-sm"
+          style={{ width: "49%" }}
+          onClick={() => setShowSortAreaDialog(true)}
+        >
+          Sort area
+        </Button>
+        {/* <Button className="btn btn-light btn-sm w-16" onClick={onClick1}>
           Mi
         </Button>
         <Button className="btn btn-light btn-sm w-16" onClick={onClick2}>
@@ -65,25 +114,32 @@ export default function FourthPage() {
         </Button>
         <Button className="btn btn-light btn-sm w-16" onClick={onClick6}>
           S
-        </Button>
+        </Button> */}
       </SmallCard>
-      <SmallCard title="Method Save"></SmallCard>
-      <SmallCard title="Go">
-        <Button className="btn btn-light btn-sm w-16" onClick={onClick7}>
-          Go
-        </Button>
-        <Button className="btn btn-light btn-sm w-16" onClick={onClick8}>
-          Stop
-        </Button>
-        <Button className="btn btn-light btn-sm w-16" onClick={onClick9}>
+      <SmallCard title="Method Save">
+        <Button className="btn btn-light btn-sm" style={{ width: "49%" }}>
           Save
         </Button>
-        <Button className="btn btn-light btn-sm w-16" onClick={onClick10}>
+        <Button className="btn btn-light btn-sm" style={{ width: "49%" }}>
+          Save as
+        </Button>
+      </SmallCard>
+      <SmallCard title="Go">
+        <Button className="btn btn-light btn-sm w-3/12" onClick={onClick7}>
+          Go
+        </Button>
+        <Button className="btn btn-light btn-sm w-3/12" onClick={onClick8}>
+          Stop
+        </Button>
+        <Button className="btn btn-light btn-sm w-3/12" onClick={onClick9}>
+          Save
+        </Button>
+        <Button className="btn btn-light btn-sm w-3/12" onClick={onClick10}>
           Cancel
         </Button>
       </SmallCard>
-      <p className="mt-4">Measure Information</p>
-      <SmallCard title=""></SmallCard>
+      <p className="mt-4">Time remain</p>
+      {/* <SmallCard title=""></SmallCard> */}
     </>
   );
 }
