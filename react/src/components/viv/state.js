@@ -34,7 +34,7 @@ const DEFAUlT_CHANNEL_STATE = {
     image: 0,
     brightness: 0,
     contrast: 0,
-    gamma: 0.45
+    gamma: 1 / 2.2
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
