@@ -20,6 +20,8 @@ import pydantic
 from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
+import subprocess
+import os
 
 
 async def add_experiment(experiment_name: str, fileNames: List[str],
@@ -176,8 +178,11 @@ async def add_experiment_with_folders(folderPath: str,
 
         pos = each_file_folder.filename.find(".JPG")
         if pos >= 0:
-            im = Image.open(new_folder_path)
-            im.save(fPath + '/' + each_file_folder.filename[0:pos] + ".TIF")
+            inputPath = os.path.abspath(new_folder_path)
+            outputPath = os.path.abspath(fPath + '/' + each_file_folder.filename[0:pos] + ".ome.tiff")
+            cmd_str = "/app/mainApi/bftools/bfconvert -separate " + inputPath + " " + outputPath
+            print('=====>', inputPath, outputPath, cmd_str)
+            subprocess.run(cmd_str, shell=True)
 
     experimentData = {
         'user_id': str(PyObjectId(current_user.id)),
