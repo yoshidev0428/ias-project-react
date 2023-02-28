@@ -11,58 +11,60 @@ import {
     mdiCircleHalfFull,
     mdiWeatherSunny
 } from '@mdi/js';
+import {
+    // useImageSettingsStore,
+    // useViewerStore,
+    useChannelsStore,
+    // useLoader
+} from '../../../viv/state';
 
 const Input = styled(TextField)`
   width: 50px;
 `;
 
 export default function ImageAdjust() {
-    //Brightness
-    const [Brightvalue, setBrightValue] = React.useState(0);
-    const BrightSliderChange = (event, newValue) => {
-        setBrightValue(newValue);
+    const [brightness, contrast, gamma, setBrightness, setContrast, setGamma] = useChannelsStore(store => [
+        store.brightness,
+        store.contrast,
+        store.gamma,
+        store.setBrightness,
+        store.setContrast,
+        store.setGamma
+    ]);
+
+    const handleSlideBrightness = (_event, newValue) => {        
+        setBrightness(newValue ? Number(newValue) : 0);
     };
-    const BrightInputChange = (event) => {
-        setBrightValue(event.target.value === '' ? '' : Number(event.target.value));
+    const handleInputBrightness = (event) => {
+        const newValue = Number(event.target.value);
+        setBrightness(newValue ? Number(newValue) : 0);
     };
-    const BrightBlur = () => {
-        if (Brightvalue < -100) {
-            setBrightValue(-100);
-        } else if (Brightvalue > 100) {
-            setBrightValue(100);
-        }
+    const handleBlurBrightness = () => {
+        setBrightness(Math.min(1, Math.max(-1, brightness)));
     };
 
     // Contrast
-    const [Contvalue, setContValue] = React.useState(0);
-    const ContSliderChange = (event, newValue) => {
-        setContValue(newValue);
+    const handleSlideContrast = (_event, newValue) => {        
+        setContrast(newValue ? Number(newValue) : 0);
     };
-    const ContInputChange = (event) => {
-        setContValue(event.target.value === '' ? '' : Number(event.target.value));
+    const handleInputContrast = (event) => {
+        const newValue = Number(event.target.value);
+        setContrast(newValue ? Number(newValue) : 0);
     };
-    const ContBlur = () => {
-        if (Contvalue < -100) {
-            setContValue(-100);
-        } else if (Contvalue > 100) {
-            setContValue(100);
-        }
+    const handleBlurContrast = () => {
+        setContrast(Math.min(1, Math.max(-1, contrast)));
     };
 
     // Gamma
-    const [Gammavalue, setGammaValue] = React.useState(0);
-    const GammaSliderChange = (event, newValue) => {
-        setGammaValue(newValue);
+    const handleSlideGamma = (_event, newValue) => {        
+        setGamma(newValue ? Number(newValue) : 0);
     };
-    const GammaInputChange = (event) => {
-        setGammaValue(event.target.value === '' ? '' : Number(event.target.value));
+    const handleInputGamma = (event) => {
+        const newValue = Number(event.target.value);
+        setGamma(newValue ? Number(newValue) : 0);
     };
-    const GammaBlur = () => {
-        if (Gammavalue < -100) {
-            setGammaValue(-100);
-        } else if (Gammavalue > 100) {
-            setGammaValue(100);
-        }
+    const handleBlurGamma = () => {
+        setGamma(Math.min(1, Math.max(-1, gamma)));
     };
 
     return (
@@ -84,23 +86,24 @@ export default function ImageAdjust() {
                             </Grid>
                             <Grid item xs>
                                 <Slider
-                                    value={typeof Brightvalue === 'number' ? Brightvalue : 0}
-                                    onChange={BrightSliderChange}
+                                    value={brightness}
+                                    onChange={handleSlideBrightness}
                                     aria-labelledby="input-slider"
-                                    min={-100}
-                                    max={100}
+                                    min={-1}
+                                    max={1}
+                                    step={0.01}
                                     size="small"
                                 />
                             </Grid>
                             <Grid item>
                                 <Input
-                                    value={Brightvalue}
+                                    value={brightness}
                                     size="small"
-                                    onChange={BrightInputChange}
-                                    onBlur={BrightBlur}
+                                    onChange={handleInputBrightness}
+                                    onBlur={handleBlurBrightness}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
+                                    InputProps={{ step: 0.01, min: -1, max: 1, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
                                 />
                             </Grid>
                         </Grid>
@@ -113,23 +116,24 @@ export default function ImageAdjust() {
                             </Grid>
                             <Grid item xs>
                                 <Slider
-                                    value={typeof Contvalue === 'number' ? Contvalue : 0}
-                                    onChange={ContSliderChange}
+                                    value={contrast}
+                                    onChange={handleSlideContrast}
                                     aria-labelledby="input-slider"
-                                    min={-100}
-                                    max={100}
+                                    min={-1}
+                                    max={1}
+                                    step={0.01}
                                     size="small"
                                 />
                             </Grid>
                             <Grid item>
                                 <Input
-                                    value={Contvalue}
+                                    value={contrast}
                                     size="small"
-                                    onChange={ContInputChange}
-                                    onBlur={ContBlur}
+                                    onChange={handleInputContrast}
+                                    onBlur={handleBlurContrast}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true, }} />
+                                    InputProps={{ step: 0.01, min: -1, max: 1, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true, }} />
                             </Grid>
                         </Grid>
                     </Col>
@@ -141,23 +145,24 @@ export default function ImageAdjust() {
                             </Grid>
                             <Grid item xs>
                                 <Slider
-                                    value={typeof Gammavalue === 'number' ? Gammavalue : 0}
-                                    onChange={GammaSliderChange}
+                                    value={gamma}
+                                    onChange={handleSlideGamma}
                                     aria-labelledby="input-slider"
-                                    min={-100}
-                                    max={100}
+                                    min={-1}
+                                    max={1}
+                                    step={0.01}
                                     size="small"
                                 />
                             </Grid>
                             <Grid item>
                                 <Input
-                                    value={Gammavalue}
+                                    value={gamma}
                                     size="small"
-                                    onChange={GammaInputChange}
-                                    onBlur={GammaBlur}
+                                    onChange={handleInputGamma}
+                                    onBlur={handleBlurGamma}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 1, min: -100, max: 100, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
+                                    InputProps={{ step: 0.01, min: -1, max: 1, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
                                 />
                             </Grid>
                         </Grid>

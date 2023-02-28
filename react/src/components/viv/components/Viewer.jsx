@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -18,18 +18,21 @@ import {
 } from '../state';
 import { useWindowSize } from '../utils';
 import { DEFAULT_OVERVIEW } from '../constants';
-import { getDefaultInitialViewState } from '@hms-dbmi/viv';
-
+import { brightnessContrast } from '@luma.gl/shadertools';
+import { PostProcessEffect } from '@deck.gl/core';
 
 const Viewer = (props) => {
 
     const [useLinkedView, use3d, viewState, source] = useViewerStore(store => [store.useLinkedView, store.use3d, store.viewState, store.source], shallow);
-    const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
+    const [colors, contrastLimits, channelsVisible, selections, brightness, contrast, gamma] = useChannelsStore(
         store => [
             store.colors,
             store.contrastLimits,
             store.channelsVisible,
-            store.selections
+            store.selections,
+            store.brightness,
+            store.contrast,
+            store.gamma
         ],
         shallow
     );
@@ -52,6 +55,10 @@ const Viewer = (props) => {
         ],
         shallow
     );
+    const postProcessEffect = useMemo(() => new PostProcessEffect(brightnessContrast, {
+        brightness,
+        contrast
+      }), [brightness, contrast]);
 
     const onViewStateChange = ({ viewState: { zoom } }) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
@@ -61,7 +68,7 @@ const Viewer = (props) => {
     const viewSize = useWindowSize(props.isFullScreen, 1, 1);
     // const pictureInPictureViewerRef = React.forwardRef(null);
     const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
-    console.log("Viewer.jsx : loader, selections, viewState", loader, selections, {...viewState, zomm: 1.5});
+    // console.log("Viewer.jsx : loader, selections, viewState", loader, selections, {...viewState, zomm: 1.5});
 
     useEffect(() => {
         // console.log("Viewer.jsx : use3d, useLinkedView", use3d, useLinkedView, viewSize);
@@ -144,6 +151,9 @@ const Viewer = (props) => {
             extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
             colormap={colormap || 'viridis'}
             onViewStateChange={onViewStateChange}
+            deckProps={{
+                effects: [postProcessEffect],
+            }}
         />
     );
 };

@@ -1,5 +1,5 @@
 const config = {
-    mode: 'production', // "production" | "development" | "none"
+    mode: 'development', // "production" | "development" | "none"
     resolve: {
         extensions: ['*', '.mjs', '.js', '.json']
     },
