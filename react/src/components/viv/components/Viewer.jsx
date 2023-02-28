@@ -18,8 +18,42 @@ import {
 } from '../state';
 import { useWindowSize } from '../utils';
 import { DEFAULT_OVERVIEW } from '../constants';
-import { brightnessContrast } from '@luma.gl/shadertools';
 import { PostProcessEffect } from '@deck.gl/core';
+
+const fs = `\
+uniform float brightness;
+uniform float contrast;
+uniform float gamma;
+
+vec4 brightnessContrastGamma_filterColor(vec4 color) {
+  color.rgb += brightness;
+  if (contrast > 0.0) {
+    color.rgb = (color.rgb - 0.5) / (1.0 - contrast) + 0.5;
+  } else {
+    color.rgb = (color.rgb - 0.5) * (1.0 + contrast) + 0.5;
+  }
+  color.rgb = pow(color.rgb, vec3(gamma));
+  return color;
+}
+
+vec4 brightnessContrastGamma_filterColor(vec4 color, vec2 texSize, vec2 texCoords) {
+  return brightnessContrastGamma_filterColor(color);
+}
+`;
+
+const uniforms = {
+  brightness: {value: 0, min: -1, max: 1},
+  contrast: {value: 0, min: -1, max: 1},
+  gamma: { value: 0.45, min: 0, max: 1}
+};
+
+const brightnessContrastGamma = {
+  name: 'brightnessContrastGamma',
+  uniforms,
+  fs,
+  passes: [{filter: true}]
+};
+
 
 const Viewer = (props) => {
 
@@ -55,10 +89,11 @@ const Viewer = (props) => {
         ],
         shallow
     );
-    const postProcessEffect = useMemo(() => new PostProcessEffect(brightnessContrast, {
+    const postProcessEffect = useMemo(() => new PostProcessEffect(brightnessContrastGamma, {
         brightness,
-        contrast
-      }), [brightness, contrast]);
+        contrast,
+        gamma
+      }), [brightness, contrast, gamma]);
 
     const onViewStateChange = ({ viewState: { zoom } }) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);

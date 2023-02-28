@@ -64,7 +64,7 @@ export default function ImageAdjust() {
         setGamma(newValue ? Number(newValue) : 0);
     };
     const handleBlurGamma = () => {
-        setGamma(Math.min(1, Math.max(-1, gamma)));
+        setGamma(Math.min(1, Math.max(100, gamma)));
     };
 
     return (
@@ -148,7 +148,7 @@ export default function ImageAdjust() {
                                     value={gamma}
                                     onChange={handleSlideGamma}
                                     aria-labelledby="input-slider"
-                                    min={-1}
+                                    min={0}
                                     max={1}
                                     step={0.01}
                                     size="small"
@@ -162,7 +162,7 @@ export default function ImageAdjust() {
                                     onBlur={handleBlurGamma}
                                     variant="standard"
                                     style={{ BorderNone: true, border: 'none' }}
-                                    InputProps={{ step: 0.01, min: -1, max: 1, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
+                                    InputProps={{ step: 0.01, min: 0, max: 1, type: 'number', 'aria-labelledby': 'input-slider', disableUnderline: true }}
                                 />
                             </Grid>
                         </Grid>
