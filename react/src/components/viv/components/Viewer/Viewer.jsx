@@ -15,9 +15,9 @@ import {
     useViewerStore,
     useChannelsStore,
     useLoader
-} from '../state';
-import { useWindowSize } from '../utils';
-import { DEFAULT_OVERVIEW } from '../constants';
+} from '../../state';
+import { useWindowSize } from '../../utils';
+import { DEFAULT_OVERVIEW } from '../../constants';
 import { PostProcessEffect } from '@deck.gl/core';
 import viewerShader from './shader';
 
