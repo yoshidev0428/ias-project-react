@@ -93,32 +93,33 @@ const DeleteSureDialog = (props) => {
     )
 }
 const ShowTreeList = (props) => {
-    console.log(props.data.folders)
+    console.log('folder-upload-show-tree-list:', props.data.folders)
     let treeFolder = []
     let max_deep = 0
     let treeShowFolder = []
     props.data.folders.map(item => {
-        for (let i = 1; i < item.folder.length - 1; i++) {
+        let folders = item.folder.split('/');
+        for (let i = 1; i < folders.length; i++) {
             console.log(item)
-            if (treeFolder.findIndex(node => node.id == item.folder[1] +'/' + i + item.folder[i]) == -1)
-                if (i == item.folder.length - 2) {
+            if (treeFolder.findIndex(node => node.id == folders[0] +'/' + i + folders[i]) == -1)
+                if (i == folders.length - 1) {
                     treeFolder.push(
-                        {   id: item.folder[1] +'/' + i + item.folder[i],
-                            folderName: item.folder[i],
+                        {   id: folders[0] +'/' + i + folders[i],
+                            folderName: folders[i],
                             files: item.files,
                             deep: i
                     })
                 } else {
                     treeFolder.push(
-                        {   id: item.folder[1] +'/' + i + item.folder[i],
-                            folderName: item.folder[i],
+                        {   id: folders[0] +'/' + i + folders[i],
+                            folderName: folders[i],
                             deep: i
                     })
                 }
         }
-        if (max_deep < item.folder.length) max_deep = item.folder.length - 1                
+        if (max_deep < folders.length) max_deep = folders.length - 1
     })
-    for(let j = 1; j < max_deep; j++) {
+    for(let j = 0; j < max_deep; j++) {
         let nodes;
         nodes = treeFolder.filter(treenode => treenode.deep == j)
         treeShowFolder.push({
@@ -128,10 +129,10 @@ const ShowTreeList = (props) => {
     }
     console.log("This is treefolder", treeShowFolder, max_deep)
     return (
-        <TreeItem nodeId={props.data.expName} label={props.data.expName}>
-            {props.data.folders&&props.data.folders.map((folder, index) => <ShowTreeFolder key={index} checkedfolder={props.checkedfolder} checked={props.checked} expName={props.data.expName} folder={folder}/>)}
+        <TreeItem nodeId={props.data.experiment_name} label={props.data.experiment_name}>
+            {props.data.folders&&props.data.folders.map((folder, index) => <ShowTreeFolder key={index} checkedfolder={props.checkedfolder} checked={props.checked} experiment_name={props.data.experiment_name} folder={folder}/>)}
             {props.data.files&&props.data.files.map((item, index) => 
-                  <TreeItem className="pl-0" key={index} label={item} nodeId={props.data.expName + item} />
+                  <TreeItem className="pl-0" key={index} label={item} nodeId={props.data.experiment_name + item} />
             )}
         </TreeItem>
     )
@@ -140,12 +141,12 @@ const ShowTreeFolder = (props) => {
     return (
     <div className="row">
         <div className="col-1">
-            <input type="checkbox" id={props.expName + '/' + props.folder.folderName} onChange={props.checked} checked={props.expName + '/' + props.folder.folderName == props.checkedfolder}></input>
+            <input type="checkbox" id={props.experiment_name + '/' + props.folder.folderName} onChange={props.checked} checked={props.experiment_name + '/' + props.folder.folderName == props.checkedfolder}></input>
         </div>
         <div className="col-11 pl-0">
-            <TreeItem nodeId={props.folder.folderName + props.expName} label={props.folder.folderName}>
+            <TreeItem nodeId={props.folder.folderName + props.experiment_name} label={props.folder.folderName}>
                 {props.folder.files.map((file, index) => 
-                    <TreeItem nodeId={props.folder.folderName + props.expName + file} key={index} label={file.split('/')[1]} />
+                    <TreeItem nodeId={props.folder.folderName + props.experiment_name + file} key={index} label={file.split('/')[1]} />
                     )}
             </TreeItem>
         </div>
@@ -176,7 +177,7 @@ const SuccessDialog = (props) => {
 const OpenFolderUpload = (props) => {
     const fileInput = React.useRef();
 
-    // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    // const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
     const [experimentName, setExperimentName] = useState('');
@@ -299,7 +300,7 @@ const OpenFolderUpload = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
         setExperimentName('')

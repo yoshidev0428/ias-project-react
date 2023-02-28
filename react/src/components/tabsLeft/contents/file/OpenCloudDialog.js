@@ -119,7 +119,7 @@ const SuccessDialog = (props) => {
 const OpenCloudDialogExp = (props) => {
     const fileInput = React.useRef();
 
-    // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    // const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
     const [experimentName, setExperimentName] = useState('');
@@ -148,7 +148,7 @@ const OpenCloudDialogExp = (props) => {
     const getTree = async () => {
         let response = await api_experiment.getExperimentDatas()
         let data = response.data
-        // if (data.expName.length!=0) {
+        // if (data.experiment_name.length!=0) {
 
         // }
         if(data.error) {
@@ -156,8 +156,8 @@ const OpenCloudDialogExp = (props) => {
             //alert("Error occured while getting the tree")
         } else {
             let content = [];
-            if (data.expName.length!=0) {
-                for (let i=0; i<=data.expName.length-1; i++ ) {
+            if (data.experiment_name.length!=0) {
+                for (let i=0; i<=data.experiment_name.length-1; i++ ) {
                     let content_children = [];
                     for (let j=0; j<=data.data[i].length -1; j++) {
                         let filename = '';
@@ -171,7 +171,7 @@ const OpenCloudDialogExp = (props) => {
                         })
                     }
                     content.push({
-                        label: data.expName[i],
+                        label: data.experiment_name[i],
                         children: content_children,
                         value: '/app/mainApi'
                     })
@@ -269,7 +269,7 @@ const OpenCloudDialogExp = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
         setExperimentName('')

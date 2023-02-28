@@ -36,14 +36,14 @@ export const useImage = (source) => {
             store.dispatch({type: "image_loading_state_change", content: true});
             if (use3d) toggleUse3d();
             // TODO support_tiling
-            // const { urlOrFile, contents, tiff_names, expName} = source;
+            // const { urlOrFile, contents, tiff_names, experiment_name} = source;
             const urlOrFile = Array.isArray(source) ? source[0] : source;
             const contents = null;
             const tiff_names = null;
-            const expName = null;
+            const experiment_name = null;
             // TODO support_tiling
-            // useViewerStore.setState({ experimentName: expName });
-            // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader, tiffNames, expName);
+            // useViewerStore.setState({ experimentName: experiment_name });
+            // console.log("-------- hook.js useEffect urlOrFile : ", urlOrFile, loader, tiffNames, experiment_name);
             const newLoader = await createLoader(urlOrFile, contents, tiff_names, toggleIsOffsetsSnackbarOn, message => useViewerStore.setState({ loaderErrorSnackbar: { on: true, message } }));
             // console.log("-------- hook.js useEffect urlOrFile : newLoader : ", newLoader);
             let nextMeta;
@@ -120,7 +120,7 @@ export const useImage = (source) => {
                 useViewerStore.setState({ useColormap: false, useLens: false });
             } else {
                 // console.log("-------- hook.js useEffect getMultiSelectionStats : ", loader, newSelections, source?.contents);
-                const stats = await getMultiSelectionStats({ loader, selections: newSelections, tiff_names: tiffNames, expName: experimentName, use3d: (use3d || source?.is3dView) });
+                const stats = await getMultiSelectionStats({ loader, selections: newSelections, tiff_names: tiffNames, experiment_name: experimentName, use3d: (use3d || source?.is3dView) });
                 console.log("-------- hook.js useEffect getMultiSelectionStats newSelections = ", newSelections, ", stats = ", stats);
                 newDomains = stats.domains;
                 newContrastLimits = stats.contrastLimits;

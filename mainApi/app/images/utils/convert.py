@@ -3,26 +3,60 @@ import javabridge
 import bioformats
 from bioformats import logback
 import xml.etree.ElementTree as ET
+import numpy as np
+import tempfile
+import unittest
+import bioformats.formatwriter as W
+from bioformats.formatreader import load_using_bioformats, get_omexml_metadata
+import bioformats.omexml as OME
 
-def convert_to_ome_format(path, image_name):
+class TestFormatWriter(unittest.TestCase):
+    path = 'mainApi/tests/test_image_convert/temp'
+    files = []
+    # imgPath = 'mainApi/tests/test_image_convert/LotA_pointA.JPG'
+    imgPath = 'mainApi/tests/test_image_convert/LotA_pointA_greyscale.JPG'
+    # def get_tempfilename(self, suffix):
+    #     fd, name = tempfile.mkstemp(suffix, self.path)
+    #     self.files.append(name)
+    #     os.close(fd)
+    #     return name
+
+    def setUp(self):
+        javabridge.start_vm(class_path=bioformats.JARS,
+                            run_headless=True)
+
+    def tearDown(self):
+        javabridge.kill_vm()
+        for filename in self.files:
+            try:
+                os.remove(filename)
+            except:
+                continue
+        # os.rmdir(self.path)
+
+    def test_01_01_write_monochrome_8_bit_tif(self):
+        r = np.random.RandomState()
+        r.seed(101)
+        # img = r.randint(0, 256, (11, 33)).astype(np.uint8)
+        img, _ = bioformats.load_image(self.imgPath, rescale=False, wants_max_intensity=True)
+        # path = self.get_tempfilename(".ome.tif")
+        if not os.path.isdir(self.path):
+            os.makedirs(self.path)
+        path = self.path + "/" + "result.ome.tif"
+        if os.path.isfile(path):
+            os.remove(path)
+
+        W.write_image(path, img, OME.PT_UINT8)
+        # result = load_using_bioformats(path, rescale=False)
+        return path
+        
+def convert_to_ome_format(imgFullPath):
     logback.basic_config()
+    image_path = os.path.join(imgFullPath) 
+    testObject = TestFormatWriter()
+    path = testObject.test_01_01_write_monochrome_8_bit_tif()
 
-    image_path = os.path.join(path, image_name) 
-    if os.path.exists(image_path):
-        image, scale = bioformats.load_image(image_path, rescale=False, wants_max_intensity=True)
-        #print(image.shape)
-        #omexml_metadata = bioformats.get_omexml_metadata(image_path)
-        #print(omexml_metadata)
-        pos = image_name.find(".TIF")
-        if pos >= 0:
-            os.remove(image_path)
-            new_image_name = image_name[0:pos] + ".OME.TIF"
-            new_image_path = os.path.join(path, new_image_name)
-
-            #print("convert_to_ome_format: ", image_path, new_image_path)
-            return new_image_name
-        return image_name
-    return ""
+    return path
 
 def get_metadata(image_path):
     logback.basic_config()

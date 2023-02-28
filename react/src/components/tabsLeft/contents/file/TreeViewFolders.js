@@ -5,35 +5,37 @@ import store from "../../../../reducers";
 
 const TreeViewFoldersExp = (props) => {
     const experiments = props.data
-
     const makeTree = (experiment) => {
         let treeData = {
-            id: experiment.expName,
-            label: experiment.expName,
+            id: experiment.experiment_name,
+            label: experiment.experiment_name,
             checked: false,
             children: [],
             type: "experiment"
         };
 
-        experiment.folders.forEach((data) => {
+        experiment.experiment_data.forEach((data) => {
             let tree = treeData.children;
-            let path = experiment.expName;
-            for (let i = 1; i < data.folder.length - 1; i++) {
-                path = path + "/" + data.folder[i];
-                const existingNode = tree.find((node) => node.label === data.folder[i]);
-                if (existingNode) {
-                    tree = existingNode.children;
-                    continue;
+            let path = experiment.experiment_name;
+            if (data.folder != '') {
+                let folders = data.folder.split('/');
+                for (let i = 1; i < folders.length; i++) {
+                    path = path + "/" + folders[i];
+                    const existingNode = tree.find((node) => node.label === folders[i]);
+                    if (existingNode) {
+                        tree = existingNode.children;
+                        continue;
+                    }
+                    const item = {
+                        id: path,
+                        label: folders[i],
+                        checked: false,
+                        children: [],
+                        type: "folder"
+                    };
+                    tree.push(item);
+                    tree = item.children;
                 }
-                const item = {
-                    id: path,
-                    label: data.folder[i],
-                    checked: false,
-                    children: [],
-                    type: "folder"
-                };
-                tree.push(item);
-                tree = item.children;
             }
             data.files.forEach((file) => tree.push({
                 id: path + "/" + file,

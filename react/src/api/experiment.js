@@ -33,11 +33,11 @@ export const deleteImageFiles = async (images) => {
     });
 }
 
-export const registerExperiment = async (expName, images) => {
+export const registerExperiment = async (experiment_name, images) => {
     const state = store.getState();
     const formData = new FormData();
     formData.append("images", images);
-    formData.append("expName", expName);
+    formData.append("experiment_name", experiment_name);
     return api.post("image/tile/register_experiment", formData, {
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -52,7 +52,7 @@ export const setExperiment = async (experimentName, addFolderName, addedFiles) =
     const state = store.getState();
     const formData = new FormData();
     // formData.append("images", addedFiles);
-    formData.append("expName", experimentName);
+    formData.append("experiment_name", experimentName);
     console.log(addedFiles)
     for (let i in addedFiles) {
         let f = addedFiles[i];
@@ -74,7 +74,7 @@ export const setExperiment_file = async (experimentName, addedFiles) => {
     const state = store.getState();
     const formData = new FormData();
     // formData.append("images", addedFiles);
-    formData.append("expName", experimentName);
+    formData.append("experiment_name", experimentName);
     console.log(addedFiles)
     for (let i in addedFiles) {
         let f = addedFiles[i];
@@ -95,7 +95,7 @@ export const setExperiment_folder = async (experimentName, addedFiles) => {
     const state = store.getState();
     const formData = new FormData();
     let pathArray = [];
-    formData.append("expName", experimentName);
+    formData.append("experiment_name", experimentName);
     for (let i in addedFiles) {
         let f = addedFiles[i];
         formData.append("files", f);
@@ -112,10 +112,10 @@ export const setExperiment_folder = async (experimentName, addedFiles) => {
         }
     });
 }
-export const registerExperimentName = async (expName) => {
+export const registerExperimentName = async (experiment_name) => {
     const state = store.getState();
     const formData = new FormData();
-    formData.append("expName", expName);
+    formData.append("experiment_name", experiment_name);
     return api.post("image/tile/register_experiment_name", formData, {
         headers: {
             "Access-Control-Allow-Origin": "*",
@@ -127,8 +127,8 @@ export const registerExperimentName = async (expName) => {
     });
 }
 
-export const getExperimentData = async (expName) => {
-    let response = await api.get("image/tile/get_experiment_data/" + expName)
+export const getExperimentData = async (experiment_name) => {
+    let response = await api.get("image/tile/get_experiment_data/" + experiment_name)
     return response
 }
 

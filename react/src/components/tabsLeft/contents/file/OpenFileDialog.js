@@ -136,7 +136,7 @@ const SuccessDialog = (props) => {
 const OpenFileDialog = (props) => {
     const fileInput = React.useRef();
 
-    // const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+    // const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
     const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
     const [experimentName, setExperimentName] = useState('');
@@ -259,7 +259,7 @@ const OpenFileDialog = (props) => {
     useEffect(() => {
         setUploading(true)
 
-        const expName = "experiement_" + new Date().toISOString().replaceAll(':', '-')
+        const experiment_name = "experiement_" + new Date().toISOString().replaceAll(':', '-')
         const upFName = "upload_" + new Date().toISOString().replaceAll(':', '-')
 
         setExperimentName('')
@@ -370,7 +370,12 @@ const OpenFileDialog = (props) => {
         const imagePathForAvivator = [];
         for (const imagePath of imagePathList) {
             if(imagePath.length > 0){
-                const file = await getImageByUrl(imagePath);
+                let path = imagePath;
+                if (path.indexOf('.JPG') >= 0) {
+                    path = path.replace('.JPG', '.ome.tiff');
+                    path = path.replace('.jpg', '.ome.tiff');
+                }
+                const file = await getImageByUrl(path);
                 if(file) imagePathForAvivator.push(file);
             }
         }
