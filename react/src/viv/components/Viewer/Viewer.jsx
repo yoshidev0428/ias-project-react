@@ -63,7 +63,7 @@ const Viewer = (props) => {
         contrast,
         gamma
       }), [brightness, contrast, gamma]);
-
+      console.log('gamma', gamma)
     const onViewStateChange = ({ viewState: { zoom } }) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({ pyramidResolution: z });

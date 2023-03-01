@@ -16,7 +16,7 @@ import {
     // useViewerStore,
     useChannelsStore,
     // useLoader
-} from '../../../viv/state';
+} from '@/viv/state';
 
 const Input = styled(TextField)`
   width: 50px;
