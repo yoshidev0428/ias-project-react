@@ -176,7 +176,7 @@ async def add_experiment_with_folders(folderPath: str,
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
 
-        pos = each_file_folder.filename.find(".JPG")
+        pos = each_file_folder.filename.find(".")
         if pos >= 0:
             inputPath = os.path.abspath(new_folder_path)
             outputPath = os.path.abspath(fPath + '/' + each_file_folder.filename[0:pos] + ".ome.tiff")
