@@ -28,6 +28,10 @@ class ExperimentModel(BaseModel):
         allow_population_by_field_name = True
         json_encoders = {ObjectId: str}
         alias_generator = to_camel
+class MetadataModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    metadata: str
+
 # class FilesModel (ExperimentModel):
 #     fileName: str
 #     path: str

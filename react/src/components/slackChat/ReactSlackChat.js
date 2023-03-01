@@ -156,16 +156,17 @@ class ReactSlackChat extends Component {
         const messageFlag = message.bot_id ? true : false;
         // console.log("message ----- ", messageFlag, message);
         // check if emoji library is enabled
+        console.log("flag====",messageFlag);
         if (this.messageFormatter.emoji && textHasEmoji) {
             // parse plain text to emoji
             messageText = emojiParser(messageText);
         }
         return (
-            <div className={`chat__msgRow ${messageFlag ? "mine" : "notMine"}`} key={message.ts} >
-                {messageFlag ? (
-                    // show customer image
-                    <img src={Avatar} className="user__contact__photo" alt="userIcon" />
-                ) : null}
+            <div className={`chat__msgRow ${messageFlag ? "notMine" : "mine"}`} key={message.ts} >
+                {
+                    // Show remote users image only if message isn't customers
+                    !messageFlag ? this.getUserImg(message) : null
+                }                
                 {textHasEmoji ? (
                     // dangerouslySetInnerHTML only if text has Emoji
                     <div className={`chat__message ${mentioned ? "mentioned" : ""}`} dangerouslySetInnerHTML={{__html: messageText}}
@@ -176,10 +177,10 @@ class ReactSlackChat extends Component {
                         <span>{messageText}</span>
                     </div>
                 )}
-                {
-                    // Show remote users image only if message isn't customers
-                    !messageFlag ? this.getUserImg(message) : null
-                }
+                {messageFlag ? (
+                    // show customer image
+                    <img src={Avatar} className="chat__contact__photo" alt="userIcon" />
+                ) : null}                
             </div>
         );
     }
@@ -349,17 +350,17 @@ class ReactSlackChat extends Component {
         });
         const imageToReturn = image ? (
             // Found backend user
-            <img src={image} className="chat__contact__photo" alt="mentionedUserImg"/>
+            <img src={image} className="user__contact__photo" alt="mentionedUserImg"/>
         ) : // Check admin or client user?
             isAdmin(message) ? (
-                <img src={Avatar} className="chat__contact__photo" alt={userId}
+                <img src={Avatar} className="user__contact__photo" alt={userId}
                 />
             ) : // Check system message or client user?
                 isSystemMessage(message) ? (
-                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="user__contact__photo" alt={userId} />
                 ) : (
                     // Regular browser client user
-                    <img src={Avatar} className="chat__contact__photo" alt={userId} />
+                    <img src={Avatar} className="user__contact__photo" alt={userId} />
                 );
         return imageToReturn;
     }
