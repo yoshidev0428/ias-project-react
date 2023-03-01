@@ -66,6 +66,27 @@ function LinearProgressWithLabel(props) {
     );
   }
 
+const getImageByUrl = async function(imagePath) {
+    try {
+        const state = store.getState();
+
+        const response = await fetch(process.env.REACT_APP_BASE_API_URL + "static/" + state.auth.user._id + "/" + imagePath, {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+                "Authorization": state.auth.tokenType + " " + state.auth.token,
+            }
+        });
+        const blob = await response.blob();
+        const file = new File([blob], imagePath, {type: "image/tiff"});
+        file.path = imagePath;
+        return file;
+    } catch (err) {
+        return null
+    }
+}
+
 const DeleteSureDialog = (props) => {
     const handleClose = () => {
         props.setDialogStatus(false)
@@ -400,7 +421,29 @@ const OpenFolderUpload = (props) => {
         document.getElementById('folder_upload').click();
     }
 
-    const onClickTreeSelectBtn = () => {
+    const imagePathForTree = useSelector((state) => state.files.imagePathForTree);
+    const onClickTreeSelectBtn = async () => {
+        if(imagePathForTree.length <= 0) {
+            store.dispatch({type: "set_image_path_for_avivator", content: null})
+            props.handleClose()
+            return;
+        }
+        const imagePathList = imagePathForTree.split(',');
+        const imagePathForAvivator = [];
+        for (const imagePath of imagePathList) {
+            if(imagePath.length > 0){
+                let path = imagePath;
+                if (path.indexOf('.JPG') >= 0) {
+                    path = path.replace('.JPG', '.ome.tiff');
+                    path = path.replace('.jpg', '.ome.tiff');
+                }
+                const file = await getImageByUrl(path);
+                if(file) imagePathForAvivator.push(file);
+            }
+        }
+        if(imagePathForAvivator.length <= 0)
+            imagePathForAvivator = null;
+        store.dispatch({type: "set_image_path_for_avivator", content: imagePathForAvivator})
         props.handleClose()
     }
    
