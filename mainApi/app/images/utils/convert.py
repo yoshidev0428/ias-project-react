@@ -59,6 +59,7 @@ def convert_to_ome_format(imgFullPath):
     return path
 
 def get_metadata(image_path):
+    print("image_path--------->", image_path)
     logback.basic_config()
     reader = bioformats.ImageReader(image_path)
     info = reader.rdr

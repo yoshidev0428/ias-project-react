@@ -21,7 +21,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
 import subprocess
-
+from mainApi.app.images.utils.convert import get_metadata
+import json
 
 async def add_experiment(experiment_name: str, fileNames: List[str],
                          clear_previous: bool,
@@ -175,8 +176,11 @@ async def add_experiment_with_folders(folderPath: str,
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
 
-		cmd_str = "ls -l /tmp | awk '{print $3,$9}' | grep root"
-		subprocess.run(cmd_str, shell=True)
+        imagedata = get_metadata(new_folder_path)
+        metadata = {
+            'metadata': json.dumps(imagedata)
+        }
+        await db['metadata'].insert_one(metadata)
 
         pos = each_file_folder.filename.find(".JPG")
         if pos >= 0:
