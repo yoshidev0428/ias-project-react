@@ -4,12 +4,14 @@ import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
     SideBySideViewer,
-    PictureInPictureViewer,
     VolumeViewer,
     AdditiveColormapExtension,
     LensExtension
     // eslint-disable-next-line import/no-unresolved
 } from '@hms-dbmi/viv';
+
+import PictureInPictureViewer from '@/viv/viewers/PictureInPictureViewer';
+
 import {
     useImageSettingsStore,
     useViewerStore,
