@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {fromBlob, fromUrl} from 'geotiff'; // eslint-disable-line import/no-extraneous-dependencies
 import {Matrix4} from '@math.gl/core';
-import {getWindowDimensions} from "../helpers";
+import {getWindowDimensions} from "../components/helpers";
 import {
     loadOmeTiff,
     loadBioformatsZarr,
@@ -11,13 +11,13 @@ import {
 } from '@hms-dbmi/viv';
 
 import {GLOBAL_SLIDER_DIMENSION_FIELDS} from './constants';
-import * as api_tiles from '../../api/tiles';
-import {getImageByUrl} from '../../api/fetch';
-import store from '../../reducers';
+import * as api_tiles from '../api/tiles';
+import {getImageByUrl} from '../api/fetch';
+import store from '../reducers';
 import {
     useViewerStore
 } from './state';
-import { api } from "../../api/base";
+import { api } from "../api/base";
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 

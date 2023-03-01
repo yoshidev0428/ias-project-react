@@ -27,23 +27,23 @@ import {
     mdiPencil,
 } from '@mdi/js';
 import {connect} from 'react-redux';
-import * as api_tiles from "../../../../api/tiles";
-import {getImageByUrl} from "../../../../api/fetch"
-import RoutedAvivator from "../../../viv/Avivator";
-import Vessel from "../../../tabsRight/contents/viewcontrol/Vessel";
-import Objective from "../../../tabsRight/contents/viewcontrol/Objective";
-import Channel from "../../../tabsRight/contents/viewcontrol/Channel";
-import ImageAdjust from "../../../tabsRight/contents/viewcontrol/ImageAdjust";
-import ZPosition from "../../../tabsRight/contents/viewcontrol/ZPosition";
-import Timeline from "../../../tabsRight/contents/viewcontrol/Timeline";
-import store from "../../../../reducers";
+import * as api_tiles from "@/api/tiles";
+import {getImageByUrl} from "@/api/fetch"
+import RoutedAvivator from "@/viv/Avivator";
+import Vessel from "@/components/tabsRight/contents/viewcontrol/Vessel";
+import Objective from "@/components/tabsRight/contents/viewcontrol/Objective";
+import Channel from "@/components/tabsRight/contents/viewcontrol/Channel";
+import ImageAdjust from "@/components/tabsRight/contents/viewcontrol/ImageAdjust";
+import ZPosition from "@/components/tabsRight/contents/viewcontrol/ZPosition";
+import Timeline from "@/components/tabsRight/contents/viewcontrol/Timeline";
+import store from "@/reducers";
 import UTIF from "utif";
-import Align0 from  '../../../../assets/images/pos_align_1.png';
-import Align1 from '../../../../assets/images/pos_align_1.png'
-import Align2 from '../../../../assets/images/pos_align_2.png'
-import Align3 from '../../../../assets/images/pos_align_3.png'
-import Align4 from '../../../../assets/images/pos_align_4.png'
-import Align5 from '../../../../assets/images/pos_align_5.png'
+import Align0 from  '@/assets/images/pos_align_1.png';
+import Align1 from '@/assets/images/pos_align_1.png'
+import Align2 from '@/assets/images/pos_align_2.png'
+import Align3 from '@/assets/images/pos_align_3.png'
+import Align4 from '@/assets/images/pos_align_4.png'
+import Align5 from '@/assets/images/pos_align_5.png'
 
 const tilingMenus = [
     "Edit",

@@ -25,11 +25,7 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import PollIcon from '@mui/icons-material/Poll';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-// import LinearProgress from '@mui/material/LinearProgress';
-// import Box from '@mui/material/Box';
-// import Toolbar from '@mui/material/Toolbar';
-import RoutedAvivator from "../components/viv";
-import Avivator from "../components/viv/Avivator";
+import Avivator from "@/viv/Avivator";
 import SupportChatSlack from "../components/slackChat/SupportChatSlack";
 
 import DLMLTab from "../components/tabsLeft/DLMLTab";

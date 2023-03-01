@@ -10,7 +10,7 @@ vec4 brightnessContrastGamma_filterColor(vec4 color) {
   } else {
     color.rgb = (color.rgb - 0.5) * (1.0 + contrast) + 0.5;
   }
-  // color.rgb = pow(color.rgb, vec3(gamma));
+  color.rgb = pow(color.rgb, vec3(gamma));
   return color;
 }
 

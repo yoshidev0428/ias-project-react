@@ -4,12 +4,14 @@ import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
     SideBySideViewer,
-    PictureInPictureViewer,
     VolumeViewer,
     AdditiveColormapExtension,
     LensExtension
     // eslint-disable-next-line import/no-unresolved
 } from '@hms-dbmi/viv';
+
+import PictureInPictureViewer from '@/viv/viewers/PictureInPictureViewer';
+
 import {
     useImageSettingsStore,
     useViewerStore,
@@ -61,7 +63,7 @@ const Viewer = (props) => {
         contrast,
         gamma
       }), [brightness, contrast, gamma]);
-
+      console.log('gamma', gamma)
     const onViewStateChange = ({ viewState: { zoom } }) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({ pyramidResolution: z });

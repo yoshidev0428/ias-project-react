@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDropzone as useReactDropzone } from 'react-dropzone';
 import { unstable_batchedUpdates } from 'react-dom';
 import shallow from 'zustand/shallow';
-import store from '../../reducers';
+import store from '../reducers';
 import {
     useChannelsStore,
     useImageSettingsStore,
