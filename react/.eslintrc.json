@@ -1,8 +1,9 @@
 {
     "parserOptions": {
         "sourceType": "module",
+        "ecmaVersion": 2020,
         "ecmaFeatures": {
-            "jsx": true
+        "jsx": true
         }
     },
     "extends": [
@@ -16,5 +17,8 @@
         "react": {
             "version": "detect"
         }
+    },
+    "env": {
+        "browser": true
     }
 }
