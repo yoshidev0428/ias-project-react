@@ -4,7 +4,7 @@ import {ThemeProvider, createTheme} from '@material-ui/core/styles';
 import {grey} from '@material-ui/core/colors';
 import Avivator from './Avivator';
 // import * as api from '../../api/tiles';
-import {getMergedImage} from '../../api/fetch';
+import {getMergedImage} from '../api/fetch';
 // import sources from './source-info';
 // import { useLocation } from 'react-router-dom';
 // import { getNameFromUrl } from './utils';

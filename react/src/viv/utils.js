@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {fromBlob, fromUrl} from 'geotiff'; // eslint-disable-line import/no-extraneous-dependencies
 import {Matrix4} from '@math.gl/core';
-import {getWindowDimensions} from "../helpers";
+import {getWindowDimensions} from "../components/helpers";
 import {
     loadOmeTiff,
     loadBioformatsZarr,
@@ -11,13 +11,13 @@ import {
 } from '@hms-dbmi/viv';
 
 import {GLOBAL_SLIDER_DIMENSION_FIELDS} from './constants';
-import * as api_tiles from '../../api/tiles';
-import {getImageByUrl} from '../../api/fetch';
-import store from '../../reducers';
+import * as api_tiles from '../api/tiles';
+import {getImageByUrl} from '../api/fetch';
+import store from '../reducers';
 import {
     useViewerStore
 } from './state';
-import { api } from "../../api/base";
+import { api } from "../api/base";
 
 const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 
@@ -137,32 +137,32 @@ export async function createLoader(urlOrFile, contents, tiff_names, handleOffset
     // Otherwise load.
     try {
         // OME-TIFF
-        if (isOMETIFF(urlOrFile)) {
-            if (urlOrFile instanceof File) {
-                const source = await loadOmeTiff(urlOrFile, {images: 'all'});
-                console.log("utills.js-> createLoader: isOMETIFF: File: source ", source);
-                return source;
-            }
-            // const url = urlOrFile;
-            // const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
-            // const isOffsets404 = res.status === 404;
-            // const offsets = !isOffsets404 ? await res.json() : undefined;
-            // const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
+        // if (isOMETIFF(urlOrFile)) {
+        if (urlOrFile instanceof File) {
             const source = await loadOmeTiff(urlOrFile, {images: 'all'});
-            // Show a warning if the total number of channels/images exceeds a fixed amount.
-            // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
-            // built in to the format for them, hence the ternary.
-            const totalImageCount = await getTotalImageCount(
-                urlOrFile,
-                source.map(s => s.metadata),
-                source.map(s => s.data)
-            );
-            // if (isOffsets404 && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
-            //     handleOffsetsNotFound(true);
-            // }
-            console.log("utills.js-> createLoader: isOMETIFF: source ", source);
+            console.log("utills.js-> createLoader: isOMETIFF: File: source ", source);
             return source;
         }
+        // const url = urlOrFile;
+        // const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
+        // const isOffsets404 = res.status === 404;
+        // const offsets = !isOffsets404 ? await res.json() : undefined;
+        // const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
+        const source = await loadOmeTiff(urlOrFile, {images: 'all'});
+        // Show a warning if the total number of channels/images exceeds a fixed amount.
+        // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
+        // built in to the format for them, hence the ternary.
+        const totalImageCount = await getTotalImageCount(
+            urlOrFile,
+            source.map(s => s.metadata),
+            source.map(s => s.data)
+        );
+        // if (isOffsets404 && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
+        //     handleOffsetsNotFound(true);
+        // }
+        console.log("utills.js-> createLoader: isOMETIFF: source ", source);
+        return source;
+        // }
         // console.log("utils.js  createLoader ------- 000: ");
         // Bio-Formats Zarr
         // // Multiple flat tiffs

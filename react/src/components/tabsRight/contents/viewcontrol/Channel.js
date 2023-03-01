@@ -14,7 +14,7 @@ import Icon from '@mdi/react';
 import {
     useChannelsStore,
     useImageSettingsStore,
-} from '../../../viv/state';
+} from '@/viv/state';
 import SmallCard from '../../../custom/SmallCard';
 import {COLORMAP_SLIDER_CHECKBOX_COLOR} from '../../../constant/constants';
 import { DropdownButton } from 'react-bootstrap';

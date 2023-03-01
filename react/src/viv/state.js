@@ -31,7 +31,10 @@ const DEFAUlT_CHANNEL_STATE = {
     selections: [],
     ids: [],
     loader: [{labels: [], shape: []}],
-    image: 0
+    image: 0,
+    brightness: 0,
+    contrast: 0,
+    gamma: 1 / 2.2
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
@@ -86,7 +89,13 @@ export const useChannelsStore = create(set => ({
                 }
             });
             return newState;
-        })
+        }),
+    setBrightness: newValue => 
+        set(state => ({ ...state, brightness: newValue })),
+    setContrast: newValue => 
+        set(state => ({ ...state, contrast: newValue })),
+    setGamma: newValue => 
+        set(state => ({ ...state, gamma: newValue })),
 }));
 
 const DEFAULT_IMAGE_STATE = {

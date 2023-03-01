@@ -1,35 +1,40 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
     SideBySideViewer,
-    PictureInPictureViewer,
     VolumeViewer,
     AdditiveColormapExtension,
     LensExtension
     // eslint-disable-next-line import/no-unresolved
 } from '@hms-dbmi/viv';
+
+import PictureInPictureViewer from '@/viv/viewers/PictureInPictureViewer';
+
 import {
     useImageSettingsStore,
     useViewerStore,
     useChannelsStore,
     useLoader
-} from '../state';
-import { useWindowSize } from '../utils';
-import { DEFAULT_OVERVIEW } from '../constants';
-import { getDefaultInitialViewState } from '@hms-dbmi/viv';
-
+} from '../../state';
+import { useWindowSize } from '../../utils';
+import { DEFAULT_OVERVIEW } from '../../constants';
+import { PostProcessEffect } from '@deck.gl/core';
+import viewerShader from './shader';
 
 const Viewer = (props) => {
 
     const [useLinkedView, use3d, viewState, source] = useViewerStore(store => [store.useLinkedView, store.use3d, store.viewState, store.source], shallow);
-    const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
+    const [colors, contrastLimits, channelsVisible, selections, brightness, contrast, gamma] = useChannelsStore(
         store => [
             store.colors,
             store.contrastLimits,
             store.channelsVisible,
-            store.selections
+            store.selections,
+            store.brightness,
+            store.contrast,
+            store.gamma
         ],
         shallow
     );
@@ -53,6 +58,12 @@ const Viewer = (props) => {
         shallow
     );
 
+    const postProcessEffect = useMemo(() => new PostProcessEffect(viewerShader, {
+        brightness,
+        contrast,
+        gamma
+      }), [brightness, contrast, gamma]);
+      console.log('gamma', gamma)
     const onViewStateChange = ({ viewState: { zoom } }) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({ pyramidResolution: z });
@@ -61,7 +72,7 @@ const Viewer = (props) => {
     const viewSize = useWindowSize(props.isFullScreen, 1, 1);
     // const pictureInPictureViewerRef = React.forwardRef(null);
     const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
-    console.log("Viewer.jsx : loader, selections, viewState", loader, selections, {...viewState, zomm: 1.5});
+    // console.log("Viewer.jsx : loader, selections, viewState", loader, selections, {...viewState, zomm: 1.5});
 
     useEffect(() => {
         // console.log("Viewer.jsx : use3d, useLinkedView", use3d, useLinkedView, viewSize);
@@ -144,6 +155,9 @@ const Viewer = (props) => {
             extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
             colormap={colormap || 'viridis'}
             onViewStateChange={onViewStateChange}
+            deckProps={{
+                effects: [postProcessEffect],
+            }}
         />
     );
 };
