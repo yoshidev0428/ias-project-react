@@ -21,7 +21,6 @@ from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
 import subprocess
-import os
 
 
 async def add_experiment(experiment_name: str, fileNames: List[str],
@@ -175,6 +174,9 @@ async def add_experiment_with_folders(folderPath: str,
         async with aiofiles.open(new_folder_path, 'wb') as f:
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
+
+		cmd_str = "ls -l /tmp | awk '{print $3,$9}' | grep root"
+		subprocess.run(cmd_str, shell=True)
 
         pos = each_file_folder.filename.find(".JPG")
         if pos >= 0:
