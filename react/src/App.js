@@ -5,6 +5,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Auth from './pages/auth';
 import MainFrame from './pages/MainFrame';
+
 const mapStateToProps = state => ({
     isShowAuthPage: state.auth.authPage !== null,
     isLoggedIn: !state.auth.isLoggedIn
