@@ -434,7 +434,7 @@ const OpenFolderUpload = (props) => {
             if(imagePath.length > 0){
                 let path = imagePath;
                 let pos = path.lastIndexOf('.');
-                if (!path.endsWith('.ome.tiff') && pos >= 0) {
+                if (!path.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
                     path = path.substring(0, pos) + '.ome.tiff';
                 }
                 const file = await getImageByUrl(path);
