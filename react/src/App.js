@@ -6,9 +6,9 @@ import Auth from './pages/auth';
 import MainFrame from './pages/MainFrame';
 
 const App = () => {
-  const authValid = useSelector((state) => !state.auth.authPage);
+  const isAuthenticated = useSelector((state) => !state.auth.authPage);
 
-  return authValid ? <Auth /> : <MainFrame />;
+  return isAuthenticated ? <MainFrame /> : <Auth />;
 };
 
 export default App;

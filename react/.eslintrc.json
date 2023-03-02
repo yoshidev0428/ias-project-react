@@ -9,7 +9,6 @@
     "extends": [
         "eslint:recommended", 
         "plugin:react/recommended",
-        "plugin:react/jsx-runtime",
         "plugin:react-hooks/recommended",
         "plugin:prettier/recommended"
     ],
@@ -21,5 +20,9 @@
     "env": {
         "browser": true,
         "node": true
+    },
+    "rules": {
+        "react/jsx-uses-vars": "error",
+        "react/react-in-jsx-scope": "off"
     }
 }
