@@ -371,9 +371,9 @@ const OpenFileDialog = (props) => {
         for (const imagePath of imagePathList) {
             if(imagePath.length > 0){
                 let path = imagePath;
-                if (path.indexOf('.JPG') >= 0) {
-                    path = path.replace('.JPG', '.ome.tiff');
-                    path = path.replace('.jpg', '.ome.tiff');
+                let pos = path.lastIndexOf('.');
+                if (!path.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
+                    path = path.substring(0, pos) + '.ome.tiff';
                 }
                 const file = await getImageByUrl(path);
                 if(file) imagePathForAvivator.push(file);
