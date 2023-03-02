@@ -187,7 +187,7 @@ async def add_experiment_with_folders(folderPath: str,
         if each_file_folder.filename[-9:].lower() !='.ome.tiff':
             fileFormat = each_file_folder.filename.split('.')
             inputPath = os.path.abspath(new_folder_path)
-            if fileFormat[-1].lower() == 'png':
+            if fileFormat[-1].lower() == 'png' or fileFormat[-1].lower() == 'bmp':
                 img = Image.open(inputPath)
                 inputPath = os.path.abspath(fPath + '/' + '.'.join(fileFormat[0:-1]) + ".jpg")
                 img.save(inputPath, 'JPEG')
