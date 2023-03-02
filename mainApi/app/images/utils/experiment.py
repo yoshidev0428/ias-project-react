@@ -193,7 +193,7 @@ async def add_experiment_with_folders(folderPath: str,
                 img.save(inputPath, 'JPEG')
 
             outputPath = os.path.abspath(fPath + '/' + '.'.join(fileFormat[0:-1]) + ".ome.tiff")
-            cmd_str = "/app/mainApi/bftools/bfconvert -separate " + inputPath + " " + outputPath
+            cmd_str = "/app/mainApi/bftools/bfconvert -separate '" + inputPath + "' '" + outputPath + "'"
             print('=====>', inputPath, outputPath, cmd_str)
             subprocess.run(cmd_str, shell=True)
 
