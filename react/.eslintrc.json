@@ -1,0 +1,13 @@
+{
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2020,
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "extends": ["plugin:react-hooks/recommended"],
+    "rules": {
+        "no-unused-vars": "warn"
+    }
+}

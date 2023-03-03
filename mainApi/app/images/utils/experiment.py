@@ -185,10 +185,17 @@ async def add_experiment_with_folders(folderPath: str,
         await db['metadata'].insert_one(metadata)
 
         pos = each_file_folder.filename.find(".JPG")
-        if pos >= 0:
+
+        if each_file_folder.filename[-9:].lower() !='.ome.tiff':
+            fileFormat = each_file_folder.filename.split('.')
             inputPath = os.path.abspath(new_folder_path)
-            outputPath = os.path.abspath(fPath + '/' + each_file_folder.filename[0:pos] + ".ome.tiff")
-            cmd_str = "/app/mainApi/bftools/bfconvert -separate " + inputPath + " " + outputPath
+            if fileFormat[-1].lower() == 'png' or fileFormat[-1].lower() == 'bmp':
+                img = Image.open(inputPath)
+                inputPath = os.path.abspath(fPath + '/' + '.'.join(fileFormat[0:-1]) + ".jpg")
+                img.save(inputPath, 'JPEG')
+
+            outputPath = os.path.abspath(fPath + '/' + '.'.join(fileFormat[0:-1]) + ".ome.tiff")
+            cmd_str = "/app/mainApi/bftools/bfconvert -separate '" + inputPath + "' '" + outputPath + "'"
             print('=====>', inputPath, outputPath, cmd_str)
             subprocess.run(cmd_str, shell=True)
 

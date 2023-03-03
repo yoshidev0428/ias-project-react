@@ -10,7 +10,7 @@ vec4 brightnessContrastGamma_filterColor(vec4 color) {
   } else {
     color.rgb = (color.rgb - 0.5) * (1.0 + contrast) + 0.5;
   }
-  color.rgb = pow(color.rgb, vec3(gamma));
+  color.rgb = pow(color.rgb, vec3(gamma / 50.0));
   return color;
 }
 
@@ -20,16 +20,16 @@ vec4 brightnessContrastGamma_filterColor(vec4 color, vec2 texSize, vec2 texCoord
 `;
 
 const uniforms = {
-  brightness: {value: 0, min: -1, max: 1},
-  contrast: {value: 0, min: -1, max: 1},
-  gamma: { value: 0.45, min: 0, max: 1}
+  brightness: { value: 0, min: -1, max: 1 },
+  contrast: { value: 0, min: -1, max: 1 },
+  gamma: { value: 50, min: 0, max: 100 },
 };
 
 export const viewerShader = {
   name: 'brightnessContrastGamma',
   uniforms,
   fs,
-  passes: [{filter: true}]
+  passes: [{ filter: true }],
 };
 
 export default viewerShader;
