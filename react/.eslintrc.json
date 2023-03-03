@@ -7,17 +7,7 @@
         }
     },
     "extends": [
-        "eslint:recommended", 
         "plugin:react-hooks/recommended",
         "plugin:prettier/recommended"
-    ],
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    },
-    "env": {
-        "browser": true,
-        "node": true
-    }
+    ]
 }
