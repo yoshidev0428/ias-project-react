@@ -10,7 +10,8 @@ const DEFAULT_PARAMS = {
         imagead: null,
         zposition: null,
         timeline: null
-    }
+    },
+    metadatas: [],
 };
 
 const initState = {

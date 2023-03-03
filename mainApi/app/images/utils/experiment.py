@@ -151,17 +151,18 @@ async def add_experiment_with_folders(folderPath: str,
         # 			files_in_folder = []
 
         fPath = ''
+        fileName = ''
         if '/' in each_file_folder.filename:
             fPath = folderPath
             new_folder_path = folderPath + '/' + each_file_folder.filename
-            files_in_folder.append(each_file_folder.filename.split('/')[len(each_file_folder.filename.split('/')) - 1])
+            fileName = each_file_folder.filename.split('/')[len(each_file_folder.filename.split('/')) - 1]
+            files_in_folder.append(fileName)
         else:
             fPath = make_new_folder
-            files_in_folder.append(each_file_folder.filename)
+            fileName = each_file_folder.filename
+            files_in_folder.append(fileName)
             new_folder_path = make_new_folder + '/' + each_file_folder.filename
 
-        print("this is folder name", make_new_folder)
-        print("this is filename", each_file_folder.filename)
         if index == len(files):
             # folders.append({
             # 		"folder": edited_paths[index-1].split('/'),
@@ -178,7 +179,8 @@ async def add_experiment_with_folders(folderPath: str,
 
         imagedata = get_metadata(new_folder_path)
         metadata = {
-            'metadata': json.dumps(imagedata)
+            'metadata': json.dumps(imagedata),
+            'file_name': fileName
         }
         await db['metadata'].insert_one(metadata)
 
