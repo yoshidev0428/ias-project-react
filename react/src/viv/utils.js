@@ -52,9 +52,9 @@ export async function getChannelStates(selection, tiff_names, experiment_name) {
   if (tiff_names) {
     for (let i = 0; i < tiff_names.length; i++) {
       if (
-        selection.t == tiff_names[i].time &&
-        selection.c == tiff_names[i].channel &&
-        selection.z == tiff_names[i].z
+        selection.t === tiff_names[i].time &&
+        selection.c === tiff_names[i].channel &&
+        selection.z === tiff_names[i].z
       ) {
         const url =
           'image/tile/get_channel_states/' +
