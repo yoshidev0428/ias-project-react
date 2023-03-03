@@ -34,8 +34,6 @@ services:
     mongo:
         image: mongo:latest
         restart: always
-        ports:
-            - "27017:27017"
         volumes:
             - mongoDbData:/data/db
         env_file:
