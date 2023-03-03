@@ -144,3 +144,8 @@ export const getExperimentDatas = async () => {
     // let response = await api.get("image/tile/get_experiment_names")
     // return response
 }
+
+export const getMetaData = async () => {
+    let response = await api.get("image/tile/get_meta_datas")
+    return response
+}

@@ -31,6 +31,7 @@ class ExperimentModel(BaseModel):
 class MetadataModel(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     metadata: str
+    file_name: str
 
 # class FilesModel (ExperimentModel):
 #     fileName: str
