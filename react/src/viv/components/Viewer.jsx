@@ -19,7 +19,7 @@ import {
 import { useWindowSize } from '@/viv/utils';
 import { DEFAULT_OVERVIEW } from '@/viv/constants';
 import { PostProcessEffect } from '@deck.gl/core';
-import vivShaderModule from '@/viv/shaders/viv-module';
+import generateShaderModule from '@/viv/helpers/generate-module';
 
 const Viewer = (props) => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
@@ -31,7 +31,7 @@ const Viewer = (props) => {
     ],
     shallow,
   );
-  const [
+  const {
     colors,
     contrastLimits,
     channelsVisible,
@@ -39,18 +39,8 @@ const Viewer = (props) => {
     brightness,
     contrast,
     gamma,
-  ] = useChannelsStore(
-    (store) => [
-      store.colors,
-      store.contrastLimits,
-      store.channelsVisible,
-      store.selections,
-      store.brightness,
-      store.contrast,
-      store.gamma,
-    ],
-    shallow,
-  );
+    deblur,
+  } = useChannelsStore((state) => state, shallow);
   const [
     lensSelection,
     colormap,
@@ -84,14 +74,19 @@ const Viewer = (props) => {
     shallow,
   );
 
+  const shaderModule = useMemo(
+    () => generateShaderModule(Math.floor(deblur.size / 2)),
+    [deblur],
+  );
   const postProcessEffect = useMemo(
     () =>
-      new PostProcessEffect(vivShaderModule, {
-        brightness,
-        contrast,
-        gamma,
+      new PostProcessEffect(shaderModule, {
+        u_brightness: brightness,
+        u_contrast: contrast,
+        u_gamma: gamma,
+        u_deblurKernel: deblur.kernel,
       }),
-    [brightness, contrast, gamma],
+    [brightness, contrast, gamma, deblur, shaderModule],
   );
 
   const onViewStateChange = ({ viewState: { zoom } }) => {

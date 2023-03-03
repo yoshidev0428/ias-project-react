@@ -1,5 +1,11 @@
 import create from 'zustand';
 import { RENDERING_MODES } from '@hms-dbmi/viv';
+import { DeblurMethods } from './constants/enums';
+import {
+  generateBoxFilter,
+  generateGaussianFilter,
+  generateLaplacianFilter,
+} from './helpers/generate-filter';
 
 const captialize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
@@ -32,6 +38,10 @@ const DEFAUlT_CHANNEL_STATE = {
   brightness: 0,
   contrast: 0,
   gamma: 50,
+  deblur: {
+    size: 1,
+    kernel: [],
+  },
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
@@ -91,6 +101,21 @@ export const useChannelsStore = create((set) => ({
     set((state) => ({ ...state, brightness: newValue })),
   setContrast: (newValue) => set((state) => ({ ...state, contrast: newValue })),
   setGamma: (newValue) => set((state) => ({ ...state, gamma: newValue })),
+  setDeConv2D: (method, size, sigma) =>
+    set((state) => ({
+      ...state,
+      deblur: {
+        size,
+        kernel:
+          method === DeblurMethods.gaussian
+            ? generateGaussianFilter(sigma, size)
+            : method === DeblurMethods.laplacian
+            ? generateLaplacianFilter(size)
+            : method === DeblurMethods.box
+            ? generateBoxFilter(size)
+            : [],
+      },
+    })),
 }));
 
 const DEFAULT_IMAGE_STATE = {
