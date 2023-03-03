@@ -8,6 +8,7 @@ cache/
 # react project
 node_modules/
 react/.env
+react/build
 # dist/
 static/
 # templates/
