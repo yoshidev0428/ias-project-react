@@ -1,0 +1,156 @@
+.tab-button {
+    padding  : 0px !important;
+    border   : 1px solid rgba(0, 0, 0, .125) !important;
+    min-width: 25% !important;
+    width    : 30px !important;
+}
+
+.common-tab-button {
+    padding: 0px !important;
+    border : 1px solid rgba(0, 0, 0, .125) !important;
+    width  : 30px !important;
+}
+
+/* Border */
+.common-border {
+    border: 2px solid rgba(0, 0, 0, .125);
+}
+
+/* Font */
+.font-16 {
+    font-size: 16px !important;
+}
+
+.font-20 {
+    font-size: 20px !important;
+}
+
+/* background */ 
+.cover-gray {
+    opacity: 0.6;
+}
+
+.dialog-close-btn {
+    right   : 20px;
+    top     : 15px;
+    position: absolute;
+    border  : none;
+}
+
+.btn-selected-vessel-color {
+    background-color: #e3e3e3 !important;
+}
+
+.filter-dialog-tab-bg {
+    background-color: rgba(0, 0, 0, .05) !important;
+}
+
+#position-dlg-span span {
+    font-size: 12px !important;
+}
+
+.showOnlyDropDownBtn {
+    width           : 20px;
+    background-color: white;
+    margin          : 0px;
+    padding         : 0px !important;
+    height          : 10px;
+}
+
+.showOnlyDropDownBtn select {
+    color: white !important;
+}
+
+.showOnlyDropDownBtn option {
+    color: black !important;
+}
+
+.showFileName {
+    font-family     : monospace;
+    padding         : 0px !important;
+    /* width        : 40% !important; */
+    border          : none !important;
+    border-bottom   : 1px solid black !important;
+}
+
+/* leaf_control imageViwer*/
+.leaf_control {
+    border-radius   : 5px;
+    background-color: white;
+    position        : absolute;
+    top             : 1.2%;
+    left            : 0.8%;
+    z-index         : 99;
+    width           : 25px;
+}
+
+.leaf_control_btn {
+    border : none;
+    width  : 100%;
+    padding: 0px !important;
+    margin : 0px !important;
+}
+
+.custom-button {
+    cursor: pointer;
+}
+
+.custom-button:hover {
+    background-color: rgba(15, 150, 136, .1);
+}
+
+.hole-blue {
+    background-color: rgba(0, 220, 244, 1) !important;
+}
+
+.hole-purple {
+    background-color: rgba(250, 39, 250, 1) !important;
+}
+
+/* progress bar  */
+@keyframes moveToRight {
+    from {
+        left: 0;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+
+.progress {
+    width        : 100%;
+    background   : #ddd;
+    position     : relative;
+    border-radius: 8px !important;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    background: rgb(18 105 191);
+    height    : 100%;
+    position  : absolute;
+    left      : 0;
+}
+
+.progress .progress-bar {
+    width        : 40%;
+    animation    : moveToRight 2s infinite linear;
+    border-radius: 8px;
+}
+
+#account-check-tree ol:first-child>li {
+    border: 1px solid gray;
+}
+
+#account-check-tree ol>li>ol>li {
+    border-top: 1px solid gray;
+}
+
+#account-check-tree ol>li>ol>li span.rct-checkbox {
+    visibility: hidden;
+}
+
+#account-check-tree ol ol {
+    padding-left: 0px;
+}

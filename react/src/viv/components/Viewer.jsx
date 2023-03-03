@@ -8,7 +8,7 @@ import {
   LensExtension,
 } from '@hms-dbmi/viv';
 
-import PictureInPictureViewer from '@/viv/viewers/PictureInPictureViewer';
+import PictureInPictureViewer from './viewers/PictureInPictureViewer';
 
 import {
   useImageSettingsStore,
@@ -19,7 +19,7 @@ import {
 import { useWindowSize } from '@/viv/utils';
 import { DEFAULT_OVERVIEW } from '@/viv/constants';
 import { PostProcessEffect } from '@deck.gl/core';
-import vivShaderModule from '../shaders/viv-module';
+import vivShaderModule from '@/viv/shaders/viv-module';
 
 const Viewer = (props) => {
   const [useLinkedView, use3d, viewState] = useViewerStore(
@@ -98,7 +98,7 @@ const Viewer = (props) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z });
   };
-  const loader = useLoader(); // <-----here
+  const loader = useLoader();
   const viewSize = useWindowSize(props.isFullScreen, 1, 1);
   const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
 

@@ -1,136 +1,16 @@
-import { useState, useEffect } from 'react';
-import { fromBlob, fromUrl } from 'geotiff';
+import { useEffect } from 'react';
 import { Matrix4 } from '@math.gl/core';
 import { getWindowDimensions } from '../components/helpers';
-import {
-  loadOmeTiff,
-  loadBioformatsZarr,
-  loadOmeZarr,
-  getChannelStats,
-  loadMultiTiff,
-} from '@hms-dbmi/viv';
+import { loadOmeTiff, getChannelStats } from '@hms-dbmi/viv';
 
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from './constants';
-import * as api_tiles from '../api/tiles';
-import { getImageByUrl } from '../api/fetch';
-import store from '../reducers';
-import { useViewerStore } from './state';
-import { api } from '../api/base';
-
-const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
-
-/**
- * Guesses whether string URL or File is for an OME-TIFF image.
- * @param {string | File} urlOrFile
- */
-function isOMETIFF(urlOrFile) {
-  // TODO: support_tiling
-  // const filenames = Array.isArray(urlOrFile) ? urlOrFile.map(f => f.name) : urlOrFile.split(',');
-  const filenames =
-    urlOrFile instanceof File ? [urlOrFile.name] : urlOrFile.split(',');
-  for (const filename of filenames) {
-    const lowerCaseName = filename.toLowerCase();
-    if (
-      !(
-        lowerCaseName.includes('.ome.tiff') ||
-        lowerCaseName.includes('.ome.tif')
-      )
-    )
-      return false;
-  }
-  return true;
-}
-
-function isMultiTiff(urlOrFile) {
-  const filenames = Array.isArray(urlOrFile)
-    ? urlOrFile.map((f) => f.name)
-    : urlOrFile.split(',');
-  for (const filename of filenames) {
-    const lowerCaseName = filename.toLowerCase();
-    if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif')))
-      return false;
-  }
-  return true;
-}
-
-/**
- * Turns an input string of one or many urls, file, or file array into a uniform array.
- * @param {string | File | File[]} urlOrFiles
- */
-async function generateMultiTiffFileArray(urlOrFiles) {
-  if (Array.isArray(urlOrFiles)) {
-    return urlOrFiles;
-  } else if (urlOrFiles instanceof File) {
-    return [urlOrFiles];
-  } else {
-    return urlOrFiles.split(',');
-  }
-}
-
-/**
- * Gets the basic image count for a TIFF using geotiff's getImageCount.
- * @param {string | File} src
- */
-async function getTiffImageCount(src) {
-  const from = typeof src === 'string' ? fromUrl : fromBlob;
-  const tiff = await from(src);
-  return tiff.getImageCount();
-}
-
-/**
- * Guesses whether string URL or File is one or multiple standard TIFF images.
- * @param {string | File | File[]} urlOrFiles
- */
-async function generateMultiTiffSources(urlOrFiles) {
-  const multiTiffFiles = await generateMultiTiffFileArray(urlOrFiles);
-  const sources = [];
-  let c = 0;
-  for (const tiffFile of multiTiffFiles) {
-    const selections = [];
-    const numImages = await getTiffImageCount(tiffFile);
-    for (let i = 0; i < numImages; i++) {
-      selections.push({ c, z: 0, t: 0 });
-      c += 1;
-    }
-    sources.push([selections, tiffFile]);
-  }
-  return sources;
-}
+import { api } from '@/api/base';
 
 class UnsupportedBrowserError extends Error {
   constructor(message) {
     super(message);
     this.name = 'UnsupportedBrowserError';
   }
-}
-
-/**
- *
- * @param {string | File} src
- * @param {import('../../src/loaders/omexml').OMEXML} rootMeta
- * @param {number} levels
- * @param {import('../../src/loaders/tiff/pixel-source').TiffPixelSource[]} data
- */
-async function getTotalImageCount(src, rootMeta, data) {
-  const from = typeof src === 'string' ? fromUrl : fromBlob;
-  const tiff = await from(src);
-  const firstImage = await tiff.getImage(0);
-  const hasSubIFDs = Boolean(firstImage?.fileDirectory?.SubIFDs);
-  if (hasSubIFDs) {
-    return rootMeta.reduce((sum, imgMeta) => {
-      const {
-        Pixels: { SizeC, SizeT, SizeZ },
-      } = imgMeta;
-      const numImagesPerResolution = SizeC * SizeT * SizeZ;
-      return numImagesPerResolution + sum;
-    }, 1);
-  }
-  const levels = data[0].length;
-  const {
-    Pixels: { SizeC, SizeT, SizeZ },
-  } = rootMeta[0];
-  const numImagesPerResolution = SizeC * SizeT * SizeZ;
-  return numImagesPerResolution * levels;
 }
 
 /**
@@ -150,142 +30,17 @@ export async function createLoader(
   // If the loader fails to load, handle the error (show an error snackbar).
   // Otherwise load.
   try {
-    // OME-TIFF
-    // if (isOMETIFF(urlOrFile)) {
     if (urlOrFile instanceof File) {
       const source = await loadOmeTiff(urlOrFile, { images: 'all' });
-      console.log('utills.js-> createLoader: isOMETIFF: File: source ', source);
       return source;
     }
-    // const url = urlOrFile;
-    // const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
-    // const isOffsets404 = res.status === 404;
-    // const offsets = !isOffsets404 ? await res.json() : undefined;
-    // const source = await loadOmeTiff(urlOrFile, {offsets, images: 'all'});
-    const source = await loadOmeTiff(urlOrFile, { images: 'all' });
-    // Show a warning if the total number of channels/images exceeds a fixed amount.
-    // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
-    // built in to the format for them, hence the ternary.
-    const totalImageCount = await getTotalImageCount(
-      urlOrFile,
-      source.map((s) => s.metadata),
-      source.map((s) => s.data),
-    );
-    // if (isOffsets404 && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
-    //     handleOffsetsNotFound(true);
-    // }
-    console.log('utills.js-> createLoader: isOMETIFF: source ', source);
-    return source;
-    // }
-    // console.log("utils.js  createLoader ------- 000: ");
-    // Bio-Formats Zarr
-    // // Multiple flat tiffs
-    // console.log("utils.js  createLoader ------- 003-1: isMultiTiff(urlOrFile)", isMultiTiff(urlOrFile), urlOrFile);
-    if (isMultiTiff(urlOrFile)) {
-      if (!contents) {
-        const mutiTiffSources = await generateMultiTiffSources(urlOrFile);
-        const source = await loadMultiTiff(mutiTiffSources, {
-          images: 'all',
-          pool: false,
-        });
-        return source;
-      }
-      const files = Array.isArray(urlOrFile) ? urlOrFile : urlOrFile.split(',');
-      console.log(
-        'utils.js  loadMultiTiff ------- contents, tiff_names, files : ',
-        contents,
-        tiff_names,
-        files,
-      );
-      let minC = -1,
-        maxC = -1;
-      let minZ = -1,
-        maxZ = -1;
-      for (let i = 0; i < contents.length; i++) {
-        if (minC === -1 || contents[i].channel < minC) {
-          minC = contents[i].channel;
-        }
-        if (maxC === -1 || maxC < contents[i].channel) {
-          maxC = contents[i].channel;
-        }
-        if (minZ === -1 || contents[i].z < minZ) {
-          minZ = contents[i].z;
-        }
-        if (maxZ === -1 || maxZ < contents[i].z) {
-          maxZ = contents[i].z;
-        }
-      }
-      // console.log("utils.js  loadMultiTiff ------- (minC maxC) = (", minC, maxC, "), (minZ maxZ) = (", minZ, maxZ, ")");
-      let multiTiffSources = [];
-      let channelMap = [];
-      let tiffNames = [];
-      for (let z = minZ; z <= maxZ; z++) {
-        let channel = 0;
-        for (let c = minC; c <= maxC; c++) {
-          for (let i = 0; i < contents.length; i++) {
-            if (c === contents[i].channel && z === contents[i].z) {
-              // multiTiffSources.push([{t: 0, c: contents[i].channel - minC, z: contents[i].z - minZ}, files[i]]);
-              multiTiffSources.push([
-                { t: 0, c: channel, z: contents[i].z - minZ },
-                files[i],
-              ]);
-              tiff_names[i].time = 0;
-              tiff_names[i].z = contents[i].z - minZ;
-              tiff_names[i].channel = channel;
-              tiffNames.push(tiff_names[i]);
-              if (z == minZ) {
-                channelMap.push(contents[i].channel);
-              }
-              channel++;
-              break;
-            }
-          }
-        }
-      }
-      useViewerStore.setState({ channelMap: channelMap });
-      useViewerStore.setState({ tiffNames: tiffNames });
-      console.log(
-        'utils.js  createLoader ------- 003: ',
-        multiTiffSources,
-        channelMap,
-        tiffNames,
-      );
-      try {
-        const source = await loadMultiTiff(multiTiffSources);
-        // const source = await loadMultiTiff(multiTiffSources, { images: 'all', pool: false });
-        console.log('utils.js  loadMultiTiff ------- source : ', source);
-        return source;
-      } catch (e) {
-        console.log('utils.js  loadMultiTiff ------- error : ', e.message);
-      }
-    } else {
-      let source;
-      try {
-        source = await loadBioformatsZarr(urlOrFile);
-        // console.log("utils.js  createLoader ------- 002: ", source);
-      } catch {
-        // try ome-zarr
-        const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-        // extract metadata into OME-XML-like form
-        const metadata = {
-          Pixels: {
-            Channels: res.metadata.omero.channels.map((c) => ({
-              Name: c.label,
-              SamplesPerPixel: 1,
-            })),
-          },
-        };
-        source = { data: res.data, metadata };
-      }
-      return source;
-    }
+    return await loadOmeTiff(urlOrFile, { images: 'all' });
   } catch (e) {
     if (e instanceof UnsupportedBrowserError) {
       handleLoaderError(e.message);
     } else {
       handleLoaderError(null);
     }
-    console.log('utils.js  createLoader ------- error : ', e.message);
     return { data: null };
   }
 }
@@ -306,14 +61,8 @@ export async function getChannelStates(selection, tiff_names, experiment_name) {
           tiff_names[i].filename +
           '&' +
           experiment_name;
-        // console.log("utils.js: getChannelStates: url", url);
         let response = await api.get(url);
         if (response.data.success) {
-          console.log(
-            'utils.js: getChannelStates: domain, contrastLimits',
-            response.data.domain,
-            response.data.contrastLimits,
-          );
           domain = response.data.domain;
           contrastLimits = response.data.contrastLimits;
         }
@@ -323,51 +72,20 @@ export async function getChannelStates(selection, tiff_names, experiment_name) {
   return { domain, contrastLimits };
 }
 
-export async function getSingleSelectionStats2D({
-  loader,
-  selection,
-  tiff_names,
-  experiment_name,
-}) {
+export async function getSingleSelectionStats2D({ loader, selection }) {
   const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
-  console.log(
-    'utils.js: getSingleSelectionStats2D: data, selection, tiff_names',
-    data,
-    selection,
-    tiff_names,
-  );
   const raster = await data.getRaster({ selection });
-  // console.log("utils.js: getSingleSelectionStats2D: raster = ", raster);
   const selectionStats = getChannelStats(raster.data);
-  // const selectionStats = await getChannelStates(selection, tiff_names, expName);
-  // console.log("utils.js: getSingleSelectionStats2D: selectionStats = ", selectionStats);
   const { domain, contrastLimits } = selectionStats;
   return { domain, contrastLimits };
 }
 
 export async function getSingleSelectionStats3D({
-  loader,
+  _loader,
   selection,
   tiff_names,
   experiment_name,
 }) {
-  console.log('utils.js: getSingleSelectionStats3D: selection = ', selection);
-  const lowResSource = loader[loader.length - 1];
-  const { shape, labels } = lowResSource;
-  // eslint-disable-next-line no-bitwise
-  const sizeZ = shape[labels.indexOf('z')] >> (loader.length - 1);
-  const raster0 = await lowResSource.getRaster({
-    selection: { ...selection, z: 0 },
-  });
-  const rasterMid = await lowResSource.getRaster({
-    selection: { ...selection, z: Math.floor(sizeZ / 2) },
-  });
-  const rasterTop = await lowResSource.getRaster({
-    selection: { ...selection, z: Math.max(0, sizeZ - 1) },
-  });
-  // const stats0 = getChannelStats(raster0.data);
-  // const statsMid = getChannelStats(rasterMid.data);
-  // const statsTop = getChannelStats(rasterTop.data);
   const stats0 = await getChannelStates(selection, tiff_names, experiment_name);
   const statsMid = await getChannelStates(
     selection,
