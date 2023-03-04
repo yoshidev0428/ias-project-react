@@ -28,7 +28,8 @@ const DEFAUlT_FLAG_STATE = {
     DialogBasicFlag: false,
     DialogCustomFlag: false,
     DialogCustomNameFlag: false,
-    DialogCellposeFlag: false
+    DialogCellposeFlag: false,
+    DialogVisualFlag: false
 }
 
 export const useFlagsStore = create(set => ({
