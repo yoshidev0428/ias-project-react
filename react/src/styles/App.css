@@ -154,3 +154,125 @@
 #account-check-tree ol ol {
     padding-left: 0px;
 }
+
+/* added by james wang */
+
+.visual-dialog{
+    /* overflow-y: hidden!important; */
+    /* background-color: #c1c1c1; */
+    max-Height: 800px;
+}
+
+.visual-title {
+    /* background-color: #c1c1c1; */
+}
+
+.visual-toolbar {
+    height: 30px;
+    /* background-color: #c1c1c1; */
+}
+
+.visual-main-body {
+    height: 600px;
+    background-color: white;
+    border: 1px solid #c1c1c1;
+    display: flex;
+}
+
+.visual-sidebar {
+    width: 25%;
+    height: 100%;
+    border-right: 2px solid #c1c1c1;
+    overflow-y: auto;
+}
+
+.visual-analysis-items {
+    height: 75%;
+    border-bottom: 2px solid #c1c1c1;
+    overflow: auto;
+}
+
+.visual-sidebar-filter {
+    height: 25%;
+    position: relative;
+}
+
+.visual-sidebar-filter-box {
+    position: absolute;
+    background-color: #C1C1C1;
+    z-index: 10;
+    right: 0px;
+    top: 0;
+}
+
+.visual-main-panel {
+    width: 75%;
+    height:100%;
+}
+
+.visual-main-panel-screen {
+    max-Height: 60%;
+    border-bottom: 2px solid #c1c1c1;
+    display: flex;
+}
+
+.visual-main-panel-screen-sidebar {
+    width: 30%;
+    max-Height: 100%;
+    border-right: 2px solid #c1c1c1;
+    overflow-y: auto;
+}
+
+.visual-mainpanel-imgbox {
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.visual-mainpanel-imgbox .selected {
+    border: 3px solid #2bac76;
+}
+
+.visual-mainpanel-imgbox img {
+    width: 95%;
+    height: auto;
+    cursor: pointer;
+}
+
+
+.visual-main-panel-screen-content {
+    width: 90%;
+    max-Height: 100%;
+    position: relative;
+}
+
+.Target-root {
+    height: 100%!important;
+    z-index: 2!important;
+}
+
+.visual-amin-panel-table {
+    width: 100%;
+    height: 40%;
+    overflow: auto;
+}
+
+.visual-sidebar-imgBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.visual-sidebar-imgBox img {
+    width: 80%;
+    height: 80%;
+}
+
+.visual-footer {
+    height: 40px;
+    /* background-color: #c1c1c1; */
+}
+
