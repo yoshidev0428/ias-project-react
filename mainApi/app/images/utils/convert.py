@@ -70,6 +70,7 @@ def get_metadata(image_path):
     
     
     omexml_metadata = bioformats.get_omexml_metadata(image_path)
+    print("omexml_mmetadata--------->", omexml_metadata)
 
     # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
     # rdr.setOriginalMetadataPopulated(True)
