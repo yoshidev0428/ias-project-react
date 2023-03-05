@@ -100,7 +100,7 @@ const Tiling = (props) => {
 
   const handleAlignment = (_event) => {
     if (fileObjs.length > 0) {
-      let method = event.target.value;
+      let method = _event.target.value;
       if (tilingAlignButtons.includes(method)) {
         api_tiles.alignTilesApi(fileObjs.length, method, handleApi);
       }
@@ -245,7 +245,7 @@ const Tiling = (props) => {
                   style={{ fontSize: '12px !important' }}
                   className="border"
                   key={idx}
-                  onClick={(_event) => handleListItemClick(event, idx)}
+                  onClick={(_event) => handleListItemClick(_event, idx)}
                 >
                   <ListItemText primary={menuTitle} />
                 </ListItemButton>
@@ -276,7 +276,7 @@ const Tiling = (props) => {
                               className="border"
                               key={idx}
                               onClick={(_event) =>
-                                handleListContentItemClick(event, idx)
+                                handleListContentItemClick(_event, idx)
                               }
                             >
                               <p className="label-text margin-0">{fileName}</p>
@@ -292,7 +292,7 @@ const Tiling = (props) => {
                               className="border"
                               key={idx}
                               onClick={(_event) =>
-                                handleListContentItemClick(event, idx)
+                                handleListContentItemClick(_event, idx)
                               }
                             >
                               <p className="label-text margin-0">{fileName}</p>
