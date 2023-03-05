@@ -282,6 +282,8 @@ const DropzoneMetaData = (props) => {
     const [allRows, setAllRows] = useState([]);
     // Search Bar
     const [searched, setSearched] = useState("");
+    const [flag, setFlag] = useState(1);
+    const [pagerow , setPageRow] = useState([]);
     const requestSearch = (searchedVal) => {
         if (searchedVal) {
             const filteredRows = allRows.filter((content) => {
@@ -329,7 +331,15 @@ const DropzoneMetaData = (props) => {
             setLoading(true);
         }
     }
-
+    const detailFetchMetaData = (props) => {
+        setFlag(0);
+        setPageRow(props.row)
+        // exp_meta_info == null ? (
+        //     <div className="d-flex align-center justify-center pt-5">
+        //                 {backgroundText}
+        //     </div>):
+        
+    }
     // const exp_meta_info = useSelector( state => state.experiment.metainfo);
     useEffect( () => {
         fetchMetaData();
@@ -343,6 +353,7 @@ const DropzoneMetaData = (props) => {
                     {backgroundText}
                 </div>
             ) : (
+                flag === 1 ? (
                 <Card>
                     <CardContent>
                         <SearchBar
@@ -367,9 +378,74 @@ const DropzoneMetaData = (props) => {
                             }}
                             rowsPerPageOptions={[2, 5, 10, 20, 25]}
                             pagination
+                            onRowClick={e => {detailFetchMetaData(e)}}
+                            
                         />
                     </div>
                 </Card>
+                ) : (
+                    <Box sx={{ minHeight: '200px'}} >
+                        <h6 className="p-2">Meta Data</h6>
+                        <nav className="border">
+                            <List>
+                                <ListItem disablePadding>
+                                    {/* <ListItemButton>
+                                        <ListItemText primary={`VesselNum: ${exp_meta_info.vesselnum}`}></ListItemText>
+                                    </ListItemButton> */}
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Filename: ${pagerow.filename}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Dimension Order: ${pagerow.dimension_order}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Size_C: ${pagerow.size_c}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Size_T: number${pagerow.size_t}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Size_X: number${pagerow.size_x}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Size_Y: number${pagerow.size_y}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Size_Z: number${pagerow.size_z}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider />
+                                <ListItem disablePadding>
+                                    <ListItemButton>
+                                        <ListItemText primary={`Type: ${pagerow.type}`}></ListItemText>
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
+                        </nav>
+                    </Box>
+                )
+                
             )}
         </div>
     );
