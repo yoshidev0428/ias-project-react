@@ -26,7 +26,7 @@ import jsons
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
-from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, FileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel
+from mainApi.app.images.sub_routers.tile.models import AlignNaiveRequest, TileModelDB, FileModelDB, AlignedTiledModel, NamePattenModel, MergeImgModel, ExperimentModel, MetadataModel
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import save_upload_file, add_image_tiles, convol2D_processing
 from mainApi.app.images.utils.experiment import add_experiment, add_experiment_with_folders, add_experiment_with_files, get_experiment_data, add_experiment_with_folder
@@ -201,7 +201,18 @@ async def get_experiments(clear_previous: bool = Form(False),
     
     return JSONResponse({"success": True, "data": exp_datas})
 
-    
+#############################################################################
+# Get Meta datas
+#############################################################################
+@router.get("/get_meta_datas",
+            response_description="Get Metadatas",
+            response_model=List[MetadataModel])
+async def get_metadatas(clear_previous: bool = Form(False),
+                    current_user: UserModelDB = Depends(get_current_user),
+                    db: AsyncIOMotorDatabase = Depends(get_database)) -> List[MetadataModel]:
+    userId = str(PyObjectId(current_user.id))
+    meta_datas = [doc async for doc in db['metadata'].find({}, {'_id': 0})]
+    return JSONResponse({"success": True, "data": meta_datas})
 
 #############################################################################
 # Get Image By its full path

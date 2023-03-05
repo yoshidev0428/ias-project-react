@@ -279,130 +279,98 @@ const DropzoneMetaData = (props) => {
     const [loading, setLoading] = useState(false);
     // Search
     const [searchrows, setSearchRows] = useState([]);
+    const [allRows, setAllRows] = useState([]);
     // Search Bar
     const [searched, setSearched] = useState("");
     const requestSearch = (searchedVal) => {
-        // const filteredRows = contents.filter((content) => {
-        //     return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
-        // });
-        // setRows(filteredRows);
+        if (searchedVal) {
+            const filteredRows = allRows.filter((content) => {
+                return content.filename.toLowerCase().includes(searchedVal.toLowerCase());
+            });
+            setSearchRows(filteredRows);
+        } else {
+            setSearchRows(allRows);
+        }
     };
     const cancelSearch = () => {
         setSearched("");
         requestSearch(searched);
     };
     const backgroundText = loading ? "Loading..." : "Drag and drop files or a folder";
-    const exp_meta_info = useSelector( state => state.experiment.metainfo);
-    useEffect(() => {
+
+    const fetchMetaData = async () => {
+        let response =  await api_experiment.getMetaData()
+        let acceptedFiles = response.data.data
+        console.log("acceptedFiles ----->", acceptedFiles)
         if (acceptedFiles) {
             setSearchRows([]);
+            setAllRows([]);
             // console.log("DropzoneMetaData:", acceptedFiles)
             for (let i = 0; i < acceptedFiles.length; i++) {
-                if (acceptedFiles[i]) {
+                let item = JSON.parse(acceptedFiles[i].metadata);
+                if (item) {
                     let current_file = {
                         id: (i + 1).toString(), 
-                        filename: acceptedFiles[i]["name"].toString(), 
+                        filename: acceptedFiles[i].file_name, 
                         // series: "", 
                         // frame: "", 
-                        dimension_order: acceptedFiles[i]["metadata"]["DimensionOrder"], 
-                        size_c: acceptedFiles[i]["metadata"]["SizeC"], 
-                        size_t: acceptedFiles[i]["metadata"]["SizeT"], 
-                        size_x: acceptedFiles[i]["metadata"]["SizeX"], 
-                        size_y: acceptedFiles[i]["metadata"]["SizeY"], 
-                        size_z: acceptedFiles[i]["metadata"]["SizeZ"], 
-                        type: acceptedFiles[i]["metadata"]["Type"], 
+                        dimension_order: item["metadata"]["DimensionOrder"], 
+                        size_c: item["metadata"]["SizeC"], 
+                        size_t: item["metadata"]["SizeT"], 
+                        size_x: item["metadata"]["SizeX"], 
+                        size_y: item["metadata"]["SizeY"], 
+                        size_z: item["metadata"]["SizeZ"], 
+                        type: item["metadata"]["Type"], 
                     };
                     setSearchRows(rows => [...rows, current_file]);
+                    setAllRows(rows => [...rows, current_file]);
                 }
             }
             setLoading(true);
         }
+    }
+
+    // const exp_meta_info = useSelector( state => state.experiment.metainfo);
+    useEffect( () => {
+        fetchMetaData();
     }, []);
 
     return (
-        // <div style={{minHeight: "200px"}}>
-        //     {/* <input {...getInputProps()} /> */}
-        //     {acceptedFiles.length === 0 ? (
-        //         <div className="d-flex align-center justify-center pt-5">
-        //             {backgroundText}
-        //         </div>
-        //     ) : (
-        //         <Card>
-        //             <CardContent>
-        //                 <SearchBar
-        //                     value={searched}
-        //                     onChange={(searchVal) => requestSearch(searchVal)}
-        //                     onCancelSearch={() => cancelSearch()}
-        //                 />
-        //             </CardContent>
-        //             <div className="" style={{height: "380px", width: "100%", border: "2px solid gray"}}>
-        //                 <DataGrid
-        //                     className="cell--textCenter"
-        //                     style={{textAlign: "center", width: "100%"}}
-        //                     rows={searchrows}
-        //                     columns={columns}
-        //                     pageSize={pageSize}
-        //                     onPageSizeChange={(newPageSize) => {
-        //                         if (isNaN(newPageSize)) {
-        //                             setPageSize(acceptedFiles.length);
-        //                         } else {
-        //                             setPageSize(newPageSize);
-        //                         }
-        //                     }}
-        //                     rowsPerPageOptions={[2, 5, 10, 20, 25]}
-        //                     pagination
-        //                 />
-        //             </div>
-        //         </Card>
-        //     )}
-        // </div>
-        <div>
-        {exp_meta_info == null ? (
-            <div className="d-flex align-center justify-center pt-5">
-                        {backgroundText}
-            </div>):
-        (<Box sx={{width: '60%'}} >
-            <h6 className="p-2">.{exp_meta_info.filetype} File</h6>
-            <nav className="border">
-                <List>
-                    <ListItem disablePadding>
-                        {/* <ListItemButton>
-                            <ListItemText primary={`VesselNum: ${exp_meta_info.vesselnum}`}></ListItemText>
-                        </ListItemButton> */}
-                    </ListItem>
-                    <Divider />
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary={`Vessel: ${exp_meta_info.vessel}`}></ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary={`object: ${exp_meta_info.object}`}></ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary={`channel: ${exp_meta_info.channel.toString()}`}></ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary={`Zposition: number${exp_meta_info.zposition} space${exp_meta_info.z_space} ${exp_meta_info.PhysicalSizeZUnit}`}></ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                    <ListItem disablePadding>
-                        <ListItemButton>
-                            <ListItemText primary={`TimeLine: number${exp_meta_info.timeline}`}></ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </nav>
-        </Box>)}
+        <div style={{minHeight: "200px"}}>
+            {/* <input {...getInputProps()} /> */}
+            {allRows.length === 0 ? (
+                <div className="d-flex align-center justify-center pt-5">
+                    {backgroundText}
+                </div>
+            ) : (
+                <Card>
+                    <CardContent>
+                        <SearchBar
+                            value={searched}
+                            onChange={(searchVal) => requestSearch(searchVal)}
+                            onCancelSearch={() => cancelSearch()}
+                        />
+                    </CardContent>
+                    <div className="" style={{height: "380px", width: "100%", border: "2px solid gray"}}>
+                        <DataGrid
+                            className="cell--textCenter"
+                            style={{textAlign: "center", width: "100%"}}
+                            rows={searchrows}
+                            columns={columns}
+                            pageSize={pageSize}
+                            onPageSizeChange={(newPageSize) => {
+                                if (isNaN(newPageSize)) {
+                                    setPageSize(searchrows.length);
+                                } else {
+                                    setPageSize(newPageSize);
+                                }
+                            }}
+                            rowsPerPageOptions={[2, 5, 10, 20, 25]}
+                            pagination
+                        />
+                    </div>
+                </Card>
+            )}
         </div>
     );
 };
@@ -837,7 +805,7 @@ const DropzoneGroup = () => {
 };
 
 const OpenPositionDialog = (props) => {
-
+    console.log("props---------->", props);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(props.selectTab ? props.selectTab : 0);
     const [cloudDialog, setCloudDialog] = useState(false);
