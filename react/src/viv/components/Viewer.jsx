@@ -74,7 +74,6 @@ const Viewer = (props) => {
     shallow,
   );
 
-  console.log('deblur', deblur);
   const shaderModule = useMemo(
     () => generateShaderModule(Math.floor(deblur.size / 2)),
     [deblur],
