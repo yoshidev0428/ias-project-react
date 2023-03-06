@@ -45,7 +45,6 @@ const DEFAUlT_CHANNEL_STATE = {
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
-  channelsVisible: true,
   contrastLimits: [0, 65535],
   colors: [255, 255, 255],
   domains: [0, 65535],

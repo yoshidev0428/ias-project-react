@@ -24,12 +24,11 @@ const Channel = () => {
     (state) => state,
     shallow,
   );
-  const selecedChannel = useSelector((state) => state.vessel.channels);
+  const selectedChannel = useSelector((state) => state.vessel.channels);
   const colormap = useImageSettingsStore((store) => store.colormap);
-  const handleToggleChannel = (current_id) => {
-    if (current_id > -1) {
-      toggleIsOn(current_id);
-    }
+
+  const handleToggleChannel = (channelId) => {
+    toggleIsOn(channelId);
   };
 
   const handleMonoColor = () => {
@@ -57,32 +56,30 @@ const Channel = () => {
   };
 
   const renderItems = (channels) => {
-    let current_channels = channels;
     let isLoading = false;
     let rgbColor = toRgb(colormap, [0, 0, 0]);
     if (colors !== null && colors !== undefined) {
       for (let i = 0; i < colors.length; i++) {
-        for (let j = 0; j < current_channels.length; j++) {
+        for (let j = 0; j < channels.length; j++) {
           if (
-            colors[i][0] === current_channels[j].rgbColor[0] &&
-            colors[i][1] === current_channels[j].rgbColor[1] &&
-            colors[i][2] === current_channels[j].rgbColor[2]
+            colors[i][0] === channels[j].rgbColor[0] &&
+            colors[i][1] === channels[j].rgbColor[1] &&
+            colors[i][2] === channels[j].rgbColor[2]
           ) {
-            current_channels[j].current_id = i;
-            current_channels[j].disabled = false;
-            current_channels[j].channelsVisible = channelsVisible[i];
+            channels[j].current_id = i;
+            channels[j].disabled = false;
+            channels[j].channelsVisible = channelsVisible[i];
             break;
           }
         }
         rgbColor = toRgb(colormap, colors[i]);
       }
     }
-    return current_channels.map((channel, i) => (
+    return channels.map((channel, i) => (
       <div key={i} className="d-flex flex-column channel-box text-center">
         <Checkbox
-          onChange={() => handleToggleChannel(channel.current_id)}
-          checked={channel.id === selecedChannel[0]}
-          disabled={selecedChannel !== null}
+          onChange={() => handleToggleChannel(i)}
+          checked={channel.id === selectedChannel[0]}
           size="small"
           sx={{
             color: isLoading ? rgbColor : channel.color,
