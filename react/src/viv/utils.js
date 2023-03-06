@@ -20,26 +20,16 @@ class UnsupportedBrowserError extends Error {
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
-export async function createLoader(
-  urlOrFile,
-  contents,
-  tiff_names,
-  handleOffsetsNotFound,
-  handleLoaderError,
-) {
+export async function createLoader(urlOrFile, onError) {
   // If the loader fails to load, handle the error (show an error snackbar).
   // Otherwise load.
   try {
-    if (urlOrFile instanceof File) {
-      const source = await loadOmeTiff(urlOrFile, { images: 'all' });
-      return source;
-    }
     return await loadOmeTiff(urlOrFile, { images: 'all' });
   } catch (e) {
     if (e instanceof UnsupportedBrowserError) {
-      handleLoaderError(e.message);
+      onError(e.message);
     } else {
-      handleLoaderError(null);
+      onError(null);
     }
     return { data: null };
   }
