@@ -6,15 +6,15 @@ import shallow from 'zustand/shallow';
 
 // eslint-disable-next-line import/no-unresolved
 import { RENDERING_MODES } from '@hms-dbmi/viv';
-import { useImageSettingsStore, useViewerStore } from '../../../state';
+import { useImageSettingsStore, useViewerStore } from '@/viv/state';
 
 const renderingOptions = Object.values(RENDERING_MODES);
 
 function RenderingModeSelect() {
-  const renderingMode = useImageSettingsStore(store => store.renderingMode);
+  const renderingMode = useImageSettingsStore((store) => store.renderingMode);
   const [isViewerLoading, use3d] = useViewerStore(
-    store => [store.isViewerLoading, store.use3d],
-    shallow
+    (store) => [store.isViewerLoading, store.use3d],
+    shallow,
   );
   // Empty option allows for displaying the title of the dropdown fully in the UI.
   const options = !use3d ? [...renderingOptions, ''] : renderingOptions;
@@ -23,17 +23,17 @@ function RenderingModeSelect() {
       <InputLabel htmlFor="rendering-mode-select">Rendering Mode</InputLabel>
       <Select
         native
-        onChange={e =>
+        onChange={(e) =>
           useImageSettingsStore.setState({ renderingMode: e.target.value })
         }
         value={use3d ? renderingMode : ''}
         inputProps={{
           name: 'rendering-mode',
-          id: 'rendering-mode-select'
+          id: 'rendering-mode-select',
         }}
         disabled={isViewerLoading || !use3d}
       >
-        {options.map(name => (
+        {options.map((name) => (
           <option key={name} value={name}>
             {name}
           </option>

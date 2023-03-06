@@ -5,14 +5,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, createStyles } from '@material-ui/core';
 import shallow from 'zustand/shallow';
 
-import {
-  useImageSettingsStore,
-  useViewerStore,
-  useLoader
-} from '../../../state';
-import { getBoundingCube, truncateDecimalNumber } from '../../../utils';
+import { useImageSettingsStore, useViewerStore, useLoader } from '@/viv/state';
+import { getBoundingCube, truncateDecimalNumber } from '@/viv/utils';
 
-const useStyles = makeStyles(theme =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     enabled: {},
     disabled: {
@@ -21,42 +17,42 @@ const useStyles = makeStyles(theme =>
       // that there are multiple overlaid parts to the slider,
       // this needs to be set manually for the desired effect.
       '& .MuiSlider-thumb': {
-        color: 'rgb(100, 100, 100, 1.0)'
+        color: 'rgb(100, 100, 100, 1.0)',
       },
       '&  .MuiSlider-track': {
-        color: 'rgb(100, 100, 100, 1.0)'
-      }
-    }
-  })
+        color: 'rgb(100, 100, 100, 1.0)',
+      },
+    },
+  }),
 );
 
 const Slicer = () => {
   const [xSlice, ySlice, zSlice] = useImageSettingsStore(
-    store => [store.xSlice, store.ySlice, store.zSlice],
-    shallow
+    (store) => [store.xSlice, store.ySlice, store.zSlice],
+    shallow,
   );
   const loader = useLoader();
-  const use3d = useViewerStore(store => store.use3d);
+  const use3d = useViewerStore((store) => store.use3d);
   const [xSliceInit, ySliceInit, zSliceInit] = getBoundingCube(loader);
   const sliceValuesAndSetSliceFunctions = [
     [
       xSlice,
-      xSliceNew => useImageSettingsStore.setState({ xSlice: xSliceNew }),
+      (xSliceNew) => useImageSettingsStore.setState({ xSlice: xSliceNew }),
       'x',
-      xSliceInit
+      xSliceInit,
     ],
     [
       ySlice,
-      ySliceNew => useImageSettingsStore.setState({ ySlice: ySliceNew }),
+      (ySliceNew) => useImageSettingsStore.setState({ ySlice: ySliceNew }),
       'y',
-      ySliceInit
+      ySliceInit,
     ],
     [
       zSlice,
-      zSliceNew => useImageSettingsStore.setState({ zSlice: zSliceNew }),
+      (zSliceNew) => useImageSettingsStore.setState({ zSlice: zSliceNew }),
       'z',
-      zSliceInit
-    ]
+      zSliceInit,
+    ],
   ];
   const classes = useStyles();
   const Slicers = sliceValuesAndSetSliceFunctions.map(
@@ -83,7 +79,7 @@ const Slicer = () => {
             value={val}
             onChange={(e, v) => setVal(v)}
             valueLabelDisplay="auto"
-            valueLabelFormat={v => truncateDecimalNumber(v, 5)}
+            valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
             getAriaLabel={() => `${label} slider`}
             min={min}
             max={max}
@@ -92,7 +88,7 @@ const Slicer = () => {
           />
         </Grid>
       </Grid>
-    )
+    ),
   );
   return (
     <>
