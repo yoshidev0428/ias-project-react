@@ -3698,6 +3698,13 @@
   dependencies:
     "@vivjs/constants" "0.13.5"
 
+"@vivjs/extensions@0.13.6", "@vivjs/extensions@^0.13.6":
+  version "0.13.6"
+  resolved "https://registry.npmjs.org/@vivjs/extensions/-/extensions-0.13.6.tgz"
+  integrity sha512-yaz6OB3pdvMt5cJA1COnx9Vcw0zQIvfA8+/X1xxGBG87NDeQR0FY/vSMBe/nCTxcoYNFvxF8uWrXc2wWZWHWiw==
+  dependencies:
+    "@vivjs/constants" "0.13.6"
+
 "@vivjs/layers@0.13.5":
   version "0.13.5"
   resolved "https://registry.npmjs.org/@vivjs/layers/-/layers-0.13.5.tgz"
@@ -3748,6 +3755,16 @@
     "@math.gl/core" "^3.5.7"
     "@vivjs/layers" "0.13.5"
     "@vivjs/loaders" "0.13.5"
+    math.gl "^3.5.7"
+
+"@vivjs/views@^0.13.6":
+  version "0.13.6"
+  resolved "https://registry.npmjs.org/@vivjs/views/-/views-0.13.6.tgz"
+  integrity sha512-E/ix+BB5W2zKdLcIBQkPDAePS+++kOfDlq9BNdMXyUc2yVRxgYK5Bs3TXjPWLDqPkRcG6xlBI18Ajb38iRhOAQ==
+  dependencies:
+    "@math.gl/core" "^3.5.7"
+    "@vivjs/layers" "0.13.6"
+    "@vivjs/loaders" "0.13.6"
     math.gl "^3.5.7"
 
 "@webassemblyjs/ast@1.11.1":
@@ -6717,6 +6734,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@^2.3.2, fsevents@~2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 fsevents@^2.3.2, fsevents@~2.3.2:
   version "2.3.2"

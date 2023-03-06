@@ -13,6 +13,7 @@ import Dishes from './Dishes';
 import Wafers from './Wafers';
 import { VESSELS } from '@/constants/vessel-types';
 import { useElementSize } from 'usehooks-ts';
+import vessel from '@/reducers/modules/vessel';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -168,6 +169,7 @@ export const SelectDialog = (props) => {
     VESSELS[tab].forEach((vessel) => {
       vessels.push(renderVesselItem(vessel));
     });
+    console.log('length====>', vessels);
     return (
       <div ref={ref} className="d-flex flex-row justify-content-around m-1">
         {vessels}
