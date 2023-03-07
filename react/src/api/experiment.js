@@ -55,7 +55,6 @@ export const setExperiment = async (
   const formData = new FormData();
   // formData.append("images", addedFiles);
   formData.append('experiment_name', experimentName);
-  console.log(addedFiles);
   for (let i in addedFiles) {
     let f = addedFiles[i];
     formData.append('files', f);
@@ -77,7 +76,6 @@ export const setExperiment_file = async (experimentName, addedFiles) => {
   const formData = new FormData();
   // formData.append("images", addedFiles);
   formData.append('experiment_name', experimentName);
-  console.log(addedFiles);
   for (let i in addedFiles) {
     let f = addedFiles[i];
     formData.append('files', f);

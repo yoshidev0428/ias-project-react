@@ -1,44 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Button } from '@mui/material';
 import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
 import shallow from 'zustand/shallow';
 import Icon from '@mdi/react';
 import SmallCard from '@/components/custom/SmallCard';
 import { useChannelsStore } from '@/viv/state';
-import { useSelector } from 'react-redux';
-import CHANNELS from '@/utils/constants/channels';
+import Colors from '@/utils/constants/colors';
 
 const Channel = () => {
-  const [colorType, setColorType] = useState(true);
-  const { channelsVisible, colors, toggleIsOn } = useChannelsStore(
-    (state) => state,
-    shallow,
+  const [colorType, setColorType] = useState('color');
+  const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
+    useChannelsStore((state) => state, shallow);
+  const channels = useMemo(
+    () =>
+      colors.map((color, idx) => ({
+        ...Object.values(Colors).find(
+          (c) => c.rgbValue.toString() === color.toString(),
+        ),
+        id: idx,
+        color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
+      })),
+    [colors],
   );
-  const selectedChannel = useSelector((state) => state.vessel.channels);
 
   const handleToggleChannel = (channelId) => {
-    toggleIsOn(channelId);
+    setChannleVisible(channelId);
   };
 
-  const handleMonoColor = () => {
-    for (let channelIdx = 0; channelIdx < CHANNELS.length; channelIdx++) {
-      for (let colorIdx = 0; colorIdx < colors.length; colorIdx++) {
-        if (colors[colorIdx].toString() === CHANNELS[channelIdx].toString()) {
-          if (channelIdx === 0) {
-            if (channelsVisible[colorIdx] === colorType) {
-              toggleIsOn(colorIdx);
-            }
-          } else {
-            if (channelsVisible[colorIdx] !== colorType) {
-              toggleIsOn(colorIdx);
-            }
-          }
-          break;
-        }
-      }
+  const handleColorType = () => {
+    if (colorType === 'color') {
+      setChannelsVisible(colors.map((_, idx) => (idx === 0 ? true : false)));
+    } else {
+      setChannelsVisible(colors.map(() => true));
     }
-    setColorType(!colorType);
+    setColorType(colorType === 'color' ? 'mono' : 'color');
   };
+
+  useEffect(() => {
+    const isMonoColor = channelsVisible.reduce((acc, visible, idx) => {
+      if (idx === 0) {
+        return visible;
+      } else {
+        return acc && !visible;
+      }
+    }, true);
+    if (isMonoColor) {
+      setColorType('mono');
+    } else {
+      setColorType('color');
+    }
+  }, [channelsVisible]);
 
   return (
     <>
@@ -49,12 +60,12 @@ const Channel = () => {
             <div className="spacer"></div>
             <Button
               className="py-0"
-              onClick={handleMonoColor}
+              onClick={handleColorType}
               variant="contained"
               color="primary"
               size="small"
             >
-              Color/Mono
+              {colorType}
             </Button>
           </div>
         </div>
@@ -76,22 +87,22 @@ const Channel = () => {
                 <Icon path={mdiPalette} size={0.7} />
               </div>
             </div>
-            {CHANNELS.map((channel, i) => (
+            {channels.map(({ id, color, symbol }) => (
               <div
-                key={i}
+                key={id}
                 className="d-flex flex-column channel-box text-center"
               >
                 <Checkbox
-                  onChange={() => handleToggleChannel(i)}
-                  checked={channel.id === selectedChannel[0]}
+                  onChange={() => handleToggleChannel(id)}
+                  checked={channelsVisible[id]}
                   size="small"
                   sx={{
-                    color: channel.color,
+                    color,
                     padding: 0,
-                    '&.Mui-checked': { color: channel.color },
+                    '&.Mui-checked': { color },
                   }}
                 />
-                <span style={{ color: channel.color }}>{channel.label}</span>
+                <span style={{ color }}>{symbol}</span>
               </div>
             ))}
             <div>
