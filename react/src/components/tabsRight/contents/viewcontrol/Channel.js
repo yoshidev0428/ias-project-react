@@ -23,11 +23,7 @@ const Channel = () => {
   const handleMonoColor = () => {
     for (let channelIdx = 0; channelIdx < CHANNELS.length; channelIdx++) {
       for (let colorIdx = 0; colorIdx < colors.length; colorIdx++) {
-        if (
-          colors[colorIdx][0] === CHANNELS[channelIdx].rgbColor[0] &&
-          colors[colorIdx][1] === CHANNELS[channelIdx].rgbColor[1] &&
-          colors[colorIdx][2] === CHANNELS[channelIdx].rgbColor[2]
-        ) {
+        if (colors[colorIdx].toString() === CHANNELS[channelIdx].toString()) {
           if (channelIdx === 0) {
             if (channelsVisible[colorIdx] === colorType) {
               toggleIsOn(colorIdx);
