@@ -2,21 +2,11 @@ import React, { useState } from 'react';
 import { Checkbox, Button } from '@mui/material';
 import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
 import shallow from 'zustand/shallow';
-import { connect } from 'react-redux';
 import Icon from '@mdi/react';
-import { useChannelsStore, useImageSettingsStore } from '@/viv/state';
 import SmallCard from '@/components/custom/SmallCard';
-import { COLORMAP_SLIDER_CHECKBOX_COLOR } from '@/components/constant/constants';
+import { useChannelsStore } from '@/viv/state';
 import { useSelector } from 'react-redux';
 import CHANNELS from '@/utils/constants/channels';
-
-const toRgb = (on, arr) => {
-  const color = on ? COLORMAP_SLIDER_CHECKBOX_COLOR : arr;
-  return `rgb(${color})`;
-};
-const mapStateToProps = (state) => ({
-  viewConfigsObj: state.vessel.viewConfigsObj,
-});
 
 const Channel = () => {
   const [colorType, setColorType] = useState(true);
@@ -25,7 +15,6 @@ const Channel = () => {
     shallow,
   );
   const selectedChannel = useSelector((state) => state.vessel.channels);
-  const colormap = useImageSettingsStore((store) => store.colormap);
 
   const handleToggleChannel = (channelId) => {
     toggleIsOn(channelId);
@@ -53,45 +42,6 @@ const Channel = () => {
       }
     }
     setColorType(!colorType);
-  };
-
-  const renderItems = (channels) => {
-    let isLoading = false;
-    let rgbColor = toRgb(colormap, [0, 0, 0]);
-    if (colors !== null && colors !== undefined) {
-      for (let i = 0; i < colors.length; i++) {
-        for (let j = 0; j < channels.length; j++) {
-          if (
-            colors[i][0] === channels[j].rgbColor[0] &&
-            colors[i][1] === channels[j].rgbColor[1] &&
-            colors[i][2] === channels[j].rgbColor[2]
-          ) {
-            channels[j].current_id = i;
-            channels[j].disabled = false;
-            channels[j].channelsVisible = channelsVisible[i];
-            break;
-          }
-        }
-        rgbColor = toRgb(colormap, colors[i]);
-      }
-    }
-    return channels.map((channel, i) => (
-      <div key={i} className="d-flex flex-column channel-box text-center">
-        <Checkbox
-          onChange={() => handleToggleChannel(i)}
-          checked={channel.id === selectedChannel[0]}
-          size="small"
-          sx={{
-            color: isLoading ? rgbColor : channel.color,
-            padding: 0,
-            '&.Mui-checked': { color: isLoading ? rgbColor : channel.color },
-          }}
-        />
-        <span style={{ color: isLoading ? rgbColor : channel.color }}>
-          {channel.label}
-        </span>
-      </div>
-    ));
   };
 
   return (
@@ -130,7 +80,24 @@ const Channel = () => {
                 <Icon path={mdiPalette} size={0.7} />
               </div>
             </div>
-            {renderItems(CHANNELS)}
+            {CHANNELS.map((channel, i) => (
+              <div
+                key={i}
+                className="d-flex flex-column channel-box text-center"
+              >
+                <Checkbox
+                  onChange={() => handleToggleChannel(i)}
+                  checked={channel.id === selectedChannel[0]}
+                  size="small"
+                  sx={{
+                    color: channel.color,
+                    padding: 0,
+                    '&.Mui-checked': { color: channel.color },
+                  }}
+                />
+                <span style={{ color: channel.color }}>{channel.label}</span>
+              </div>
+            ))}
             <div>
               <div
                 className="d-block border mx-auto pr-3 pb-3"
@@ -154,4 +121,4 @@ const Channel = () => {
   );
 };
 
-export default connect(mapStateToProps)(Channel);
+export default Channel;

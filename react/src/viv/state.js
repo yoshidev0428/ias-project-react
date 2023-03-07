@@ -56,11 +56,12 @@ export const useChannelsStore = create((set) => ({
   ...DEFAUlT_CHANNEL_STATE,
   ...generateToggles(DEFAUlT_CHANNEL_VALUES, set),
   toggleIsOn: (index) =>
-    set((state) => {
-      const channelsVisible = [...state.channelsVisible];
-      channelsVisible[index] = !channelsVisible[index];
-      return { ...state, channelsVisible };
-    }),
+    set((state) => ({
+      ...state,
+      channelsVisible: state.channelsVisible.map((v, idx) =>
+        idx === index ? !v : v,
+      ),
+    })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((state) => {
       const entries = Object.entries(newProperties);
