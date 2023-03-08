@@ -142,6 +142,15 @@ const MainFrame = () => {
 
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
+    const user = useSelector((state) => state.auth.user);
+    let initialName = '';
+    if (user.fullName.length > 0) {
+      const nameArray = user.fullName.split(' ');
+      nameArray.forEach((name) => {
+        if (name.length <= 0) return;
+        initialName += name.charAt(0).toUpperCase();
+      });
+    }
 
     return (
       <Box sx={{ flexGrow: 1, height: '65px' }}>
@@ -192,7 +201,7 @@ const MainFrame = () => {
                 <IconButton size="large" onClick={handleUserPage}>
                   <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
                     {' '}
-                    JM{' '}
+                    {initialName}{' '}
                   </Avatar>
                 </IconButton>
                 <IconButton size="large" onClick={handleLogout} color="inherit">
