@@ -858,28 +858,34 @@ async def get_image_raw_data(
             "contrastLimits": [int(contrastLimits[0]), int(contrastLimits[1])],
         }
     )
-   
+
 
 # Get focus stacked images
 @router.post(
     "/focus-stack",
     response_description="Get focus stacked images",
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
     response_model=List[TileModelDB],
 )
-async def get_focus_stacked(imageFiles: List[UploadFile] = File(...)) -> List[TileModelDB]:
-    tmp_path = os.path.join(STATIC_PATH, "tmp", str(uuid.uuid4()))
-    input_path = os.path.join(tmp_path, "input")
-    output_path = os.path.join(tmp_path, "output")
-
+async def get_focus_stacked(
+    imageFiles: List[UploadFile] = File(...),
+) -> List[TileModelDB]:
+    tmp_uuid = str(uuid.uuid4())
+    tmp_path = os.path.join(STATIC_PATH, "tmp", tmp_uuid)
     os.makedirs(tmp_path)
-    
+
+    input_path = os.path.join(tmp_path, "input")
+    os.makedirs(input_path)
+
+    output_path = os.path.join(tmp_path, "output")
+    os.makedirs(output_path)
+
     for imageFile in imageFiles:
         imagePath = os.path.join(input_path, imageFile.filename)
-        async with aiofiles.open(imagePath, 'wb') as f:
+        async with aiofiles.open(imagePath, "wb") as f:
             imageData = await imageFile.read()
             await f.write(imageData)
-    
+
     image_files = sorted(os.listdir(input_path))
     for img in image_files:
         if img.split(".")[-1].lower() not in ["jpg", "jpeg", "png"]:
@@ -888,10 +894,12 @@ async def get_focus_stacked(imageFiles: List[UploadFile] = File(...)) -> List[Ti
     focusimages = []
     for img in image_files:
         print("Reading in file {}".format(img))
-        focusimages.append(cv2.imread("input/{}".format(img)))
+        focusimages.append(
+            cv2.imread("{input}/{file}".format(input=input_path, file=img))
+        )
 
     output_file_path = os.path.join(output_path, "merged.png")
     merged = focus_stack(focusimages)
     cv2.imwrite(output_file_path, merged)
 
-    return JSONResponse({"result": output_file_path})
+    return JSONResponse({"result": "static/tmp/{}/output/merged.png".format(tmp_uuid)})

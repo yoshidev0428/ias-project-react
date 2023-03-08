@@ -8,3 +8,14 @@ export const getImageByPath = async (folder, imagePath) => {
   file.path = imagePath;
   return file;
 };
+
+export const getFoucsStackedImage = async (images, onUploadProgress) => {
+  const formData = new FormData();
+  images.forEach((file) => formData.append('imageFiles', file));
+  return mainApiService.post('image/tile/focus-stack', formData, {
+    onUploadProgress,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
