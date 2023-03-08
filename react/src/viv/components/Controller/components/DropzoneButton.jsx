@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import { useDropzone } from '../../../hooks/use-dropzone';
+import { useDropzone } from '@/viv/hooks/use-dropzone';
 
 export default function DropzoneButton() {
   const { getRootProps, getInputProps } = useDropzone();

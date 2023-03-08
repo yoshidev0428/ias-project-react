@@ -15,9 +15,9 @@ import {
   useImageSettingsStore,
   useViewerStore,
   useChannelsStore,
-  useLoader
-} from '../../../state';
-import { range, getMultiSelectionStats, getBoundingCube } from '../../../utils';
+  useLoader,
+} from '@/viv/state';
+import { range, getMultiSelectionStats, getBoundingCube } from '@/viv/utils';
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
@@ -47,7 +47,7 @@ const getStatsForResolution = (loader, resolution) => {
 const canLoadResolution = (loader, resolution) => {
   const { totalBytes, height, width, depthDownsampled } = getStatsForResolution(
     loader,
-    resolution
+    resolution,
   );
   const maxHeapSize =
     window.performance?.memory &&
@@ -65,51 +65,51 @@ const canLoadResolution = (loader, resolution) => {
 
 const useStyles = makeStyles(() => ({
   paper: {
-    backgroundColor: 'rgba(0, 0, 0, 1)'
+    backgroundColor: 'rgba(0, 0, 0, 1)',
   },
   span: {
     width: '70px',
     textAlign: 'center',
     paddingLeft: '2px',
-    paddingRight: '2px'
+    paddingRight: '2px',
   },
   colors: {
     '&:hover': {
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     paddingLeft: '2px',
-    paddingRight: '2px'
-  }
+    paddingRight: '2px',
+  },
 }));
 
 function VolumeButton() {
   const [selections, setPropertiesForChannel] = useChannelsStore(
-    store => [store.selections, store.setPropertiesForChannel],
-    shallow
+    (store) => [store.selections, store.setPropertiesForChannel],
+    shallow,
   );
   const loader = useLoader();
   const [
     use3d,
     toggleUse3d,
     toggleIsVolumeRenderingWarningOn,
-    isViewerLoading
+    isViewerLoading,
   ] = useViewerStore(
-    store => [
+    (store) => [
       store.use3d,
       store.toggleUse3d,
       store.toggleIsVolumeRenderingWarningOn,
-      store.isViewerLoading
+      store.isViewerLoading,
     ],
-    shallow
+    shallow,
   );
 
-  const [open, toggle] = useReducer(v => !v, false);
+  const [open, toggle] = useReducer((v) => !v, false);
   const anchorRef = useRef(null);
   const classes = useStyles();
   const { shape, labels } = Array.isArray(loader) ? loader[0] : loader;
   // Only show volume button if we can actually view resolutions.
   const hasViewableResolutions = Array.from({
-    length: loader.length
+    length: loader.length,
   }).filter((_, resolution) => canLoadResolution(loader, resolution)).length;
   return (
     <>
@@ -128,20 +128,20 @@ function VolumeButton() {
           if (use3d) {
             toggleUse3d();
             useViewerStore.setState({
-              isChannelLoading: Array(selections.length).fill(true)
+              isChannelLoading: Array(selections.length).fill(true),
             });
             getMultiSelectionStats({ loader, selections, use3d: !use3d }).then(
               ({ domains, contrastLimits }) => {
                 range(selections.length).forEach((channel, j) =>
                   setPropertiesForChannel(channel, {
                     domains: domains[j],
-                    contrastLimits: contrastLimits[j]
-                  })
+                    contrastLimits: contrastLimits[j],
+                  }),
                 );
                 useViewerStore.setState({
-                  isChannelLoading: Array(selections.length).fill(false)
+                  isChannelLoading: Array(selections.length).fill(false),
                 });
-              }
+              },
             );
           }
         }}
@@ -159,12 +159,8 @@ function VolumeButton() {
                 .map((_, resolution) => {
                   if (loader) {
                     if (canLoadResolution(loader, resolution)) {
-                      const {
-                        height,
-                        width,
-                        depthDownsampled,
-                        totalBytes
-                      } = getStatsForResolution(loader, resolution);
+                      const { height, width, depthDownsampled, totalBytes } =
+                        getStatsForResolution(loader, resolution);
                       return (
                         <MenuItem
                           dense
@@ -172,41 +168,40 @@ function VolumeButton() {
                           onClick={() => {
                             useViewerStore.setState({
                               isChannelLoading: Array(selections.length).fill(
-                                true
-                              )
+                                true,
+                              ),
                             });
-                            const [xSlice, ySlice, zSlice] = getBoundingCube(
-                              loader
-                            );
+                            const [xSlice, ySlice, zSlice] =
+                              getBoundingCube(loader);
                             useImageSettingsStore.setState({
                               resolution,
                               xSlice,
                               ySlice,
-                              zSlice
+                              zSlice,
                             });
                             toggle();
                             getMultiSelectionStats({
                               loader,
                               selections,
-                              use3d: true
+                              use3d: true,
                             }).then(({ domains, contrastLimits }) => {
                               range(selections.length).forEach((channel, j) =>
                                 setPropertiesForChannel(channel, {
                                   domains: domains[j],
-                                  contrastLimits: contrastLimits[j]
-                                })
+                                  contrastLimits: contrastLimits[j],
+                                }),
                               );
                               useImageSettingsStore.setState({
                                 onViewportLoad: () => {
                                   useImageSettingsStore.setState({
-                                    onViewportLoad: () => {}
+                                    onViewportLoad: () => {},
                                   });
                                   useViewerStore.setState({
                                     isChannelLoading: Array(
-                                      selections.length
-                                    ).fill(false)
+                                      selections.length,
+                                    ).fill(false),
                                   });
-                                }
+                                },
                               });
                               toggleUse3d();
                               const isWebGL2Supported = !!document
@@ -220,7 +215,7 @@ function VolumeButton() {
                           key={`(${height}, ${width}, ${depthDownsampled})`}
                         >
                           {`${resolution}x Downsampled, ~${formatBytes(
-                            totalBytes
+                            totalBytes,
                           )} per channel, (${height}, ${width}, ${depthDownsampled})`}
                         </MenuItem>
                       );

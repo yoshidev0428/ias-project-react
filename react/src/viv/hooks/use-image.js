@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { unstable_batchedUpdates } from 'react-dom';
 import shallow from 'zustand/shallow';
 import store from '@/reducers';
 import {
@@ -20,53 +19,28 @@ import {
 import { COLOR_PALLETE, FILL_PIXEL_VALUE } from '@/viv/constants';
 
 export const useImage = (source) => {
-  const [
-    use3d,
-    toggleUse3d,
-    toggleIsOffsetsSnackbarOn,
-    tiffNames,
-    experimentName,
-  ] = useViewerStore(
-    (store) => [
-      store.use3d,
-      store.toggleUse3d,
-      store.toggleIsOffsetsSnackbarOn,
-      store.tiffNames,
-      store.experimentName,
-    ],
-    shallow,
-  );
-  const [lensEnabled, toggleLensEnabled] = useImageSettingsStore(
-    (store) => [store.lensEnabled, store.toggleLensEnabled],
+  const { use3d, tiffNames, experimentName } = useViewerStore(
+    (state) => state,
     shallow,
   );
   const loader = useLoader();
   const metadata = useMetadata();
 
   useEffect(() => {
-    async function changeLoader() {
+    if (!source) {
+      return;
+    }
+    (async () => {
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
       store.dispatch({ type: 'image_loading_state_change', content: true });
-      if (use3d) toggleUse3d();
-      // TODO support_tiling
-      // const { urlOrFile, contents, tiff_names, experiment_name} = source;
+
       const urlOrFile = Array.isArray(source) ? source[0] : source;
-      const contents = null;
-      const tiff_names = null;
-      // TODO support_tiling
-      // const experiment_name = null;
-      // useViewerStore.setState({ experimentName: experiment_name });
-      const newLoader = await createLoader(
-        urlOrFile,
-        contents,
-        tiff_names,
-        toggleIsOffsetsSnackbarOn,
-        (message) =>
-          useViewerStore.setState({
-            loaderErrorSnackbar: { on: true, message },
-          }),
-      );
+      const newLoader = await createLoader(urlOrFile, (message) => {
+        useViewerStore.setState({
+          loaderErrorSnackbar: { on: true, message },
+        });
+      });
       let nextMeta;
       let nextLoader;
       if (Array.isArray(newLoader)) {
@@ -81,15 +55,12 @@ export const useImage = (source) => {
         nextMeta = newLoader.metadata;
         nextLoader = newLoader.data;
       }
+
       if (nextLoader) {
-        unstable_batchedUpdates(() => {
-          useChannelsStore.setState({ loader: nextLoader });
-          useViewerStore.setState({ metadata: nextMeta });
-        });
-        if (use3d) toggleUse3d();
+        useChannelsStore.setState({ loader: nextLoader });
+        useViewerStore.setState({ metadata: nextMeta });
       }
-    }
-    if (source) changeLoader();
+    })();
   }, [source]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -98,7 +69,7 @@ export const useImage = (source) => {
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
       store.dispatch({ type: 'image_loading_state_change', content: true });
-      if (use3d) toggleUse3d();
+
       let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
       const channelOptions = Channels.map((c, i) => c.Name ?? `Channel ${i}`);
@@ -129,9 +100,6 @@ export const useImage = (source) => {
             [0, 255, 0],
             [0, 0, 255],
           ];
-        }
-        if (lensEnabled) {
-          toggleLensEnabled();
         }
         useViewerStore.setState({ useColormap: false, useLens: false });
       } else {

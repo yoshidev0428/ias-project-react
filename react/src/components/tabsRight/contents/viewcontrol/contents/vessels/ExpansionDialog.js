@@ -1,24 +1,18 @@
-import Dialog from "@mui/material/Dialog";
+import Dialog from '@mui/material/Dialog';
 
-import Box from "@mui/material/Box";
-import DialogTitle from "@mui/material/DialogTitle";
-import PropTypes from "prop-types";
+import Box from '@mui/material/Box';
+import DialogTitle from '@mui/material/DialogTitle';
+import PropTypes from 'prop-types';
 
-import React, { useEffect, useState } from "react";
-import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
-import Slides from "./Slides";
-import WellPlates from "./WellPlates";
-import Dishes from "./Dishes";
-import Wafers from "./Wafers";
-import { getVesselById } from "../../../../../constant/vessel-types";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import HoleArea from "./HoleArea";
-import NumericInput from "react-numeric-input";
-// import { useElementSize } from 'usehooks-ts';
+import React, { useEffect, useState } from 'react';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Slides from './Slides';
+import WellPlates from './WellPlates';
+import Dishes from './Dishes';
+import Wafers from './Wafers';
+import { getVesselById } from '@/components/constant/vessel-types';
+import NumericInput from 'react-numeric-input';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -44,13 +38,8 @@ TabPanel.propTypes = {
 
 export const ExpansionDialog = (props) => {
   const maxDialogWidth = 600;
-  // const [tab, setTab] = useState(0);
   const [open, setOpen] = useState(true);
   const [currentVessel, setCurrentVessel] = useState(props.currentVessel);
-  // const [ref, { width, height }] = useElementSize();
-  // const handleTabChange = (event, newValue) => {
-  //     setTab(newValue);
-  // };
 
   const handleClose = () => {
     props.closeDialog();
@@ -65,12 +54,6 @@ export const ExpansionDialog = (props) => {
 
   const [areaPercentage, setAreaPercentage] = useState(30);
 
-  const handleChange = (event) => {
-    setAreaPercentage(event.target.value);
-  };
-
-  const options = Array.from(Array(101).keys());
-
   useEffect(() => {
     setOpen(props.open);
     setCurrentVessel(props.currentVessel);
@@ -79,7 +62,7 @@ export const ExpansionDialog = (props) => {
   const renderVesselItem = (vessel) => {
     if (vessel) {
       switch (vessel.type) {
-        case "Slide":
+        case 'Slide':
           return (
             <div
               role="button"
@@ -97,7 +80,7 @@ export const ExpansionDialog = (props) => {
               />
             </div>
           );
-        case "Dish":
+        case 'Dish':
           return (
             <div
               role="button"
@@ -115,7 +98,7 @@ export const ExpansionDialog = (props) => {
               />
             </div>
           );
-        case "WellPlate":
+        case 'WellPlate':
           return (
             <div
               role="button"
@@ -136,7 +119,7 @@ export const ExpansionDialog = (props) => {
               />
             </div>
           );
-        case "Wafer":
+        case 'Wafer':
           return (
             <div
               role="button"
@@ -182,14 +165,14 @@ export const ExpansionDialog = (props) => {
         <div
           className="d-flex"
           style={{
-            width: "50%",
-            margin: "0 auto",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingBottom: "36px",
+            width: '50%',
+            margin: '0 auto',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingBottom: '36px',
           }}
         >
-          <span style={{ width: "30%" }}>Area</span>
+          <span style={{ width: '30%' }}>Area</span>
           {/* <FormControl sx={{ width: "30%" }}>
             <InputLabel labelid="Percentage-label">30</InputLabel>
             <Select
@@ -212,16 +195,16 @@ export const ExpansionDialog = (props) => {
             max={100}
             value={areaPercentage}
             style={{
-                wrap: {
-                    width: "30%"
-                },
-                input: {
-                    width: "100%"
-                }
+              wrap: {
+                width: '30%',
+              },
+              input: {
+                width: '100%',
+              },
             }}
             onChange={(value) => setAreaPercentage(value)}
           ></NumericInput>
-          <span style={{ width: "30%" }}>%</span>
+          <span style={{ width: '30%' }}>%</span>
         </div>
         {/* <HoleArea /> */}
       </div>

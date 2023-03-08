@@ -45,7 +45,6 @@ const DEFAUlT_CHANNEL_STATE = {
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
-  channelsVisible: true,
   contrastLimits: [0, 65535],
   colors: [255, 255, 255],
   domains: [0, 65535],
@@ -56,12 +55,18 @@ const DEFAUlT_CHANNEL_VALUES = {
 export const useChannelsStore = create((set) => ({
   ...DEFAUlT_CHANNEL_STATE,
   ...generateToggles(DEFAUlT_CHANNEL_VALUES, set),
-  toggleIsOn: (index) =>
-    set((state) => {
-      const channelsVisible = [...state.channelsVisible];
-      channelsVisible[index] = !channelsVisible[index];
-      return { ...state, channelsVisible };
-    }),
+  setChannleVisible: (index) =>
+    set((state) => ({
+      ...state,
+      channelsVisible: state.channelsVisible.map((v, idx) =>
+        idx === index ? !v : v,
+      ),
+    })),
+  setChannelsVisible: (visibilities) =>
+    set((state) => ({
+      ...state,
+      channelsVisible: visibilities,
+    })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((state) => {
       const entries = Object.entries(newProperties);

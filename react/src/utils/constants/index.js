@@ -33,4 +33,4 @@ export const TILING_SCALE_OPTIONS = [0.5, 2, 5, 10, 20, 50, 100];
 export const COLORS = {
   BLACK: '#212529',
   LIGHT_CYAN: '#0f9688',
-}
+};

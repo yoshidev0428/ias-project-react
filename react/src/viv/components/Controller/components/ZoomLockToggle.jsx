@@ -2,14 +2,14 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import shallow from 'zustand/shallow';
 
-import { useImageSettingsStore, useViewerStore } from '../../../state';
+import { useImageSettingsStore, useViewerStore } from '@/viv/state';
 
 const ZoomLockToggle = () => {
   const [toggleZoomLock, zoomLock] = useImageSettingsStore(
-    store => [store.toggleZoomLock, store.zoomLock],
-    shallow
+    (store) => [store.toggleZoomLock, store.zoomLock],
+    shallow,
   );
-  const isViewerLoading = useViewerStore(store => store.isViewerLoading);
+  const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
   return (
     <Button
       disabled={isViewerLoading}

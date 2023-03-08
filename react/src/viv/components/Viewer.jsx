@@ -22,13 +22,8 @@ import { PostProcessEffect } from '@deck.gl/core';
 import generateShaderModule from '@/viv/helpers/generate-module';
 
 const Viewer = (props) => {
-  const [useLinkedView, use3d, viewState] = useViewerStore(
-    (store) => [
-      store.useLinkedView,
-      store.use3d,
-      store.viewState,
-      store.source,
-    ],
+  const { useLinkedView, use3d, viewState } = useViewerStore(
+    (state) => state,
     shallow,
   );
   const {
@@ -41,7 +36,7 @@ const Viewer = (props) => {
     gamma,
     deblur,
   } = useChannelsStore((state) => state, shallow);
-  const [
+  const {
     lensSelection,
     colormap,
     renderingMode,
@@ -55,26 +50,11 @@ const Viewer = (props) => {
     isOverviewOn,
     onViewportLoad,
     useFixedAxis,
-  ] = useImageSettingsStore(
-    (store) => [
-      store.lensSelection,
-      store.colormap,
-      store.renderingMode,
-      store.xSlice,
-      store.ySlice,
-      store.zSlice,
-      store.resolution,
-      store.lensEnabled,
-      store.zoomLock,
-      store.panLock,
-      store.isOverviewOn,
-      store.onViewportLoad,
-      store.useFixedAxis,
-    ],
-    shallow,
-  );
+  } = useImageSettingsStore((store) => store, shallow);
 
-  console.log('deblur', deblur);
+  const loader = useLoader();
+  const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
+
   const shaderModule = useMemo(
     () => generateShaderModule(Math.floor(deblur.size / 2)),
     [deblur],
@@ -89,14 +69,12 @@ const Viewer = (props) => {
       }),
     [brightness, contrast, gamma, deblur, shaderModule],
   );
+  const viewSize = useWindowSize(props.isFullScreen, 1, 1);
 
   const onViewStateChange = ({ viewState: { zoom } }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z });
   };
-  const loader = useLoader();
-  const viewSize = useWindowSize(props.isFullScreen, 1, 1);
-  const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
 
   useEffect(() => {
     if (props.mouseFlag !== null && props.mouseFlag !== undefined) {
