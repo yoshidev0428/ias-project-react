@@ -203,6 +203,7 @@ const MainFrame = () => {
                     {' '}
                     {initialName}{' '}
                   </Avatar>
+                  {user.fullName}
                 </IconButton>
                 <IconButton size="large" onClick={handleLogout} color="inherit">
                   <Logout />
