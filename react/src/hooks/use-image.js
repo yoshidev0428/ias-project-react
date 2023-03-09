@@ -19,7 +19,7 @@ import {
 import { COLOR_PALLETE, FILL_PIXEL_VALUE } from '@/constants';
 
 export const useImage = (source) => {
-  const { use3d, tiffNames, experimentName } = useViewerStore(
+  const { use3d, toggleUse3d, tiffNames, experimentName } = useViewerStore(
     (state) => state,
     shallow,
   );
@@ -34,9 +34,8 @@ export const useImage = (source) => {
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
       store.dispatch({ type: 'image_loading_state_change', content: true });
-
-      const urlOrFile = Array.isArray(source) ? source[0] : source;
-      const newLoader = await createLoader(urlOrFile, (message) => {
+      if (use3d) toggleUse3d();
+      const newLoader = await createLoader(source, (message) => {
         useViewerStore.setState({
           loaderErrorSnackbar: { on: true, message },
         });
@@ -59,6 +58,13 @@ export const useImage = (source) => {
       if (nextLoader) {
         useChannelsStore.setState({ loader: nextLoader });
         useViewerStore.setState({ metadata: nextMeta });
+      }
+      if (nextLoader) {
+        useChannelsStore.setState({ loader: nextLoader });
+        useViewerStore.setState({
+          metadata: nextMeta,
+        });
+        if (use3d) toggleUse3d();
       }
     })();
   }, [source]); // eslint-disable-line react-hooks/exhaustive-deps

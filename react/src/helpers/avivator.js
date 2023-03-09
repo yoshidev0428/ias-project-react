@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { Matrix4 } from '@math.gl/core';
-import { getWindowDimensions } from '@/helpers/browser';
-import { loadOmeTiff, getChannelStats } from '@hms-dbmi/viv';
+import { loadOmeTiff, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
+import { fromBlob, fromUrl } from 'geotiff';
 
-import { GLOBAL_SLIDER_DIMENSION_FIELDS } from '../constants';
+import { getWindowDimensions } from '@/helpers/browser';
+import { GLOBAL_SLIDER_DIMENSION_FIELDS } from '@/constants';
 import { api } from '@/api/base';
+import { MAX_CHANNELS_WARNING } from '@/constants/avivator';
 
 class UnsupportedBrowserError extends Error {
   constructor(message) {
@@ -14,22 +16,181 @@ class UnsupportedBrowserError extends Error {
 }
 
 /**
+ *
+ * @param {string | File} src
+ * @param {OMEXML} rootMeta
+ * @param {number} levels
+ * @param {TiffPixelSource[]} data
+ */
+async function getTotalImageCount(src, rootMeta, data) {
+  const from = typeof src === 'string' ? fromUrl : fromBlob;
+  const tiff = await from(src);
+  const firstImage = await tiff.getImage(0);
+  const hasSubIFDs = Boolean(firstImage?.fileDirectory?.SubIFDs);
+  if (hasSubIFDs) {
+    return rootMeta.reduce((sum, imgMeta) => {
+      const {
+        Pixels: { SizeC, SizeT, SizeZ },
+      } = imgMeta;
+      const numImagesPerResolution = SizeC * SizeT * SizeZ;
+      return numImagesPerResolution + sum;
+    }, 1);
+  }
+  const levels = data[0].length;
+  const {
+    Pixels: { SizeC, SizeT, SizeZ },
+  } = rootMeta[0];
+  const numImagesPerResolution = SizeC * SizeT * SizeZ;
+  return numImagesPerResolution * levels;
+}
+
+/**
+ * Guesses whether string URL or File is for an OME-TIFF image.
+ * @param {string | File} urlOrFile
+ */
+function isOMETIFF(urlOrFile) {
+  if (Array.isArray(urlOrFile)) return false; // local Zarr is array of File Objects
+  const name = typeof urlOrFile === 'string' ? urlOrFile : urlOrFile.name;
+  return name.includes('ome.tiff') || name.includes('ome.tif');
+}
+
+/**
+ * Gets an array of filenames for a multi tiff input.
+ * @param {string | File | File[]} urlOrFiles
+ */
+function getMultiTiffFilenames(urlOrFiles) {
+  if (Array.isArray(urlOrFiles)) {
+    return urlOrFiles.map((f) => f.name);
+  } else if (urlOrFiles instanceof File) {
+    return [urlOrFiles.name];
+  } else {
+    return urlOrFiles.split(',');
+  }
+}
+
+/**
+ * Guesses whether string URL or File is one or multiple standard TIFF images.
+ * @param {string | File | File[]} urlOrFiles
+ */
+function isMultiTiff(urlOrFiles) {
+  const filenames = getMultiTiffFilenames(urlOrFiles);
+  for (const filename of filenames) {
+    const lowerCaseName = filename.toLowerCase();
+    if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif')))
+      return false;
+  }
+  return true;
+}
+
+/**
+ * Turns an input string of one or many urls, file, or file array into a uniform array.
+ * @param {string | File | File[]} urlOrFiles
+ */
+async function generateMultiTiffFileArray(urlOrFiles) {
+  if (Array.isArray(urlOrFiles)) {
+    return urlOrFiles;
+  } else if (urlOrFiles instanceof File) {
+    return [urlOrFiles];
+  } else {
+    return urlOrFiles.split(',');
+  }
+}
+
+/**
+ * Gets the basic image count for a TIFF using geotiff's getImageCount.
+ * @param {string | File} src
+ */
+async function getTiffImageCount(src) {
+  const from = typeof src === 'string' ? fromUrl : fromBlob;
+  const tiff = await from(src);
+  return tiff.getImageCount();
+}
+
+/**
+ * Guesses whether string URL or File is one or multiple standard TIFF images.
+ * @param {string | File | File[]} urlOrFiles
+ */
+async function generateMultiTiffSources(urlOrFiles) {
+  const multiTiffFiles = await generateMultiTiffFileArray(urlOrFiles);
+  const sources = [];
+  let c = 0;
+  for (const tiffFile of multiTiffFiles) {
+    const selections = [];
+    const numImages = await getTiffImageCount(tiffFile);
+    for (let i = 0; i < numImages; i++) {
+      selections.push({ c, z: 0, t: 0 });
+      c += 1;
+    }
+    sources.push([selections, tiffFile]);
+  }
+  return sources;
+}
+
+/**
  * Given an image source, creates a PixelSource[] and returns XML-meta
  *
- * @param {string | File | File[]} urlOrFile
- * @param {} handleOffsetsNotFound
+ * @param {File | File[]} file
  * @param {*} handleLoaderError
  */
-export async function createLoader(urlOrFile, onError) {
+export async function createLoader(
+  urlOrFile,
+  handleOffsetsNotFound,
+  handleLoaderError,
+) {
   // If the loader fails to load, handle the error (show an error snackbar).
   // Otherwise load.
   try {
-    return await loadOmeTiff(urlOrFile, { images: 'all' });
+    // OME-TIFF
+    if (isOMETIFF(urlOrFile)) {
+      if (urlOrFile instanceof File) {
+        // TODO(2021-05-09): temporarily disable `pool` until inline worker module is fixed.
+        const source = await loadOmeTiff(urlOrFile, {
+          images: 'all',
+          pool: false,
+        });
+        return source;
+      }
+
+      const url = urlOrFile;
+      const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
+      const isOffsetsNot200 = res.status !== 200;
+      const offsets = !isOffsetsNot200 ? await res.json() : undefined;
+      // TODO(2021-05-06): temporarily disable `pool` until inline worker module is fixed.
+      const source = await loadOmeTiff(urlOrFile, {
+        offsets,
+        images: 'all',
+        pool: false,
+      });
+
+      // Show a warning if the total number of channels/images exceeds a fixed amount.
+      // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
+      // built in to the format for them, hence the ternary.
+      const totalImageCount = await getTotalImageCount(
+        urlOrFile,
+        source.map((s) => s.metadata),
+        source.map((s) => s.data),
+      );
+      if (isOffsetsNot200 && totalImageCount > MAX_CHANNELS_WARNING) {
+        handleOffsetsNotFound(true);
+      }
+      return source;
+    }
+
+    // Multiple flat tiffs
+    if (isMultiTiff(urlOrFile)) {
+      const mutiTiffSources = await generateMultiTiffSources(urlOrFile);
+      const source = await loadMultiTiff(mutiTiffSources, {
+        images: 'all',
+        pool: false,
+      });
+      return source;
+    }
   } catch (e) {
     if (e instanceof UnsupportedBrowserError) {
-      onError(e.message);
+      handleLoaderError(e.message);
     } else {
-      onError(null);
+      console.error(e); // eslint-disable-line
+      handleLoaderError(null);
     }
     return { data: null };
   }
