@@ -5,9 +5,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
-import { useFlagsStore } from '@/components/state';
-import { useChannelsStore } from '@/viv/state';
-import { DeblurMethods } from '@/viv/constants/enums';
+import { useFlagsStore } from '@/state';
+import { useChannelsStore } from '@/state';
+import { DeblurMethods } from '@/constants/enums';
 
 const Dec2dDialog = () => {
   const dialogFlag = useFlagsStore((store) => store.dialogFlag);

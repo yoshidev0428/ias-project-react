@@ -3,7 +3,7 @@ import SmallCard from '@/components/custom/SmallCard';
 import { mdiPlayCircle, mdiCog } from '@mdi/js';
 import Icon from '@mdi/react';
 import Dec2dDialog from './dialog/Dec2dDialog';
-import { useFlagsStore } from '@/components/state';
+import { useFlagsStore } from '@/state';
 
 export default function Dec2D() {
   const dialogFlag = useFlagsStore((store) => store.dialogFlag);

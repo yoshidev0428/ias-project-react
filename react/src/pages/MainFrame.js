@@ -25,7 +25,7 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import PollIcon from '@mui/icons-material/Poll';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import Avivator from '@/viv/components/Avivator';
+import Avivator from '@/components/avivator/Avivator';
 import SupportChatSlack from '../components/slackChat/SupportChatSlack';
 
 import DLMLTab from '../components/tabsLeft/DLMLTab';
@@ -40,7 +40,7 @@ import SettingsTab from '../components/tabsRight/SettingsTab';
 
 import store from '../reducers';
 import { connect } from 'react-redux';
-import { getWindowDimensions } from '../components/helpers';
+import { getWindowDimensions } from '@/helpers/browser';
 import { mdiChatQuestionOutline } from '@mdi/js';
 import logo75 from '../assets/images/logo75.png';
 

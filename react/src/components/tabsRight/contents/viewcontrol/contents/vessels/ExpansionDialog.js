@@ -11,7 +11,7 @@ import Slides from './Slides';
 import WellPlates from './WellPlates';
 import Dishes from './Dishes';
 import Wafers from './Wafers';
-import { getVesselById } from '@/components/constant/vessel-types';
+import { getVesselById } from '@/constants/vessel-types';
 import NumericInput from 'react-numeric-input';
 
 function TabPanel(props) {

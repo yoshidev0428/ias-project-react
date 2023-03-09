@@ -7,7 +7,7 @@ import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
 import DialogContent from '@mui/material/DialogContent';
 import Dropzone from 'react-dropzone';
-import { useFlagsStore } from '@/components/state';
+import { useFlagsStore } from '@/state';
 import { getFoucsStackedImage } from '@/api/image';
 import { Typography } from '@mui/material';
 

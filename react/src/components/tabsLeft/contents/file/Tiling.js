@@ -23,7 +23,7 @@ import { mdiWeatherSunny, mdiCropFree, mdiClose, mdiPencil } from '@mdi/js';
 import { connect } from 'react-redux';
 import * as api_tiles from '@/api/tiles';
 import { getImageByUrl } from '@/api/fetch';
-import RoutedAvivator from '@/viv/components/Avivator';
+import RoutedAvivator from '@/components/avivator/Avivator';
 import Vessel from '@/components/tabsRight/contents/viewcontrol/Vessel';
 import Objective from '@/components/tabsRight/contents/viewcontrol/Objective';
 import Channel from '@/components/tabsRight/contents/viewcontrol/Channel';

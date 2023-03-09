@@ -4,7 +4,7 @@ import {
   VESSEL_SLIDE_H_RATIO,
   VESSEL_SLIDE_MAX_HEIGHT,
   VESSEL_SLIDE_V_RATIO,
-} from '@/components/constant/constants';
+} from '@/constants';
 
 export default function Slides(props) {
   const areaRatio = props.areaPercentage * 0.01;
