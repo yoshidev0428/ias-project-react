@@ -1,8 +1,8 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import LensIcon from '@material-ui/icons/Lens';
+import IconButton from '@mui/material/IconButton';
+import LensIcon from '@mui/icons-material/Lens';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/material/styles';
 
 import { COLOR_PALLETE } from '@/viv/constants';
 

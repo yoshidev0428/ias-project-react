@@ -89,7 +89,6 @@ const MainFrame = () => {
   const handleResize = () => {
     let { height } = getWindowDimensions();
     setHeight(height);
-    // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
     localStorage.setItem(
       'imageViewSizeWidth',
       imageViewAreaRef.current.offsetWidth,
@@ -232,7 +231,6 @@ const MainFrame = () => {
             className="btn btn-sm pt-0 pb-0"
             style={{ marginLeft: 'auto', marginRight: '280px' }}
             onClick={() => {
-              console.log('set-show-chat:', showChatFlag);
               setShowChatFlag(!showChatFlag);
             }}
           >

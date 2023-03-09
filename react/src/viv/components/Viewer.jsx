@@ -2,13 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
+  PictureInPictureViewer,
   SideBySideViewer,
   VolumeViewer,
   AdditiveColormapExtension,
   LensExtension,
 } from '@hms-dbmi/viv';
-
-import PictureInPictureViewer from './viewers/PictureInPictureViewer';
 
 import {
   useImageSettingsStore,

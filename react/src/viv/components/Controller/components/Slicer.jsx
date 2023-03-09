@@ -1,8 +1,8 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles, createStyles } from '@material-ui/core';
+import Grid from '@mui/material/Grid';
+import Slider from '@mui/material/Slider';
+import Typography from '@mui/material/Typography';
+import { makeStyles, createStyles } from '@mui/material';
 import shallow from 'zustand/shallow';
 
 import { useImageSettingsStore, useViewerStore, useLoader } from '@/viv/state';
