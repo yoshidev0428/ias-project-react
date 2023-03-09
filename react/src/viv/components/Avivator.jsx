@@ -9,15 +9,7 @@ import { mdiFullscreen, mdiMinus, mdiPlus } from '@mdi/js';
 import Icon from '@mdi/react';
 import '@/styles/viv.css';
 
-/**
- * This component serves as batteries-included visualization for OME-compliant tiff or zarr images.
- * This includes color contrastLimits, selectors, and more.
- * @param {Object} props
- * @param {Object} props.history A React router history object to create new urls (optional).
- * @param {Object} args.sources A list of sources for a dropdown menu, like [{ url, description }]
- * */
-
-const Avivator = function ({ source, containerType, isDemoImage }) {
+const Avivator = function ({ source, containerType }) {
   const isImageLoading = useSelector((state) => state.files.isImageLoading);
   const isViewerLoading = useViewerStore((store) => store.isViewerLoading);
   const [isFullScreen, setFullScreen] = useState(false);
@@ -35,9 +27,9 @@ const Avivator = function ({ source, containerType, isDemoImage }) {
 
   useEffect(() => {
     if (source !== null) {
-      useViewerStore.setState({ source, isNoImageUrlSnackbarOn: isDemoImage });
+      useViewerStore.setState({ source });
     }
-  }, [source, isDemoImage, mouseFlag]);
+  }, [source, mouseFlag]);
 
   useImage(source);
 
