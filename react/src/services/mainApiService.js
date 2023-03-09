@@ -3,7 +3,7 @@ import store from '@/reducers';
 
 const mainApiService = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL,
-  withCredentials: true,
+  withCredentials: false,
 });
 
 mainApiService.interceptors.request.use((config) => {
