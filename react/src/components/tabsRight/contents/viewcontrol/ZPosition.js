@@ -68,17 +68,11 @@ export default function ZPosition() {
     [loader, selections, setPropertiesForChannel],
   );
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{ p: 1 }}
-    >
+    <Grid container sx={{ p: 1 }}>
       <Grid item xs={12}>
         <Box component="h6">Z Position</Box>
       </Grid>
-      <Grid item xs={12} sx={{ px: 1 }}>
+      <Grid item xs={12} sx={{ px: 1, pt: 1 }}>
         <Slider
           value={globalSelection.z}
           onChange={(event, newValue) => {
