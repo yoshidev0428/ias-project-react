@@ -1,10 +1,12 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from '@mui/material';
 
 import App from './App';
 import store from './reducers';
 import reportWebVitals from './reportWebVitals';
+import theme from './constants/theme';
 
 import '@/styles/index.css';
 
@@ -13,7 +15,9 @@ const root = createRoot(container);
 
 root.render(
   <Provider store={store}>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </Provider>,
 );
 

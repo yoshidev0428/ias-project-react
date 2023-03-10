@@ -1,4 +1,3 @@
-import { createTheme } from '@mui/material/styles';
 // components/vessels/slides
 export const VESSEL_SLIDE_H_RATIO = 0.6;
 export const VESSEL_SLIDE_V_RATIO = 0.5;
@@ -37,12 +36,3 @@ export const COLORS = {
 };
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [220, 220, 220];
-
-export const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#1976d2',
-    },
-  },
-});
