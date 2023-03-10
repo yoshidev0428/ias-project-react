@@ -431,7 +431,8 @@ export function isMobileOrTablet() {
 export function guessRgb({ Pixels }) {
   const numChannels = Pixels.Channels.length;
   const { SamplesPerPixel } = Pixels.Channels[0];
-  const is3Channel8Bit = numChannels === 3 && Pixels.Type === 'uint8';
+  const is3Channel8Bit =
+    numChannels === 3 && Pixels.Type.toLowerCase() === 'uint8';
   const interleavedRgb =
     Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
   return SamplesPerPixel === 3 || is3Channel8Bit || interleavedRgb;
