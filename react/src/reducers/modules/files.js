@@ -9,8 +9,7 @@ const DEFAULT_PARAMS = {
   isImageLoading: false,
   experimentName: null,
   selectedImage: null,
-  imagePathForAvivator:
-    'https://viv-demo.storage.googleapis.com/brain.pyramid.ome.tif',
+  imagePathForAvivator: null,
   imagePathForTree: [],
 };
 
