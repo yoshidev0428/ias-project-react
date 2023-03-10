@@ -1,24 +1,22 @@
-import React from 'react';
 import SmallCard from '@/components/custom/SmallCard';
 import { mdiPlayCircle, mdiCog } from '@mdi/js';
 import Icon from '@mdi/react';
-import Dec2dDialog from './dialog/Dec2dDialog';
+import Dec3dDialog from '../dialogs/Dec3dDialog';
 import { useFlagsStore } from '@/state';
 
-export default function Dec2D() {
-  const dialogFlag = useFlagsStore((store) => store.dialogFlag);
-
+export default function Dec3D() {
+  const Dialog3dflag = useFlagsStore((store) => store.Dialog3dflag);
+  const select1 = () => {
+    console.log('Select-1');
+    useFlagsStore.setState({ Dialog3dflag: true });
+  };
   const select2 = () => {
     console.log('Select-2');
   };
-  const show2Ddialog = () => {
-    useFlagsStore.setState({ dialogFlag: true });
-  };
-
   return (
     <div className="">
-      <SmallCard title="2D Deconvolution">
-        <button className="btn btn-light btn-sm w-50" onClick={show2Ddialog}>
+      <SmallCard title="3D Deconvolution">
+        <button className="btn btn-light btn-sm w-50" onClick={select1}>
           <Icon
             size={0.8}
             horizontal
@@ -27,7 +25,7 @@ export default function Dec2D() {
             color="#212529"
             path={mdiPlayCircle}
           ></Icon>
-          2DGo
+          3DGo
         </button>
         <button className="btn btn-light btn-sm w-50" onClick={select2}>
           <Icon
@@ -38,10 +36,12 @@ export default function Dec2D() {
             color="#212529"
             path={mdiCog}
           ></Icon>
-          2DSet
+          3DSet
         </button>
+        {/* <CustomButton icon={mdiPlayCircle} label="3DGo" click={select1} />
+                <CustomButton icon={mdiCog} label="3DSet" click={select2} /> */}
       </SmallCard>
-      {dialogFlag && <Dec2dDialog />}
+      {Dialog3dflag && <Dec3dDialog />}
     </div>
   );
 }

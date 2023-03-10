@@ -14,30 +14,23 @@ from mainApi.app.images.utils.super_resolution.utils import load_image, plot_sam
 from mainApi.config import STATIC_PATH
 
 # Enhanced Deep Residual Networks for Single Image Super-Resolution (EDSR)
-def EDSuperResolution(file_name):
-
-    # Number of residual blocks
-    depth = 16
-
-    # Super-resolution factor
-    scale = 4
-
+def EDSuperResolution(filepath: str, scale=4, depth=16):
     # Location of model weights
     weights_dir = Path(os.path.join(os.path.dirname(__file__), f'weights/edsr-{depth}-x{scale}'))
     weights_file = os.path.join(weights_dir, 'weights.h5')
 
     model = edsr(scale=scale, num_res_blocks=depth)
     model.load_weights(weights_file)
-    
-    abs_path = STATIC_PATH
-    file_path = str(abs_path) + "/" + str(file_name)
-    
-    lr = load_image(file_path)
+   
+    lr = load_image(filepath)
     sr = resolve_single(model, lr)
-    outFileName = str(file_name).split(".")[0] + "_EDSR.png"
-    output_path = str(abs_path) + "/" + str(outFileName)
-    io.imsave(output_path, sr)
-    return output_path
+
+    out_filename = filepath.split("/")[-1].split(".")[0] + "_edsr.png"
+    out_path = os.path.join(filepath.rsplit("/", 1)[0], out_filename)
+
+    io.imsave(out_path, sr)
+
+    return out_path
 
 # Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network (SRGAN)
 def SRGAN(file_name):

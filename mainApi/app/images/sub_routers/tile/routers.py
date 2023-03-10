@@ -46,7 +46,7 @@ from mainApi.app.images.utils.experiment import (
     add_experiment_with_folder,
 )
 import mainApi.app.images.utils.deconvolution as Deconv
-import mainApi.app.images.utils.super_resolution.functions as SuperRes_Func
+import mainApi.app.images.utils.super_resolution.functions as SuperResolution
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 from mainApi.config import STATIC_PATH, CURRENT_STATIC
@@ -753,23 +753,23 @@ async def deconvol3D(
     return JSONResponse(result)
 
 
-@router.post(
-    "/SuperRes",
+@router.get(
+    "/super-resolution/{experiment}/{filename}/{scale}",
     response_description="image super resolution",
     status_code=status.HTTP_201_CREATED,
     response_model=List[TileModelDB],
 )
-async def SuperRes(
-    file_name: str = Form(""),
-    current_user: UserModelDB = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database),
+async def GetSuperResolution(
+    experiment: str,
+    filename: str,
+    scale: int,
+    user: UserModelDB = Depends(get_current_user)
 ) -> List[TileModelDB]:
-    abs_path = SuperRes_Func.EDSuperResolution(file_name)
-    abs_path = abs_path.split("/")[-1]
-    path = []
-    path.append(abs_path)
-    result = {"Flag_3d": False, "N_images": 1, "path_images": path}
-    return JSONResponse(result)
+    filepath = os.path.join(STATIC_PATH, str(user.id), experiment, filename, scale)
+    out_filepath = SuperResolution.EDSuperResolution(filepath)
+    rel_path = out_filepath.rsplit(str(STATIC_PATH), 1)[1]
+
+    return JSONResponse({ "result": rel_path})
 
 
 @router.post(

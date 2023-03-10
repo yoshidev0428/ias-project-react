@@ -19,3 +19,13 @@ export const getFoucsStackedImage = async (images, onUploadProgress) => {
     },
   });
 };
+
+export const getSuperResoutionImage = async (
+  experiment,
+  filename,
+  scale = 4,
+) => {
+  return mainApiService.get(
+    `image/tile/super-resolution/${experiment}/${filename}/${scale}`,
+  );
+};

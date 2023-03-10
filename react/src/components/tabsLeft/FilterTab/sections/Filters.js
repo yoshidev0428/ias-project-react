@@ -1,9 +1,9 @@
-import SmallCard from '../../../custom/SmallCard';
+import SmallCard from '@/components/custom/SmallCard';
 import { mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import { useFlagsStore } from '@/state';
-import Filter2dDialog from './dialog/Filter2dDialog';
-import Filter3dDialog from './dialog/Filter3dDialog';
+import Filter2dDialog from '../dialogs/Filter2dDialog';
+import Filter3dDialog from '../dialogs/Filter3dDialog';
 
 export default function Filters() {
   const DialogFilter2dflag = useFlagsStore((store) => store.DialogFilter2dflag);
