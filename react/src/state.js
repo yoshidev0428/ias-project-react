@@ -163,7 +163,7 @@ const DEFAULT_VIEWER_STATE = {
   globalSelection: { z: 0, t: 0 },
   channelOptions: [],
   metadata: null,
-  viewState: null,
+  viewState: { zoom: 1 },
   source: '',
   pyramidResolution: 0,
 };
@@ -188,6 +188,11 @@ export const useViewerStore = create((set) => ({
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
+  setViewState: (viewState) =>
+    set((state) => ({
+      ...state,
+      viewState: { ...state.viewState, ...viewState },
+    })),
 }));
 
 export const useLoader = () => {

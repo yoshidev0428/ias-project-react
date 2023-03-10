@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -7,6 +7,8 @@ import {
   VolumeViewer,
   AdditiveColormapExtension,
   LensExtension,
+  DETAIL_VIEW_ID,
+  getDefaultInitialViewState,
 } from '@hms-dbmi/viv';
 
 import {
@@ -21,7 +23,7 @@ import { PostProcessEffect } from '@deck.gl/core';
 import generateShaderModule from '@/helpers/generate-module';
 
 const Viewer = ({ isFullScreen }) => {
-  const { useLinkedView, use3d, viewState } = useViewerStore(
+  const { useLinkedView, use3d, viewState, setViewState } = useViewerStore(
     (state) => state,
     shallow,
   );
@@ -68,9 +70,16 @@ const Viewer = ({ isFullScreen }) => {
   );
   const viewSize = useWindowSize(isFullScreen, 1, 1);
 
-  const onViewStateChange = ({ viewState: { zoom } }) => {
+  useEffect(() => {
+    const initialViewState = getDefaultInitialViewState(loader, viewSize);
+    setViewState(initialViewState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onViewStateChange = ({ viewState }) => {
+    const { zoom } = viewState;
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
-    useViewerStore.setState({ pyramidResolution: z });
+    useViewerStore.setState({ pyramidResolution: z, viewState });
   };
 
   return use3d ? (
@@ -143,6 +152,7 @@ const Viewer = ({ isFullScreen }) => {
         colormap ? new AdditiveColormapExtension() : new LensExtension(),
       ]}
       colormap={colormap || 'viridis'}
+      viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}
       deckProps={{
         effects: [postProcessEffect],
