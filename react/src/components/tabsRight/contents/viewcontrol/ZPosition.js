@@ -92,6 +92,7 @@ export default function ZPosition() {
               changeSelection(event, newValue);
             }
           }}
+          valueLabelDisplay="auto"
           onChangeCommitted={changeSelection}
           marks={range(size).map((val) => ({ value: val }))}
           min={0}

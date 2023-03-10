@@ -27,10 +27,7 @@ export const useImage = (source) => {
   const metadata = useMetadata();
 
   useEffect(() => {
-    if (!source) {
-      return;
-    }
-    (async () => {
+    const changeLoader = async () => {
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
       store.dispatch({ type: 'image_loading_state_change', content: true });
@@ -66,7 +63,8 @@ export const useImage = (source) => {
         });
         if (use3d) toggleUse3d();
       }
-    })();
+    };
+    if (source) changeLoader();
   }, [source]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

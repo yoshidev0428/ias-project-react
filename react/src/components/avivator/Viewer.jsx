@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -20,7 +20,7 @@ import { DEFAULT_OVERVIEW } from '@/constants';
 import { PostProcessEffect } from '@deck.gl/core';
 import generateShaderModule from '@/helpers/generate-module';
 
-const Viewer = (props) => {
+const Viewer = ({ isFullScreen }) => {
   const { useLinkedView, use3d, viewState } = useViewerStore(
     (state) => state,
     shallow,
@@ -52,8 +52,6 @@ const Viewer = (props) => {
   } = useImageSettingsStore((store) => store, shallow);
 
   const loader = useLoader();
-  const [mouseFlag, setMouseFlag] = useState(props.mouseFlag);
-
   const shaderModule = useMemo(
     () => generateShaderModule(Math.floor(deblur.size / 2)),
     [deblur],
@@ -68,20 +66,12 @@ const Viewer = (props) => {
       }),
     [brightness, contrast, gamma, deblur, shaderModule],
   );
-  const viewSize = useWindowSize(props.isFullScreen, 1, 1);
+  const viewSize = useWindowSize(isFullScreen, 1, 1);
 
   const onViewStateChange = ({ viewState: { zoom } }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z });
   };
-
-  useEffect(() => {
-    if (props.mouseFlag !== null && props.mouseFlag !== undefined) {
-      if (mouseFlag !== props.mouseFlag) {
-        setMouseFlag(props.mouseFlag);
-      }
-    }
-  }, [props, mouseFlag]);
 
   return use3d ? (
     <VolumeViewer
