@@ -29,26 +29,28 @@ const Avivator = function ({ source }) {
         setFullScreen(isFullScreen);
       }}
     >
-      <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 99 }}>
-        <IconButton
-          onClick={() => setFullScreen(!isFullScreen)}
-          color="primary"
-          sx={{ bgcolor: 'white' }}
-        >
-          <FullscreenIcon />
-        </IconButton>
-      </Box>
-      {isImageLoading || isViewerLoading ? (
+      {isViewerLoading ? (
         <Box
           justifyContent="center"
           alignItems="center"
           width="100%"
           height="100%"
         >
-          <Loader />
+          {isImageLoading && <Loader />}
         </Box>
       ) : (
-        <Viewer isFullScreen={isFullScreen} />
+        <>
+          <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 99 }}>
+            <IconButton
+              onClick={() => setFullScreen(!isFullScreen)}
+              color="primary"
+              sx={{ bgcolor: 'white' }}
+            >
+              <FullscreenIcon />
+            </IconButton>
+          </Box>
+          <Viewer isFullScreen={isFullScreen} />
+        </>
       )}
     </FullScreen>
   );
