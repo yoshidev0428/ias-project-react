@@ -7,6 +7,7 @@ import Dishes from './contents/vessels/Dishes';
 import Slides from './contents/vessels/Slides';
 import WellPlates from './contents/vessels/WellPlates';
 import Wafers from './contents/vessels/Wafers';
+import store from '../../../../reducers';
 import {
   mdiChevronLeft,
   mdiChevronRight,
@@ -29,6 +30,11 @@ const Vessel = (props) => {
   const [showExpansionDialog, setShowExpansionDialog] = useState(false);
   const [contents, setContents] = useState(props.content);
   const [ref, { width }] = useElementSize();
+  console.log('props--->', currentVessel);
+  store.dispatch({
+    type: 'SET_VESSEL_STATUS_COUNT',
+    count: currentVessel.count,
+  });
 
   const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
     let vesselID = -1;
