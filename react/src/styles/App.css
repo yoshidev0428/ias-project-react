@@ -73,24 +73,6 @@
     border-bottom   : 1px solid black !important;
 }
 
-/* leaf_control imageViwer*/
-.leaf_control {
-    border-radius   : 5px;
-    background-color: white;
-    position        : absolute;
-    top             : 1.2%;
-    left            : 0.8%;
-    z-index         : 99;
-    width           : 25px;
-}
-
-.leaf_control_btn {
-    border : none;
-    width  : 100%;
-    padding: 0px !important;
-    margin : 0px !important;
-}
-
 .custom-button {
     cursor: pointer;
 }
@@ -301,4 +283,10 @@
 .method-img-selected {
     cursor: pointer;
     border: 1px solid black!important;
+
+.topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
+    padding: 10px 15px;
+}
+.topInput:nth-of-type(3){
+    margin-top: 15px;
 }

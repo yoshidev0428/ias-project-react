@@ -911,7 +911,6 @@ async def get_focus_stacked(
 
     return JSONResponse({"result": "static/tmp/{}/output/merged.png".format(tmp_uuid)})
 
-
 @router.post("/test_segment",
              response_description="Test Segment",
              status_code=status.HTTP_201_CREATED,
@@ -1025,5 +1024,3 @@ async def get_models(request: Request,
     if len(models) == 0:
         return JSONResponse({"error": "NO"})
     return JSONResponse({"success": True, "data": models})
-
-

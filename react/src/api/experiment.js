@@ -152,7 +152,6 @@ export const getMetaData = async () => {
   return response;
 };
 
-
 export const testSegment = async (file_url, exp_name, model_name) => {
   console.log('file_url',file_url)
   const state = store.getState();
