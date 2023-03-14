@@ -151,3 +151,61 @@ export const getMetaData = async () => {
   let response = await api.get('image/tile/get_meta_datas');
   return response;
 };
+
+export const testSegment = async (file_url, exp_name, model_name) => {
+  console.log('file_url', file_url);
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  formData.append('model_name', model_name);
+  return api.post('image/tile/test_segment', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};
+
+export const save_model = async (model_info) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('custom_method', model_info.custom_method);
+  formData.append('custom_name', model_info.custom_name);
+  formData.append('custom_icon', model_info.custom_icon);
+  formData.append('viewValue', model_info.viewValue);
+  formData.append('outline', model_info.outline);
+  formData.append('cell_diam', model_info.cell_diam);
+  formData.append('chan_segment', model_info.chan_segment);
+  formData.append('chan_2', model_info.chan_2);
+  formData.append('f_threshold', model_info.f_threshold);
+  formData.append('c_threshold', model_info.c_threshold);
+  formData.append('s_threshold', model_info.s_threshold);
+  return api.post('image/tile/save_model', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};
+
+export const get_model = async (model) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('model', 'experiment_name');
+  return api.post('image/tile/get_models', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};

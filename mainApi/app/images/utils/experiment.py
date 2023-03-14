@@ -12,6 +12,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId, ShowUserModel
 from mainApi.app.images.sub_routers.tile.models import NamePattenModel
 from mainApi.app.images.sub_routers.tile.models import ExperimentModel
+from mainApi.app.images.sub_routers.tile.models import UserCustomModel
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
 from mainApi.config import STATIC_PATH
@@ -22,7 +23,10 @@ from datetime import datetime
 from PIL import Image
 import subprocess
 from mainApi.app.images.utils.convert import get_metadata
+import matplotlib
 import json
+from cellpose import plot, utils
+from matplotlib import pyplot as plt
 
 
 async def add_experiment(
@@ -253,3 +257,59 @@ async def get_experiment_data(
 
     print(experiment)
     return experiment
+
+async def convert_npy_to_jpg(file_full_path: str,
+                             file_name: str,
+                             model_info: object,
+                             clear_previous: bool,
+                             current_user: UserModelDB or ShowUserModel) -> ExperimentModel:
+
+
+    file_full_name = file_full_path + file_name + "_seg.npy"
+    dat = np.load(file_full_name, allow_pickle=True).item()
+
+    # plot image with masks overlaid
+    mask_RGB = plot.mask_rgb( dat['masks'])
+
+    # plot image with outlines overlaid in red
+    outlines = utils.outlines_list(dat['masks'])
+    # plt.imshow(dat['img'])
+    for o in outlines:
+        plt.plot(o[:,0], o[:,1], color='b')
+    # im = Image.fromarray(mask_RGB, 'RGB')
+    if model_info['outline'] == True :
+        # mask_RGB = plot.mask_overlay(outlines, mask_RGB)
+        out_file = file_full_path + file_name + "_outlines.png"
+        img = Image.open(out_file)
+        inputPath = file_full_path + file_name + "_outlines.jpg"
+        img.save(inputPath, 'JPEG')
+        outputPath = file_full_path + file_name + "_outlines.ome.tiff"
+        out_file_name = file_name + "_outlines.ome.tiff"
+        cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
+        print('=====>', out_file, outputPath, cmd_str)
+        subprocess.run(cmd_str, shell=True)
+        return out_file_name
+    else :
+        im = Image.fromarray(mask_RGB, 'RGB')
+        out_file = file_full_path + file_name + "_seg.jpg"
+        im.save(out_file)
+        outputPath = file_full_path + file_name + "_seg.ome.tiff"
+        out_file_name = file_name + "_seg.ome.tiff"
+        cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + out_file + "' '" + outputPath + "'"
+        print('=====>', out_file, outputPath, cmd_str)
+        subprocess.run(cmd_str, shell=True)
+        return out_file_name
+    
+
+async def get_model(model_name: str,
+                              clear_previous: bool,
+                              current_user: UserModelDB or ShowUserModel,
+                              db: AsyncIOMotorDatabase) -> List[UserCustomModel]:
+    model = [doc async for doc in
+             db['usercustom'].find({'custom_name': model_name, 'user_id': current_user.id}, {'_id': 0, 'update_time': 0})]
+
+    if model is None:
+        return False
+
+    print(model)
+    return model

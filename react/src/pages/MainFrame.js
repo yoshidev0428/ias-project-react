@@ -47,6 +47,8 @@ import AccountPage from './account';
 import { useSelector } from 'react-redux';
 import { FIXED_BAR_HEIGHT } from '@/constants/design';
 
+import LoadingDialog from '@/components/custom/LoadingDialog';
+import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -67,6 +69,8 @@ const MainFrame = () => {
   const imagePathForAvivator = useSelector(
     (state) => state.files.imagePathForAvivator,
   );
+
+  const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
 
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
@@ -401,6 +405,7 @@ const MainFrame = () => {
           }}
         />
       )}
+      {DialogLoadingFlag && <LoadingDialog />}
       <FooterContent />
     </>
   );

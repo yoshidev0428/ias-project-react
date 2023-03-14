@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { RENDERING_MODES } from '@hms-dbmi/viv';
 import { DeblurMethods } from '@/constants/enums';
+import { Options } from '@/constants/filterOptions';
 import {
   generateBoxFilter,
   generateGaussianFilter,
@@ -42,6 +43,7 @@ const DEFAUlT_CHANNEL_STATE = {
     size: 1,
     kernel: [],
   },
+  iterNum: 1,
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
@@ -121,6 +123,16 @@ export const useChannelsStore = create((set) => ({
             : [],
       },
     })),
+
+  setFilter2D: (method, size) =>
+    set((state) => ({
+      ...state,
+      deblur: {
+        size,
+        kernel: Options(size)[method].kernel(size),
+      },
+    })),
+  setPasses: (newValue) => set((state) => ({ ...state, iterNum: newValue })),
 }));
 
 const DEFAULT_IMAGE_STATE = {
@@ -223,6 +235,7 @@ const DEFAUlT_FLAG_STATE = {
   DialogCustomNameFlag: false,
   DialogCellposeFlag: false,
   DialogVisualFlag: false,
+  DialogLoadingFlag: false,
 };
 
 export const useFlagsStore = create((set) => ({

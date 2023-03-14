@@ -1,7 +1,9 @@
-const fs = (bound) => `
-precision highp float;
+const fs = (bound, iterNum) => `
+#ifdef GL_ES
+precision mediump float;
+#endif
 
-uniform mat3 u_deblurKernel;
+uniform float u_deblurKernel[49];
 uniform float u_brightness;
 uniform float u_contrast;
 uniform float u_gamma;
@@ -19,24 +21,20 @@ vec4 brightnessContrastGamma(vec4 color) {
 
 vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
   vec4 color = vec4(0.0);
-  
-
-${
-  bound <= 0
-    ? `
-  color = texture2D(texture, texCoord);
-`
-    : `
-  vec3 sum = vec3(0.0);
-  for (int i = -${bound}; i <= ${bound}; i++) {
-    for (int j = -${bound}; j <= ${bound}; j++) {
-      vec2 offset = vec2(float(i), float(j));
-      sum += texture2D(texture, texCoord + offset).rgb * u_deblurKernel[i+${bound}][j+${bound}];
+  if (${bound} <=0 ){
+    color = texture2D(texture, texCoord);
+  } else {
+    vec3 sum = vec3(0.);
+    for (int num = 1; num<=${iterNum}; num++) {
+      for (int i = -${bound}; i <= ${bound}; i++) {
+        for (int j = -${bound}; j <= ${bound}; j++) {
+          vec2 offset = vec2(float(j), float(i));
+          sum += texture2D(texture, texCoord + offset).rgb * u_deblurKernel[(i+${bound})*(${bound}*2+1) + j+${bound}];
+        }
+      }
     }
+    color = vec4(sum, 1.0);
   }
-  color = vec4(sum, 1.0);
-`
-}
   return brightnessContrastGamma(color);
 }
 `;
@@ -48,10 +46,10 @@ const uniforms = {
   u_deblurKernel: [],
 };
 
-const generateShaderModule = (bound) => ({
+const generateShaderModule = (bound, iterNum) => ({
   name: 'viv',
   uniforms,
-  fs: fs(bound),
+  fs: fs(bound, iterNum),
   passes: [{ sampler: true }],
 });
 

@@ -36,6 +36,7 @@ const Viewer = ({ isFullScreen }) => {
     contrast,
     gamma,
     deblur,
+    iterNum,
   } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
@@ -55,8 +56,8 @@ const Viewer = ({ isFullScreen }) => {
 
   const loader = useLoader();
   const shaderModule = useMemo(
-    () => generateShaderModule(Math.floor(deblur.size / 2)),
-    [deblur],
+    () => generateShaderModule(Math.floor(deblur.size / 2), iterNum),
+    [deblur, iterNum],
   );
   const postProcessEffect = useMemo(
     () =>
