@@ -258,3 +258,9 @@
     /* background-color: #c1c1c1; */
 }
 
+.topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
+    padding: 10px 15px;
+}
+.topInput:nth-of-type(3){
+    margin-top: 15px;
+}
