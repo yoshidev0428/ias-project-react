@@ -25,7 +25,10 @@ RUN apt-get install -y openslide-tools && \
     apt install -y default-jdk && \
     pip install --upgrade pip \
     pip install openslide-python \
-    pip install numpy
+    pip install numpy \
+    pip install opencv-python \ 
+    pip install opencv-contrib-python \
+    pip install cellpose --upgrade
 
 WORKDIR /app
 

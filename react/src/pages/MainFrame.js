@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -25,7 +25,7 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import PollIcon from '@mui/icons-material/Poll';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import Avivator from '@/viv/components/Avivator';
+import Avivator from '@/components/avivator/Avivator';
 import SupportChatSlack from '../components/slackChat/SupportChatSlack';
 
 import DLMLTab from '../components/tabsLeft/DLMLTab';
@@ -40,13 +40,15 @@ import SettingsTab from '../components/tabsRight/SettingsTab';
 
 import store from '../reducers';
 import { connect } from 'react-redux';
-import { getWindowDimensions } from '../components/helpers';
+import { getWindowDimensions } from '@/helpers/browser';
 import { mdiChatQuestionOutline } from '@mdi/js';
 import logo75 from '../assets/images/logo75.png';
 
 import UserPage from './user';
 import AccountPage from './account';
 import { useSelector } from 'react-redux';
+import LoadingDialog from '@/components/custom/LoadingDialog';
+import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -63,6 +65,7 @@ const mapStateToProps = (state) => ({
   isFilesAvailable: state.files.isFilesAvailable,
   filesChosen: state.vessel.selectedVesselHole,
   isFilesChosenAvailable: state.files.isFilesChosenAvailable,
+  currentVesseelCount: state.vessel.currentVesseelCount,
 });
 
 const darkTheme = createTheme({
@@ -75,7 +78,8 @@ const darkTheme = createTheme({
 });
 
 const fixedBarHeight = 91;
-const MainFrame = () => {
+const MainFrame = (props) => {
+  const { currentVesseelCount } = props;
   const [userPage, setUserPage] = useState(false);
   const [accountPage, setAccountPage] = useState(false);
   const [vivPage, setVivPage] = useState(true);
@@ -84,12 +88,13 @@ const MainFrame = () => {
     (state) => state.files.imagePathForAvivator,
   );
 
+  const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
+
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
   const handleResize = () => {
     let { height } = getWindowDimensions();
     setHeight(height);
-    // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
     localStorage.setItem(
       'imageViewSizeWidth',
       imageViewAreaRef.current.offsetWidth,
@@ -139,9 +144,18 @@ const MainFrame = () => {
       window.addEventListener('resize', handleResize);
     };
   }, [imageViewAreaRef]);
-
+  console.log('vessel--->', currentVesseelCount);
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
+    const user = useSelector((state) => state.auth.user);
+    let initialName = '';
+    if (user.fullName.length > 0) {
+      const nameArray = user.fullName.split(' ');
+      nameArray.forEach((name) => {
+        if (name.length <= 0) return;
+        initialName += name.charAt(0).toUpperCase();
+      });
+    }
 
     return (
       <Box sx={{ flexGrow: 1, height: '65px' }}>
@@ -192,7 +206,7 @@ const MainFrame = () => {
                 <IconButton size="large" onClick={handleUserPage}>
                   <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
                     {' '}
-                    JM{' '}
+                    {initialName}{' '}
                   </Avatar>
                 </IconButton>
                 <IconButton size="large" onClick={handleLogout} color="inherit">
@@ -222,7 +236,6 @@ const MainFrame = () => {
             className="btn btn-sm pt-0 pb-0"
             style={{ marginLeft: 'auto', marginRight: '280px' }}
             onClick={() => {
-              console.log('set-show-chat:', showChatFlag);
               setShowChatFlag(!showChatFlag);
             }}
           >
@@ -325,24 +338,138 @@ const MainFrame = () => {
               )}
             </div>
           </Col>
-          <Col
-            xs={8}
-            ref={imageViewAreaRef}
-            style={{
-              backgroundColor: '#ddd',
-              height: (height - fixedBarHeight).toString() + 'px',
-              overflowY: 'auto',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {' '}
-            {/* Central Panel, Viv Image Viewer */}
-            {userPage && <UserPage />}
-            {accountPage && <AccountPage />}
-            {vivPage && <Avivator source={imagePathForAvivator} />}
-          </Col>
+          {currentVesseelCount == 1 && (
+            <Col
+              xs={8}
+              ref={imageViewAreaRef}
+              style={{
+                backgroundColor: '#ddd',
+                height: (height - fixedBarHeight).toString() + 'px',
+                overflowY: 'auto',
+                borderBottom: '2px solid black',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {' '}
+              {/* Central Panel, Viv Image Viewer */}
+              {userPage && <UserPage />}
+              {accountPage && <AccountPage />}
+              {vivPage && <Avivator source={imagePathForAvivator} />}
+            </Col>
+          )}
+          {currentVesseelCount == 2 && (
+            <Col xs={8}>
+              {' '}
+              {/* Central Panel, Viv Image Viewer */}
+              <Col
+                ref={imageViewAreaRef}
+                style={{
+                  backgroundColor: '#ddd',
+                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                  overflowY: 'auto',
+                  borderBottom: '3px solid black',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {userPage && <UserPage />}
+                {accountPage && <AccountPage />}
+                {vivPage && <Avivator source={imagePathForAvivator} />}
+              </Col>
+              <Col
+                ref={imageViewAreaRef}
+                style={{
+                  backgroundColor: '#ddd',
+                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {userPage && <UserPage />}
+                {accountPage && <AccountPage />}
+                {vivPage && <Avivator source={imagePathForAvivator} />}
+              </Col>
+            </Col>
+          )}
+          {currentVesseelCount == 4 && (
+            <Fragment>
+              <Col xs={4} style={{ borderRight: '3px solid black' }}>
+                {' '}
+                {/* Central Panel, Viv Image Viewer */}
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    borderBottom: '3px solid black',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+              </Col>
+              <Col xs={4}>
+                {' '}
+                {/* Central Panel, Viv Image Viewer */}
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    borderBottom: '3px solid black',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+              </Col>
+            </Fragment>
+          )}
           <Col
             xs={2}
             className="border-left p-2"
@@ -417,6 +544,7 @@ const MainFrame = () => {
           }}
         />
       )}
+      {DialogLoadingFlag && <LoadingDialog />}
       <FooterContent />
     </>
   );

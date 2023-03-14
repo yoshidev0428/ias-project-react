@@ -20,6 +20,8 @@
             }
         ],
         "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "no-console": "warn",
+        "no-template-curly-in-string": "error"
     }
 }

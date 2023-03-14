@@ -63,6 +63,8 @@ mysql-connector==2.2.9
 networkx==3.0
 numpy==1.24.1
 oauthlib==3.2.2
+opencv-contrib-python==4.7.0.72
+opencv-python==4.7.0.72
 opt-einsum==3.3.0
 packaging==23.0
 passlib==1.7.4
@@ -112,6 +114,7 @@ typeguard==2.13.3
 typing-extensions==4.4.0
 typish==1.9.3
 urllib3==1.26.14
+uuid==1.30.0
 uvicorn==0.20.0
 vine==5.0.0
 wcwidth==0.2.6

@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Icon from '@mdi/react';
 import { mdiBrightness5, mdiCircleHalfFull, mdiWeatherSunny } from '@mdi/js';
-import { useChannelsStore } from '@/viv/state';
+import { useChannelsStore } from '@/state';
 
 const Input = styled(TextField)`
   width: 50px;
