@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Card from '@mui/material/Card';
-import { getVesselById, VESSELS } from '../../../constant/vessel-types';
+import { getVesselById, VESSELS } from '@/constants/vessel-types';
 import { useElementSize } from 'usehooks-ts';
 import Dishes from './contents/vessels/Dishes';
 import Slides from './contents/vessels/Slides';

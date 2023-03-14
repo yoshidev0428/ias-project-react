@@ -25,7 +25,7 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import PollIcon from '@mui/icons-material/Poll';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import Avivator from '@/viv/components/Avivator';
+import Avivator from '@/components/avivator/Avivator';
 import SupportChatSlack from '../components/slackChat/SupportChatSlack';
 
 import DLMLTab from '../components/tabsLeft/DLMLTab';
@@ -40,7 +40,7 @@ import SettingsTab from '../components/tabsRight/SettingsTab';
 
 import store from '../reducers';
 import { connect } from 'react-redux';
-import { getWindowDimensions } from '../components/helpers';
+import { getWindowDimensions } from '@/helpers/browser';
 import { mdiChatQuestionOutline } from '@mdi/js';
 import logo75 from '../assets/images/logo75.png';
 
@@ -91,7 +91,6 @@ const MainFrame = (props) => {
   const handleResize = () => {
     let { height } = getWindowDimensions();
     setHeight(height);
-    // console.log("MainFrame.js imageViewAreaRef.current :", imageViewAreaRef.current, imageViewAreaRef.current.clientHeight, imageViewAreaRef.current.offsetWidth);
     localStorage.setItem(
       'imageViewSizeWidth',
       imageViewAreaRef.current.offsetWidth,
@@ -144,6 +143,15 @@ const MainFrame = (props) => {
   console.log('vessel--->', currentVesseelCount);
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
+    const user = useSelector((state) => state.auth.user);
+    let initialName = '';
+    if (user.fullName.length > 0) {
+      const nameArray = user.fullName.split(' ');
+      nameArray.forEach((name) => {
+        if (name.length <= 0) return;
+        initialName += name.charAt(0).toUpperCase();
+      });
+    }
 
     return (
       <Box sx={{ flexGrow: 1, height: '65px' }}>
@@ -194,7 +202,7 @@ const MainFrame = (props) => {
                 <IconButton size="large" onClick={handleUserPage}>
                   <Avatar sx={{ width: 30, height: 30, bgcolor: blue[500] }}>
                     {' '}
-                    JM{' '}
+                    {initialName}{' '}
                   </Avatar>
                 </IconButton>
                 <IconButton size="large" onClick={handleLogout} color="inherit">
@@ -224,7 +232,6 @@ const MainFrame = (props) => {
             className="btn btn-sm pt-0 pb-0"
             style={{ marginLeft: 'auto', marginRight: '280px' }}
             onClick={() => {
-              console.log('set-show-chat:', showChatFlag);
               setShowChatFlag(!showChatFlag);
             }}
           >

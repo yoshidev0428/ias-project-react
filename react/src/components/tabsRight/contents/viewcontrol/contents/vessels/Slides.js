@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { height } from "@mui/system";
+import React, { useEffect, useState } from 'react';
+import { height } from '@mui/system';
 import {
   VESSEL_SLIDE_H_RATIO,
   VESSEL_SLIDE_MAX_HEIGHT,
   VESSEL_SLIDE_V_RATIO,
-} from "../../../../../constant/constants";
-// import store from "../../../../../../reducers";
+} from '@/constants';
+
 export default function Slides(props) {
   const areaRatio = props.areaPercentage * 0.01;
 
@@ -69,16 +69,11 @@ export default function Slides(props) {
 
   const [width, setWidth] = useState(props.width);
   const [count, setCount] = useState(isNaN(props.count) ? 0 : props.count);
-  const [showNumber, setShowNumber] = useState(props.showNumber);
   const [rect, setRect] = useState(calculateDRect);
   const [slide, setSlide] = useState(calculateDSlide);
 
   useEffect(() => {
-    if (
-      width !== props.width ||
-      count !== props.count ||
-      showNumber !== props.showNumber
-    ) {
+    if (width !== props.width || count !== props.count) {
       if (props.count < 3) {
         if (props.width * VESSEL_SLIDE_H_RATIO > VESSEL_SLIDE_MAX_HEIGHT) {
           calculateDRect = {
@@ -147,41 +142,35 @@ export default function Slides(props) {
         style={{ width: width, height: rect.height }}
         className="d-flex flex-column justify-content-center"
       >
-        
-        {[...Array(count)].map((x, i) => (
-          <>
+        {[...Array(count)].map((_, i) => (
+          <div
+            style={{ width: width }}
+            key={'slides' + i}
+            className="d-flex justify-content-center"
+          >
             <div
-              style={{ width: width }}
-              key={"slides" + i}
-              className="d-flex justify-content-center"
+              style={{ width: slide.width / 4, height: slide.height }}
+              className="border border-dark rounded-0"
+            ></div>
+            <div
+              style={{
+                width: (slide.width / 4) * 3,
+                height: slide.height,
+              }}
+              className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center"
             >
-              <div
-                style={{ width: slide.width / 4, height: slide.height }}
-                className="border border-dark rounded-0"
-              ></div>
-              <div
-                style={{
-                  width: (slide.width / 4) * 3,
-                  height: slide.height,
-                }}
-                className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center"
-              >
-                <span>{showNumber ? i + 1 : ""}</span>
-                {props.showHole && i === 0 ? (
-                  <div
-                    style={{
-                      width: (slide.width / 4) * 3 * areaRatio,
-                      height: slide.height * areaRatio,
-                      backgroundColor: "#00a0e9",
-                    }}
-                  ></div>
-                ) : (
-                  <></>
-                )}
-              </div>
+              <span>{props.showNumber ? i + 1 : ''}</span>
+              {props.showHole && i === 0 && (
+                <div
+                  style={{
+                    width: (slide.width / 4) * 3 * areaRatio,
+                    height: slide.height * areaRatio,
+                    backgroundColor: '#00a0e9',
+                  }}
+                ></div>
+              )}
             </div>
-            {/* <HoleArea /> */}
-          </>
+          </div>
         ))}
       </div>
     );
@@ -193,7 +182,7 @@ export default function Slides(props) {
       >
         {[...Array(count)].map((x, i) => (
           <div
-            key={"slides" + i}
+            key={'slides' + i}
             className="d-flex flex-column justify-content-center"
           >
             <div
@@ -204,17 +193,15 @@ export default function Slides(props) {
               style={{ width: slide.width, height: (slide.height / 4) * 3 }}
               className="border border-dark rounded-0 d-flex flex-column justify-content-center align-items-center"
             >
-              <span>{showNumber ? i + 1 : ""}</span>
-              {props.showHole && i === 0 ? (
+              <span>{props.showNumber ? i + 1 : ''}</span>
+              {props.showHole && i === 0 && (
                 <div
                   style={{
                     width: (slide.width / 4) * 3 * areaRatio,
                     height: slide.height * areaRatio,
-                    backgroundColor: "#00a0e9",
+                    backgroundColor: '#00a0e9',
                   }}
                 ></div>
-              ) : (
-                <></>
               )}
             </div>
           </div>

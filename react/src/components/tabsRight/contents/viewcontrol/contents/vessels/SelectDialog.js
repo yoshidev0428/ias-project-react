@@ -11,7 +11,7 @@ import Slides from './Slides';
 import WellPlates from './WellPlates';
 import Dishes from './Dishes';
 import Wafers from './Wafers';
-import { VESSELS } from '../../../../../constant/vessel-types';
+import { VESSELS } from '@/constants/vessel-types';
 import { useElementSize } from 'usehooks-ts';
 import vessel from '@/reducers/modules/vessel';
 

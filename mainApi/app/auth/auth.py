@@ -249,7 +249,7 @@ def verify_password(plain_password, hashed_password):
 def authenticate_email_password(user: UserModelDB or None, password, otp_code) -> bool:
     # async def authenticate_user(form_data: OAuth2PasswordRequestForm = Depends()) -> UserModel or None:
     # user: UserModelDB = await get_user_by_email(email, db)
-    print('user_opt_secret is', user.otp_secret)
+    # print('user_opt_secret is', user.otp_secret)
     if user is None:
         return False
 

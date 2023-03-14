@@ -4,8 +4,8 @@ import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
 import shallow from 'zustand/shallow';
 import Icon from '@mdi/react';
 import SmallCard from '@/components/custom/SmallCard';
-import { useChannelsStore } from '@/viv/state';
-import Colors from '@/utils/constants/colors';
+import { useChannelsStore } from '@/state';
+import Colors from '@/constants/colors';
 
 const Channel = () => {
   const [colorType, setColorType] = useState('color');

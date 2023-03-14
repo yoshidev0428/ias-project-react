@@ -1,7 +1,6 @@
 import html2canvas from 'html2canvas';
-import {postFile} from './chat-functions';
-import {base64ToArrayBuffer} from "../../../utils/utils-func";
-// conditionally imported for full blown version of lib
+import { postFile } from './chat-functions';
+import { base64ToArrayBuffer } from '@/helpers/file';
 
 // Define System hooks for everyone
 export const systemHooks = [
@@ -15,7 +14,7 @@ export const systemHooks = [
   },
   {
     id: 'getScreenshot',
-    action: ({apiToken, channel, username}) => {
+    action: ({ apiToken, channel, username }) => {
       return html2canvas(document.body)
         .then((canvas) => {
           const dataURL = canvas.toDataURL();
@@ -26,7 +25,7 @@ export const systemHooks = [
           }
 
           // Create File
-          const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+          const file = new Blob([new Uint8Array(array)], { type: 'image/png' });
           // Give it a name
           file.name = `$=>@getScreenshot:Screenshot-by-${username}`;
 
@@ -38,7 +37,9 @@ export const systemHooks = [
           }).then(() => 'Screenshot sent.');
         })
         .catch((err) => {
-          console.log(`Error capturing screenshot. Check browser support. ${err}`);
+          console.log(
+            `Error capturing screenshot. Check browser support. ${err}`,
+          );
         });
     },
   },
