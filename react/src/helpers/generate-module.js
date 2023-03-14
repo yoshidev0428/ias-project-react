@@ -19,7 +19,6 @@ vec4 brightnessContrastGamma(vec4 color) {
   return color;
 }
 
-
 vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
   vec4 color = vec4(0.0);
   if (${bound} <=0 ){

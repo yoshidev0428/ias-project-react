@@ -27,7 +27,8 @@ RUN apt-get install -y openslide-tools && \
     pip install openslide-python \
     pip install numpy \
     pip install opencv-python \ 
-    pip install opencv-contrib-python
+    pip install opencv-contrib-python \
+    pip install cellpose --upgrade
 
 WORKDIR /app
 

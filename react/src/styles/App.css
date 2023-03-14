@@ -258,6 +258,33 @@
     /* background-color: #c1c1c1; */
 }
 
+.loading-dialog {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(194, 194, 194, 0.5);
+    z-index: 9999;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+}
+
+.method-img {
+    cursor: pointer;
+}
+
+.method-img-selected {
+    cursor: pointer;
+    border: 1px solid black!important;
+}
+
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
     padding: 10px 15px;
 }
