@@ -28,7 +28,8 @@ RUN apt-get install -y openslide-tools && \
     pip install numpy \
     pip install opencv-python \ 
     pip install opencv-contrib-python \
-    pip install cellpose --upgrade
+    pip install --upgrade cellpose \
+    pip install --upgrade numba
 
 WORKDIR /app
 
