@@ -9,6 +9,7 @@ import unittest
 import bioformats.formatwriter as W
 from bioformats.formatreader import load_using_bioformats, get_omexml_metadata
 import bioformats.omexml as OME
+import subprocess
 
 class TestFormatWriter(unittest.TestCase):
     path = 'mainApi/tests/test_image_convert/temp'
@@ -72,6 +73,23 @@ def get_metadata(image_path):
     omexml_metadata = bioformats.get_omexml_metadata(image_path)
     print("omexml_mmetadata--------->", omexml_metadata)
 
+    acquisitionDate = ''
+
+    try:
+        cmd_str = "sh /app/mainApi/bftools/showinf -omexml-only -nopix '" + image_path + "'"
+        xml = subprocess.run(cmd_str, shell=True, capture_output=True)
+        xmlroot = ET.fromstring(xml.stdout)
+
+        for x in xmlroot:
+            if 'Image' in x.tag:
+                for y in x:
+                    if 'AcquisitionDate' in y.tag:
+                        acquisitionDate = y.text
+
+        print("acquisitiondate:", acquisitionDate)
+    except:
+        print("something wrong")
+
     # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
     # rdr.setOriginalMetadataPopulated(True)
     # rdr.setFlattenedResolutions(False)
@@ -111,6 +129,7 @@ def get_metadata(image_path):
                     stage = y.attrib
                 if 'Pixels' in y.tag :
                     metadata = y.attrib
+                    metadata["acquisitionDate"] = acquisitionDate
                     print('pixel data', metadata)
                     for z in y:
                         if 'Channel' in z.tag:
