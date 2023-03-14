@@ -283,6 +283,7 @@
 .method-img-selected {
     cursor: pointer;
     border: 1px solid black!important;
+}
 
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
     padding: 10px 15px;
