@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SimpleDialog from '@/components/custom/SimpleDialog';
 import Button from '@mui/material/Button';
@@ -9,86 +9,93 @@ import LinearProgress from '@mui/material/LinearProgress';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_experiment from '@/api/experiment';
 import store from '@/reducers';
-import { cancelImage } from '@/reducers/actions/filesAction';
 import { useSelector } from 'react-redux';
+import Grid from '@mui/material/Grid';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import { setNullView, initView } from '@/reducers/actions/vesselAction';
 import Dropzone from 'react-dropzone';
-import TreeViewFoldersExp from './TreeViewFolders';
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpTreeView from './ExpTreeView';
 import { useViewerStore } from '@/state';
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  createFilterOptions,
+  Divider,
+  MenuItem,
+  Select,
+} from '@mui/material';
+import { getStaticPath } from '@/helpers/file';
 
-const DeleteSureDialog = (props) => {
+const DeleteSureDialog = ({
+  open,
+  selectedNum,
+  setDialogStatus,
+  sureDelete,
+}) => {
   const handleClose = () => {
-    props.setDialogStatus(false);
+    setDialogStatus(false);
   };
   const handleDelete = () => {
-    props.setDialogStatus(false);
-    props.sureDelete();
+    setDialogStatus(false);
+    sureDelete();
   };
 
   return (
-    <>
-      <Dialog open={props.open}>
-        <DialogTitle>Delete {props.selectedNum} files </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Deleted files cannot be recovered forever, are you sure?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" color="error" onClick={handleDelete}>
-            Yes, sure
-          </Button>
-          <Button variant="outlined" onClick={handleClose}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog open={open}>
+      <DialogTitle>Delete {selectedNum} files </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Deleted files cannot be recovered forever, are you sure?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" color="error" onClick={handleDelete}>
+          Yes, sure
+        </Button>
+        <Button variant="outlined" onClick={handleClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-const SuccessDialog = (props) => {
+const SuccessDialog = ({ open, setsuccessStatus }) => {
   const handleClose = () => {
-    props.setsuccessStatus(false);
+    setsuccessStatus(false);
   };
   return (
-    <>
-      <Dialog open={props.open}>
-        <DialogTitle>Uploading files </DialogTitle>
-        <DialogContent>
-          <DialogContentText>Uploading is Successful</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleClose}>
-            Ok
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog open={open}>
+      <DialogTitle>Uploading files </DialogTitle>
+      <DialogContent>
+        <DialogContentText>Uploading is Successful</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={handleClose}>
+          Ok
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-const OpenFileDialog = (props) => {
-  const [experimentName, setExperimentName] = useState('');
-  const [fileName] = useState(null);
+const filter = createFilterOptions();
+
+const OpenFileDialog = ({ experiments, handleClose }) => {
+  const [experiment, setExperiment] = useState(null);
   const [checked] = useState('');
   const [uploading, setUploading] = useState(false);
   const [sureDialog, setSureDialog] = useState(false);
-  const [successDialog, setsuccessDialog] = useState(false);
-  const [_imageSrc, setImageSrc] = useState(null);
-  const [addedFiles, setAddedFiles] = useState([]);
+  const [successDialog, setSuccessDialog] = useState(false);
+  const [uploadFiles, setUploadFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedExp, setSelectedExp] = useState(null);
 
-  const selectedImg = useSelector((state) => state.files.selectedImage);
   const auth = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
   const getTree = async () => {
     let response = await api_experiment.getExperimentDatas();
@@ -113,39 +120,10 @@ const OpenFileDialog = (props) => {
       throw err;
     }
   };
-  const registerExperimentData = async () => {
-    try {
-      let response = await api_experiment.registerExperiment(
-        experimentName,
-        checked,
-      );
-      let data = response.data;
-
-      if (data.success) {
-        alert('Successfully registered');
-      } else {
-        alert('Failed to register');
-      }
-      props.handleClose();
-    } catch (err) {
-      props.handleClose();
-      throw err;
-    }
-  };
-
-  useEffect(() => {
-    if (selectedImg !== null) {
-      const imgsrc =
-        process.env.REACT_APP_BASE_API_URL +
-        'image/tile/get_image' +
-        selectedImg.split(auth.user._id)[1];
-      setImageSrc(imgsrc);
-    }
-  }, [selectedImg, auth, setImageSrc]);
 
   useEffect(() => {
     setUploading(true);
-    setExperimentName('');
+    setExperiment('');
     getTree();
     setUploading(false);
   }, []);
@@ -153,249 +131,206 @@ const OpenFileDialog = (props) => {
   const sureDelete = () => {
     deleteFiles();
   };
-  const registerExperiment = () => {
-    registerExperimentData();
-  };
-  const cancelBtn = () => {
-    dispatch(cancelImage());
-    props.handleClose();
-    dispatch(setNullView());
-    setImageSrc(null);
-  };
-  const setItem = () => {
-    dispatch(initView());
+
+  const handleLoadFile = () => {
+    useViewerStore.setState({
+      source: getStaticPath(`/${auth.user._id}/${selectedFile}`),
+    });
+    handleClose();
   };
 
-  const addFiles = (files) => {
-    if (files.length === 0) {
-      alert('choose at least one file');
-    } else {
-      setAddedFiles(files);
+  const handleDelete = () => {};
+
+  const handleUpload = async () => {
+    setUploading(true);
+
+    const response = await api_experiment.setExperiment_folder(
+      experiment.experiment_name,
+      uploadFiles,
+    );
+
+    if (response.status === 200 && response.data === true) {
+      setSuccessDialog(true);
+      getTree();
+    } else if (response.data.error) {
+      alert(response.data.error);
+    } else if (response.status !== 200) {
+      alert('Server connection is error');
     }
-  };
 
-  const onClickSelectBtn = () => {
-    document.getElementById('file_upload').click();
-  };
-
-  const imagePathForTree = useSelector((state) => state.files.imagePathForTree);
-  const onClickTreeSelectBtn = async () => {
-    if (imagePathForTree.length <= 0) {
-      store.dispatch({ type: 'set_image_path_for_avivator', content: null });
-      props.handleClose();
-      return;
-    }
-    const imagePathList = imagePathForTree.split(',');
-    const imagePathForAvivator = [];
-    for (const imagePath of imagePathList) {
-      if (imagePath.length > 0) {
-        imagePathForAvivator.push(`/api/static/${auth.user._id}/${imagePath}`);
-      }
-    }
-    if (imagePathForAvivator.length <= 0) imagePathForAvivator.splice(0);
-
-    useViewerStore.setState({ source: imagePathForAvivator[0] });
-
-    props.handleClose();
-  };
-
-  const uploadExpData = async () => {
-    if (experimentName === '' || addedFiles.length === 0) {
-      alert('Select experiment and folder');
-    } else {
-      setUploading(true);
-      let response = await api_experiment.setExperiment_folder(
-        experimentName,
-        addedFiles,
-      );
-      if (response.status === 200 && response.data === true) {
-        setUploading(false);
-        setsuccessDialog(true);
-        setAddedFiles([]);
-        setExperimentName('');
-        getTree();
-      } else if (response.data.error) {
-        alert(response.data.error);
-        setUploading(false);
-      } else if (response.status !== 200) {
-        alert('Server connection is error');
-        setUploading(false);
-      }
-    }
-  };
-
-  const eraseFolder = () => {
-    setAddedFiles([]);
+    setUploading(false);
   };
 
   return (
     <>
-      <SimpleDialog
-        title="Files"
-        checked={checked}
-        singleButton={false}
-        fullWidth={true}
-        newTitle=""
-        register={registerExperiment}
-        onCancel={cancelBtn}
-        set={setItem}
-      >
-        <div className="container border">
-          <div className="row">
-            <div className="col-6 border">
-              <h6 className="mt-2">Upload Data Select</h6>
-              <div className="mt-2 mb-4">
-                <p className="mt-4">New Experiment Name</p>
-                <div className="row">
-                  <div className="col-4"></div>
-                  <div className="col-8">
-                    <TextField
-                      variant="outlined"
-                      label="Experiment Name"
-                      size="small"
-                      fullWidth
-                      value={experimentName}
-                      onChange={(e) => setExperimentName(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-2 mb-4">
-                <p className="mt-4">Select Upload Data</p>
-                <Dropzone onDrop={(files) => addFiles(files)}>
-                  {({ getRootProps, getInputProps }) => (
-                    <div {...getRootProps()}>
-                      <input {...getInputProps()} id="file_upload" multiple />
-                      {addedFiles.length === 0 ? (
-                        <p className="border rounded p-4 text-center">
+      <SimpleDialog title="Files" onClose={handleClose} maxWidth="sm">
+        <Grid container direction="row">
+          <Grid
+            container
+            item
+            xs
+            direction="column"
+            justifyContent="space-between"
+          >
+            <Box flexGrow={1} display="flex" flexDirection="column">
+              <Typography mb={2}>Upload Experiment data</Typography>
+              <Autocomplete
+                value={experiment}
+                fullWidth
+                sx={{ mb: 2 }}
+                onChange={(_event, newValue) => {
+                  if (typeof newValue === 'string') {
+                    setExperiment({
+                      experiment_name: newValue,
+                    });
+                  } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+                    setExperiment({
+                      experiment_name: newValue.inputValue,
+                    });
+                  } else {
+                    setExperiment(newValue);
+                  }
+                }}
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+
+                  const { inputValue } = params;
+                  // Suggest the creation of a new value
+                  const isExisting = options.some(
+                    (option) => inputValue === option.experiment_name,
+                  );
+                  if (inputValue !== '' && !isExisting) {
+                    filtered.push({
+                      inputValue,
+                      experiment_name: `Add "${inputValue}"`,
+                    });
+                  }
+
+                  return filtered;
+                }}
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                options={experiments}
+                getOptionLabel={(option) => {
+                  // Value selected with enter, right from the input
+                  if (typeof option === 'string') {
+                    return option;
+                  }
+                  // Add "xxx" option created dynamically
+                  if (option.inputValue) {
+                    return option.inputValue;
+                  }
+                  // Regular option
+                  return option.experiment_name;
+                }}
+                renderOption={(props, option) => (
+                  <li {...props}>{option.experiment_name}</li>
+                )}
+                freeSolo
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select experiment"
+                    size="small"
+                  />
+                )}
+              />
+              <Dropzone onDrop={(files) => setUploadFiles(files)}>
+                {({ getRootProps, getInputProps }) => (
+                  <Box {...getRootProps()} flexGrow={1} mb={2}>
+                    <input {...getInputProps()} multiple />
+                    <Box
+                      sx={{
+                        p: 2,
+                        height: '100%',
+                        display: 'flex',
+                        textAlign: 'center',
+                        alignItems: 'center',
+                        border: 'solid lightgray thin',
+                        borderRadius: 2,
+                      }}
+                    >
+                      {uploadFiles.length === 0 ? (
+                        <span>
                           Drag 'n' drop some files here, or click to select
                           files
-                        </p>
+                        </span>
                       ) : (
-                        <p className="border rounded p-4 text-center">
-                          Selected {addedFiles.length} files
-                        </p>
+                        <span>Selected {uploadFiles.length} files</span>
                       )}
-                    </div>
-                  )}
-                </Dropzone>
-                <div className="row">
-                  <div className="col-3"></div>
-                  <div className="col-3">
-                    <Button
-                      label="Click Here"
-                      variant="outlined"
-                      color="success"
-                      className="mt-3 mb-3"
-                      fullWidth
-                      value={fileName}
-                      onClick={onClickSelectBtn}
-                    >
-                      Select
-                    </Button>
-                  </div>
-                  <div className="col-1"></div>
-                  <div className="col-3">
-                    {addedFiles.length !== 0 ? (
-                      <Button
-                        label="Click Here"
-                        variant="outlined"
-                        color="primary"
-                        className="mt-3 mb-3"
-                        fullWidth
-                        onClick={eraseFolder}
-                      >
-                        Erase
-                      </Button>
-                    ) : (
-                      <Button
-                        label="Click Here"
-                        disabled
-                        variant="outlined"
-                        color="primary"
-                        className="mt-3 mb-3"
-                        fullWidth
-                      >
-                        Erase
-                      </Button>
-                    )}
-                  </div>
-                  <div className="col-2"></div>
-                </div>
-              </div>
-              <div className="row mt-5 mb-3">
-                <div className="col-2"></div>
-                <div className="col-4">
-                  <Button
-                    label="Click Here"
-                    variant="outlined"
-                    color="error"
-                    className="mt-3"
-                    fullWidth
-                    value={fileName}
-                    onClick={uploadExpData}
-                  >
-                    Upload
-                  </Button>
-                </div>
-                <div className="col-1"></div>
-                <div className="col-4">
-                  <Button
-                    label="Click Here"
-                    variant="outlined"
-                    color="info"
-                    className="mt-3"
-                    fullWidth
-                    onClick={() => props.handleClose()}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-                <div className="col-1"></div>
-              </div>
-            </div>
-            <div className="col-6 border">
-              <div>
-                <Typography component="div" className="mb-2 p-2">
-                  <h6>Server Data View</h6>
-                </Typography>
-                <TreeView
-                  aria-label="file system navigator"
-                  defaultCollapseIcon={<ExpandMoreIcon />}
-                  defaultExpandIcon={<ChevronRightIcon />}
-                  sx={{
-                    height: 440,
-                    flexGrow: 1,
-                    maxWidth: 400,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
+                    </Box>
+                  </Box>
+                )}
+              </Dropzone>
+            </Box>
+            <Button
+              variant="outlined"
+              color="info"
+              fullWidth
+              disabled={!experiment || !uploadFiles.length || uploading}
+              onClick={handleUpload}
+            >
+              {uploading ? <CircularProgress size={24} /> : 'Upload'}
+            </Button>
+          </Grid>
+          <Divider
+            orientation="vertical"
+            variant="middle"
+            flexItem
+            sx={{ mx: 3, my: -3 }}
+          />
+          <Grid container item xs spacing={2}>
+            <Grid item xs={12}>
+              <Typography>Experiment Data Sources</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  height: 300,
+                  pt: 1,
+                  overflow: 'auto',
+                  border: 'solid lightgray thin',
+                  borderRadius: 1,
+                }}
+              >
+                <ExpTreeView
+                  data={experiments}
+                  onSelectFile={(file) => setSelectedFile(file)}
+                  onSelectExp={(exp) => {
+                    setSelectedExp(exp);
+                    setSelectedFile(null);
                   }}
-                >
-                  {props.experiments.length ? (
-                    <TreeViewFoldersExp data={props.experiments} />
-                  ) : (
-                    <label>No data found, please upload..</label>
-                  )}
-                </TreeView>
+                />
+              </Box>
+            </Grid>
+            <Grid item container xs={12} spacing={2}>
+              <Grid item xs={6}>
                 <Button
-                  label="Click Here"
-                  variant="outlined"
-                  color="success"
-                  className="mt-3 mb-3"
+                  variant="contained"
+                  color="primary"
                   fullWidth
-                  onClick={onClickTreeSelectBtn}
+                  disabled={!selectedFile}
+                  onClick={handleLoadFile}
                 >
-                  SELECT
+                  Load
                 </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-6">
-            <div className="mt-2 mb-2">{uploading && <LinearProgress />}</div>
-          </div>
-        </div>
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  fullWidth
+                  disabled={!selectedFile && !selectedExp}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
       </SimpleDialog>
       <DeleteSureDialog
         open={sureDialog}
@@ -403,7 +338,7 @@ const OpenFileDialog = (props) => {
         sureDelete={sureDelete}
         selectedNum={checked.length}
       />
-      <SuccessDialog open={successDialog} setsuccessStatus={setsuccessDialog} />
+      <SuccessDialog open={successDialog} setsuccessStatus={setSuccessDialog} />
     </>
   );
 };

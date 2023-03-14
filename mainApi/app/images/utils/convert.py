@@ -10,11 +10,12 @@ import bioformats.formatwriter as W
 from bioformats.formatreader import load_using_bioformats, get_omexml_metadata
 import bioformats.omexml as OME
 
+
 class TestFormatWriter(unittest.TestCase):
-    path = 'mainApi/tests/test_image_convert/temp'
+    path = "mainApi/tests/test_image_convert/temp"
     files = []
     # imgPath = 'mainApi/tests/test_image_convert/LotA_pointA.JPG'
-    imgPath = 'mainApi/tests/test_image_convert/LotA_pointA_greyscale.JPG'
+    imgPath = "mainApi/tests/test_image_convert/LotA_pointA_greyscale.JPG"
     # def get_tempfilename(self, suffix):
     #     fd, name = tempfile.mkstemp(suffix, self.path)
     #     self.files.append(name)
@@ -22,8 +23,7 @@ class TestFormatWriter(unittest.TestCase):
     #     return name
 
     def setUp(self):
-        javabridge.start_vm(class_path=bioformats.JARS,
-                            run_headless=True)
+        javabridge.start_vm(class_path=bioformats.JARS, run_headless=True)
 
     def tearDown(self):
         javabridge.kill_vm()
@@ -38,7 +38,9 @@ class TestFormatWriter(unittest.TestCase):
         r = np.random.RandomState()
         r.seed(101)
         # img = r.randint(0, 256, (11, 33)).astype(np.uint8)
-        img, _ = bioformats.load_image(self.imgPath, rescale=False, wants_max_intensity=True)
+        img, _ = bioformats.load_image(
+            self.imgPath, rescale=False, wants_max_intensity=True
+        )
         # path = self.get_tempfilename(".ome.tif")
         if not os.path.isdir(self.path):
             os.makedirs(self.path)
@@ -49,41 +51,21 @@ class TestFormatWriter(unittest.TestCase):
         W.write_image(path, img, OME.PT_UINT8)
         # result = load_using_bioformats(path, rescale=False)
         return path
-        
+
+
 def convert_to_ome_format(imgFullPath):
     logback.basic_config()
-    image_path = os.path.join(imgFullPath) 
+    image_path = os.path.join(imgFullPath)
     testObject = TestFormatWriter()
     path = testObject.test_01_01_write_monochrome_8_bit_tif()
 
     return path
 
+
 def get_metadata(image_path):
-    print("image_path--------->", image_path)
     logback.basic_config()
-    reader = bioformats.ImageReader(image_path)
-    info = reader.rdr
-
-    # omeMeta = bioformats.metadatatools.createOMEXMLMetadata()
-    # reader.setMetadataStore(omeMeta)
-    # reader.get(image_path)
-    
-    
     omexml_metadata = bioformats.get_omexml_metadata(image_path)
-    print("omexml_mmetadata--------->", omexml_metadata)
-
-    # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
-    # rdr.setOriginalMetadataPopulated(True)
-    # rdr.setFlattenedResolutions(False)
-    # rdr.setId(image_path)
-    # print("Series Count", rdr.getSeriesCount())
-    # print("Image Count", rdr.getImageCount())
-    # print("Res Count", rdr.getResolutionCount())
-    # rdr.setResolution(2)
-    # javabridge.kill_vm()
-    # print(omexml_metadata)
     xmlroot = ET.fromstring(omexml_metadata)
-    # 
     plate_data = {}
     channels = []
     planes = []
@@ -91,41 +73,48 @@ def get_metadata(image_path):
     microscope = {}
     objective = []
     for x in xmlroot:
-        print('tag val', x.tag)
-        if 'Instrument' in x.tag:
+        if "Instrument" in x.tag:
             for y in x:
-                if 'Microscope' in y.tag:
+                if "Microscope" in y.tag:
                     microscope = y.attrib
-                if 'Objective' in y.tag:
+                if "Objective" in y.tag:
                     objective.append(y.attrib)
-        if 'Plate' in x.tag:
-            print('plate data', x.attrib)
-            plate_data =  x.attrib 
-        if 'Image' in x.tag:
-            # metadata = x.attrib
-            # print('image data', metadata)
-            print('subdata', x[0])
-            
+        if "Plate" in x.tag:
+            plate_data = x.attrib
+        if "Image" in x.tag:
             for y in x:
-                if 'StageLabel' in y.tag:
+                if "StageLabel" in y.tag:
                     stage = y.attrib
-                if 'Pixels' in y.tag :
+                if "Pixels" in y.tag:
                     metadata = y.attrib
-                    print('pixel data', metadata)
                     for z in y:
-                        if 'Channel' in z.tag:
+                        if "Channel" in z.tag:
                             channels.append(z.attrib)
-                        if 'Plane' in z.tag:
+                        if "Plane" in z.tag:
                             planes.append(z.attrib)
-                    return {"objective": objective, "microscope": microscope, "metadata": metadata, "channels": channels, "planes": planes, "stage": stage, "plates": plate_data}
-                    # return metadata
-                   
+                    return {
+                        "objective": objective,
+                        "microscope": microscope,
+                        "metadata": metadata,
+                        "channels": channels,
+                        "planes": planes,
+                        "stage": stage,
+                        "plates": plate_data,
+                    }
             break
 
-def write_image(pathname, pixels, pixel_type,
-                c = 0, z = 0, t = 0,
-                size_c = 1, size_z = 1, size_t = 1,
-                channel_names = None):
+def write_image(
+    pathname,
+    pixels,
+    pixel_type,
+    c=0,
+    z=0,
+    t=0,
+    size_c=1,
+    size_z=1,
+    size_t=1,
+    channel_names=None,
+):
     """Write the image using bioformats.
 
     :param filename: save to this filename
@@ -165,7 +154,8 @@ def write_image(pathname, pixels, pixel_type,
         p.SizeC = pixels.shape[2]
         p.Channel(0).SamplesPerPixel = pixels.shape[2]
         omexml.structured_annotations.add_original_metadata(
-            ome.OM_SAMPLES_PER_PIXEL, str(pixels.shape[2]))
+            ome.OM_SAMPLES_PER_PIXEL, str(pixels.shape[2])
+        )
     elif size_c > 1:
         p.channel_count = size_c
 
@@ -184,21 +174,20 @@ def write_image(pathname, pixels, pixel_type,
     writer.saveBytes(index, buffer);
     writer.close();
     """
-    jutil.run_script(script,
-                     dict(path=pathname,
-                          xml=xml,
-                          index=index,
-                          buffer=pixel_buffer))
+    jutil.run_script(
+        script, dict(path=pathname, xml=xml, index=index, buffer=pixel_buffer)
+    )
+
 
 def convert_pixels_to_buffer(pixels, pixel_type):
-    '''Convert the pixels in the image into a buffer of the right pixel type
+    """Convert the pixels in the image into a buffer of the right pixel type
 
     pixels - a 2d monochrome or color image
 
     pixel_type - one of the OME pixel types
 
     returns a 1-d byte array
-    '''
+    """
     if pixel_type in (ome.PT_UINT8, ome.PT_INT8, ome.PT_BIT):
         as_dtype = np.uint8
     elif pixel_type in (ome.PT_UINT16, ome.PT_INT16):
@@ -214,4 +203,3 @@ def convert_pixels_to_buffer(pixels, pixel_type):
     buf = np.frombuffer(np.ascontiguousarray(pixels, as_dtype).data, np.uint8)
     env = jutil.get_env()
     return env.make_byte_array(buf)
-
