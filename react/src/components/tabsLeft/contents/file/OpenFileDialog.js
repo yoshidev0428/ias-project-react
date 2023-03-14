@@ -22,7 +22,7 @@ import TreeViewFoldersExp from './TreeViewFolders';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { getImageByPath } from '@/api/image';
+import { useViewerStore } from '@/state';
 
 const DeleteSureDialog = (props) => {
   const handleClose = () => {
@@ -189,20 +189,13 @@ const OpenFileDialog = (props) => {
     const imagePathForAvivator = [];
     for (const imagePath of imagePathList) {
       if (imagePath.length > 0) {
-        let path = imagePath;
-        let pos = path.lastIndexOf('.');
-        if (!path.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
-          path = path.substring(0, pos) + '.ome.tiff';
-        }
-        const file = await getImageByPath(auth.user._id, path);
-        if (file) imagePathForAvivator.push(file);
+        imagePathForAvivator.push(`/api/static/${auth.user._id}/${imagePath}`);
       }
     }
     if (imagePathForAvivator.length <= 0) imagePathForAvivator.splice(0);
-    store.dispatch({
-      type: 'set_image_path_for_avivator',
-      content: imagePathForAvivator,
-    });
+
+    useViewerStore.setState({ source: imagePathForAvivator[0] });
+
     props.handleClose();
   };
 
@@ -220,7 +213,6 @@ const OpenFileDialog = (props) => {
         setsuccessDialog(true);
         setAddedFiles([]);
         setExperimentName('');
-
         getTree();
       } else if (response.data.error) {
         alert(response.data.error);

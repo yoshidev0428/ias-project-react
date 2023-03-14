@@ -1,16 +1,14 @@
 import os
 import os.path
-import matplotlib.pyplot as plt
-from skimage import exposure, io
+from skimage import io
 from pathlib import Path
-from mainApi.app.images.utils.super_resolution.data import DIV2K
 
 from mainApi.app.images.utils.super_resolution.model.edsr import edsr
-from mainApi.app.images.utils.super_resolution.model.srgan import generator, discriminator
+from mainApi.app.images.utils.super_resolution.model.srgan import generator
 from mainApi.app.images.utils.super_resolution.model.wdsr import wdsr_b
 
 from mainApi.app.images.utils.super_resolution.model.common import resolve_single
-from mainApi.app.images.utils.super_resolution.utils import load_image, plot_sample 
+from mainApi.app.images.utils.super_resolution.utils import load_image 
 from mainApi.config import STATIC_PATH
 
 # Enhanced Deep Residual Networks for Single Image Super-Resolution (EDSR)
@@ -25,7 +23,7 @@ def EDSuperResolution(filepath: str, scale=4, depth=16):
     lr = load_image(filepath)
     sr = resolve_single(model, lr)
 
-    out_filename = filepath.split("/")[-1].split(".")[0] + "_edsr.png"
+    out_filename = filepath.split("/")[-1].split(".")[0] + "_edsr.tiff"
     out_path = os.path.join(filepath.rsplit("/", 1)[0], out_filename)
 
     io.imsave(out_path, sr)
