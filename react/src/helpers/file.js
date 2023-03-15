@@ -73,8 +73,7 @@ export const loadImage = (src) => {
 };
 
 export const getStaticPath = (path) => {
-  return `${process.env.REACT_APP_BASE_API_URL}/static/${path}`.replaceAll(
-    /\/+/g,
-    '/',
-  );
+  return `${process.env.REACT_APP_BASE_API_URL}/static/${path}`
+    .replaceAll(/\/+/g, '/')
+    .replace(':/', '://');
 };

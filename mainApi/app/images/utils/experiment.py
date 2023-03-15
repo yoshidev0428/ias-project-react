@@ -24,7 +24,6 @@ from PIL import Image
 import subprocess
 import asyncio
 from mainApi.app.images.utils.convert import get_metadata
-import matplotlib
 import json
 from cellpose import plot, utils
 from matplotlib import pyplot as plt
@@ -142,23 +141,25 @@ async def add_experiment_with_folders(
         metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
         await db["metadata"].insert_one(metadata)
 
-        if each_file_folder.filename[-9:].lower() != ".ome.tiff":
-            fileFormat = each_file_folder.filename.split(".")
+        if not each_file_folder.filename.lower().endswith(".ome.tiff"):
+            filename = each_file_folder.filename.rsplit(".", 1)
             inputPath = os.path.abspath(new_folder_path)
-            if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
-                img = Image.open(inputPath)
-                inputPath = os.path.abspath(
-                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
-                )
-                img.save(inputPath, "JPEG")
-
-            outputPath = os.path.abspath(
-                fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
-            )
+            outputPath = os.path.abspath(os.path.join(fPath, "{}.ome.tiff".format(filename)))
             cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
                 inputPath=inputPath, outputPath=outputPath
             )
-            await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
+            # Run the bfconvert command and capture its output
+            process = await asyncio.create_subprocess_exec(
+                cmd_str,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+
+            # Wait for the command to complete
+            stdout = await process.communicate()
+
+            # Print the output of the command
+            print(stdout.decode())
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
