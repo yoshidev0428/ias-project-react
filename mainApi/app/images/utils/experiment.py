@@ -137,29 +137,27 @@ async def add_experiment_with_folders(
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
 
-        imagedata = get_metadata(new_folder_path)
-        metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
-        await db["metadata"].insert_one(metadata)
+            if each_file_folder.filename[-9:].lower() != ".ome.tiff":
+                fileFormat = each_file_folder.filename.split(".")
+                inputPath = os.path.abspath(new_folder_path)
+                if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
+                    img = Image.open(inputPath)
+                    inputPath = os.path.abspath(
+                        fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
+                    )
+                    img.save(inputPath, "JPEG")
 
-        if not each_file_folder.filename.lower().endswith(".ome.tiff"):
-            filename = each_file_folder.filename.rsplit(".", 1)
-            inputPath = os.path.abspath(new_folder_path)
-            outputPath = os.path.abspath(os.path.join(fPath, "{}.ome.tiff".format(filename)))
-            cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
-                inputPath=inputPath, outputPath=outputPath
-            )
-            # Run the bfconvert command and capture its output
-            process = await asyncio.create_subprocess_exec(
-                cmd_str,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
+                outputPath = os.path.abspath(
+                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
+                )
+                cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
+                    inputPath=inputPath, outputPath=outputPath
+                )
+                subprocess.run(cmd_str, shell=True)
 
-            # Wait for the command to complete
-            stdout = await process.communicate()
-
-            # Print the output of the command
-            print(stdout.decode())
+            imagedata = get_metadata(new_folder_path)
+            metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
+            await db["metadata"].insert_one(metadata)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
