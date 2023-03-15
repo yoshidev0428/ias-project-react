@@ -186,11 +186,13 @@ export async function createLoader(
       return source;
     }
   } catch (e) {
-    if (e instanceof UnsupportedBrowserError) {
-      handleLoaderError(e.message);
-    } else {
-      console.error(e); // eslint-disable-line
-      handleLoaderError(null);
+    if (handleLoaderError && typeof handleLoaderError === 'function') {
+      if (e instanceof UnsupportedBrowserError) {
+        handleLoaderError(e.message);
+      } else {
+        console.error(e); // eslint-disable-line
+        handleLoaderError(null);
+      }
     }
     return { data: null };
   }
