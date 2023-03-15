@@ -12,17 +12,11 @@ import { useImage } from '@/hooks/use-image';
 import { useViewerStore } from '@/state';
 import { VIEWER_ZOOM_FACTOR } from '@/constants/avivator';
 
-const Avivator = function ({ source }) {
+const Avivator = function () {
   const isImageLoading = useSelector((state) => state.files.isImageLoading);
-  const isViewerLoading = useViewerStore((state) => state.isViewerLoading);
+  const { isViewerLoading, source } = useViewerStore((state) => state);
   const { viewState, setViewState } = useViewerStore((state) => state);
   const [isFullScreen, setFullScreen] = useState(false);
-
-  useEffect(() => {
-    if (!source) {
-      useViewerStore.setState({ source });
-    }
-  }, [source]);
 
   useImage(source);
 

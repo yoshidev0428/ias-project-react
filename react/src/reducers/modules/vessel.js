@@ -15,7 +15,6 @@ const initState = {
 
 //action redux
 const vessel = (state = initState, action) => {
-  console.log('Action--->', action);
   switch (action.type) {
     case 'vessel_selectedVesselHole':
       state.selectedVesselHole = action.content;
@@ -45,6 +44,7 @@ const vessel = (state = initState, action) => {
       break;
     case 'SET_VESSEL_STATUS_COUNT':
       state.currentVesseelCount = action.count;
+      break;
     default:
       break;
   }

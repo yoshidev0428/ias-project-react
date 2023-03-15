@@ -112,6 +112,26 @@ class NamePattenModel(BaseModel):
         allow_population_by_field_name = True
         json_encoders = {ObjectId: str}
         alias_generator = to_camel
+        
+class UserCustomModel(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    user_id: PyObjectId = Field(default_factory=PyObjectId)
+    custom_method: Optional[str] = ""
+    custom_name: Optional[str] = ""
+    custom_icon: Optional[str] = ""
+    viewValue: Optional[str] = ""
+    outline: Optional[bool] = ""
+    cell_diam: Optional[int] = 0
+    chan_segment: Optional[int] = 0
+    chan_2: Optional[int] = 0
+    f_threshold: Optional[float] = 0.00
+    c_threshold: Optional[float] = 0.00
+    s_threshold: Optional[float] = 0.00
+    class config:
+        # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
+        allow_population_by_field_name = True
+        json_encoders = {ObjectId: str}
+        alias_generator = to_camel
 
 
 class AlignedTiledModel(TileModelDB):

@@ -1,27 +1,17 @@
-import React from 'react';
-import Divider from '@mui/material/Divider';
-import TabItem from '@/components/custom/TabItem';
-import Filters from './sections/Filters';
-import AddSub from './sections/AddSub';
-import Dec2D from './sections/Dec2D';
-import Dec3D from './sections/Dec3D';
-import FocusStack from './sections/FocusStack';
-import SuperResolution from './sections/SuperResolution';
+import { useState } from 'react';
+import FilterMenu from './sections/FilterMenu';
+import Filter2D from './sections/Filter2D';
+import Filter3D from './sections/Filter3D';
 
 export default function FilterTab() {
-  return (
-    <TabItem title="Filter">
-      <Filters />
-      <Divider />
-      <AddSub />
-      <Divider />
-      <Dec2D />
-      <Divider />
-      <Dec3D />
-      <Divider />
-      <FocusStack />
-      <Divider />
-      <SuperResolution />
-    </TabItem>
-  );
+  const [st, setSt] = useState('menu');
+  const setFilter = (value) => {
+    setSt(value);
+  };
+  const renderPanel = () => {
+    if (st === 'menu') return <FilterMenu setFilter={setFilter} />;
+    else if (st === '2D') return <Filter2D setFilter={setFilter} />;
+    else if (st === '3D') return <Filter3D setFilter={setFilter} />;
+  };
+  return <>{renderPanel()}</>;
 }

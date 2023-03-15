@@ -5,12 +5,25 @@ import DialogActions from '@mui/material/DialogActions';
 import { useFlagsStore } from '@/state';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, Image } from 'react-bootstrap';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
 import CustomNameDialog from './CustomNameDialog';
+//This is James Wang's code//
+import store from '../../../../../reducers';
+import * as api_experiment from '@/api/experiment';
+import { isNull } from 'lodash';
+import { mdiConsoleLine } from '@mdi/js';
+import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
+import imgNuchel from '../../../../../assets/cell/nuchel.png';
+import imgCyto from '../../../../../assets/cell/cyto.png';
+import imgLayer from '../../../../../assets/cell/layer.png';
+import imgWafer from '../../../../../assets/cell/wafer.png';
+import imgAnimal from '../../../../../assets/cell/animal.png';
+import imgBacteria from '../../../../../assets/cell/bacteria.png';
+import imgHuman from '../../../../../assets/cell/human.png';
+import imgStem from '../../../../../assets/cell/embryonic_stem.png';
 
 function TabContainer(props) {
   return (
@@ -25,13 +38,79 @@ TabContainer.propTypes = {
 };
 
 const CustomDialog = () => {
+  const getImageByUrl = async function (imagePath) {
+    try {
+      const state = store.getState();
+
+      const response = await fetch(
+        process.env.REACT_APP_BASE_API_URL +
+          'static/' +
+          state.auth.user._id +
+          '/' +
+          imagePath,
+        {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods':
+              'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers':
+              'Origin, Content-Type, X-Auth-Token',
+            Authorization: state.auth.tokenType + ' ' + state.auth.token,
+          },
+        },
+      );
+      const blob = await response.blob();
+      const file = new File([blob], imagePath, { type: 'image/tiff' });
+      file.path = imagePath;
+      return file;
+    } catch (err) {
+      return null;
+    }
+  };
+
   const DialogCustomFlag = useFlagsStore((store) => store.DialogCustomFlag);
   const DialogCustomNameFlag = useFlagsStore(
     (store) => store.DialogCustomNameFlag,
   );
+  const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
 
-  const showCustomNameDialog = () => {
+  const showCustomNameDialog = async () => {
+    const state = store.getState();
+    if (isNull(state.files.imagePathForAvivator)) {
+      alert('Please enter your image file!');
+      return;
+    }
     useFlagsStore.setState({ DialogCustomFlag: false });
+
+    console.log('image-path', state.files.imagePathForAvivator[0].path);
+    let imgPath = state.files.imagePathForAvivator[0].path;
+    let exp_name = imgPath.split('/');
+    exp_name = exp_name[0];
+    console.log('experiment', exp_name);
+    useFlagsStore.setState({ DialogLoadingFlag: true });
+    let result = await api_experiment.testSegment(
+      imgPath,
+      exp_name,
+      selectedIcon,
+    );
+    const imagePathForAvivator = [];
+    if (result.data.error) {
+      console.log('Error occured while invoking getImageTree api');
+      //alert("Error occured while getting the tree")
+    } else {
+      let file_path = result.data.success;
+
+      console.log('cell-segmant', file_path);
+      const file = await getImageByUrl(exp_name + '/' + file_path);
+      console.log('file', file);
+      if (file) imagePathForAvivator.push(file);
+    }
+    if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
+    store.dispatch({
+      type: 'set_image_path_for_avivator',
+      content: imagePathForAvivator,
+    });
+    useFlagsStore.setState({ DialogLoadingFlag: false });
   };
 
   const close = (event, reason) => {
@@ -50,6 +129,71 @@ const CustomDialog = () => {
     //these fail to keep the modal open
     e.stopPropagation();
     return false;
+  };
+
+  const [models, setModels] = useState([]);
+  const get_models = async () => {
+    let response = await api_experiment.get_model('all');
+    if (response.data.data) {
+      setModels(response.data.data);
+      store.dispatch({ type: 'set_models', content: response.data.data });
+    }
+    const state = store.getState();
+    console.log('models-store', models);
+  };
+
+  useEffect(() => {
+    get_models();
+  }, []);
+
+  const imgArray = {
+    tissuenet: imgTissueNet,
+    nuclei: imgNuchel,
+    cyto: imgCyto,
+    layer: imgLayer,
+    wafer: imgWafer,
+    animal: imgAnimal,
+    bacteria: imgBacteria,
+    human: imgHuman,
+    stem: imgStem,
+  };
+
+  const [selectedIcon, setSelectedIcon] = useState('tissuenet');
+
+  const handleSelectedMethod = (newValue) => {
+    setSelectedIcon(newValue);
+  };
+
+  const ImageBox = () => {
+    if (models.length > 0)
+      return models.map((model) => (
+        <div className="m-1" key={model.custom_name} style={{ width: '65px' }}>
+          <div
+            className={
+              selectedIcon !== model.custom_name
+                ? 'border method-img'
+                : 'method-img-selected'
+            }
+            onClick={() => handleSelectedMethod(model.custom_name)}
+          >
+            <Image
+              style={{ margin: '0 auto', width: '65px', height: '65px' }}
+              src={imgArray[model.custom_icon]}
+              alt="no image"
+            />
+          </div>
+          <div className="label-text text-center">{model.custom_name}</div>
+        </div>
+      ));
+    else
+      return (
+        <>
+          <div className="m-1" style={{ width: '65px' }}>
+            <div className="border method-img"></div>
+            <div className="label-text text-center">There is no models.</div>
+          </div>
+        </>
+      );
   };
 
   return (
@@ -80,21 +224,8 @@ const CustomDialog = () => {
                 </Tabs>
                 {rightTabVal === 0 && (
                   <TabContainer>
-                    <div className="p-3">
-                      <div style={{ width: '65px' }}>
-                        <div className="border">
-                          <Image
-                            style={{
-                              margin: '0 auto',
-                              width: '65px',
-                              height: '65px',
-                            }}
-                            src={imgTissueNet}
-                            alt="no image"
-                          />
-                        </div>
-                        <div className="label-text text-center">name</div>
-                      </div>
+                    <div className="p-3 border overflow-auto d-flex p-2">
+                      <ImageBox />
                     </div>
                   </TabContainer>
                 )}
