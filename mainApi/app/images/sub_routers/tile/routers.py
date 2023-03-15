@@ -35,7 +35,7 @@ from mainApi.app.images.sub_routers.tile.models import (
     MergeImgModel,
     ExperimentModel,
     MetadataModel,
-    UserCustomModel
+    UserCustomModel,
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.file import (
@@ -49,8 +49,8 @@ from mainApi.app.images.utils.experiment import (
     add_experiment_with_files,
     get_experiment_data,
     add_experiment_with_folder,
-    convert_npy_to_jpg, 
-    get_model
+    convert_npy_to_jpg,
+    get_model,
 )
 import mainApi.app.images.utils.deconvolution as Deconv
 import mainApi.app.images.utils.super_resolution.functions as SuperResolution
@@ -71,6 +71,7 @@ import cv2
 router = APIRouter(
     prefix="/tile",
     tags=["tile"],
+    dependencies=[Depends(get_current_user)]
 )
 
 
@@ -898,116 +899,163 @@ async def get_focus_stacked(
 
     return JSONResponse({"result": "static/tmp/{}/output/merged.png".format(tmp_uuid)})
 
-@router.post("/test_segment",
-             response_description="Test Segment",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[ExperimentModel])
-async def test_segment(request: Request,
-                         clear_previous: bool = Form(False),
-                         current_user: UserModelDB = Depends(get_current_user),
-                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+
+@router.post(
+    "/test_segment",
+    response_description="Test Segment",
+    status_code=status.HTTP_201_CREATED,
+    response_model=List[ExperimentModel],
+)
+async def test_segment(
+    request: Request,
+    clear_previous: bool = Form(False),
+    current_user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[ExperimentModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     # print(request)
     data = await request.form()
     file_url = data.get("file_url")
     exp_url = data.get("exp_url")
     model_name = data.get("model_name")
-    model = await get_model(model_name=model_name,clear_previous=clear_previous , current_user=current_user, db=db)
-    print('my_model', model[0]['custom_name'])
+    model = await get_model(
+        model_name=model_name,
+        clear_previous=clear_previous,
+        current_user=current_user,
+        db=db,
+    )
+    print("my_model", model[0]["custom_name"])
     # parameter control
-    custom_method = model[0]['custom_method']
-    viewValue = model[0]['viewValue']
-    outline = model[0]['outline']
-    cell_diam = model[0]['cell_diam']
-    chan_segment = model[0]['chan_segment']
-    chan_2 = model[0]['chan_2']
-    f_threshold = model[0]['f_threshold']
-    c_threshold = model[0]['c_threshold']
-    s_threshold = model[0]['s_threshold']
-    #Get file's full abs path
+    custom_method = model[0]["custom_method"]
+    viewValue = model[0]["viewValue"]
+    outline = model[0]["outline"]
+    cell_diam = model[0]["cell_diam"]
+    chan_segment = model[0]["chan_segment"]
+    chan_2 = model[0]["chan_2"]
+    f_threshold = model[0]["f_threshold"]
+    c_threshold = model[0]["c_threshold"]
+    s_threshold = model[0]["s_threshold"]
+    # Get file's full abs path
     exp_path = os.path.join(current_user_path, file_url)
     exp_path = os.path.abspath(exp_path)
-    directory = exp_path.split('/')
+    directory = exp_path.split("/")
     directory_length = len(directory)
     make_new_folder = ""
     for i in range(directory_length - 2):
-        make_new_folder = make_new_folder + '/' + directory[i+1]
+        make_new_folder = make_new_folder + "/" + directory[i + 1]
     make_new_folder = make_new_folder + "/"
-    #Get file's name except type
-    file_full_name = directory[directory_length-1]
+    # Get file's name except type
+    file_full_name = directory[directory_length - 1]
     file_name_array = file_full_name.split(".")
     file_name = ""
     file_name_length = len(file_name_array)
     for i in range(file_name_length - 1):
-        if(i == 0):
+        if i == 0:
             file_name = file_name + file_name_array[i]
-        if(i>0):
-            file_name = file_name + '.' + file_name_array[i]
-    print('file_name', file_name)
+        if i > 0:
+            file_name = file_name + "." + file_name_array[i]
+    print("file_name", file_name)
     # Run cellpose and test cell segmnent
-    command_string = "python -m cellpose --image_path {file_full_path} --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
+    command_string = "python -m cellpose --image_path {file_full_path} --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(
+        file_full_path=exp_path,
+        custom_method=custom_method,
+        chan_segment=chan_segment,
+        chan_2=chan_2,
+        cell_diam=cell_diam,
+        s_threshold=s_threshold,
+        f_threshold=f_threshold,
+        c_threshold=c_threshold,
+    )
     print("my_command", command_string)
     os.system(command_string)
-    result = await convert_npy_to_jpg(file_full_path=make_new_folder,clear_previous=clear_previous , model_info = model[0],file_name=file_name, current_user=current_user)
+    result = await convert_npy_to_jpg(
+        file_full_path=make_new_folder,
+        clear_previous=clear_previous,
+        model_info=model[0],
+        file_name=file_name,
+        current_user=current_user,
+    )
     return JSONResponse({"success": result})
 
-@router.post("/save_model",
-            response_description="Save Model",
-            status_code=status.HTTP_201_CREATED,
-            response_model=List[UserCustomModel])
-async def save_model(request: Request,
+
+@router.post(
+    "/save_model",
+    response_description="Save Model",
+    status_code=status.HTTP_201_CREATED,
+    response_model=List[UserCustomModel],
+)
+async def save_model(
+    request: Request,
     clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
-)-> List[UserCustomModel]:
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[UserCustomModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     data = await request.form()
-    custom_name = data.get('custom_name')
+    custom_name = data.get("custom_name")
     usercustom = UserCustomModel(
         user_id=PyObjectId(current_user.id),
-        custom_method = data.get('custom_method'),
-        custom_name = data.get('custom_name'),
-        custom_icon = data.get('custom_icon'),
-        viewValue = data.get('viewValue'),
-        outline = data.get('outline'),
-        cell_diam = data.get('cell_diam'),
-        chan_segment = data.get('chan_segment'),
-        chan_2 = data.get('chan_2'),
-        f_threshold = data.get('f_threshold'),
-        c_threshold = data.get('c_threshold'),
-        s_threshold = data.get('s_threshold')
+        custom_method=data.get("custom_method"),
+        custom_name=data.get("custom_name"),
+        custom_icon=data.get("custom_icon"),
+        viewValue=data.get("viewValue"),
+        outline=data.get("outline"),
+        cell_diam=data.get("cell_diam"),
+        chan_segment=data.get("chan_segment"),
+        chan_2=data.get("chan_2"),
+        f_threshold=data.get("f_threshold"),
+        c_threshold=data.get("c_threshold"),
+        s_threshold=data.get("s_threshold"),
     )
-    print('model-name', usercustom)
+    print("model-name", usercustom)
     # print('model_info', dir(usercustom))
-    models = [doc async for doc in
-            db['usercustom'].find({'custom_name': custom_name, 'user_id': current_user.id})]
+    models = [
+        doc
+        async for doc in db["usercustom"].find(
+            {"custom_name": custom_name, "user_id": current_user.id}
+        )
+    ]
     if len(models) > 0:
         return JSONResponse({"error": "NO"})
-    else :
-        await db['usercustom'].insert_one(usercustom.dict(exclude={'id'}))
+    else:
+        await db["usercustom"].insert_one(usercustom.dict(exclude={"id"}))
     return JSONResponse({"success": "OK"})
 
-@router.post("/get_models",
-             response_description="Get Model",
-             status_code=status.HTTP_201_CREATED,
-             response_model=List[UserCustomModel])
-async def get_models(request: Request,
-                         clear_previous: bool = Form(False),
-                         current_user: UserModelDB = Depends(get_current_user),
-                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[UserCustomModel]:
+
+@router.post(
+    "/get_models",
+    response_description="Get Model",
+    status_code=status.HTTP_201_CREATED,
+    response_model=List[UserCustomModel],
+)
+async def get_models(
+    request: Request,
+    clear_previous: bool = Form(False),
+    current_user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[UserCustomModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     data = await request.form()
-    model = 'all'
+    model = "all"
     models = []
-    if model == 'all' :
-        models = [doc async for doc in
-                db['usercustom'].find({'user_id': current_user.id}, {'_id': 0, 'update_time': 0})]
-    else :
-        models = [doc async for doc in
-             db['usercustom'].find({'custom_name': model, 'user_id': current_user.id}, {'_id': 0, 'update_time': 0})]
-    for mo in models :
-        mo['user_id'] = ''
-    print('models', models)
+    if model == "all":
+        models = [
+            doc
+            async for doc in db["usercustom"].find(
+                {"user_id": current_user.id}, {"_id": 0, "update_time": 0}
+            )
+        ]
+    else:
+        models = [
+            doc
+            async for doc in db["usercustom"].find(
+                {"custom_name": model, "user_id": current_user.id},
+                {"_id": 0, "update_time": 0},
+            )
+        ]
+    for mo in models:
+        mo["user_id"] = ""
+    print("models", models)
     if len(models) == 0:
         return JSONResponse({"error": "NO"})
     return JSONResponse({"success": True, "data": models})
