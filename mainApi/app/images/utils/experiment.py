@@ -137,27 +137,27 @@ async def add_experiment_with_folders(
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
 
-        imagedata = get_metadata(new_folder_path)
-        metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
-        await db["metadata"].insert_one(metadata)
+            if each_file_folder.filename[-9:].lower() != ".ome.tiff":
+                fileFormat = each_file_folder.filename.split(".")
+                inputPath = os.path.abspath(new_folder_path)
+                if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
+                    img = Image.open(inputPath)
+                    inputPath = os.path.abspath(
+                        fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
+                    )
+                    img.save(inputPath, "JPEG")
 
-        if each_file_folder.filename[-9:].lower() != ".ome.tiff":
-            fileFormat = each_file_folder.filename.split(".")
-            inputPath = os.path.abspath(new_folder_path)
-            if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
-                img = Image.open(inputPath)
-                inputPath = os.path.abspath(
-                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
+                outputPath = os.path.abspath(
+                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
                 )
-                img.save(inputPath, "JPEG")
+                cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
+                    inputPath=inputPath, outputPath=outputPath
+                )
+                subprocess.run(cmd_str, shell=True)
 
-            outputPath = os.path.abspath(
-                fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
-            )
-            cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
-                inputPath=inputPath, outputPath=outputPath
-            )
-            subprocess.run(cmd_str, shell=True)
+            imagedata = get_metadata(new_folder_path)
+            metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
+            await db["metadata"].insert_one(metadata)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
