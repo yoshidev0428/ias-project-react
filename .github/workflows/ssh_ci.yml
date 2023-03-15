@@ -26,7 +26,7 @@ jobs:
         with:
          command: cd ias-project-react &&
                   git reset --hard &&
-                  git pull https://oauth2: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@github.com/daisukekubota0823/ias-project-react.git &&
+                  git pull -f https://oauth2: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@github.com/daisukekubota0823/ias-project-react.git &&
                   sudo chmod -R 777 /home/iasgcp/ias-project-react &&
                   cd react &&
                   npm -v &&
