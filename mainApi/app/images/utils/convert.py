@@ -82,8 +82,8 @@ def get_metadata(image_path):
                         acquisitionDate = y.text
 
         print("acquisitiondate:", acquisitionDate)
-    except:
-        print("something wrong")
+    except Exception as e:
+        print("something wrong:" + str(e))
 
     # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
     # rdr.setOriginalMetadataPopulated(True)
