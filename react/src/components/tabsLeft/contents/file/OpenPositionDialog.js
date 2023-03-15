@@ -524,7 +524,7 @@ const DropzoneMetaData = (props) => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemText
-                    primary={`Size_T: number${pagerow.size_t}`}
+                    primary={`Size_T: ${pagerow.size_t}`}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
@@ -532,7 +532,7 @@ const DropzoneMetaData = (props) => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemText
-                    primary={`Size_X: number${pagerow.size_x}`}
+                    primary={`Size_X: ${pagerow.size_x}`}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
@@ -540,7 +540,7 @@ const DropzoneMetaData = (props) => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemText
-                    primary={`Size_Y: number${pagerow.size_y}`}
+                    primary={`Size_Y: ${pagerow.size_y}`}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
@@ -548,7 +548,7 @@ const DropzoneMetaData = (props) => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemText
-                    primary={`Size_Z: number${pagerow.size_z}`}
+                    primary={`Size_Z: ${pagerow.size_z}`}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
