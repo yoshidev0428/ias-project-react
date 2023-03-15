@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import { Dropzone } from '@dropzone-ui/react';
 import { Row, Container } from 'react-bootstrap';
 import { DataGrid } from '@mui/x-data-grid';
+import SearchBar from 'material-ui-search-bar';
 import TextField from '@mui/material/TextField';
 import store from '@/reducers';
 import * as api_tiles from '@/api/tiles';
@@ -407,6 +408,7 @@ const DropzoneMetaData = (props) => {
             filename: acceptedFiles[i].file_name,
             // series: "",
             // frame: "",
+            acquisitionDate: item['metadata']['acquisitionDate'],
             dimension_order: item['metadata']['DimensionOrder'],
             size_c: item['metadata']['SizeC'],
             size_t: item['metadata']['SizeT'],
@@ -445,11 +447,11 @@ const DropzoneMetaData = (props) => {
       ) : flag === 1 ? (
         <Card>
           <CardContent>
-            {/* <SearchBar
-                            value={searched}
-                            onChange={(searchVal) => requestSearch(searchVal)}
-                            onCancelSearch={() => cancelSearch()}
-                        /> */}
+            <SearchBar
+              value={searched}
+              onChange={(searchVal) => requestSearch(searchVal)}
+              onCancelSearch={() => cancelSearch()}
+            />
           </CardContent>
           <div
             className=""
@@ -491,6 +493,14 @@ const DropzoneMetaData = (props) => {
                 <ListItemButton>
                   <ListItemText
                     primary={`Filename: ${pagerow.filename}`}
+                  ></ListItemText>
+                </ListItemButton>
+              </ListItem>
+              <Divider />
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemText
+                    primary={`AcquisitionDate: ${pagerow.acquisitionDate}`}
                   ></ListItemText>
                 </ListItemButton>
               </ListItem>
@@ -981,12 +991,12 @@ const DropzoneNamesFiles = (props) => {
                 Clear
               </Button>
               <div className="spacer"></div>
-              {/* <SearchBar
-                                className="w-50 h-100"
-                                value={searched}
-                                onChange={(searchVal) => requestSearch(searchVal)}
-                                onCancelSearch={() => cancelSearch()}
-                            /> */}
+              <SearchBar
+                className="w-50 h-100"
+                value={searched}
+                onChange={(searchVal) => requestSearch(searchVal)}
+                onCancelSearch={() => cancelSearch()}
+              />
             </div>
             <div style={{ height: '380px', width: '100%' }}>
               <DataGrid

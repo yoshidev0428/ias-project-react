@@ -16,9 +16,9 @@ services:
         volumes:
             - image-storage:/image-storage
             - cache-storage:/cache-storage
-            - ./mainApi:/app/mainApi:rw,shared
-            - ./docker_compose_libs/shared_utils:/app/shared_utils:rw,shared
-            - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rw,shared
+            - ./mainApi:/app/mainApi:rw
+            - ./docker_compose_libs/shared_utils:/app/shared_utils:rw
+            - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rw
         command: [ "sh", "./mainApi/start.sh" ]
         restart: always
     # nginx:
