@@ -70,20 +70,17 @@ def get_metadata(image_path):
 
     acquisitionDate = ''
 
-    try:
-        cmd_str = "sh /app/mainApi/bftools/showinf -omexml-only -nopix '" + image_path + "'"
-        xml = subprocess.run(cmd_str, shell=True, capture_output=True)
-        xmlroot = ET.fromstring(xml.stdout)
+    cmd_str = "sh /app/mainApi/bftools/showinf -omexml-only -nopix '" + image_path + "'"
+    xml = subprocess.run(cmd_str, shell=True, capture_output=True)
+    xmlroot = ET.fromstring(xml.stdout)
 
-        for x in xmlroot:
-            if 'Image' in x.tag:
-                for y in x:
-                    if 'AcquisitionDate' in y.tag:
-                        acquisitionDate = y.text
+    for x in xmlroot:
+        if 'Image' in x.tag:
+            for y in x:
+                if 'AcquisitionDate' in y.tag:
+                    acquisitionDate = y.text
 
-        print("acquisitiondate:", acquisitionDate)
-    except Exception as e:
-        print("something wrong:" + str(e) + "::::" + image_path)
+    print("acquisitiondate:", acquisitionDate)
 
     # rdr = javabridge.JClassWrapper('loci.formats.in.LeicaSCNReader')()
     # rdr.setOriginalMetadataPopulated(True)
