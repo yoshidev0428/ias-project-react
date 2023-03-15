@@ -72,6 +72,8 @@ def get_metadata(image_path):
 
     cmd_str = "sh /app/mainApi/bftools/showinf -omexml-only -nopix '" + image_path + "'"
     xml = subprocess.run(cmd_str, shell=True, capture_output=True)
+
+    print("showinf_metadata---->", xml.stdout)
     xmlroot = ET.fromstring(xml.stdout)
 
     for x in xmlroot:
