@@ -27,7 +27,7 @@ WORKDIR /app
 
 COPY ./mainApi/requirements.txt /requirements.txt
 
-RUN pip install --upgrade -r /requirements.txt
+RUN pip install -r /requirements.txt
 
 EXPOSE 8000
 
