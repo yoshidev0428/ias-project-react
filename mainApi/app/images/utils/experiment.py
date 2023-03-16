@@ -24,6 +24,7 @@ from PIL import Image
 import subprocess
 import asyncio
 from mainApi.app.images.utils.convert import get_metadata
+import matplotlib
 import json
 from cellpose import plot, utils
 from matplotlib import pyplot as plt
@@ -147,17 +148,23 @@ async def add_experiment_with_folders(
                     )
                     img.save(inputPath, "JPEG")
 
-                outputPath = os.path.abspath(
-                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
+        if each_file_folder.filename[-9:].lower() != ".ome.tiff":
+            fileFormat = each_file_folder.filename.split(".")
+            inputPath = os.path.abspath(new_folder_path)
+            if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
+                img = Image.open(inputPath)
+                inputPath = os.path.abspath(
+                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
                 )
-                cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
-                    inputPath=inputPath, outputPath=outputPath
-                )
-                subprocess.run(cmd_str, shell=True)
+                img.save(inputPath, "JPEG")
 
-            imagedata = get_metadata(new_folder_path)
-            metadata = {"metadata": json.dumps(imagedata), "file_name": fileName}
-            await db["metadata"].insert_one(metadata)
+            outputPath = os.path.abspath(
+                fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
+            )
+            cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
+                inputPath=inputPath, outputPath=outputPath
+            )
+            await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
