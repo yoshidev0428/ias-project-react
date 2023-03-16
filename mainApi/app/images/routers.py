@@ -15,14 +15,15 @@ router = APIRouter(prefix="/image", tags=[])
 
 router.include_router(tile_router)
 
-@router.get("/file/{user_id}/{folder}/{filename}")
+@router.get("/file/{user_id}/{exp_name}/{folder}/{filename}")
 async def download_exp_image(
     request: Request,
     filename: str,
     folder: str,
+    exp_name: str,
     user_id: str
 ):
-    full_path = f"{STATIC_PATH}/{user_id}/{folder}/{filename}"
+    full_path = f"{STATIC_PATH}/{user_id}/{exp_name}/{folder}/{filename}"
     file_size = os.path.getsize(full_path)
     if not os.path.isfile(full_path):
         raise HTTPException(status_code=404, detail="File not found")
