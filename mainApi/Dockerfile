@@ -18,6 +18,7 @@ RUN apt-get update && \
 # Install dependencies to solve dependency bug: openslide
 RUN apt-get install -y openslide-tools && \
     apt install -y build-essential && \
+    apt install -y git && \
     apt install -y default-jdk && \
     pip install openslide-python \
     pip install numpy==1.23.5 \
@@ -28,12 +29,3 @@ RUN apt-get install -y openslide-tools && \
     pip install -r /requirements.txt
 
 EXPOSE 8000
-
-# COPY ./mainApi /app/mainApi/
-# RUN mkdir -p /app/mainApi/app/static
-# RUN chmod -R 777 /app/mainApi/app/static
-## Copy shared
-# COPY ./docker_compose_libs/shared_utils/ /app/shared_utils/
-# COPY ./docker_compose_libs/celery_tasks/ /app/celery_tasks/
-
-

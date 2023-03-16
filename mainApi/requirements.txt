@@ -47,7 +47,7 @@ idna==3.4
 imageio==2.24.0
 importlib-metadata==6.0.0
 iniconfig==2.0.0
-javabridge==1.0.19
+git+https://github.com/LeeKamentsky/python-javabridge
 jmespath==1.0.1
 jsons==1.6.3
 keras==2.10.0
