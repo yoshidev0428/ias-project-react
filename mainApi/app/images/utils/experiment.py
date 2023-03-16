@@ -22,7 +22,6 @@ from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
 import subprocess
-import asyncio
 from mainApi.app.images.utils.convert import get_metadata
 import matplotlib
 import json
@@ -164,7 +163,7 @@ async def add_experiment_with_folders(
             cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
                 inputPath=inputPath, outputPath=outputPath
             )
-            await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
+            subprocess.run(cmd_str, shell=True)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),

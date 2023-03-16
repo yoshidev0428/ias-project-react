@@ -16,16 +16,11 @@ RUN apt-get update && \
     apt-get install -y netcat
 
 # Install dependencies to solve dependency bug: openslide
-RUN apt-get install -y openslide-tools && \
+RUN apt install -y openslide-tools && \
     apt install -y build-essential && \
     apt install -y git && \
     apt install -y default-jdk && \
-    pip install openslide-python \
-    pip install numpy==1.23.5 \
-    pip install opencv-python \ 
-    pip install opencv-contrib-python \
-    pip install --upgrade cellpose \
-    pip install --upgrade numba \
+    pip install numpy==1.23.5 && \
     pip install -r /requirements.txt
 
 EXPOSE 8000
