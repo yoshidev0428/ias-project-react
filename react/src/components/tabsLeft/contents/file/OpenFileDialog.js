@@ -5,6 +5,8 @@ import SimpleDialog from '@/components/custom/SimpleDialog';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_experiment from '@/api/experiment';
 import store from '@/reducers';
 import { useSelector } from 'react-redux';
@@ -23,8 +25,10 @@ import {
   CircularProgress,
   createFilterOptions,
   Divider,
+  MenuItem,
+  Select,
 } from '@mui/material';
-import { getImagePath } from '@/helpers/file';
+import { getStaticPath } from '@/helpers/file';
 
 const DeleteSureDialog = ({
   open,
@@ -79,6 +83,35 @@ const SuccessDialog = ({ open, setsuccessStatus }) => {
   );
 };
 
+const getImageByUrl = async function (imagePath) {
+  try {
+    const state = store.getState();
+
+    const response = await fetch(
+      process.env.REACT_APP_BASE_API_URL +
+        'static/' +
+        state.auth.user._id +
+        '/' +
+        imagePath,
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods':
+            'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+          Authorization: state.auth.tokenType + ' ' + state.auth.token,
+        },
+      },
+    );
+    const blob = await response.blob();
+    const file = new File([blob], imagePath, { type: 'image/tiff' });
+    file.path = imagePath;
+    return file;
+  } catch (err) {
+    return null;
+  }
+};
+
 const filter = createFilterOptions();
 
 const OpenFileDialog = ({ experiments, handleClose }) => {
@@ -128,10 +161,16 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
     deleteFiles();
   };
 
-  const handleLoadFile = () => {
-    useViewerStore.setState({
-      source: getImagePath(selectedFile),
-    });
+  const handleLoadFile = async () => {
+    let filePath = selectedFile;
+    let pos = filePath.lastIndexOf('.');
+    if (!filePath.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
+      filePath = filePath.substring(0, pos) + '.ome.tiff';
+    }
+    const file = await getImageByUrl(filePath);
+    const files = [];
+    if (file) files.push(file);
+    store.dispatch({ type: 'set_image_path_for_avivator', content: files });
     handleClose();
   };
 

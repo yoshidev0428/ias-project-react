@@ -1,16 +1,33 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Checkbox, Button } from '@mui/material';
 import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
 import shallow from 'zustand/shallow';
 import Icon from '@mdi/react';
 import SmallCard from '@/components/custom/SmallCard';
-import { useChannelsStore } from '@/state';
+import {
+  useChannelsStore,
+  useLoader,
+  useMetadata,
+  useViewerStore,
+  useImageSettingsStore,
+} from '@/state';
 import Colors from '@/constants/colors';
+import { getSingleSelectionStats } from '@/helpers/avivator';
+import { MAX_CHANNELS, COLOR_PALLETE } from '@/constants';
 
 const Channel = () => {
   const [colorType, setColorType] = useState('color');
   const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
     useChannelsStore((state) => state, shallow);
+  const [selections, addChannel, setPropertiesForChannel] = useChannelsStore(
+    (store) => [
+      store.selections,
+      store.addChannel,
+      store.setPropertiesForChannel,
+    ],
+    shallow,
+  );
+
   const channels = useMemo(
     () =>
       colors.map((color, idx) => ({
@@ -21,6 +38,26 @@ const Channel = () => {
         color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
       })),
     [colors],
+  );
+  const loader = useLoader();
+  const metadata = useMetadata();
+  const { labels } = loader[0];
+
+  const [
+    globalSelection,
+    isViewerLoading,
+    use3d,
+    setIsChannelLoading,
+    addIsChannelLoading,
+  ] = useViewerStore(
+    (store) => [
+      store.globalSelection,
+      store.isViewerLoading,
+      store.use3d,
+      store.setIsChannelLoading,
+      store.addIsChannelLoading,
+    ],
+    shallow,
   );
 
   const handleToggleChannel = (channelId) => {
@@ -35,6 +72,55 @@ const Channel = () => {
     }
     setColorType(colorType === 'color' ? 'mono' : 'color');
   };
+
+  const handleChannelAdd = useCallback(() => {
+    let selection = Object.fromEntries(labels.map((l) => [l, 0]));
+    selection = { ...selection, ...globalSelection };
+    const numSelectionsBeforeAdd = selections.length;
+    getSingleSelectionStats({
+      loader,
+      selection,
+      use3d,
+    }).then(({ domain, contrastLimits }) => {
+      setPropertiesForChannel(numSelectionsBeforeAdd, {
+        domains: domain,
+        contrastLimits,
+        channelsVisible: true,
+      });
+      useImageSettingsStore.setState({
+        onViewportLoad: () => {
+          useImageSettingsStore.setState({
+            onViewportLoad: () => {},
+          });
+          setIsChannelLoading(numSelectionsBeforeAdd, false);
+        },
+      });
+      addIsChannelLoading(true);
+      const {
+        Pixels: { Channels },
+      } = metadata;
+      const { c } = selection;
+      addChannel({
+        selections: selection,
+        ids: String(Math.random()),
+        channelsVisible: false,
+        colors:
+          (Channels[c].Color && Channels[c].Color.slice(0, -1)) ??
+          (COLOR_PALLETE[c] || [255, 255, 255]),
+      });
+    });
+  }, [
+    labels,
+    loader,
+    globalSelection,
+    use3d,
+    addChannel,
+    addIsChannelLoading,
+    selections,
+    setIsChannelLoading,
+    setPropertiesForChannel,
+    metadata,
+  ]);
 
   useEffect(() => {
     const isMonoColor = channelsVisible.reduce((acc, visible, idx) => {
@@ -75,6 +161,7 @@ const Channel = () => {
               <div
                 className="d-block border mx-auto pr-3 pb-3"
                 style={{ width: '17px', height: '17px' }}
+                onClick={handleChannelAdd}
               >
                 {' '}
                 <Icon path={mdiPlus} size={0.7} />
