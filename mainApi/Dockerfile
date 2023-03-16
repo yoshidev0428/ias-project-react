@@ -6,6 +6,10 @@ ENV PYTHONUNBUFFERED 1
 # ENV NVIDIA_VISIBLE_DEVICES all
 # ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
+WORKDIR /app
+
+COPY ./mainApi/requirements.txt /requirements.txt
+
 # additional dependencies
 # netcat used for checking for resources on the network before start, see start.sh for use
 RUN apt-get update && \
@@ -21,13 +25,8 @@ RUN apt-get install -y openslide-tools && \
     pip install opencv-python \ 
     pip install opencv-contrib-python \
     pip install --upgrade cellpose \
-    pip install --upgrade numba
-
-WORKDIR /app
-
-COPY ./mainApi/requirements.txt /requirements.txt
-
-RUN pip install -r /requirements.txt
+    pip install --upgrade numba \
+    pip install -r /requirements.txt
 
 EXPOSE 8000
 
