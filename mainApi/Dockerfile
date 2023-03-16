@@ -19,7 +19,6 @@ RUN apt-get update && \
 RUN apt-get install -y openslide-tools && \
     apt install -y build-essential && \
     apt install -y default-jdk && \
-    pip install --upgrade pip \
     pip install openslide-python \
     pip install numpy==1.23.5 \
     pip install opencv-python \ 
