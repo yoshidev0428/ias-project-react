@@ -1,5 +1,4 @@
 import { FILE_TYPES } from '../constants/file-types';
-import store from '@/reducers';
 
 export const getFileName = (fname) => {
   const regex = /(.*)\.[^\.]+/g; /* eslint-disable-line */
@@ -73,16 +72,8 @@ export const loadImage = (src) => {
   });
 };
 
-export const cleanUrl = (urlStr) =>
-  urlStr.replaceAll(/\/+/g, '/').replace(':/', '://');
-
 export const getStaticPath = (path) => {
-  return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/static/${path}`);
-};
-
-export const getImagePath = (path) => {
-  const userId = store.getState().auth.user._id;
-  return cleanUrl(
-    `${process.env.REACT_APP_BASE_API_URL}/image/file/${userId}/${path}`,
-  );
+  return `${process.env.REACT_APP_BASE_API_URL}/static/${path}`
+    .replaceAll(/\/+/g, '/')
+    .replace(':/', '://');
 };

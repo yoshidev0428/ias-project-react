@@ -5,6 +5,8 @@ import SimpleDialog from '@/components/custom/SimpleDialog';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_experiment from '@/api/experiment';
 import store from '@/reducers';
 import { useSelector } from 'react-redux';
@@ -23,8 +25,10 @@ import {
   CircularProgress,
   createFilterOptions,
   Divider,
+  MenuItem,
+  Select,
 } from '@mui/material';
-import { getImagePath } from '@/helpers/file';
+import { getStaticPath } from '@/helpers/file';
 
 const DeleteSureDialog = ({
   open,
@@ -130,7 +134,7 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
 
   const handleLoadFile = () => {
     useViewerStore.setState({
-      source: getImagePath(selectedFile),
+      source: getStaticPath(`/${auth.user._id}/${selectedFile}`),
     });
     handleClose();
   };
