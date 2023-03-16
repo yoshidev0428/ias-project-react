@@ -1,12 +1,4 @@
-FROM python:3.8-slim
-
-# FROM nvcr.io/nvidia/tensorflow:22.02-tf2-py3
-# FROM tensorflow/tensorflow:1.6.0-gpu-py3
-# set env variables
-# FROM nvidia/cuda:11.5.0-base-ubuntu20.04
-
-# RUN apt update
-# RUN apt-get install -y python3 python3-pip
+FROM python:3.10.10-slim-bullseye
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
