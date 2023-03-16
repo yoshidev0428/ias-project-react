@@ -30,13 +30,11 @@ const Vessel = (props) => {
   const [showExpansionDialog, setShowExpansionDialog] = useState(false);
   const [contents, setContents] = useState(props.content);
   const [ref, { width }] = useElementSize();
-
-  useEffect(() => {
-    store.dispatch({
-      type: 'SET_VESSEL_STATUS_COUNT',
-      count: currentVessel.count,
-    });
-  }, [currentVessel.count]);
+  console.log('props--->', currentVessel);
+  store.dispatch({
+    type: 'SET_VESSEL_STATUS_COUNT',
+    count: currentVessel.count,
+  });
 
   const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
     let vesselID = -1;
