@@ -76,6 +76,7 @@ const Channel = () => {
   const handleChannelAdd = useCallback(() => {
     let selection = Object.fromEntries(labels.map((l) => [l, 0]));
     selection = { ...selection, ...globalSelection };
+    console.log('selection:', selection);
     const numSelectionsBeforeAdd = selections.length;
     getSingleSelectionStats({
       loader,
@@ -144,35 +145,34 @@ const Channel = () => {
           <h6>Channels</h6>
           <div>
             <div className="spacer"></div>
-            <Button
-              className="py-0"
-              onClick={handleColorType}
-              variant="contained"
-              color="primary"
-              size="small"
-            >
-              {colorType}
-            </Button>
+            {/*<Button*/}
+            {/*  className="py-0"*/}
+            {/*  onClick={handleColorType}*/}
+            {/*  variant="contained"*/}
+            {/*  color="primary"*/}
+            {/*  size="small"*/}
+            {/*>*/}
+            {/*  {colorType}*/}
+            {/*</Button>*/}
           </div>
         </div>
         <div>
           <SmallCard>
             <div className="d-block">
-              <div
-                className="d-block border mx-auto pr-3 pb-3"
-                style={{ width: '17px', height: '17px' }}
+              <button
+                className="d-block border mx-auto"
+                style={{ width: '26px', height: '26px', padding: '0' }}
                 onClick={handleChannelAdd}
               >
-                {' '}
                 <Icon path={mdiPlus} size={0.7} />
-              </div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3 mt-1"
-                style={{ width: '17px', height: '17px' }}
+              </button>
+              <button
+                className="d-block border mx-auto mt-1"
+                style={{ width: '26px', height: '26px', padding: '0' }}
+                onClick={handleColorType}
               >
-                {' '}
                 <Icon path={mdiPalette} size={0.7} />
-              </div>
+              </button>
             </div>
             {channels.map(({ id, color, symbol }) => (
               <div
@@ -192,22 +192,22 @@ const Channel = () => {
                 <span style={{ color }}>{symbol}</span>
               </div>
             ))}
-            <div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3"
-                style={{ width: '17px', height: '17px' }}
-              >
-                {' '}
-                <Icon path={mdiMenuUp} size={0.7} />
-              </div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3 mt-1"
-                style={{ width: '17px', height: '17px' }}
-              >
-                {' '}
-                <Icon path={mdiMenuDown} size={0.7} />
-              </div>
-            </div>
+            {/*<div>*/}
+            {/*  <div*/}
+            {/*    className="d-block border mx-auto pr-3 pb-3"*/}
+            {/*    style={{ width: '17px', height: '17px' }}*/}
+            {/*  >*/}
+            {/*    {' '}*/}
+            {/*    <Icon path={mdiMenuUp} size={0.7} />*/}
+            {/*  </div>*/}
+            {/*  <div*/}
+            {/*    className="d-block border mx-auto pr-3 pb-3 mt-1"*/}
+            {/*    style={{ width: '17px', height: '17px' }}*/}
+            {/*  >*/}
+            {/*    {' '}*/}
+            {/*    <Icon path={mdiMenuDown} size={0.7} />*/}
+            {/*  </div>*/}
+            {/*</div>*/}
           </SmallCard>
         </div>
       </div>
