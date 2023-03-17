@@ -174,24 +174,26 @@ const Channel = () => {
                 <Icon path={mdiPalette} size={0.7} />
               </button>
             </div>
-            {channels.map(({ id, color, symbol }) => (
-              <div
-                key={id}
-                className="d-flex flex-column channel-box text-center"
-              >
-                <Checkbox
-                  onChange={() => handleToggleChannel(id)}
-                  checked={channelsVisible[id]}
-                  size="small"
-                  sx={{
-                    color,
-                    padding: 0,
-                    '&.Mui-checked': { color },
-                  }}
-                />
-                <span style={{ color }}>{symbol}</span>
-              </div>
-            ))}
+            <div className="channel-box-container">
+              {channels.map(({ id, color, symbol }) => (
+                <div
+                  key={id}
+                  className="d-flex flex-column channel-box text-center"
+                >
+                  <Checkbox
+                    onChange={() => handleToggleChannel(id)}
+                    checked={channelsVisible[id]}
+                    size="small"
+                    sx={{
+                      color,
+                      padding: 0,
+                      '&.Mui-checked': { color },
+                    }}
+                  />
+                  <span style={{ color }}>{symbol}</span>
+                </div>
+              ))}
+            </div>
             {/*<div>*/}
             {/*  <div*/}
             {/*    className="d-block border mx-auto pr-3 pb-3"*/}
