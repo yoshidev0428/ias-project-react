@@ -141,56 +141,56 @@ const BasicDialog = () => {
                 )}
                 {rightTabVal === 1 && (
                   <TabContainer>
-                    <div className="p-3 d-flex">
-                      <div style={{ width: '65px' }} className="mr-2">
+                    <div className="p-3 img-container">
+                      <div style={{ width: '65px' }} className="mr-3">
                         <ImageBox methodName="nuclei" />
                         <div className="label-text text-center">Nuclei</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="mr-3">
                         <ImageBox methodName="cyto" />
                         <div className="label-text text-center">Cyto</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="mr-3">
                         <ImageBox methodName="livecell" />
                         <div className="label-text text-center">Livecell</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="cyto2" />
                         <div className="label-text text-center">Cyto2</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="cp" />
                         <div className="label-text text-center">CP</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="cpx" />
                         <div className="label-text text-center">CPx</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="tn1" />
                         <div className="label-text text-center">TN1</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="tn2" />
                         <div className="label-text text-center">TN2</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="tn3" />
                         <div className="label-text text-center">TN3</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="lc1" />
                         <div className="label-text text-center">LC1</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="lc2" />
                         <div className="label-text text-center">LC2</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="lc3" />
                         <div className="label-text text-center">LC3</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-2">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="lc4" />
                         <div className="label-text text-center">LC4</div>
                       </div>
@@ -224,7 +224,7 @@ const BasicDialog = () => {
         <div className="border-top mt-2">
           <DialogActions>
             <Button variant="contained" onClick={showCellposeDialog}>
-              Custom
+              Set
             </Button>
             <Button variant="contained" onClick={close}>
               Cancel

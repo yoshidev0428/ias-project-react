@@ -945,7 +945,7 @@ async def test_segment(request: Request,
             file_name = file_name + '.' + file_name_array[i]
     print('file_name', file_name)
     # Run cellpose and test cell segmnent
-    command_string = "python -m cellpose --image_path {file_full_path} --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
+    command_string = "python -m cellpose --image_path \"{file_full_path}\" --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
     print("my_command", command_string)
     os.system(command_string)
     result = await convert_npy_to_jpg(file_full_path=make_new_folder,clear_previous=clear_previous , model_info = model[0],file_name=file_name, current_user=current_user)

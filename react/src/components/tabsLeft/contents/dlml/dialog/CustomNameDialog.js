@@ -82,8 +82,8 @@ const CustomNameDialog = () => {
       <div
         className={
           selectedIcon !== props.methodName
-            ? 'border method-img'
-            : 'method-img-selected'
+            ? 'border method-img m-2'
+            : 'method-img-selected m-2'
         }
         onClick={() => handleSelectedMethod(props.methodName)}
       >
@@ -133,7 +133,7 @@ const CustomNameDialog = () => {
                       <p className="mb-0 mt-1">Icon</p>
                     </Col>
                     <Col xs={9}>
-                      <div className="border overflow-auto d-flex p-2">
+                      <div className="img-container border p-2">
                         <ImageBox methodName="tissuenet" />
                         <ImageBox methodName="nuclei" />
                         <ImageBox methodName="cyto" />

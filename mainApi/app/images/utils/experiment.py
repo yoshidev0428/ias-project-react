@@ -285,22 +285,42 @@ async def convert_npy_to_jpg(file_full_path: str,
     # im = Image.fromarray(mask_RGB, 'RGB')
     if model_info['outline'] == True :
         # mask_RGB = plot.mask_overlay(outlines, mask_RGB)
-        out_file = file_full_path + file_name + "_outlines.png"
+        out_file = file_full_path + file_name + "_cp_output.png"
+        if os.path.isfile(out_file) == True :
+            inputPath = file_full_path + file_name + "_cp_output.jpg"
+            outputPath = file_full_path + file_name + "_cp_output.ome.tiff"
+            out_file_name = file_name + "_cp_output.ome.tiff"
+        else :
+            out_file = file_full_path + file_name + "_outlines.png"
+            inputPath = file_full_path + file_name + "_outlines.jpg"
+            outputPath = file_full_path + file_name + "_outlines.ome.tiff"
+            out_file_name = file_name + "_outlines.ome.tiff"
+        print('out_name', out_file)
+        if os.path.isfile(out_file) == False :
+            return "NO"
         img = Image.open(out_file)
-        inputPath = file_full_path + file_name + "_outlines.jpg"
-        img.save(inputPath, 'JPEG')
-        outputPath = file_full_path + file_name + "_outlines.ome.tiff"
-        out_file_name = file_name + "_outlines.ome.tiff"
+        rgb_im = img.convert('RGB')
+        rgb_im.save(inputPath, 'JPEG')
         cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
         print('=====>', out_file, outputPath, cmd_str)
         subprocess.run(cmd_str, shell=True)
         return out_file_name
     else :
-        im = Image.fromarray(mask_RGB, 'RGB')
-        out_file = file_full_path + file_name + "_seg.jpg"
-        im.save(out_file)
-        outputPath = file_full_path + file_name + "_seg.ome.tiff"
-        out_file_name = file_name + "_seg.ome.tiff"
+        out_file = file_full_path + file_name + "_cp_output.png"
+        if os.path.isfile(out_file) == True :
+            inputPath = file_full_path + file_name + "_cp_output.jpg"
+            outputPath = file_full_path + file_name + "_cp_output.ome.tiff"
+            out_file_name = file_name + "_cp_output.ome.tiff"
+        else :
+            out_file = file_full_path + file_name + "_outlines.png"
+            print('out_name', out_file)
+            if os.path.isfile(out_file) == False :
+                return "NO"
+            im = Image.fromarray(mask_RGB, 'RGB')
+            out_file = file_full_path + file_name + "_seg.jpg"
+            im.save(out_file)
+            outputPath = file_full_path + file_name + "_seg.ome.tiff"
+            out_file_name = file_name + "_seg.ome.tiff"
         cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + out_file + "' '" + outputPath + "'"
         print('=====>', out_file, outputPath, cmd_str)
         subprocess.run(cmd_str, shell=True)
