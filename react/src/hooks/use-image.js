@@ -121,13 +121,13 @@ export const useImage = (source) => {
           newColors = [[255, 255, 255]];
         } else {
           for (let i = 0; i < newDomains.length; i++) {
-            newColors.push(COLOR_PALLETE[i]);
+            newColors.push(COLOR_PALLETE[i % COLOR_PALLETE.length]);
           }
         }
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => COLOR_PALLETE[i]);
+            : newDomains.map((_, i) => COLOR_PALLETE[i % COLOR_PALLETE.length]);
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,
           useColormap: true,

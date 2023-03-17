@@ -360,7 +360,7 @@ export function buildDefaultSelection(pixelSource) {
     .map((name, i) => ({ name, size: pixelSource.shape[i] }))
     .find((d) => !GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name) && d.size);
 
-  for (let i = 0; i < Math.min(4, firstNonGlobalDimension.size); i += 1) {
+  for (let i = 0; i < firstNonGlobalDimension.size; i += 1) {
     selection.push({
       [firstNonGlobalDimension.name]: i,
       ...globalSelection,
