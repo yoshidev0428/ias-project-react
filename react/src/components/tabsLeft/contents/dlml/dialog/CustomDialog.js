@@ -200,7 +200,6 @@ const CustomDialog = () => {
         <>
           <div className="m-3"style={{ width: '65px' }}>
             <div className="border method-img">
-              
             </div>
             <div className="label-text text-center">There is no models.</div>
           </div>
