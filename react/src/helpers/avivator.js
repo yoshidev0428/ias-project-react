@@ -152,9 +152,14 @@ export async function createLoader(
       }
 
       const url = urlOrFile;
-      const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
-      const isOffsetsNot200 = res.status !== 200;
-      const offsets = !isOffsetsNot200 ? await res.json() : undefined;
+      let offsets = undefined;
+      let isOffsetsNot200 = false;
+      try {
+        const res = await fetch(url.replace(/ome\.tif(f?)/gi, 'offsets.json'));
+        isOffsetsNot200 = res.status !== 200;
+        offsets = !isOffsetsNot200 ? await res.json() : undefined;
+      } catch (e1) {}
+
       // TODO(2021-05-06): temporarily disable `pool` until inline worker module is fixed.
       const source = await loadOmeTiff(urlOrFile, {
         offsets,
@@ -186,11 +191,13 @@ export async function createLoader(
       return source;
     }
   } catch (e) {
-    if (e instanceof UnsupportedBrowserError) {
-      handleLoaderError(e.message);
-    } else {
-      console.error(e); // eslint-disable-line
-      handleLoaderError(null);
+    if (handleLoaderError && typeof handleLoaderError === 'function') {
+      if (e instanceof UnsupportedBrowserError) {
+        handleLoaderError(e.message);
+      } else {
+        console.error(e); // eslint-disable-line
+        handleLoaderError(null);
+      }
     }
     return { data: null };
   }

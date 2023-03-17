@@ -80,6 +80,11 @@ const CustomDialog = () => {
       alert('Please enter your image file!');
       return;
     }
+    if(selectedIcon === '') {
+      alert('Please select your model!');
+      useFlagsStore.setState({ DialogLoadingFlag: false });
+      return;
+    }
     useFlagsStore.setState({ DialogCustomFlag: false });
 
     console.log('image-path', state.files.imagePathForAvivator[0].path);
@@ -98,6 +103,11 @@ const CustomDialog = () => {
       console.log('Error occured while invoking getImageTree api');
       //alert("Error occured while getting the tree")
     } else {
+      if(result.data.success == 'NO') {
+        alert('Your custom model is not suitable for this image. Please choose another model')
+        useFlagsStore.setState({ DialogLoadingFlag: false });
+        return
+      }
       let file_path = result.data.success;
 
       console.log('cell-segmant', file_path);
@@ -158,16 +168,16 @@ const CustomDialog = () => {
     stem: imgStem,
   };
 
-  const [selectedIcon, setSelectedIcon] = useState('tissuenet');
+  const [selectedIcon, setSelectedIcon] = useState('');
 
   const handleSelectedMethod = (newValue) => {
     setSelectedIcon(newValue);
   };
 
   const ImageBox = () => {
-    if(models.length>0)
+    if (models.length > 0)
       return models.map((model) => (
-        <div className="m-1" key={model.custom_name} style={{ width: '65px' }}>
+        <div className="m-3" key={model.custom_name} style={{ width: '65px' }}>
           <div
             className={
               selectedIcon !== model.custom_name
@@ -185,17 +195,17 @@ const CustomDialog = () => {
           <div className="label-text text-center">{model.custom_name}</div>
         </div>
       ));
-    else 
+    else
       return (
         <>
-          <div className="m-1"style={{ width: '65px' }}>
+          <div className="m-3"style={{ width: '65px' }}>
             <div className="border method-img">
               
             </div>
             <div className="label-text text-center">There is no models.</div>
           </div>
         </>
-      )
+      );
   };
 
   return (
@@ -225,8 +235,8 @@ const CustomDialog = () => {
                   />
                 </Tabs>
                 {rightTabVal === 0 && (
-                  <TabContainer>
-                    <div className="p-3 border overflow-auto d-flex p-2">
+                  <TabContainer className="d-flex justify-content-center">
+                    <div className="img-container p-3 border overflow-auto d-flex p-2">
                       <ImageBox />
                     </div>
                   </TabContainer>

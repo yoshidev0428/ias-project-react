@@ -245,22 +245,16 @@ async def get_image(
     response_model=List[ExperimentModel],
 )
 async def get_experiments(
-    clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[ExperimentModel]:
-    # print("this is current user", current_user)
     userId = str(PyObjectId(current_user.id))
-    # print(userId)
     exp_datas = [
         doc
         async for doc in db["experiment"].find(
             {"user_id": userId}, {"_id": 0, "update_time": 0}
         )
     ]
-    print(exp_datas)
-    # exp_datas = [doc async for doc in db['experiment'].find({'user_id': str(PyObjectId(current_user.id))})]
-    # experiment_names = [doc['experiment_name'] async for doc in db['experiment'].find({'user_id':current_user.id})]
 
     return JSONResponse({"success": True, "data": exp_datas})
 
@@ -466,7 +460,6 @@ async def register_experiment_with_folder(
 async def register_experiment_with_folders(
     request: Request,
     files: List[UploadFile] = File(...),
-    clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[ExperimentModel]:
@@ -474,28 +467,22 @@ async def register_experiment_with_folders(
     experiment_name = data.get("experiment_name")
     paths = data.get("path")
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    new_experiment_path = os.path.join(current_user_path, data.get("experiment_name"))
-    print("This is uploaded data", paths)
-    print("this is new epxeriment path", new_experiment_path, current_user_path)
+    new_experiment_path = os.path.join(current_user_path, experiment_name)
 
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
 
-    if os.path.isdir(new_experiment_path):
-        result = {}
-        result["error"] = "Experiment name is already exist"
-        return JSONResponse(result)
-    else:
+    if not os.path.isdir(new_experiment_path):
         os.mkdir(new_experiment_path)
-        result = await add_experiment_with_folders(
-            folderPath=new_experiment_path,
-            experiment_name=data.get("experiment_name"),
-            files=files,
-            paths=paths,
-            clear_previous=clear_previous,
-            current_user=current_user,
-            db=db,
-        )
+
+    result = await add_experiment_with_folders(
+        folderPath=new_experiment_path,
+        experiment_name=experiment_name,
+        files=files,
+        paths=paths,
+        current_user=current_user,
+        db=db,
+    )
     #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
@@ -770,13 +757,13 @@ async def GetSuperResolution(
     experiment: str,
     filename: str,
     scale: int,
-    user: UserModelDB = Depends(get_current_user)
+    user: UserModelDB = Depends(get_current_user),
 ) -> List[TileModelDB]:
     filepath = os.path.join(STATIC_PATH, str(user.id), experiment, filename, scale)
     out_filepath = SuperResolution.EDSuperResolution(filepath)
     rel_path = out_filepath.rsplit(str(STATIC_PATH), 1)[1]
 
-    return JSONResponse({ "result": rel_path})
+    return JSONResponse({"result": rel_path})
 
 
 @router.post(
@@ -958,7 +945,7 @@ async def test_segment(request: Request,
             file_name = file_name + '.' + file_name_array[i]
     print('file_name', file_name)
     # Run cellpose and test cell segmnent
-    command_string = "python -m cellpose --image_path {file_full_path} --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
+    command_string = "python -m cellpose --image_path \"{file_full_path}\" --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
     print("my_command", command_string)
     os.system(command_string)
     result = await convert_npy_to_jpg(file_full_path=make_new_folder,clear_previous=clear_previous , model_info = model[0],file_name=file_name, current_user=current_user)
