@@ -22,12 +22,12 @@ import { DEFAULT_OVERVIEW } from '@/constants';
 import { PostProcessEffect } from '@deck.gl/core';
 import generateShaderModule from '@/helpers/generate-module';
 
-const Viewer = ({ isFullScreen }) => {
+const Viewer = ({ isFullScreen, index }) => {
   const { useLinkedView, use3d, viewState, setViewState } = useViewerStore(
     (state) => state,
     shallow,
   );
-  const {
+  let {
     colors,
     contrastLimits,
     channelsVisible,
@@ -82,6 +82,12 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
+
+  if (index > 1) {
+    channelsVisible = channelsVisible.map((v, idx) =>
+      idx === index - 1 ? 1 : 0,
+    );
+  }
 
   return use3d ? (
     <VolumeViewer

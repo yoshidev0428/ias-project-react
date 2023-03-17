@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
+import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -49,7 +49,10 @@ import AccountPage from './account';
 import { useSelector } from 'react-redux';
 
 import LoadingDialog from '@/components/custom/LoadingDialog';
-import { useFlagsStore } from '@/state';
+import { useChannelsStore, useFlagsStore } from '@/state';
+import shallow from 'zustand/shallow';
+import Colors from '@/constants/colors';
+import { useImage } from '@/hooks/use-image';
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -89,7 +92,11 @@ const MainFrame = (props) => {
     (state) => state.files.imagePathForAvivator,
   );
 
+  useImage(imagePathForAvivator);
+
   const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
+  const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
+    useChannelsStore((state) => state, shallow);
 
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
@@ -102,6 +109,18 @@ const MainFrame = (props) => {
     );
     localStorage.setItem('imageViewSizeHeight', height - fixedBarHeight);
   };
+
+  const channels = useMemo(
+    () =>
+      colors.map((color, idx) => ({
+        ...Object.values(Colors).find(
+          (c) => c.rgbValue.toString() === color.toString(),
+        ),
+        id: idx,
+        color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
+      })),
+    [colors],
+  );
 
   const [rightTabVal, setRightTabVal] = useState(0);
   const [leftTabVal, setLeftTabVal] = useState(3);
@@ -253,6 +272,33 @@ const MainFrame = (props) => {
       </>
     );
   };
+
+  const renderPart = (rowCount, index) => {
+    return (
+      <Col
+        ref={imageViewAreaRef}
+        style={{
+          backgroundColor: '#ddd',
+          height: ((height - fixedBarHeight) / rowCount).toString() + 'px',
+          overflowY: 'auto',
+          border: '1px solid black',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {userPage && <UserPage />}
+        {accountPage && <AccountPage />}
+        {vivPage &&
+          (index <= channels.length + 1 ? (
+            <Avivator source={imagePathForAvivator} index={index} />
+          ) : (
+            <Avivator index={index} />
+          ))}
+      </Col>
+    );
+  };
+  console.log('mainframe-channel-count', channels.length, imagePathForAvivator);
   return (
     <>
       <HeaderContent />
@@ -339,138 +385,158 @@ const MainFrame = (props) => {
               )}
             </div>
           </Col>
-          {currentVesseelCount == 1 && (
-            <Col
-              xs={8}
-              ref={imageViewAreaRef}
-              style={{
-                backgroundColor: '#ddd',
-                height: (height - fixedBarHeight).toString() + 'px',
-                overflowY: 'auto',
-                borderBottom: '2px solid black',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              {' '}
-              {/* Central Panel, Viv Image Viewer */}
-              {userPage && <UserPage />}
-              {accountPage && <AccountPage />}
-              {vivPage && <Avivator source={imagePathForAvivator} />}
-            </Col>
-          )}
-          {currentVesseelCount == 2 && (
-            <Col xs={8}>
-              {' '}
-              {/* Central Panel, Viv Image Viewer */}
-              <Col
-                ref={imageViewAreaRef}
-                style={{
-                  backgroundColor: '#ddd',
-                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                  overflowY: 'auto',
-                  borderBottom: '3px solid black',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                {userPage && <UserPage />}
-                {accountPage && <AccountPage />}
-                {vivPage && <Avivator source={imagePathForAvivator} />}
-              </Col>
-              <Col
-                ref={imageViewAreaRef}
-                style={{
-                  backgroundColor: '#ddd',
-                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                  overflowY: 'auto',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                {userPage && <UserPage />}
-                {accountPage && <AccountPage />}
-                {vivPage && <Avivator source={imagePathForAvivator} />}
-              </Col>
-            </Col>
-          )}
-          {currentVesseelCount == 4 && (
-            <Fragment>
-              <Col xs={4} style={{ borderRight: '3px solid black' }}>
-                {' '}
-                {/* Central Panel, Viv Image Viewer */}
-                <Col
-                  ref={imageViewAreaRef}
-                  style={{
-                    backgroundColor: '#ddd',
-                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                    overflowY: 'auto',
-                    borderBottom: '3px solid black',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {userPage && <UserPage />}
-                  {accountPage && <AccountPage />}
-                  {vivPage && <Avivator source={imagePathForAvivator} />}
-                </Col>
-                <Col
-                  ref={imageViewAreaRef}
-                  style={{
-                    backgroundColor: '#ddd',
-                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                    overflowY: 'auto',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {userPage && <UserPage />}
-                  {accountPage && <AccountPage />}
-                  {vivPage && <Avivator source={imagePathForAvivator} />}
-                </Col>
-              </Col>
-              <Col xs={4}>
-                {' '}
-                {/* Central Panel, Viv Image Viewer */}
-                <Col
-                  ref={imageViewAreaRef}
-                  style={{
-                    backgroundColor: '#ddd',
-                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                    overflowY: 'auto',
-                    borderBottom: '3px solid black',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {userPage && <UserPage />}
-                  {accountPage && <AccountPage />}
-                  {vivPage && <Avivator source={imagePathForAvivator} />}
-                </Col>
-                <Col
-                  ref={imageViewAreaRef}
-                  style={{
-                    backgroundColor: '#ddd',
-                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
-                    overflowY: 'auto',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {userPage && <UserPage />}
-                  {accountPage && <AccountPage />}
-                  {vivPage && <Avivator source={imagePathForAvivator} />}
-                </Col>
-              </Col>
-            </Fragment>
-          )}
+          <Col xs={8} className="render-container">
+            {channels.length + 1 == 1 && renderPart(1, 1)}
+            {channels.length + 1 == 2 && (
+              <>
+                {renderPart(2, 1)}
+                {renderPart(2, 2)}
+              </>
+            )}
+            {channels.length + 1 <= 4 && channels.length + 1 > 2 && (
+              <Fragment>
+                <Row>
+                  <Col xs={6}>
+                    {renderPart(2, 1)}
+                    {renderPart(2, 3)}
+                  </Col>
+                  <Col xs={6}>
+                    {renderPart(2, 2)}
+                    {renderPart(2, 4)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+            {channels.length + 1 <= 6 && channels.length + 1 > 4 && (
+              <Fragment>
+                <Row>
+                  <Col xs={4}>
+                    {renderPart(2, 1)}
+                    {renderPart(2, 4)}
+                  </Col>
+                  <Col xs={4}>
+                    {renderPart(2, 2)}
+                    {renderPart(2, 5)}
+                  </Col>
+                  <Col xs={4}>
+                    {renderPart(2, 3)}
+                    {renderPart(2, 6)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+            {channels.length + 1 <= 9 && channels.length + 1 > 6 && (
+              <Fragment>
+                <Row>
+                  <Col xs={4}>
+                    {renderPart(3, 1)}
+                    {renderPart(3, 4)}
+                    {renderPart(3, 7)}
+                  </Col>
+                  <Col xs={4}>
+                    {renderPart(3, 2)}
+                    {renderPart(3, 5)}
+                    {renderPart(3, 8)}
+                  </Col>
+                  <Col xs={4}>
+                    {renderPart(3, 3)}
+                    {renderPart(3, 6)}
+                    {renderPart(3, 9)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+            {channels.length + 1 <= 12 && channels.length + 1 > 9 && (
+              <Fragment>
+                <Row>
+                  <Col xs={3}>
+                    {renderPart(3, 1)}
+                    {renderPart(3, 5)}
+                    {renderPart(3, 9)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(3, 2)}
+                    {renderPart(3, 6)}
+                    {renderPart(3, 10)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(3, 3)}
+                    {renderPart(3, 7)}
+                    {renderPart(3, 11)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(3, 4)}
+                    {renderPart(3, 8)}
+                    {renderPart(3, 12)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+            {channels.length + 1 <= 16 && channels.length + 1 > 12 && (
+              <Fragment>
+                <Row>
+                  <Col xs={3}>
+                    {renderPart(4, 1)}
+                    {renderPart(4, 5)}
+                    {renderPart(4, 9)}
+                    {renderPart(4, 13)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(4, 2)}
+                    {renderPart(4, 6)}
+                    {renderPart(4, 10)}
+                    {renderPart(4, 14)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(4, 3)}
+                    {renderPart(4, 7)}
+                    {renderPart(4, 11)}
+                    {renderPart(4, 15)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(4, 4)}
+                    {renderPart(4, 8)}
+                    {renderPart(4, 12)}
+                    {renderPart(4, 16)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+            {channels.length + 1 <= 20 && channels.length + 1 > 16 && (
+              <Fragment>
+                <Row>
+                  <Col xs={3}>
+                    {renderPart(5, 1)}
+                    {renderPart(5, 5)}
+                    {renderPart(5, 9)}
+                    {renderPart(5, 13)}
+                    {renderPart(5, 17)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(5, 2)}
+                    {renderPart(5, 6)}
+                    {renderPart(5, 10)}
+                    {renderPart(5, 14)}
+                    {renderPart(5, 18)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(5, 3)}
+                    {renderPart(5, 7)}
+                    {renderPart(5, 11)}
+                    {renderPart(5, 15)}
+                    {renderPart(5, 19)}
+                  </Col>
+                  <Col xs={3}>
+                    {renderPart(5, 4)}
+                    {renderPart(5, 8)}
+                    {renderPart(5, 12)}
+                    {renderPart(5, 16)}
+                    {renderPart(5, 20)}
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
+          </Col>
           <Col
             xs={2}
             className="border-left p-2"

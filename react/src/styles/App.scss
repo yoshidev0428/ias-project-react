@@ -507,3 +507,12 @@ h6 {
         padding: 0 5px;
     }
 }
+
+.render-container {
+    .row {
+        margin: 0;
+    }
+    .col-6, .col-3, .col-4 {
+        padding: 0
+    }
+}

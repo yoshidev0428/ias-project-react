@@ -1,4 +1,4 @@
-export const MAX_CHANNELS = 100;
+export const MAX_CHANNELS = 16;
 export const DEFAULT_OVERVIEW = {
   margin: 25,
   scale: 0.15,

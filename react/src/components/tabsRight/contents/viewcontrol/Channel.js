@@ -162,6 +162,7 @@ const Channel = () => {
               <button
                 className="d-block border mx-auto"
                 style={{ width: '26px', height: '26px', padding: '0' }}
+                disabled={selections.length === MAX_CHANNELS || isViewerLoading}
                 onClick={handleChannelAdd}
               >
                 <Icon path={mdiPlus} size={0.7} />
