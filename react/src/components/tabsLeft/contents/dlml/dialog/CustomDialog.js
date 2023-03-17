@@ -85,13 +85,13 @@ const CustomDialog = () => {
       useFlagsStore.setState({ DialogLoadingFlag: false });
       return;
     }
-    useFlagsStore.setState({ DialogCustomFlag: false });
-
+    
     console.log('image-path', state.files.imagePathForAvivator[0].path);
     let imgPath = state.files.imagePathForAvivator[0].path;
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
     console.log('experiment', exp_name);
+    useFlagsStore.setState({ DialogCustomFlag: false });
     useFlagsStore.setState({ DialogLoadingFlag: true });
     let result = await api_experiment.testSegment(
       imgPath,
