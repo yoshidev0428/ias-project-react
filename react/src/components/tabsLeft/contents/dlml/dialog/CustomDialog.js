@@ -80,7 +80,7 @@ const CustomDialog = () => {
       alert('Please enter your image file!');
       return;
     }
-    if(selectedIcon === '') {
+    if (selectedIcon === '') {
       alert('Please select your model!');
       useFlagsStore.setState({ DialogLoadingFlag: false });
       return;
@@ -103,10 +103,12 @@ const CustomDialog = () => {
       console.log('Error occured while invoking getImageTree api');
       //alert("Error occured while getting the tree")
     } else {
-      if(result.data.success == 'NO') {
-        alert('Your custom model is not suitable for this image. Please choose another model')
+      if (result.data.success == 'NO') {
+        alert(
+          'Your custom model is not suitable for this image. Please choose another model',
+        );
         useFlagsStore.setState({ DialogLoadingFlag: false });
-        return
+        return;
       }
       let file_path = result.data.success;
 
@@ -198,9 +200,8 @@ const CustomDialog = () => {
     else
       return (
         <>
-          <div className="m-3"style={{ width: '65px' }}>
-            <div className="border method-img">
-            </div>
+          <div className="m-3" style={{ width: '65px' }}>
+            <div className="border method-img"></div>
             <div className="label-text text-center">There is no models.</div>
           </div>
         </>

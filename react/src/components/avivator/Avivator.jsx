@@ -12,7 +12,8 @@ import { useImage } from '@/hooks/use-image';
 import { useViewerStore } from '@/state';
 import { VIEWER_ZOOM_FACTOR } from '@/constants/avivator';
 
-const Avivator = function ({ source }) {
+const Avivator = function ({ source, index }) {
+  console.log('avivator:', index, source);
   const isImageLoading = useSelector((state) => state.files.isImageLoading);
   const isViewerLoading = useViewerStore((state) => state.isViewerLoading);
   const { viewState, setViewState } = useViewerStore((state) => state);
@@ -24,7 +25,7 @@ const Avivator = function ({ source }) {
     }
   }, [source]);
 
-  useImage(source);
+  // useImage(source);
 
   const handleFullscreen = (isFullScreenEnabled) => {
     setFullScreen(isFullScreenEnabled);
@@ -84,7 +85,7 @@ const Avivator = function ({ source }) {
               <ZoomOutIcon />
             </IconButton>
           </Box>
-          <Viewer isFullScreen={isFullScreen} />
+          {source && <Viewer isFullScreen={isFullScreen} index={index} />}
         </>
       )}
     </FullScreen>
