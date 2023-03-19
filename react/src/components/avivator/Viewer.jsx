@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -19,25 +19,14 @@ import {
 } from '@/state';
 import { useWindowSize } from '@/helpers/avivator';
 import { DEFAULT_OVERVIEW } from '@/constants';
-import { PostProcessEffect } from '@deck.gl/core';
-import generateShaderModule from '@/helpers/generate-module';
 
 const Viewer = ({ isFullScreen }) => {
   const { useLinkedView, use3d, viewState, setViewState } = useViewerStore(
     (state) => state,
     shallow,
   );
-  const {
-    colors,
-    contrastLimits,
-    channelsVisible,
-    selections,
-    brightness,
-    contrast,
-    gamma,
-    deblur,
-    iterNum,
-  } = useChannelsStore((state) => state, shallow);
+  const { colors, contrastLimits, channelsVisible, selections } =
+    useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
     colormap,
@@ -55,20 +44,6 @@ const Viewer = ({ isFullScreen }) => {
   } = useImageSettingsStore((store) => store, shallow);
 
   const loader = useLoader();
-  const shaderModule = useMemo(
-    () => generateShaderModule(Math.floor(deblur.size / 2), iterNum),
-    [deblur, iterNum],
-  );
-  const postProcessEffect = useMemo(
-    () =>
-      new PostProcessEffect(shaderModule, {
-        u_brightness: brightness,
-        u_contrast: contrast,
-        u_gamma: gamma,
-        u_deblurKernel: deblur.kernel,
-      }),
-    [brightness, contrast, gamma, deblur, shaderModule],
-  );
   const viewSize = useWindowSize(isFullScreen, 1, 1);
 
   useEffect(() => {
@@ -155,9 +130,6 @@ const Viewer = ({ isFullScreen }) => {
       colormap={colormap || 'viridis'}
       viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}
-      deckProps={{
-        effects: [postProcessEffect],
-      }}
     />
   );
 };

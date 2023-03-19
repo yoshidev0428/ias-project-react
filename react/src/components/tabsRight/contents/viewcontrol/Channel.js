@@ -1,130 +1,108 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Checkbox, Button } from '@mui/material';
-import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
+import React, { useMemo } from 'react';
+import Grid from '@mui/material/Grid';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import shallow from 'zustand/shallow';
-import Icon from '@mdi/react';
-import SmallCard from '@/components/custom/SmallCard';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import AddIcon from '@mui/icons-material/Add';
+import PaletteIcon from '@mui/icons-material/Palette';
 import { useChannelsStore } from '@/state';
-import Colors from '@/constants/colors';
+import { ChannelColors } from '@/constants/enums';
 
 const Channel = () => {
-  const [colorType, setColorType] = useState('color');
-  const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
-    useChannelsStore((state) => state, shallow);
+  const {
+    channelsVisible,
+    colors,
+    selectedChannel,
+    setChannleVisible,
+    selectChannel,
+  } = useChannelsStore((state) => state, shallow);
   const channels = useMemo(
     () =>
-      colors.map((color, idx) => ({
-        ...Object.values(Colors).find(
-          (c) => c.rgbValue.toString() === color.toString(),
-        ),
-        id: idx,
-        color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
-      })),
-    [colors],
+      Object.values(ChannelColors).map(({ rgb, symbol }) => {
+        const chId = colors.findIndex((c) => c.toString() === rgb.toString());
+        return {
+          disabled: chId < 0,
+          id: chId,
+          symbol,
+          color: rgb,
+          visible: chId >= 0 && channelsVisible[chId],
+          cssColor:
+            symbol === ChannelColors.white.symbol ? 'gray' : `rgb(${rgb})`,
+        };
+      }),
+    [colors, channelsVisible],
   );
 
-  const handleToggleChannel = (channelId) => {
-    setChannleVisible(channelId);
+  const handleToggle = (chId) => {
+    setChannleVisible(chId);
   };
 
-  const handleColorType = () => {
-    if (colorType === 'color') {
-      setChannelsVisible(colors.map((_, idx) => (idx === 0 ? true : false)));
-    } else {
-      setChannelsVisible(colors.map(() => true));
-    }
-    setColorType(colorType === 'color' ? 'mono' : 'color');
+  const handleSelect = (chId) => {
+    selectChannel(chId);
   };
-
-  useEffect(() => {
-    const isMonoColor = channelsVisible.reduce((acc, visible, idx) => {
-      if (idx === 0) {
-        return visible;
-      } else {
-        return acc && !visible;
-      }
-    }, true);
-    if (isMonoColor) {
-      setColorType('mono');
-    } else {
-      setColorType('color');
-    }
-  }, [channelsVisible]);
 
   return (
-    <>
-      <div className="pa-1 common-border">
-        <div className="d-flex justify-space-between align-center">
-          <h6>Channels</h6>
-          <div>
-            <div className="spacer"></div>
-            <Button
-              className="py-0"
-              onClick={handleColorType}
-              variant="contained"
-              color="primary"
-              size="small"
+    <Box px={1}>
+      <Typography variant="card-title" gutterBottom>
+        Channels
+      </Typography>
+      <Grid container justifyContent="space-between">
+        <Grid item display="flex" direction="column" alignItems="center">
+          <Button variant="icon">
+            <AddIcon fontSize="1rem" />
+          </Button>
+          <Button variant="icon">
+            <PaletteIcon fontSize="1rem" />
+          </Button>
+        </Grid>
+        {channels.map(
+          ({ id, cssColor: color, symbol, disabled, visible }, idx) => (
+            <Grid
+              key={idx}
+              item
+              display="flex"
+              direction="column"
+              alignItems="center"
             >
-              {colorType}
-            </Button>
-          </div>
-        </div>
-        <div>
-          <SmallCard>
-            <div className="d-block">
-              <div
-                className="d-block border mx-auto pr-3 pb-3"
-                style={{ width: '17px', height: '17px' }}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    onChange={() => handleToggle(id)}
+                    checked={visible}
+                    disabled={disabled}
+                    size="small"
+                    sx={{
+                      color,
+                      padding: 0,
+                      '&.Mui-checked': { color },
+                    }}
+                  />
+                }
+                label={symbol}
+                labelPlacement="bottom"
+                sx={{ m: 0 }}
+              />
+              <IconButton
+                size="small"
+                sx={{ p: 0, mt: -1 }}
+                disabled={disabled}
+                color={id === selectedChannel ? 'info' : 'default'}
+                onClick={() => handleSelect(id)}
               >
-                {' '}
-                <Icon path={mdiPlus} size={0.7} />
-              </div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3 mt-1"
-                style={{ width: '17px', height: '17px' }}
-              >
-                {' '}
-                <Icon path={mdiPalette} size={0.7} />
-              </div>
-            </div>
-            {channels.map(({ id, color, symbol }) => (
-              <div
-                key={id}
-                className="d-flex flex-column channel-box text-center"
-              >
-                <Checkbox
-                  onChange={() => handleToggleChannel(id)}
-                  checked={channelsVisible[id]}
-                  size="small"
-                  sx={{
-                    color,
-                    padding: 0,
-                    '&.Mui-checked': { color },
-                  }}
-                />
-                <span style={{ color }}>{symbol}</span>
-              </div>
-            ))}
-            <div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3"
-                style={{ width: '17px', height: '17px' }}
-              >
-                {' '}
-                <Icon path={mdiMenuUp} size={0.7} />
-              </div>
-              <div
-                className="d-block border mx-auto pr-3 pb-3 mt-1"
-                style={{ width: '17px', height: '17px' }}
-              >
-                {' '}
-                <Icon path={mdiMenuDown} size={0.7} />
-              </div>
-            </div>
-          </SmallCard>
-        </div>
-      </div>
-    </>
+                <ArrowDropDownIcon fontSize="small" />
+              </IconButton>
+            </Grid>
+          ),
+        )}
+      </Grid>
+      <Divider sx={{ mx: -1 }} />
+    </Box>
   );
 };
 

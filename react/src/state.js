@@ -27,18 +27,17 @@ const generateToggles = (defaults, set) => {
 const DEFAUlT_CHANNEL_STATE = {
   channelsVisible: [],
   contrastLimits: [],
+  selectedChannel: -1,
   colors: [],
   domains: [],
   channelMap: [],
-  tiffNames: [],
-  experimentName: '',
   selections: [],
   ids: [],
   loader: [{ labels: [], shape: [] }],
   image: 0,
-  brightness: 0,
-  contrast: 0,
-  gamma: 50,
+  brightness: [],
+  contrast: [],
+  gamma: [],
   deblur: {
     size: 1,
     kernel: [],
@@ -63,11 +62,6 @@ export const useChannelsStore = create((set) => ({
       channelsVisible: state.channelsVisible.map((v, idx) =>
         idx === index ? !v : v,
       ),
-    })),
-  setChannelsVisible: (visibilities) =>
-    set((state) => ({
-      ...state,
-      channelsVisible: visibilities,
     })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((state) => {
@@ -104,6 +98,8 @@ export const useChannelsStore = create((set) => ({
       });
       return newState;
     }),
+  selectChannel: (chId) =>
+    set((state) => ({ ...state, selectedChannel: chId })),
   setBrightness: (newValue) =>
     set((state) => ({ ...state, brightness: newValue })),
   setContrast: (newValue) => set((state) => ({ ...state, contrast: newValue })),

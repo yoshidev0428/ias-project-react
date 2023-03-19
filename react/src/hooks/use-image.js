@@ -117,24 +117,17 @@ export const useImage = (source) => {
         newDomains = stats.domains;
         newContrastLimits = stats.contrastLimits;
         // If there is only one channel, use white.
-        if (newDomains.length === 1) {
-          newColors = [[255, 255, 255]];
-        } else {
-          for (let i = 0; i < newDomains.length; i++) {
-            newColors.push(COLOR_PALLETE[i]);
-          }
-        }
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => COLOR_PALLETE[i]);
+            : newDomains.map((_, i) => COLOR_PALLETE[i % COLOR_PALLETE.length]);
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,
           useColormap: true,
         });
       }
       useChannelsStore.setState({
-        ids: newDomains.map(() => String(Math.random())),
+        ids: newDomains.map(() => Math.random().toString(16).slice(2)),
         selections: newSelections,
         domains: newDomains,
         contrastLimits: newContrastLimits,

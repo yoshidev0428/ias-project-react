@@ -17,7 +17,6 @@ export const COLORMAP_OPTIONS = [
   'inferno',
 ];
 export const COLOR_PALLETE = [
-  [255, 255, 255],
   [0, 0, 255],
   [0, 255, 0],
   [255, 0, 0],
