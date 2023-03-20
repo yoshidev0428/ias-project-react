@@ -145,7 +145,7 @@ const MainFrame = (props) => {
       window.addEventListener('resize', handleResize);
     };
   }, [imageViewAreaRef]);
-  console.log('vessel--->', currentVesseelCount);
+
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
     const user = useSelector((state) => state.auth.user);

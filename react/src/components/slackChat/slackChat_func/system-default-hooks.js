@@ -15,32 +15,26 @@ export const systemHooks = [
   {
     id: 'getScreenshot',
     action: ({ apiToken, channel, username }) => {
-      return html2canvas(document.body)
-        .then((canvas) => {
-          const dataURL = canvas.toDataURL();
-          const blobBin = base64ToArrayBuffer(dataURL.split(',')[1]);
-          const array = [];
-          for (var i = 0; i < blobBin.length; i++) {
-            array.push(blobBin.charCodeAt(i));
-          }
+      return html2canvas(document.body).then((canvas) => {
+        const dataURL = canvas.toDataURL();
+        const blobBin = base64ToArrayBuffer(dataURL.split(',')[1]);
+        const array = [];
+        for (var i = 0; i < blobBin.length; i++) {
+          array.push(blobBin.charCodeAt(i));
+        }
 
-          // Create File
-          const file = new Blob([new Uint8Array(array)], { type: 'image/png' });
-          // Give it a name
-          file.name = `$=>@getScreenshot:Screenshot-by-${username}`;
+        // Create File
+        const file = new Blob([new Uint8Array(array)], { type: 'image/png' });
+        // Give it a name
+        file.name = `$=>@getScreenshot:Screenshot-by-${username}`;
 
-          return postFile({
-            file,
-            title: `Posted by ${username}`,
-            apiToken,
-            channel,
-          }).then(() => 'Screenshot sent.');
-        })
-        .catch((err) => {
-          console.log(
-            `Error capturing screenshot. Check browser support. ${err}`,
-          );
-        });
+        return postFile({
+          file,
+          title: `Posted by ${username}`,
+          apiToken,
+          channel,
+        }).then(() => 'Screenshot sent.');
+      });
     },
   },
 ];

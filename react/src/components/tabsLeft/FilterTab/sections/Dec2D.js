@@ -8,9 +8,7 @@ import { useFlagsStore } from '@/state';
 export default function Dec2D() {
   const dialogFlag = useFlagsStore((store) => store.dialogFlag);
 
-  const select2 = () => {
-    console.log('Select-2');
-  };
+  const select2 = () => {};
   const show2Ddialog = () => {
     useFlagsStore.setState({ dialogFlag: true });
   };

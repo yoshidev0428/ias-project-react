@@ -52,7 +52,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Threshold_1: 0, Threshold_2: 0, Passes: 1 },
-      kernel: (kerSize) => {
+      kernel: (_kerSize) => {
         return baseArray;
       },
     },
@@ -153,7 +153,7 @@ export const Options = (kerSize) => {
         'St.Deviation',
       ],
       inputNum: { St_Deviation: 1, Windows_Size: 30, Step: 1 },
-      kernel: (kerSize) => {
+      kernel: (_kerSize) => {
         return [];
       },
     },
@@ -161,7 +161,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['Dark', 'Bright'],
       inputNum: { Object_Width: 20 },
-      kernel: (kerSize) => {
+      kernel: (_kerSize) => {
         return [];
       },
     },
@@ -169,7 +169,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Threshold_1: 0, Threshold_2: 0, Rank: 50, Passes: 1 },
-      kernel: (kerSize) => {
+      kernel: (_kerSize) => {
         return [];
       },
     },

@@ -8,12 +8,9 @@ import { useFlagsStore } from '@/state';
 export default function FocusStack() {
   const Focusflag = useFlagsStore((store) => store.Focusflag);
   const select1 = () => {
-    console.log('Select-1');
     useFlagsStore.setState({ Focusflag: true });
   };
-  const select2 = () => {
-    console.log('Select-2');
-  };
+  const select2 = () => {};
 
   return (
     <div className="">

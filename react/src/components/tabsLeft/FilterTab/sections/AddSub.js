@@ -8,18 +8,10 @@ import {
   mdiTuneVariant,
 } from '@mdi/js';
 export default function AddSub() {
-  const select1 = () => {
-    console.log('Select-1');
-  };
-  const select2 = () => {
-    console.log('Select-2');
-  };
-  const select3 = () => {
-    console.log('Select-3');
-  };
-  const select4 = () => {
-    console.log('Select-4');
-  };
+  const select1 = () => {};
+  const select2 = () => {};
+  const select3 = () => {};
+  const select4 = () => {};
   return (
     <div className="">
       <SmallCard title="Addition&Subtraction">
