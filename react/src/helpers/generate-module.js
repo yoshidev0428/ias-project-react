@@ -1,12 +1,17 @@
+// var glsl = require('glslify')
 const fs = (bound, iterNum) => `
 #ifdef GL_ES
 precision mediump float;
 #endif
-
+const float PI = 3.14159265359;
 uniform float u_deblurKernel[49];
 uniform float u_brightness;
 uniform float u_contrast;
 uniform float u_gamma;
+
+uniform vec2 uResolution;
+uniform float uWeakThreshold;
+uniform float uStrongThreshold;
 
 vec4 brightnessContrastGamma(vec4 color) {
   color.rgb += u_brightness;
@@ -22,14 +27,16 @@ vec4 brightnessContrastGamma(vec4 color) {
 vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
   vec4 color = vec4(0.0);
   if (${bound} <=0 ){
-    color = texture2D(texture, texCoord);
+    color = texture2D(texture, texCoord); 
   } else {
     vec3 sum = vec3(0.);
     for (int num = 1; num<=${iterNum}; num++) {
       for (int i = -${bound}; i <= ${bound}; i++) {
         for (int j = -${bound}; j <= ${bound}; j++) {
+          // vec2 onePixel = vec2(1) / texSize(texture, 0);
+          vec2 onePixel = vec2(1) / texSize;
           vec2 offset = vec2(float(j), float(i));
-          sum += texture2D(texture, texCoord + offset).rgb * u_deblurKernel[(i+${bound})*(${bound}*2+1) + j+${bound}];
+          sum += texture2D(texture, texCoord + onePixel*offset).rgb * u_deblurKernel[(i+${bound})*(${bound}*2+1) + j+${bound}];
         }
       }
     }
@@ -37,6 +44,7 @@ vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
   }
   return brightnessContrastGamma(color);
 }
+
 `;
 
 const uniforms = {

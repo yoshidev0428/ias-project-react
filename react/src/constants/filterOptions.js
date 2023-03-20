@@ -1,6 +1,21 @@
 export const Options = (kerSize) => {
   const baseArray = Array(Math.pow(kerSize, 2)).fill(1);
   const minBaseArray = Array(Math.pow(kerSize, 2)).fill(-1);
+  const gaussKernel = (kerSize) => {
+    const k = Math.floor(kerSize / 2);
+    const sigma = 1;
+    let kernel = new Array(kerSize * kerSize);
+    let cnt = 0;
+    for (let i = -k; i <= k; i++) {
+      for (let j = -k; j <= k; j++) {
+        kernel[cnt] =
+          Math.exp(-(i * i + j * j) / (2 * sigma * sigma)) /
+          (2 * Math.PI * sigma * sigma);
+        cnt = cnt + 1;
+      }
+    }
+    return kernel;
+  };
 
   const reducer = (accumulator, currentValue) => accumulator + currentValue;
   return {
@@ -20,7 +35,7 @@ export const Options = (kerSize) => {
       inputNum: { Strength: 100, Passes: 1 },
       kernel: (kerSize) => {
         minBaseArray[Math.floor(Math.pow(kerSize, 2) / 2)] =
-          -minBaseArray.reduce(reducer) - 1;
+          -minBaseArray.reduce(reducer);
         return minBaseArray;
       },
     },
@@ -29,20 +44,64 @@ export const Options = (kerSize) => {
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
       kernel: (kerSize) => {
+        // const k = 0.1; // coefficient
+        // const Gkernel = gaussKernel(kerSize);
+        // let kernel = new Array(kerSize*kerSize);
+        // let cnt = 0;
+        // for (let i = 0; i < kerSize; i++) {
+        //   for (let j = 0; j < kerSize; j++) {
+        //     if (i===j) {
+        //       kernel[cnt] = (1+k) - k*Gkernel[cnt];
+        //     } else {
+        //       kernel[cnt] = - k*Gkernel[cnt];
+        //     }
+        //     cnt = cnt + 1;
+        //   }
+        // }
+        // return kernel;
+
         switch (kerSize) {
           case 3:
             return [0, -1, 0, -1, 5, -1, 0, -1, 0];
           case 5:
             return [
-              -1, -1, -1, -1, -1, -1, 2, 2, 2, -1, -1, 2, 8, 2, -1, -1, 2, 2, 2,
-              -1, -1, -1, -1, -1, -1,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              2 / 8,
+              2 / 8,
+              2 / 8,
+              -1 / 8,
+              -1 / 8,
+              2 / 8,
+              8 / 8,
+              2 / 8,
+              -1 / 8,
+              -1 / 8,
+              2 / 8,
+              2 / 8,
+              2 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
+              -1 / 8,
             ];
           case 7:
-            return [
+            const temp = [
               -1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 1, -1, -1, -1, 1, 4, 4,
               1, -1, -1, -1, 1, 4, 8, 1, -1, -1, -1, 1, 4, 4, 1, -1, -1, -1, 1,
               1, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             ];
+            temp.forEach((element, index) => {
+              temp[index] = element / 13;
+            });
+            return temp;
+
           default:
             break;
         }
@@ -53,51 +112,52 @@ export const Options = (kerSize) => {
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Threshold_1: 0, Threshold_2: 0, Passes: 1 },
       kernel: (kerSize) => {
-        return baseArray;
+        return baseArray.map((num) => num / Math.pow(kerSize, 2));
       },
     },
     Gauss: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7', '9X9'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: (kerSize) => {
-        switch (kerSize) {
-          case 3:
-            return [
-              0.075, 0.124, 0.075, 0.124, 0.204, 0.124, 0.075, 0.124, 0.075,
-            ];
-          case 5:
-            return [
-              0.003, 0.0133, 0.0219, 0.0133, 0.003, 0.0133, 0.0596, 0.0983,
-              0.0596, 0.0133, 0.0219, 0.0983, 0.1621, 0.0983, 0.0219, 0.0133,
-              0.0596, 0.0983, 0.0596, 0.0133, 0.003, 0.0133, 0.0219, 0.0133,
-              0.003,
-            ];
-          case 7:
-            return [
-              0, 0.0002, 0.0011, 0.0018, 0.0011, 0.0002, 0, 0.0002, 0.0029,
-              0.0131, 0.0216, 0.0131, 0.0029, 0.0002, 0.0011, 0.0131, 0.0586,
-              0.0966, 0.0586, 0.0131, 0.0011, 0.0018, 0.0216, 0.0966, 0.1592,
-              0.0966, 0.0216, 0.0018, 0.0011, 0.0131, 0.0586, 0.0966, 0.0586,
-              0.0131, 0.0011, 0.0002, 0.0029, 0.0131, 0.0216, 0.0131, 0.0029,
-              0.0002, 0, 0.0002, 0.0011, 0.0018, 0.0011, 0.0002, 0,
-            ];
-          case 9:
-            return [
-              0.0, 0.0, 0.0, 0.0, 1.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0e-4,
-              1.1e-3, 1.8e-3, 1.1e-3, 2.0e-4, 0.0, 0.0, 0.0, 2.0e-4, 2.9e-3,
-              1.31e-2, 2.15e-2, 1.31e-2, 2.9e-3, 2.0e-4, 0.0, 0.0, 1.1e-3,
-              1.31e-2, 5.86e-2, 9.65e-2, 5.86e-2, 1.31e-2, 1.1e-3, 0.0, 1.0e-4,
-              1.8e-3, 2.15e-2, 9.65e-2, 1.592e-1, 9.65e-2, 2.15e-2, 1.8e-3,
-              1.0e-4, 0.0, 1.1e-3, 1.31e-2, 5.86e-2, 9.65e-2, 5.86e-2, 1.31e-2,
-              1.1e-3, 0.0, 0.0, 2.0e-4, 2.9e-3, 1.31e-2, 2.15e-2, 1.31e-2,
-              2.9e-3, 2.0e-4, 0.0, 0.0, 0.0, 2.0e-4, 1.1e-3, 1.8e-3, 1.1e-3,
-              2.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0e-4, 0.0, 0.0, 0.0, 0.0,
-            ];
-          default:
-            break;
-        }
-      },
+      kernel: (kerSize) => gaussKernel(kerSize),
+
+      // switch (kerSize) {
+
+      //   case 3:
+      //     return [
+      //       0.075, 0.124, 0.075, 0.124, 0.204, 0.124, 0.075, 0.124, 0.075,
+      //     ];
+      //   case 5:
+      //     return [
+      //       0.003, 0.0133, 0.0219, 0.0133, 0.003, 0.0133, 0.0596, 0.0983,
+      //       0.0596, 0.0133, 0.0219, 0.0983, 0.1621, 0.0983, 0.0219, 0.0133,
+      //       0.0596, 0.0983, 0.0596, 0.0133, 0.003, 0.0133, 0.0219, 0.0133,
+      //       0.003,
+      //     ];
+      //   case 7:
+      //     return [
+      //       0, 0.0002, 0.0011, 0.0018, 0.0011, 0.0002, 0, 0.0002, 0.0029,
+      //       0.0131, 0.0216, 0.0131, 0.0029, 0.0002, 0.0011, 0.0131, 0.0586,
+      //       0.0966, 0.0586, 0.0131, 0.0011, 0.0018, 0.0216, 0.0966, 0.1592,
+      //       0.0966, 0.0216, 0.0018, 0.0011, 0.0131, 0.0586, 0.0966, 0.0586,
+      //       0.0131, 0.0011, 0.0002, 0.0029, 0.0131, 0.0216, 0.0131, 0.0029,
+      //       0.0002, 0, 0.0002, 0.0011, 0.0018, 0.0011, 0.0002, 0,
+      //     ];
+      //   case 9:
+      //     return [
+      //       0.0, 0.0, 0.0, 0.0, 1.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0e-4,
+      //       1.1e-3, 1.8e-3, 1.1e-3, 2.0e-4, 0.0, 0.0, 0.0, 2.0e-4, 2.9e-3,
+      //       1.31e-2, 2.15e-2, 1.31e-2, 2.9e-3, 2.0e-4, 0.0, 0.0, 1.1e-3,
+      //       1.31e-2, 5.86e-2, 9.65e-2, 5.86e-2, 1.31e-2, 1.1e-3, 0.0, 1.0e-4,
+      //       1.8e-3, 2.15e-2, 9.65e-2, 1.592e-1, 9.65e-2, 2.15e-2, 1.8e-3,
+      //       1.0e-4, 0.0, 1.1e-3, 1.31e-2, 5.86e-2, 9.65e-2, 5.86e-2, 1.31e-2,
+      //       1.1e-3, 0.0, 0.0, 2.0e-4, 2.9e-3, 1.31e-2, 2.15e-2, 1.31e-2,
+      //       2.9e-3, 2.0e-4, 0.0, 0.0, 0.0, 2.0e-4, 1.1e-3, 1.8e-3, 1.1e-3,
+      //       2.0e-4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0e-4, 0.0, 0.0, 0.0, 0.0,
+      //     ];
+      //   default:
+      //     break;
+      // }
     },
 
     High_Gauss: {
@@ -107,15 +167,41 @@ export const Options = (kerSize) => {
       kernel: (kerSize) => {
         switch (kerSize) {
           case 3:
-            return [
-              0.751, 1.238, 0.751, 1.238, 2.042, 1.238, 0.751, 1.238, 0.751,
-            ];
+            return [-1, -1, -1, -1, 9, -1, -1, -1, -1];
+          // return [
+          //   0.751, 1.238, 0.751, 1.238, 2.042, 1.238, 0.751, 1.238, 0.751,
+
+          // ];
           case 5:
-            return [
-              0.03, 0.133, 0.219, 0.133, 0.03, 0.133, 0.596, 0.983, 0.596,
-              0.133, 0.219, 0.983, 1.621, 0.983, 0.219, 0.133, 0.596, 0.983,
-              0.596, 0.133, 0.03, 0.133, 0.219, 0.133, 0.03,
+            const temp = [
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              1 / 5,
+              1 / 5,
+              1 / 5 - 1 / 25,
+              -1 / 25,
+              1 / 5,
+              8 / 25,
+              1 / 5 - 1 / 25,
+              -1 / 25,
+              1 / 5,
+              1 / 5,
+              1 / 5,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
+              -1 / 25,
             ];
+            // temp.forEach((element, index) => {
+            //   temp[index] = element / 25;
+            // });
+            return temp;
           case 7:
             return [
               0, 0.002, 0.011, 0.018, 0.011, 0.002, 0, 0.002, 0.029, 0.131,
@@ -177,83 +263,104 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [
-        1 / 16,
-        2 / 16,
-        1 / 16,
-        1 / 8,
-        2 / 8,
-        1 / 8,
-        1 / 16,
-        2 / 16,
-        1 / 16,
-      ],
+      kernel: (kerSize) => {
+        return [
+          1.0 / 16.0,
+          2.0 / 16.0,
+          1.0 / 16.0,
+          2.0 / 16.0,
+          4.0 / 16.0,
+          12 / 16.0,
+          1.0 / 16.0,
+          2.0 / 16.0,
+          1.0 / 16.0,
+        ];
+      },
     },
     Sigma: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7', '9X9'],
       inputNum: { St_Deviation: 100, Passes: 1 },
-      kernel: [
-        1 / 16,
-        2 / 16,
-        1 / 16,
-        1 / 8,
-        2 / 8,
-        1 / 8,
-        1 / 16,
-        2 / 16,
-        1 / 16,
-      ],
+      kernel: (kerSize) => {
+        return [
+          1 / 16.0,
+          1 / 8.0,
+          1 / 16.0,
+          1 / 8.0,
+          1 / 4.0,
+          1 / 8.0,
+          1 / 16.0,
+          1 / 8.0,
+          1 / 16.0,
+        ];
+      },
     },
     Sigma_Median: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { St_Deviation: 2.5 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     // Edge
     Sobel: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 77, Passes: 22 },
-      kernel: [-1, 0, 1 - 2, 0, 2 - 1, 0, 1],
+      kernel: (kerSize) => {
+        return [-1, 0, 1 - 2, 0, 2, -1, 0, 1];
+        // return [1, 2, -1, 2, 0, -2, -1, 2, 1]
+      },
     },
     Roberts: {
       radioName: 'Kernel Size',
-      radio: ['3X3', '5X5', '7X7'],
+      radio: [],
       inputNum: { Strength: 100, Passes: 33 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [-1, 0, 1 - 2, 0, 2, -1, 0, 1];
+      },
     },
     Laplacian: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [0, -1, 0, -1, 4, -1, 0, -1, 0];
+      },
     },
     Variance: { radioName: '', radio: [], inputNum: { Width: 100, Height: 1 } },
     Sobel_phase: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Horizontal_edge: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [0.7, 1, 1, 0.7, 1, 0.7, 0.7, 1, 0.7],
+      kernel: (kerSize) => {
+        return [1, 2, 1, 0, 0, 0, -1, -2, -1];
+      },
     },
     Vertical_edge: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [-1, -2, -1, 0, 0, 0, 1, 2, 1],
+      kernel: (kerSize) => {
+        return [1, 0, -1, 2, 0, -2, 1, 0, -1];
+      },
     },
     Canny: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Low: 100, High: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Gabor: { radioName: '', radio: [], inputNum: { Period: 100, Angle: 1 } },
     DIC_Restore: { radioName: '', radio: [], inputNum: { Angle: 0 } },
@@ -262,19 +369,25 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Close: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Erode: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Dilate: {
       radioName: 'Shape',
@@ -286,38 +399,50 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Well: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     // Kernels
     Convolution: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Morphological: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Sculpture: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     Background: {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
 
     //Learge
@@ -325,13 +450,17 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
     High_Pass: {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '11X11'],
       inputNum: { Strength: 100, Passes: 1 },
-      kernel: [],
+      kernel: (kerSize) => {
+        return [];
+      },
     },
   };
 };
