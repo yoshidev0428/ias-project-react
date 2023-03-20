@@ -1,7 +1,7 @@
 import { LayerExtension } from '@deck.gl/core';
 import colorPalette from './custom-palette-module';
 import { getDefaultPalette, padColors, padWithDefault } from '../utils';
-import { MAX_CHANNELS } from '@/constants';
+import { MAX_CHANNELS } from '@vivjs/constants';
 
 const defaultProps = {
   colors: { type: 'array', value: null, compare: true },
