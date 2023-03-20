@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
@@ -55,22 +55,21 @@ const Channel = () => {
       <Typography variant="card-title" gutterBottom>
         Channels
       </Typography>
-      <Grid container justifyContent="space-between">
-        <Grid item display="flex" direction="column" alignItems="center">
+      <Stack direction="row" justifyContent="space-between">
+        <Stack direction="column" alignItems="center">
           <Button variant="icon">
             <AddIcon fontSize="1rem" />
           </Button>
           <Button variant="icon">
             <PaletteIcon fontSize="1rem" />
           </Button>
-        </Grid>
+        </Stack>
         {channels.map(
           ({ id, cssColor: color, symbol, disabled, visible }, idx) => (
-            <Grid
+            <Box
               key={idx}
-              item
               display="flex"
-              direction="column"
+              flexDirection="column"
               alignItems="center"
             >
               <FormControlLabel
@@ -100,10 +99,10 @@ const Channel = () => {
               >
                 <ArrowDropDownIcon fontSize="small" />
               </IconButton>
-            </Grid>
+            </Box>
           ),
         )}
-      </Grid>
+      </Stack>
       <Divider sx={{ mx: -1 }} />
     </Box>
   );
