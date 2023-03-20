@@ -13,7 +13,7 @@
     "plugins": ["prettier"],
     "rules": {
         "no-unused-vars": [
-            "warn",
+            "error",
             {
                 "argsIgnorePattern": "^_",
                 "varsIgnorePattern": "^_"
@@ -21,7 +21,7 @@
         ],
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
-        "no-console": "warn",
+        "no-console": "error",
         "no-template-curly-in-string": "error"
     }
 }
