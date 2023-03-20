@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
-  PictureInPictureViewer,
   SideBySideViewer,
   VolumeViewer,
   AdditiveColormapExtension,
@@ -19,14 +18,23 @@ import {
 } from '@/state';
 import { useWindowSize } from '@/helpers/avivator';
 import { DEFAULT_OVERVIEW } from '@/constants';
+import CustomPaletteExtension from './extensions/custom-palette-extension';
+import CustomPipViewer from './viewers/CustomPipViewer';
 
 const Viewer = ({ isFullScreen }) => {
   const { useLinkedView, use3d, viewState, setViewState } = useViewerStore(
     (state) => state,
     shallow,
   );
-  const { colors, contrastLimits, channelsVisible, selections } =
-    useChannelsStore((state) => state, shallow);
+  const {
+    colors,
+    contrastLimits,
+    brightness,
+    contrast,
+    gamma,
+    channelsVisible,
+    selections,
+  } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
     colormap,
@@ -108,9 +116,14 @@ const Viewer = ({ isFullScreen }) => {
       colormap={colormap || 'viridis'}
     />
   ) : (
-    <PictureInPictureViewer
+    <CustomPipViewer
       loader={loader}
       contrastLimits={contrastLimits}
+      parameters={{
+        brightness,
+        contrast,
+        gamma,
+      }}
       colors={colors}
       channelsVisible={channelsVisible}
       selections={selections}
@@ -124,9 +137,7 @@ const Viewer = ({ isFullScreen }) => {
       lensSelection={lensSelection}
       lensEnabled={lensEnabled}
       onViewportLoad={onViewportLoad}
-      extensions={[
-        colormap ? new AdditiveColormapExtension() : new LensExtension(),
-      ]}
+      extensions={[new CustomPaletteExtension()]}
       colormap={colormap || 'viridis'}
       viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}

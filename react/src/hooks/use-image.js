@@ -16,7 +16,7 @@ import {
   getBoundingCube,
   isInterleaved,
 } from '@/helpers/avivator';
-import { COLOR_PALLETE, FILL_PIXEL_VALUE } from '@/constants';
+import { COLOR_PALETTE, FILL_PIXEL_VALUE } from '@/constants';
 
 export const useImage = (source) => {
   const { use3d, toggleUse3d, tiffNames, experimentName } = useViewerStore(
@@ -120,7 +120,7 @@ export const useImage = (source) => {
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => COLOR_PALLETE[i % COLOR_PALLETE.length]);
+            : newDomains.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length]);
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,
           useColormap: true,

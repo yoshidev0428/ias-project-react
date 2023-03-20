@@ -41,6 +41,9 @@ const Channel = () => {
 
   const handleToggle = (chId) => {
     setChannleVisible(chId);
+    if (!channelsVisible[chId]) {
+      selectChannel(chId);
+    }
   };
 
   const handleSelect = (chId) => {
