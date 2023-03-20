@@ -37,6 +37,7 @@ export const useImage = (source) => {
           loaderErrorSnackbar: { on: true, message },
         });
       });
+      console.log('use-image-new-loader:', newLoader);
       let nextMeta;
       let nextLoader;
       if (Array.isArray(newLoader)) {
