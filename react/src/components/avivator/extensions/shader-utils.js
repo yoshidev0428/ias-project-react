@@ -13,7 +13,7 @@ vec3 apply_brightness_contrast_gamma(vec3 rgb, float b, float c, float g) {
   } else {
     rgb = (rgb - 0.5) * (1.0 + c) + 0.5;
   }
-  return pow(rgb, vec3(g));
+  return pow(rgb, vec3((g == -1.0 ? -0.9999999 : g) + 1.0));
 }
 `;
 

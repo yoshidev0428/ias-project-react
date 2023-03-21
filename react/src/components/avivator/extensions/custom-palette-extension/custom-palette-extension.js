@@ -60,7 +60,7 @@ const CustomPaletteExtension = class extends LayerExtension {
       ),
       gamma: padWithDefault(
         parameters.gamma,
-        1,
+        0,
         MAX_CHANNELS - parameters.gamma.length,
       ),
     };
