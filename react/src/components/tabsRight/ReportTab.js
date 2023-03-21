@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
 import SmallCard from '../custom/SmallCard';
 import TabItem from '../custom/TabItem';
-import { CSVLink, CSVDownload } from 'react-csv';
 import { useFlagsStore } from '@/state';
 import VisualDialog from './contents/report/VisualDialog';
 // import Divider from '@mui/material/Divider';
@@ -21,25 +19,14 @@ import {
 export default function ReportTab() {
   const DialogVisualFlag = useFlagsStore((store) => store.DialogVisualFlag);
 
-  const onClick1 = () => {
-    console.log('onClick Cloud');
-  };
-  const onClick2 = () => {
-    console.log('onClick Excel');
-  };
-  const onClick3 = () => {
-    console.log('onClick CSV');
-  };
-  const onClick4 = () => {
-    console.log('onClick hdf5');
-  };
+  const onClick1 = () => {};
+  const onClick2 = () => {};
+  const onClick3 = () => {};
+  const onClick4 = () => {};
   const onClick5 = () => {
-    console.log('onClick Visual');
     useFlagsStore.setState({ DialogVisualFlag: true });
   };
-  const onClick6 = () => {
-    console.log('onClick Tableau');
-  };
+  const onClick6 = () => {};
   return (
     <TabItem title="Report">
       {/* <p className='mt-4'>Save</p> */}

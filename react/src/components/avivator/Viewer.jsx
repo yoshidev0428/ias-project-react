@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
-  PictureInPictureViewer,
   SideBySideViewer,
   VolumeViewer,
   AdditiveColormapExtension,
@@ -19,24 +18,22 @@ import {
 } from '@/state';
 import { useWindowSize } from '@/helpers/avivator';
 import { DEFAULT_OVERVIEW } from '@/constants';
-import { PostProcessEffect } from '@deck.gl/core';
-import generateShaderModule from '@/helpers/generate-module';
+import CustomPaletteExtension from './extensions/custom-palette-extension';
+import CustomPipViewer from './viewers/CustomPipViewer';
 
-const Viewer = ({ isFullScreen, index }) => {
+const Viewer = ({ isFullScreen }) => {
   const { useLinkedView, use3d, viewState, setViewState } = useViewerStore(
     (state) => state,
     shallow,
   );
-  let {
+  const {
     colors,
     contrastLimits,
-    channelsVisible,
-    selections,
     brightness,
     contrast,
     gamma,
-    deblur,
-    iterNum,
+    channelsVisible,
+    selections,
   } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
@@ -55,20 +52,6 @@ const Viewer = ({ isFullScreen, index }) => {
   } = useImageSettingsStore((store) => store, shallow);
 
   const loader = useLoader();
-  const shaderModule = useMemo(
-    () => generateShaderModule(Math.floor(deblur.size / 2), iterNum),
-    [deblur, iterNum],
-  );
-  const postProcessEffect = useMemo(
-    () =>
-      new PostProcessEffect(shaderModule, {
-        u_brightness: brightness,
-        u_contrast: contrast,
-        u_gamma: gamma,
-        u_deblurKernel: deblur.kernel,
-      }),
-    [brightness, contrast, gamma, deblur, shaderModule],
-  );
   const viewSize = useWindowSize(isFullScreen, 1, 1);
 
   useEffect(() => {
@@ -82,12 +65,6 @@ const Viewer = ({ isFullScreen, index }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-
-  if (index > 1) {
-    channelsVisible = channelsVisible.map((v, idx) =>
-      idx === index - 1 ? 1 : 0,
-    );
-  }
 
   return use3d ? (
     <VolumeViewer
@@ -139,9 +116,14 @@ const Viewer = ({ isFullScreen, index }) => {
       colormap={colormap || 'viridis'}
     />
   ) : (
-    <PictureInPictureViewer
+    <CustomPipViewer
       loader={loader}
       contrastLimits={contrastLimits}
+      parameters={{
+        brightness,
+        contrast,
+        gamma,
+      }}
       colors={colors}
       channelsVisible={channelsVisible}
       selections={selections}
@@ -155,15 +137,10 @@ const Viewer = ({ isFullScreen, index }) => {
       lensSelection={lensSelection}
       lensEnabled={lensEnabled}
       onViewportLoad={onViewportLoad}
-      extensions={[
-        colormap ? new AdditiveColormapExtension() : new LensExtension(),
-      ]}
+      extensions={[new CustomPaletteExtension()]}
       colormap={colormap || 'viridis'}
       viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}
-      deckProps={{
-        effects: [postProcessEffect],
-      }}
     />
   );
 };

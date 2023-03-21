@@ -1,6 +1,5 @@
 import * as React from 'react';
-import Loader from '@/components/avivator/Loader'
-import loadingImg from '../../assets/images/loading.gif';
+import Loader from '@/components/avivator/Loader';
 
 const LoadingDialog = () => {
   return (

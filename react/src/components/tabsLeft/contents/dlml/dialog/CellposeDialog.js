@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import { useFlagsStore } from '@/state';
-import { Row, Col, Button, Form, Image } from 'react-bootstrap';
+import { Row, Col, Button, Form } from 'react-bootstrap';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -13,17 +13,10 @@ import Checkbox from '@mui/material/Checkbox';
 import store from '../../../../../reducers';
 
 const CellposeDialog = () => {
-  const DialogCustomNameFlag = useFlagsStore(
-    (store) => store.DialogCustomNameFlag,
-  );
   const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const state = store.getState();
-  const [selectedMethod, setSelectedMethod] = React.useState(
-    state.experiment.method,
-  );
-  const [customName, setCustomName] = React.useState(
-    state.experiment.custom_name,
-  );
+  const [selectedMethod] = React.useState(state.experiment.method);
+  const [customName] = React.useState(state.experiment.custom_name);
   const segInfo = state.experiment.seg_info;
   const methods = {
     tissuenet: 'TissueNet',
@@ -44,16 +37,14 @@ const CellposeDialog = () => {
     lc4: 'LC4',
   };
 
-  const close = (event, reason) => {
+  const close = (_event, reason) => {
     if (reason !== 'backdropClick') {
       useFlagsStore.setState({ DialogBasicFlag: true });
       useFlagsStore.setState({ DialogCellposeFlag: false });
-      console.log('flag Status--->' + DialogCellposeFlag);
     }
   };
 
   const action = () => {
-    console.log('flag Status---> Action');
     segInfo.custom_name = customName;
     segInfo.custom_method = selectedMethod;
     segInfo.outline = outline;

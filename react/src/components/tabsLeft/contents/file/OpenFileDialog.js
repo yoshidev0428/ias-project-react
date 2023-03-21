@@ -5,11 +5,9 @@ import SimpleDialog from '@/components/custom/SimpleDialog';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 import * as api_experiment from '@/api/experiment';
 import store from '@/reducers';
-import { useSelector } from 'react-redux';
 import Grid from '@mui/material/Grid';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -18,17 +16,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import Dropzone from 'react-dropzone';
 import ExpTreeView from './ExpTreeView';
-import { useViewerStore } from '@/state';
 import {
   Autocomplete,
   Box,
   CircularProgress,
   createFilterOptions,
   Divider,
-  MenuItem,
-  Select,
 } from '@mui/material';
-import { getStaticPath } from '@/helpers/file';
 
 const DeleteSureDialog = ({
   open,
@@ -123,8 +117,6 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
   const [uploadFiles, setUploadFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedExp, setSelectedExp] = useState(null);
-
-  const auth = useSelector((state) => state.auth);
 
   const getTree = async () => {
     let response = await api_experiment.getExperimentDatas();

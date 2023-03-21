@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 // import Button from "@mui/material/Button";
 // import Slider from "@mui/material/Slider";
@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 // import {Col, Container} from "react-bootstrap";
 // import {styled} from "@mui/material/styles";
 // import TextField from "@mui/material/TextField";
-import { submit_message } from '../../api/auth';
 // import {ReactSlackChat} from "react-slack-chat";
 import ReactSlackChat from './ReactSlackChat';
 
@@ -15,7 +14,7 @@ const mapStateToProps = (state) => ({
   user: state.auth.user,
 });
 
-const SupportChatSlack = (props) => {
+const SupportChatSlack = () => {
   // function handleCloseChatBox() {
   //     props.updateShowFlag();
   // }

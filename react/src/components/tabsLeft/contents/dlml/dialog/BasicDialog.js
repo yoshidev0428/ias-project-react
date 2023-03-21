@@ -15,7 +15,7 @@ import imgNuchel from '../../../../../assets/cell/nuchel.png';
 import imgCyto from '../../../../../assets/cell/cyto.png';
 import imgLayer from '../../../../../assets/cell/layer.png';
 import imgWafer from '../../../../../assets/cell/wafer.png';
-import CellposeDialog from './CellposeDialog';
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -29,9 +29,7 @@ TabContainer.propTypes = {
 };
 
 const BasicDialog = () => {
-  const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const DialogBasicFlag = useFlagsStore((store) => store.DialogBasicFlag);
-  const state = store.getState();
   const showCellposeDialog = () => {
     useFlagsStore.setState({ DialogBasicFlag: false });
     useFlagsStore.setState({ DialogCellposeFlag: true });
@@ -40,7 +38,6 @@ const BasicDialog = () => {
   };
   const close = () => {
     useFlagsStore.setState({ DialogBasicFlag: false });
-    console.log('flag Status--->' + DialogBasicFlag);
   };
 
   const [rightTabVal, setRightTabVal] = useState(0);

@@ -14,7 +14,6 @@ import CustomNameDialog from './CustomNameDialog';
 import store from '../../../../../reducers';
 import * as api_experiment from '@/api/experiment';
 import { isNull } from 'lodash';
-import { mdiConsoleLine } from '@mdi/js';
 import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
 import imgNuchel from '../../../../../assets/cell/nuchel.png';
 import imgCyto from '../../../../../assets/cell/cyto.png';
@@ -72,7 +71,6 @@ const CustomDialog = () => {
   const DialogCustomNameFlag = useFlagsStore(
     (store) => store.DialogCustomNameFlag,
   );
-  const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
 
   const showCustomNameDialog = async () => {
     const state = store.getState();
@@ -85,12 +83,10 @@ const CustomDialog = () => {
       useFlagsStore.setState({ DialogLoadingFlag: false });
       return;
     }
-    
-    console.log('image-path', state.files.imagePathForAvivator[0].path);
+
     let imgPath = state.files.imagePathForAvivator[0].path;
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
-    console.log('experiment', exp_name);
     useFlagsStore.setState({ DialogCustomFlag: false });
     useFlagsStore.setState({ DialogLoadingFlag: true });
     let result = await api_experiment.testSegment(
@@ -100,7 +96,6 @@ const CustomDialog = () => {
     );
     const imagePathForAvivator = [];
     if (result.data.error) {
-      console.log('Error occured while invoking getImageTree api');
       //alert("Error occured while getting the tree")
     } else {
       if (result.data.success == 'NO') {
@@ -112,9 +107,7 @@ const CustomDialog = () => {
       }
       let file_path = result.data.success;
 
-      console.log('cell-segmant', file_path);
       const file = await getImageByUrl(exp_name + '/' + file_path);
-      console.log('file', file);
       if (file) imagePathForAvivator.push(file);
     }
     if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
@@ -128,7 +121,6 @@ const CustomDialog = () => {
   const close = (event, reason) => {
     if (reason != 'backdropClick') {
       useFlagsStore.setState({ DialogCustomFlag: false });
-      console.log('flag Status--->' + DialogCustomFlag);
     }
   };
 
@@ -150,8 +142,6 @@ const CustomDialog = () => {
       setModels(response.data.data);
       store.dispatch({ type: 'set_models', content: response.data.data });
     }
-    const state = store.getState();
-    console.log('models-store', models);
   };
 
   useEffect(() => {

@@ -15,8 +15,9 @@ import {
   getMultiSelectionStats,
   getBoundingCube,
   isInterleaved,
+  randomId,
 } from '@/helpers/avivator';
-import { COLOR_PALLETE, FILL_PIXEL_VALUE } from '@/constants';
+import { COLOR_PALETTE, FILL_PIXEL_VALUE } from '@/constants';
 
 export const useImage = (source) => {
   const { use3d, toggleUse3d, tiffNames, experimentName } = useViewerStore(
@@ -37,7 +38,7 @@ export const useImage = (source) => {
           loaderErrorSnackbar: { on: true, message },
         });
       });
-      console.log('use-image-new-loader:', newLoader);
+
       let nextMeta;
       let nextLoader;
       if (Array.isArray(newLoader)) {
@@ -118,24 +119,17 @@ export const useImage = (source) => {
         newDomains = stats.domains;
         newContrastLimits = stats.contrastLimits;
         // If there is only one channel, use white.
-        if (newDomains.length === 1) {
-          newColors = [[255, 255, 255]];
-        } else {
-          for (let i = 0; i < newDomains.length; i++) {
-            newColors.push(COLOR_PALLETE[i % COLOR_PALLETE.length]);
-          }
-        }
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => COLOR_PALLETE[i % COLOR_PALLETE.length]);
+            : newDomains.map((_, i) => COLOR_PALETTE[i % COLOR_PALETTE.length]);
         useViewerStore.setState({
           useLens: channelOptions.length !== 1,
           useColormap: true,
         });
       }
       useChannelsStore.setState({
-        ids: newDomains.map(() => String(Math.random())),
+        ids: newDomains.map(() => randomId()),
         selections: newSelections,
         domains: newDomains,
         contrastLimits: newContrastLimits,

@@ -15,7 +15,6 @@ const initState = {
 
 //action redux
 const vessel = (state = initState, action) => {
-  console.log('Action--->', action);
   switch (action.type) {
     case 'vessel_selectedVesselHole':
       state.selectedVesselHole = action.content;

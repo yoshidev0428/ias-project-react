@@ -11,15 +11,15 @@ import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
-const VisualLineChart = (props) => {
-  const [data, setData] = useState([
+const VisualLineChart = () => {
+  const [data] = useState([
     { x: 1, y: 30 },
     { x: 2, y: 40 },
     { x: 3, y: 5 },
     { x: 4, y: 2 },
     { x: 5, y: 21 },
   ]);
-  const [items, setItem] = useState([
+  const [items] = useState([
     { id: 0, name: 'hearmap' },
     { id: 1, name: 'histagram' },
     { id: 2, name: 'graph' },
@@ -27,7 +27,7 @@ const VisualLineChart = (props) => {
     { id: 4, name: 'dotplot' },
   ]);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [_selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (e) => {
     setSelectedIndex(e.target.value);
