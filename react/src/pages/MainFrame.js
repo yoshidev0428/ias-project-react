@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -49,10 +49,7 @@ import AccountPage from './account';
 import { useSelector } from 'react-redux';
 
 import LoadingDialog from '@/components/custom/LoadingDialog';
-import { useChannelsStore, useFlagsStore } from '@/state';
-import shallow from 'zustand/shallow';
-import Colors from '@/constants/colors';
-import { useImage } from '@/hooks/use-image';
+import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -92,11 +89,7 @@ const MainFrame = (props) => {
     (state) => state.files.imagePathForAvivator,
   );
 
-  useImage(imagePathForAvivator);
-
   const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
-  const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
-    useChannelsStore((state) => state, shallow);
 
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
@@ -109,18 +102,6 @@ const MainFrame = (props) => {
     );
     localStorage.setItem('imageViewSizeHeight', height - fixedBarHeight);
   };
-
-  const channels = useMemo(
-    () =>
-      colors.map((color, idx) => ({
-        ...Object.values(Colors).find(
-          (c) => c.rgbValue.toString() === color.toString(),
-        ),
-        id: idx,
-        color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
-      })),
-    [colors],
-  );
 
   const [rightTabVal, setRightTabVal] = useState(0);
   const [leftTabVal, setLeftTabVal] = useState(3);
@@ -164,7 +145,7 @@ const MainFrame = (props) => {
       window.addEventListener('resize', handleResize);
     };
   }, [imageViewAreaRef]);
-  console.log('vessel--->', currentVesseelCount);
+
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
     const user = useSelector((state) => state.auth.user);
@@ -272,28 +253,6 @@ const MainFrame = (props) => {
       </>
     );
   };
-
-  const renderPart = (rowCount, index) => {
-    return (
-      <Col
-        ref={imageViewAreaRef}
-        style={{
-          backgroundColor: '#ddd',
-          height: ((height - fixedBarHeight) / rowCount).toString() + 'px',
-          overflowY: 'auto',
-          border: '1px solid black',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {userPage && <UserPage />}
-        {accountPage && <AccountPage />}
-        {vivPage && <Avivator source={imagePathForAvivator} />}
-      </Col>
-    );
-  };
-  console.log('mainframe-channel-count', channels.length, imagePathForAvivator);
   return (
     <>
       <HeaderContent />
@@ -380,9 +339,138 @@ const MainFrame = (props) => {
               )}
             </div>
           </Col>
-          <Col xs={8} className="render-container">
-            <>{renderPart(1, 1)}</>)
-          </Col>
+          {currentVesseelCount == 1 && (
+            <Col
+              xs={8}
+              ref={imageViewAreaRef}
+              style={{
+                backgroundColor: '#ddd',
+                height: (height - fixedBarHeight).toString() + 'px',
+                overflowY: 'auto',
+                borderBottom: '2px solid black',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {' '}
+              {/* Central Panel, Viv Image Viewer */}
+              {userPage && <UserPage />}
+              {accountPage && <AccountPage />}
+              {vivPage && <Avivator source={imagePathForAvivator} />}
+            </Col>
+          )}
+          {currentVesseelCount == 2 && (
+            <Col xs={8}>
+              {' '}
+              {/* Central Panel, Viv Image Viewer */}
+              <Col
+                ref={imageViewAreaRef}
+                style={{
+                  backgroundColor: '#ddd',
+                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                  overflowY: 'auto',
+                  borderBottom: '3px solid black',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {userPage && <UserPage />}
+                {accountPage && <AccountPage />}
+                {vivPage && <Avivator source={imagePathForAvivator} />}
+              </Col>
+              <Col
+                ref={imageViewAreaRef}
+                style={{
+                  backgroundColor: '#ddd',
+                  height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {userPage && <UserPage />}
+                {accountPage && <AccountPage />}
+                {vivPage && <Avivator source={imagePathForAvivator} />}
+              </Col>
+            </Col>
+          )}
+          {currentVesseelCount == 4 && (
+            <Fragment>
+              <Col xs={4} style={{ borderRight: '3px solid black' }}>
+                {' '}
+                {/* Central Panel, Viv Image Viewer */}
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    borderBottom: '3px solid black',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+              </Col>
+              <Col xs={4}>
+                {' '}
+                {/* Central Panel, Viv Image Viewer */}
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    borderBottom: '3px solid black',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+                <Col
+                  ref={imageViewAreaRef}
+                  style={{
+                    backgroundColor: '#ddd',
+                    height: ((height - fixedBarHeight) / 2).toString() + 'px',
+                    overflowY: 'auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {userPage && <UserPage />}
+                  {accountPage && <AccountPage />}
+                  {vivPage && <Avivator source={imagePathForAvivator} />}
+                </Col>
+              </Col>
+            </Fragment>
+          )}
           <Col
             xs={2}
             className="border-left p-2"

@@ -1,32 +1,35 @@
-import {debugLog} from '../utils';
+import { debugLog } from '../utils';
 
-export default async ({apiToken, bot, channelFilter = [], defaultChannel}) => {
+export default async ({
+  apiToken,
+  bot,
+  channelFilter = [],
+  defaultChannel,
+}) => {
+  let payload = await bot.conversations.list({ token: apiToken });
 
-    let payload = await bot.conversations.list({token: apiToken});
+  debugLog(payload);
+  // get the channels we need
+  let channels = [];
+  let activeChannel = '';
 
-    console.log("slack-utils  get channelsasdfasdfasdfds");
-    debugLog(payload);
-    // get the channels we need
-    let channels = [];
-    let activeChannel = '';
+  for (let i = 0; i < payload.channels.length; i++) {
+    let channel = payload.channels[i];
 
-    for (let i = 0; i < payload.channels.length; i ++) {
-        let channel = payload.channels[i];
-
-        for (let j = 0; j < channelFilter.length; j ++) {
-            let channelObject = channelFilter[j];
-            if (
-                channelObject.name === channel.name ||
-                channelObject.id === channel.id
-            ) {
-                if (defaultChannel === channel.name) {
-                    activeChannel = channelObject;
-                }
-                channel.icon = channelObject.icon; // Add on the icon property to the channel list
-                channels.push(channel);
-            }
+    for (let j = 0; j < channelFilter.length; j++) {
+      let channelObject = channelFilter[j];
+      if (
+        channelObject.name === channel.name ||
+        channelObject.id === channel.id
+      ) {
+        if (defaultChannel === channel.name) {
+          activeChannel = channelObject;
         }
+        channel.icon = channelObject.icon; // Add on the icon property to the channel list
+        channels.push(channel);
+      }
     }
+  }
 
-    return {channels, activeChannel};
+  return { channels, activeChannel };
 };

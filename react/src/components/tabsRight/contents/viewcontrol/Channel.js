@@ -1,82 +1,72 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { Checkbox, Button } from '@mui/material';
-import { mdiPlus, mdiMenuUp, mdiMenuDown, mdiPalette } from '@mdi/js';
+import React, { useCallback, useMemo } from 'react';
+import Stack from '@mui/material/Stack';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 import shallow from 'zustand/shallow';
-import Icon from '@mdi/react';
-import SmallCard from '@/components/custom/SmallCard';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import AddIcon from '@mui/icons-material/Add';
+import PaletteIcon from '@mui/icons-material/Palette';
 import {
   useChannelsStore,
+  useImageSettingsStore,
   useLoader,
   useMetadata,
   useViewerStore,
-  useImageSettingsStore,
 } from '@/state';
-import Colors from '@/constants/colors';
-import { getSingleSelectionStats } from '@/helpers/avivator';
-import { MAX_CHANNELS, COLOR_PALLETE } from '@/constants';
+import { ChannelColors } from '@/constants/enums';
+import { MAX_CHANNELS } from '@hms-dbmi/viv';
+import { getSingleSelectionStats, randomId } from '@/helpers/avivator';
+import { COLOR_PALETTE } from '@/constants';
 
 const Channel = () => {
-  const [colorType, setColorType] = useState('color');
-  const { channelsVisible, colors, setChannleVisible, setChannelsVisible } =
-    useChannelsStore((state) => state, shallow);
-  const [selections, addChannel, setPropertiesForChannel] = useChannelsStore(
-    (store) => [
-      store.selections,
-      store.addChannel,
-      store.setPropertiesForChannel,
-    ],
-    shallow,
-  );
-
-  const channels = useMemo(
-    () =>
-      colors.map((color, idx) => ({
-        ...Object.values(Colors).find(
-          (c) => c.rgbValue.toString() === color.toString(),
-        ),
-        id: idx,
-        color: color.toString() === '255,255,255' ? 'gray' : `rgb(${color})`,
-      })),
-    [colors],
-  );
   const loader = useLoader();
   const metadata = useMetadata();
   const { labels } = loader[0];
 
-  const [
+  const {
+    channelsVisible,
+    colors,
+    selections,
+    selectedChannel,
+    setChannleVisible,
+    selectChannel,
+    addChannel,
+    setPropertiesForChannel,
+  } = useChannelsStore((state) => state, shallow);
+
+  const {
     globalSelection,
     isViewerLoading,
     use3d,
     setIsChannelLoading,
     addIsChannelLoading,
-  ] = useViewerStore(
-    (store) => [
-      store.globalSelection,
-      store.isViewerLoading,
-      store.use3d,
-      store.setIsChannelLoading,
-      store.addIsChannelLoading,
-    ],
-    shallow,
+  } = useViewerStore((store) => store, shallow);
+
+  const channels = useMemo(
+    () =>
+      Object.values(ChannelColors).map(({ rgb, symbol }) => {
+        const chId = colors.findIndex((c) => c.toString() === rgb.toString());
+        return {
+          disabled: chId < 0,
+          id: chId,
+          symbol,
+          color: rgb,
+          visible: chId >= 0 && channelsVisible[chId],
+          cssColor:
+            symbol === ChannelColors.white.symbol ? 'gray' : `rgb(${rgb})`,
+        };
+      }),
+    [colors, channelsVisible],
   );
 
-  const handleToggleChannel = (channelId) => {
-    setChannleVisible(channelId);
-  };
-
-  const handleColorType = () => {
-    if (colorType === 'color') {
-      setChannelsVisible(colors.map((_, idx) => (idx === 0 ? true : false)));
-    } else {
-      setChannelsVisible(colors.map(() => true));
-    }
-    setColorType(colorType === 'color' ? 'mono' : 'color');
-  };
-
-  const handleChannelAdd = useCallback(() => {
+  const handleAddChannel = useCallback(() => {
     let selection = Object.fromEntries(labels.map((l) => [l, 0]));
     selection = { ...selection, ...globalSelection };
-    console.log('selection:', selection);
     const numSelectionsBeforeAdd = selections.length;
     getSingleSelectionStats({
       loader,
@@ -90,9 +80,7 @@ const Channel = () => {
       });
       useImageSettingsStore.setState({
         onViewportLoad: () => {
-          useImageSettingsStore.setState({
-            onViewportLoad: () => {},
-          });
+          useImageSettingsStore.setState({ onViewportLoad: () => {} });
           setIsChannelLoading(numSelectionsBeforeAdd, false);
         },
       });
@@ -103,11 +91,11 @@ const Channel = () => {
       const { c } = selection;
       addChannel({
         selections: selection,
-        ids: String(Math.random()),
+        ids: randomId(),
         channelsVisible: false,
         colors:
           (Channels[c].Color && Channels[c].Color.slice(0, -1)) ??
-          (COLOR_PALLETE[c] || [255, 255, 255]),
+          COLOR_PALETTE[numSelectionsBeforeAdd % COLOR_PALETTE.length],
       });
     });
   }, [
@@ -123,67 +111,49 @@ const Channel = () => {
     metadata,
   ]);
 
-  useEffect(() => {
-    const isMonoColor = channelsVisible.reduce((acc, visible, idx) => {
-      if (idx === 0) {
-        return visible;
-      } else {
-        return acc && !visible;
-      }
-    }, true);
-    if (isMonoColor) {
-      setColorType('mono');
-    } else {
-      setColorType('color');
+  const handleToggle = (chId) => {
+    setChannleVisible(chId);
+    if (!channelsVisible[chId]) {
+      selectChannel(chId);
     }
-  }, [channelsVisible]);
+  };
+
+  const handleSelect = (chId) => {
+    selectChannel(chId);
+  };
 
   return (
-    <>
-      <div className="pa-1 common-border">
-        <div className="d-flex justify-space-between align-center">
-          <h6>Channels</h6>
-          <div>
-            <div className="spacer"></div>
-            {/*<Button*/}
-            {/*  className="py-0"*/}
-            {/*  onClick={handleColorType}*/}
-            {/*  variant="contained"*/}
-            {/*  color="primary"*/}
-            {/*  size="small"*/}
-            {/*>*/}
-            {/*  {colorType}*/}
-            {/*</Button>*/}
-          </div>
-        </div>
-        <div>
-          <SmallCard>
-            <div className="d-block">
-              <button
-                className="d-block border mx-auto"
-                style={{ width: '26px', height: '26px', padding: '0' }}
-                disabled={selections.length === MAX_CHANNELS || isViewerLoading}
-                onClick={handleChannelAdd}
-              >
-                <Icon path={mdiPlus} size={0.7} />
-              </button>
-              <button
-                className="d-block border mx-auto mt-1"
-                style={{ width: '26px', height: '26px', padding: '0' }}
-                onClick={handleColorType}
-              >
-                <Icon path={mdiPalette} size={0.7} />
-              </button>
-            </div>
-            <div className="channel-box-container">
-              {channels.map(({ id, color, symbol }) => (
-                <div
-                  key={id}
-                  className="d-flex flex-column channel-box text-center"
-                >
+    <Box px={1}>
+      <Typography variant="card-title" gutterBottom>
+        Channels
+      </Typography>
+      <Stack direction="row" justifyContent="space-between">
+        <Stack direction="column" alignItems="center">
+          <Button
+            variant="icon"
+            onClick={handleAddChannel}
+            disabled={selections.length === MAX_CHANNELS || isViewerLoading}
+          >
+            <AddIcon fontSize="1rem" />
+          </Button>
+          <Button variant="icon">
+            <PaletteIcon fontSize="1rem" />
+          </Button>
+        </Stack>
+        {channels.map(
+          ({ id, cssColor: color, symbol, disabled, visible }, idx) => (
+            <Box
+              key={idx}
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+            >
+              <FormControlLabel
+                control={
                   <Checkbox
-                    onChange={() => handleToggleChannel(id)}
-                    checked={channelsVisible[id]}
+                    onChange={() => handleToggle(id)}
+                    checked={visible}
+                    disabled={disabled}
                     size="small"
                     sx={{
                       color,
@@ -191,30 +161,26 @@ const Channel = () => {
                       '&.Mui-checked': { color },
                     }}
                   />
-                  <span style={{ color }}>{symbol}</span>
-                </div>
-              ))}
-            </div>
-            {/*<div>*/}
-            {/*  <div*/}
-            {/*    className="d-block border mx-auto pr-3 pb-3"*/}
-            {/*    style={{ width: '17px', height: '17px' }}*/}
-            {/*  >*/}
-            {/*    {' '}*/}
-            {/*    <Icon path={mdiMenuUp} size={0.7} />*/}
-            {/*  </div>*/}
-            {/*  <div*/}
-            {/*    className="d-block border mx-auto pr-3 pb-3 mt-1"*/}
-            {/*    style={{ width: '17px', height: '17px' }}*/}
-            {/*  >*/}
-            {/*    {' '}*/}
-            {/*    <Icon path={mdiMenuDown} size={0.7} />*/}
-            {/*  </div>*/}
-            {/*</div>*/}
-          </SmallCard>
-        </div>
-      </div>
-    </>
+                }
+                label={symbol}
+                labelPlacement="bottom"
+                sx={{ m: 0 }}
+              />
+              <IconButton
+                size="small"
+                sx={{ p: 0, mt: -1 }}
+                disabled={disabled}
+                color={id === selectedChannel ? 'info' : 'default'}
+                onClick={() => handleSelect(id)}
+              >
+                <ArrowDropDownIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          ),
+        )}
+      </Stack>
+      <Divider sx={{ mx: -1 }} />
+    </Box>
   );
 };
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {useState} from 'react'
+import { useState } from 'react';
 
-const VisualImageList = (props) => {
-  const [itemData, setitemData] = useState([
+const VisualImageList = () => {
+  const [itemData] = useState([
     {
       img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
       title: 'Breakfast',
@@ -52,27 +52,25 @@ const VisualImageList = (props) => {
       title: 'Bike',
     },
   ]);
-  const [selectedIndex, setSelectedIndex] = useState('Breakfast')
-  const selectImg = (event, item) => {
-    console.log(item);
-    setSelectedIndex(item)
-  }
+  const [selectedIndex, setSelectedIndex] = useState('Breakfast');
+  const selectImg = (_event, item) => {
+    setSelectedIndex(item);
+  };
 
   return (
-    <div className='mx-2 my-1 visual-main-panel-screen-sidebar'>
-      {itemData.map((item)=>
+    <div className="mx-2 my-1 visual-main-panel-screen-sidebar">
+      {itemData.map((item) => (
         <div className="visual-mainpanel-imgbox" key={item.title}>
-          <img 
-            className={selectedIndex === item.title?
-                "selected" : ""}
-            alt={item.title} 
-            src={item.img} 
-            onClick={(event) => selectImg(event, item.title)}  
+          <img
+            className={selectedIndex === item.title ? 'selected' : ''}
+            alt={item.title}
+            src={item.img}
+            onClick={(event) => selectImg(event, item.title)}
           />
         </div>
-      )}
+      ))}
     </div>
   );
-}
+};
 
-export default VisualImageList
+export default VisualImageList;

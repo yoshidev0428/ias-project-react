@@ -16,9 +16,7 @@ const Dec3dDialog = () => {
     useFlagsStore.setState({ Dialog3dflag: false });
   };
 
-  const action = () => {
-    console.log('flag Status---> Action');
-  };
+  const action = () => {};
 
   function PaperComponent(props) {
     return (

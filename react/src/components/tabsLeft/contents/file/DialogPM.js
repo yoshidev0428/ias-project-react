@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -15,7 +15,6 @@ import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 
-
 const DialogPM = () => {
   const [value, setValue] = React.useState('');
   const [showDialog, setShowDialog] = useState(false);
@@ -24,19 +23,21 @@ const DialogPM = () => {
     setValue(event.target.value);
   };
   const dialog = () => {
-    console.log("disable dialog button clicked ok");
     setShowDialog(false);
-  }
+  };
 
   return (
     <>
       <div className="text-center">
-        <Dialog maxWidth='500' open={showDialog}>
+        <Dialog maxWidth="500" open={showDialog}>
           <DialogContent>
-            <Card> 
-              <CardHeader className="text-h5 grey lighten-2" title="Pattern Matching" />
+            <Card>
+              <CardHeader
+                className="text-h5 grey lighten-2"
+                title="Pattern Matching"
+              />
               <CardContent>
-                <FormControl >
+                <FormControl>
                   <Select
                     value={value}
                     label="Correlation Method"
@@ -71,12 +72,18 @@ const DialogPM = () => {
                     }}
                   />
                   <FormGroup>
-                      <FormControlLabel control={<Checkbox />} label="Uniform X/Y Overlaps" />
-                      <FormControlLabel control={<Checkbox />} label="Multi-point Registrasion" />
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      label="Uniform X/Y Overlaps"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      label="Multi-point Registrasion"
+                    />
                   </FormGroup>
                 </FormControl>
               </CardContent>
-              <Divider/>
+              <Divider />
               <CardActions>
                 <div className="spacer"></div>
                 <Button onClick={dialog}>Ok</Button>
@@ -87,8 +94,8 @@ const DialogPM = () => {
       </div>
     </>
   );
-}
+};
 DialogPM.propTypes = {
-  handleClose: PropTypes.func.isRequired
+  handleClose: PropTypes.func.isRequired,
 };
 export default DialogPM;

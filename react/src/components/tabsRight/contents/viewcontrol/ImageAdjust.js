@@ -1,211 +1,118 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import { Col, Container } from 'react-bootstrap';
 import Slider from '@mui/material/Slider';
-import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import Icon from '@mdi/react';
-import { mdiBrightness5, mdiCircleHalfFull, mdiWeatherSunny } from '@mdi/js';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import Typography from '@mui/material/Typography';
+import BrightnessLowIcon from '@mui/icons-material/BrightnessLow';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import ContrastIcon from '@mui/icons-material/Contrast';
 import { useChannelsStore } from '@/state';
+import styled from '@emotion/styled';
 
-const Input = styled(TextField)`
-  width: 50px;
+const PARAMS = [
+  {
+    name: 'brightness',
+    icon: BrightnessLowIcon,
+    default: 0,
+    min: -1,
+    max: 1,
+    step: 0.1,
+  },
+  {
+    name: 'contrast',
+    icon: ContrastIcon,
+    default: 0,
+    min: -1,
+    max: 1,
+    step: 0.1,
+  },
+  {
+    name: 'gamma',
+    icon: LightModeIcon,
+    default: 0,
+    min: -1,
+    max: 1,
+    step: 0.1,
+  },
+];
+
+const ParamItem = styled(Grid)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default function ImageAdjust() {
-  const [brightness, contrast, gamma, setBrightness, setContrast, setGamma] =
-    useChannelsStore((store) => [
-      store.brightness,
-      store.contrast,
-      store.gamma,
-      store.setBrightness,
-      store.setContrast,
-      store.setGamma,
-    ]);
+  const channelState = useChannelsStore((state) => state);
+  const { setPropertiesForChannel, selectedChannel: channel } = channelState;
 
-  const handleSlideBrightness = (_event, newValue) => {
-    setBrightness(newValue ? Number(newValue) : 0);
+  const handleSlide = (event, newValue) => {
+    setPropertiesForChannel(channel, {
+      [event.target.name]: newValue ? Number(newValue) : 0,
+    });
   };
-  const handleInputBrightness = (event) => {
+  const handleInput = (event) => {
     const newValue = Number(event.target.value);
-    setBrightness(newValue ? Number(newValue) : 0);
-  };
-  const handleBlurBrightness = () => {
-    setBrightness(Math.min(1, Math.max(-1, brightness)));
-  };
-
-  // Contrast
-  const handleSlideContrast = (_event, newValue) => {
-    setContrast(newValue ? Number(newValue) : 0);
-  };
-  const handleInputContrast = (event) => {
-    const newValue = Number(event.target.value);
-    setContrast(newValue ? Number(newValue) : 0);
-  };
-  const handleBlurContrast = () => {
-    setContrast(Math.min(1, Math.max(-1, contrast)));
-  };
-
-  // Gamma
-  const handleSlideGamma = (_event, newValue) => {
-    setGamma(newValue ? Number(newValue) : 0);
-  };
-  const handleInputGamma = (event) => {
-    const newValue = Number(event.target.value);
-    setGamma(newValue ? Number(newValue) : 0);
-  };
-  const handleBlurGamma = () => {
-    setGamma(Math.min(0, Math.max(100, gamma)));
+    setPropertiesForChannel(channel, { [event.target.name]: newValue ?? 0 });
   };
 
   return (
-    <>
-      <div className="common-border">
-        <div className="d-flex justify-space-between align-center">
-          <h6>Image Adjust</h6>
-          <div>
-            <div className="spacer"></div>
-            <Button
-              className="py-0"
-              height="20px"
-              variant="contained"
-              color="primary"
-              size="small"
-            >
-              Reset
-            </Button>
-          </div>
-        </div>
-        <Container fluid={true} className="px-0 py-0">
-          {/* Brightness */}
-          <Col className="pa-0" xs={12}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="left"
-              style={{ marginTop: '-10px' }}
-            >
-              <Grid item>
-                <Icon path={mdiBrightness5} size={0.7} />
-              </Grid>
-              <Grid item xs>
-                <Slider
-                  value={brightness}
-                  onChange={handleSlideBrightness}
-                  aria-labelledby="input-slider"
-                  min={-1}
-                  max={1}
-                  step={0.01}
-                  size="small"
-                />
-              </Grid>
-              <Grid item>
-                <Input
-                  value={brightness}
-                  size="small"
-                  onChange={handleInputBrightness}
-                  onBlur={handleBlurBrightness}
-                  variant="standard"
-                  style={{ BorderNone: true, border: 'none' }}
-                  InputProps={{
-                    step: 0.01,
-                    min: -1,
-                    max: 1,
-                    type: 'number',
-                    'aria-labelledby': 'input-slider',
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Col>
-          {/* Contrast */}
-          <Col className="pa-0" xs={12}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="left"
-              style={{ marginTop: '-20px' }}
-            >
-              <Grid item>
-                <Icon path={mdiCircleHalfFull} size={0.7} />
-              </Grid>
-              <Grid item xs>
-                <Slider
-                  value={contrast}
-                  onChange={handleSlideContrast}
-                  aria-labelledby="input-slider"
-                  min={-1}
-                  max={1}
-                  step={0.01}
-                  size="small"
-                />
-              </Grid>
-              <Grid item>
-                <Input
-                  value={contrast}
-                  size="small"
-                  onChange={handleInputContrast}
-                  onBlur={handleBlurContrast}
-                  variant="standard"
-                  style={{ BorderNone: true, border: 'none' }}
-                  InputProps={{
-                    step: 0.01,
-                    min: -1,
-                    max: 1,
-                    type: 'number',
-                    'aria-labelledby': 'input-slider',
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Col>
-          {/* Gamma */}
-          <Col className="pa-0" xs={12}>
-            <Grid
-              container
-              spacing={1}
-              alignItems="left"
-              style={{ marginTop: '-20px', marginBottom: '-12px' }}
-            >
-              <Grid item>
-                <Icon path={mdiWeatherSunny} size={0.7} />
-              </Grid>
-              <Grid item xs>
-                <Slider
-                  value={gamma}
-                  onChange={handleSlideGamma}
-                  aria-labelledby="input-slider"
-                  min={0}
-                  max={100}
-                  step={1}
-                  size="small"
-                />
-              </Grid>
-              <Grid item>
-                <Input
-                  value={gamma}
-                  size="small"
-                  onChange={handleInputGamma}
-                  onBlur={handleBlurGamma}
-                  variant="standard"
-                  style={{ BorderNone: true, border: 'none' }}
-                  InputProps={{
-                    step: 1,
-                    min: 0,
-                    max: 100,
-                    type: 'number',
-                    'aria-labelledby': 'input-slider',
-                    disableUnderline: true,
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Col>
-        </Container>
-      </div>
-    </>
+    <Box mb={1}>
+      <Typography variant="card-title" gutterBottom mx={1}>
+        Image Adjust
+      </Typography>
+      <Grid container>
+        {PARAMS.map((param) => (
+          <React.Fragment key={param.name}>
+            <ParamItem item xs={2}>
+              <IconButton
+                size="small"
+                disabled={channel < 0}
+                onClick={() =>
+                  setPropertiesForChannel(channel, {
+                    [param.name]: param.default,
+                  })
+                }
+              >
+                <param.icon fontSize="1rem" />
+              </IconButton>
+            </ParamItem>
+            <ParamItem item xs={7}>
+              <Slider
+                name={param.name}
+                sx={{ py: 1 }}
+                value={channelState[param.name][channel] ?? param.default}
+                disabled={channel < 0}
+                onChange={handleSlide}
+                min={param.min}
+                max={param.max}
+                step={param.step}
+                size="small"
+              />
+            </ParamItem>
+            <ParamItem item xs={3}>
+              <InputBase
+                name={param.name}
+                value={channelState[param.name][channel] ?? param.default}
+                disabled={channel < 0}
+                size="small"
+                onChange={handleInput}
+                inputProps={{
+                  step: param.step,
+                  min: param.min,
+                  max: param.max,
+                  type: 'number',
+                  style: { textAlign: 'center', padding: 0, height: 'unset' },
+                }}
+              />
+            </ParamItem>
+          </React.Fragment>
+        ))}
+      </Grid>
+      <Divider />
+    </Box>
   );
 }
