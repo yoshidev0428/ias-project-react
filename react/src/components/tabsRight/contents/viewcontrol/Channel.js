@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,17 +11,42 @@ import shallow from 'zustand/shallow';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import AddIcon from '@mui/icons-material/Add';
 import PaletteIcon from '@mui/icons-material/Palette';
-import { useChannelsStore } from '@/state';
+import {
+  useChannelsStore,
+  useImageSettingsStore,
+  useLoader,
+  useMetadata,
+  useViewerStore,
+} from '@/state';
 import { ChannelColors } from '@/constants/enums';
+import { MAX_CHANNELS } from '@hms-dbmi/viv';
+import { getSingleSelectionStats, randomId } from '@/helpers/avivator';
+import { COLOR_PALETTE } from '@/constants';
 
 const Channel = () => {
+  const loader = useLoader();
+  const metadata = useMetadata();
+  const { labels } = loader[0];
+
   const {
     channelsVisible,
     colors,
+    selections,
     selectedChannel,
     setChannleVisible,
     selectChannel,
+    addChannel,
+    setPropertiesForChannel,
   } = useChannelsStore((state) => state, shallow);
+
+  const {
+    globalSelection,
+    isViewerLoading,
+    use3d,
+    setIsChannelLoading,
+    addIsChannelLoading,
+  } = useViewerStore((store) => store, shallow);
+
   const channels = useMemo(
     () =>
       Object.values(ChannelColors).map(({ rgb, symbol }) => {
@@ -38,6 +63,53 @@ const Channel = () => {
       }),
     [colors, channelsVisible],
   );
+
+  const handleAddChannel = useCallback(() => {
+    let selection = Object.fromEntries(labels.map((l) => [l, 0]));
+    selection = { ...selection, ...globalSelection };
+    const numSelectionsBeforeAdd = selections.length;
+    getSingleSelectionStats({
+      loader,
+      selection,
+      use3d,
+    }).then(({ domain, contrastLimits }) => {
+      setPropertiesForChannel(numSelectionsBeforeAdd, {
+        domains: domain,
+        contrastLimits,
+        channelsVisible: true,
+      });
+      useImageSettingsStore.setState({
+        onViewportLoad: () => {
+          useImageSettingsStore.setState({ onViewportLoad: () => {} });
+          setIsChannelLoading(numSelectionsBeforeAdd, false);
+        },
+      });
+      addIsChannelLoading(true);
+      const {
+        Pixels: { Channels },
+      } = metadata;
+      const { c } = selection;
+      addChannel({
+        selections: selection,
+        ids: randomId(),
+        channelsVisible: false,
+        colors:
+          (Channels[c].Color && Channels[c].Color.slice(0, -1)) ??
+          COLOR_PALETTE[numSelectionsBeforeAdd % COLOR_PALETTE.length],
+      });
+    });
+  }, [
+    labels,
+    loader,
+    globalSelection,
+    use3d,
+    addChannel,
+    addIsChannelLoading,
+    selections,
+    setIsChannelLoading,
+    setPropertiesForChannel,
+    metadata,
+  ]);
 
   const handleToggle = (chId) => {
     setChannleVisible(chId);
@@ -57,7 +129,11 @@ const Channel = () => {
       </Typography>
       <Stack direction="row" justifyContent="space-between">
         <Stack direction="column" alignItems="center">
-          <Button variant="icon">
+          <Button
+            variant="icon"
+            onClick={handleAddChannel}
+            disabled={selections.length === MAX_CHANNELS || isViewerLoading}
+          >
             <AddIcon fontSize="1rem" />
           </Button>
           <Button variant="icon">

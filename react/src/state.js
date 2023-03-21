@@ -47,10 +47,13 @@ const DEFAUlT_CHANNEL_STATE = {
 
 const DEFAUlT_CHANNEL_VALUES = {
   contrastLimits: [0, 65535],
-  colors: [255, 255, 255],
+  colors: [255, 0, 0],
   domains: [0, 65535],
   selections: { z: 0, c: 0, t: 0 },
   ids: '',
+  brightness: 0,
+  contrast: 0,
+  gamma: 0,
 };
 
 export const useChannelsStore = create((set) => ({
@@ -100,10 +103,6 @@ export const useChannelsStore = create((set) => ({
     }),
   selectChannel: (chId) =>
     set((state) => ({ ...state, selectedChannel: chId })),
-  setBrightness: (newValue) =>
-    set((state) => ({ ...state, brightness: newValue })),
-  setContrast: (newValue) => set((state) => ({ ...state, contrast: newValue })),
-  setGamma: (newValue) => set((state) => ({ ...state, gamma: newValue })),
   setDeConv2D: (method, size, sigma) =>
     set((state) => ({
       ...state,

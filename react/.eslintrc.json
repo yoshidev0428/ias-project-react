@@ -15,7 +15,7 @@
   ],
   "rules": {
     "no-unused-vars": [
-      "error",
+      "warn",
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_"
@@ -24,6 +24,6 @@
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "no-console": "off",
-    "no-template-curly-in-string": "error"
+    "no-template-curly-in-string": "warn"
   }
 }

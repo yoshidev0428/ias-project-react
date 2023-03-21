@@ -15,6 +15,7 @@ import {
   getMultiSelectionStats,
   getBoundingCube,
   isInterleaved,
+  randomId,
 } from '@/helpers/avivator';
 import { COLOR_PALETTE, FILL_PIXEL_VALUE } from '@/constants';
 
@@ -128,7 +129,7 @@ export const useImage = (source) => {
         });
       }
       useChannelsStore.setState({
-        ids: newDomains.map(() => Math.random().toString(16).slice(2)),
+        ids: newDomains.map(() => randomId()),
         selections: newSelections,
         domains: newDomains,
         contrastLimits: newContrastLimits,

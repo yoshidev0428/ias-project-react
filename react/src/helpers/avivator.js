@@ -486,3 +486,10 @@ export function getBoundingCube(loader) {
   ];
   return [xSlice, ySlice, zSlice];
 }
+
+/**
+ * Get random hexidemical id
+ */
+export function randomId() {
+  return Math.random().toString(16).slice(2);
+}
