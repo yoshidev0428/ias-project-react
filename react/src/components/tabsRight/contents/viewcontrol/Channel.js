@@ -90,7 +90,10 @@ const Channel = () => {
       } = metadata;
       const { c } = selection;
       addChannel({
-        selections: selection,
+        selections: {
+          ...selection,
+          c: numSelectionsBeforeAdd % Channels.length,
+        },
         ids: randomId(),
         channelsVisible: false,
         colors:
