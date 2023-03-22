@@ -32,7 +32,7 @@ const SupportChatSlack = () => {
         closeChatButton={true}
         botName={'support-ias-react-bot'} // VisitorID, CorpID, Email, IP address etc.
         // botName='pragmatismer666@gmail.com' // VisitorID, CorpID, Email, IP address etc.
-        apiToken={'xoxb-2644799806533-4841549102548-fEW0ET4MKoyyOtGyaqidXYlA'}
+        apiToken={'xoxb-2644799806533-4841549102548-ONEvcsqlfFKzoPoBv9shBJlO'}
         channels={[
           {
             name: 'ias-support-chat',
