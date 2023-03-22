@@ -120,6 +120,10 @@ const MainFrame = (props) => {
     setAnchorEl(null);
   };
   const handleLogout = () => {
+    localStorage.removeItem('rememberFlag');
+    localStorage.removeItem('token');
+    localStorage.removeItem('tokenType');
+    localStorage.removeItem('user');
     store.dispatch({ type: 'auth_logOut' });
   };
   const handleUserPage = () => {
@@ -339,7 +343,7 @@ const MainFrame = (props) => {
               )}
             </div>
           </Col>
-          {currentVesseelCount == 1 && (
+          {currentVesseelCount === 1 && (
             <Col
               xs={8}
               ref={imageViewAreaRef}
@@ -360,7 +364,7 @@ const MainFrame = (props) => {
               {vivPage && <Avivator source={imagePathForAvivator} />}
             </Col>
           )}
-          {currentVesseelCount == 2 && (
+          {currentVesseelCount === 2 && (
             <Col xs={8}>
               {' '}
               {/* Central Panel, Viv Image Viewer */}
@@ -397,7 +401,7 @@ const MainFrame = (props) => {
               </Col>
             </Col>
           )}
-          {currentVesseelCount == 4 && (
+          {currentVesseelCount === 4 && (
             <Fragment>
               <Col xs={4} style={{ borderRight: '3px solid black' }}>
                 {' '}

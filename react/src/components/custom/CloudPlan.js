@@ -24,10 +24,10 @@ export const TasksProgress = (props) => (
       <Grid container spacing={3} sx={{ justifyContent: 'space-between' }}>
         <Grid item>
           <Typography color="textSecondary" gutterBottom variant="overline">
-            YOUR CLOUD STORAGE USAGE
+            YOUR PROFILE
           </Typography>
           <Typography color="textPrimary" variant="h4">
-            75.5%
+            PROFILE INFORMATION
           </Typography>
         </Grid>
         <Grid item>
