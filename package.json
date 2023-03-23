@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "glsl-canny-edge-detection": "^1.0.1"
+  }
+}

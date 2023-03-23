@@ -1,17 +1,19 @@
-// var glsl = require('glslify')
+
 const fs = (bound, iterNum) => `
+#pragma glslify: cannyEdgeDetection = require(glsl-canny-edge-detection);
 #ifdef GL_ES
 precision mediump float;
 #endif
-const float PI = 3.14159265359;
-uniform float u_deblurKernel[49];
-uniform float u_brightness;
-uniform float u_contrast;
-uniform float u_gamma;
 
 uniform vec2 uResolution;
-uniform float uWeakThreshold;
-uniform float uStrongThreshold;
+vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
+  vec3 color = vec3(0.0);
+  if (${bound} <=0 ){
+    
+    float edge = cannyEdgeDetection(
+      texture, texCoord, uResolution, 10., 50.);
+    color = vec3(edge);
+
 
 vec4 brightnessContrastGamma(vec4 color) {
   color.rgb += u_brightness;
@@ -24,24 +26,6 @@ vec4 brightnessContrastGamma(vec4 color) {
   return color;
 }
 
-vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
-  vec4 color = vec4(0.0);
-  if (${bound} <=0 ){
-    color = texture2D(texture, texCoord); 
-  } else {
-    vec3 sum = vec3(0.);
-    for (int num = 1; num<=${iterNum}; num++) {
-      for (int i = -${bound}; i <= ${bound}; i++) {
-        for (int j = -${bound}; j <= ${bound}; j++) {
-          // vec2 onePixel = vec2(1) / texSize(texture, 0);
-          vec2 onePixel = vec2(1) / texSize;
-          vec2 offset = vec2(float(j), float(i));
-          sum += texture2D(texture, texCoord + onePixel*offset).rgb * u_deblurKernel[(i+${bound})*(${bound}*2+1) + j+${bound}];
-        }
-      }
-    }
-    color = vec4(sum, 1.0);
-  }
   return brightnessContrastGamma(color);
 }
 
@@ -52,6 +36,11 @@ const uniforms = {
   u_contrast: { value: 0, min: -1, max: 1 },
   u_gamma: { value: 50, min: 0, max: 100 },
   u_deblurKernel: [],
+  u_Slice: [0, 0],
+  u_target: [0, 0],  
+  u_zoom: 1.,
+  canWH: [634., 594.],
+  disWH: [791., 744.],
 };
 
 const generateShaderModule = (bound, iterNum) => ({

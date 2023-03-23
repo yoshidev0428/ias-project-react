@@ -56,9 +56,19 @@ const Viewer = ({ isFullScreen }) => {
 
   const loader = useLoader();
   const shaderModule = useMemo(
+    // const centerCoors = viewState.target;
     () => generateShaderModule(Math.floor(deblur.size / 2), iterNum),
     [deblur, iterNum],
   );
+  let target = viewState.target;
+  if (typeof target === 'undefined') {
+    target = [255, 255];
+  }
+  // debugger;
+  console.log("========>", xSlice, ySlice)
+  console.log("========>", target)
+  console.log("========>", viewState.zoom)
+
   const postProcessEffect = useMemo(
     () =>
       new PostProcessEffect(shaderModule, {
@@ -66,8 +76,12 @@ const Viewer = ({ isFullScreen }) => {
         u_contrast: contrast,
         u_gamma: gamma,
         u_deblurKernel: deblur.kernel,
+        u_Slice: [xSlice[1], ySlice[1]],
+        u_target: target,
+        u_zoom: viewState.zoom,
+
       }),
-    [brightness, contrast, gamma, deblur, shaderModule],
+    [brightness, contrast, gamma, deblur, target, shaderModule],
   );
   const viewSize = useWindowSize(isFullScreen, 1, 1);
 
@@ -82,7 +96,7 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-
+  // debugger;
   return use3d ? (
     <VolumeViewer
       loader={loader}
