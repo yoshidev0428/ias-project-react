@@ -23,6 +23,7 @@ import * as api_tiles from '@/api/tiles';
 import * as api_experiment from '@/api/experiment';
 import OpenCloudDialog from './OpenCloudDialog';
 import OpenCloudUploadNew from './OpenCloudUpload';
+import OpenFolderUpload from './OpenFolderUpload';
 import Tiling from './Tiling';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import Box from '@mui/material/Box';
@@ -1013,6 +1014,9 @@ const OpenPositionDialog = (props) => {
   );
   const [cloudDialog, setCloudDialog] = useState(false);
   const [experimentDialog, setExperimentDialog] = useState(false);
+  const [folderDialog, setFolderDialog] = useState(false);
+  const [_folderDialogClose, setFolderDialogClose] = useState(false);
+  const [treeData] = useState([]);
 
   const [experiment_name] = useState('');
   const [fileNames] = useState([]);
@@ -1022,8 +1026,9 @@ const OpenPositionDialog = (props) => {
     setSelectedTab(newValue);
   };
 
-  const handleCloudDialog = () => {
-    setCloudDialog(!cloudDialog);
+  const handleFolderClose = () => {
+    setFolderDialog(false);
+    setFolderDialogClose(true);
   };
 
   const handleExperimentDialog = () => {
@@ -1389,7 +1394,10 @@ const OpenPositionDialog = (props) => {
                 <div style={{ width: '580px' }}></div>
               )}
               {cloudDialog && (
-                <OpenCloudDialog handleClose={handleCloudDialog} />
+                <OpenFolderUpload
+                  handleClose={handleFolderClose}
+                  treeData={treeData}
+                />
               )}
             </div>
           )}
@@ -1421,7 +1429,12 @@ const OpenPositionDialog = (props) => {
                         handleexperiment_nameChange={handleexperiment_nameChange}
                     />
                 */}
-        {experimentDialog && <OpenCloudUploadNew />}
+        {experimentDialog && (
+          <OpenFolderUpload
+            handleClose={handleFolderClose}
+            treeData={treeData}
+          />
+        )}
       </Dialog>
     </>
   );
