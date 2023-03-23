@@ -28,12 +28,16 @@ const Vessel = (props) => {
   const [currentVessel, setCurrentVessel] = useState(getVesselById(1));
   const [showSelectDialog, setShowSelectDialog] = useState(false);
   const [showExpansionDialog, setShowExpansionDialog] = useState(false);
-  const [contents, setContents] = useState(props.content);
+  const [contents, setContents] = useState(props.content ?? []); //added ?? by QmQ
   const [ref, { width }] = useElementSize();
-  store.dispatch({
-    type: 'SET_VESSEL_STATUS_COUNT',
-    count: currentVessel.count,
-  });
+
+  // updated by QmQ
+  useEffect(() => {
+    store.dispatch({
+      type: 'SET_VESSEL_STATUS_COUNT',
+      count: currentVessel.count ?? 1,
+    });
+  }, [currentVessel]);
 
   const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
     let vesselID = -1;
