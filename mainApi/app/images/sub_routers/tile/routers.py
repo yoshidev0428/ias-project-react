@@ -103,7 +103,7 @@ async def upload_image_tiles(
         current_user=current_user,
         db=db,
     )
-    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
+    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)), 'images')
     return JSONResponse(result)
 
 
