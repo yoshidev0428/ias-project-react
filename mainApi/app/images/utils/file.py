@@ -60,8 +60,8 @@ async def add_image_tiles(path: Path,
         #     with PIL.Image.open(file_path) as im:
         #         width_px, height_px = im.size
 
-            if file_name.filename[-9:].lower() != ".ome.tiff":
-                fileFormat = file_name.filename.split(".")
+            if file_name[-9:].lower() != ".ome.tiff":
+                fileFormat = file_name.split(".")
                 inputPath = os.path.abspath(file_path)
                 if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
                     img = Image.open(inputPath)
