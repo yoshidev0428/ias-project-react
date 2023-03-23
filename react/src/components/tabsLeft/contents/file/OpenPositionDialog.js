@@ -337,10 +337,10 @@ const ImageDropzone = (props) => {
           key={index}
         >
           <FileIcon
-            extension={file.name.split('.').pop()}
+            extension={file.file.name.split('.').pop()}
             {...defaultStyles.tif}
           />
-          <label style={{ overflow: 'hidden' }}>{file.name}</label>
+          <label style={{ overflow: 'hidden' }}>{file.file.name}</label>
         </div>
       ))}
     </Dropzone>
