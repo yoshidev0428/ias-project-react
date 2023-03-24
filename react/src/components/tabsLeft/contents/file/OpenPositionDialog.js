@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 // import { useDropzone } from "react-dropzone"
 // import { borderBottom } from "@mui/system";
 import PropTypes from 'prop-types';
@@ -23,6 +23,7 @@ import * as api_tiles from '@/api/tiles';
 import * as api_experiment from '@/api/experiment';
 import OpenCloudDialog from './OpenCloudDialog';
 import OpenCloudUploadNew from './OpenCloudUpload';
+import OpenFolderUpload from './OpenFolderUpload';
 import Tiling from './Tiling';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import Box from '@mui/material/Box';
@@ -163,6 +164,26 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState(acceptedFiles);
+  const selectedFilesPath = useSelector(
+    (state) => state.files.selectedFilesForDropZone,
+  );
+
+  // if (selectedFilesPath) {
+  //   console.log('drop-zone-selected-files:', selectedFilesPath);
+  //
+  //   let files = [];
+  //   let selectedFiles = selectedFilesPath.split(',');
+  //   for (let i = 0; i < selectedFiles.length; i ++) {
+  //     let item = selectedFiles[i];
+  //     let fileName =item.substr(item.lastIndexOf('/') + 1);
+  //     files.push({
+  //       file: {
+  //         name: fileName
+  //       }
+  //     });
+  //   }
+  //   setFiles(files);
+  // }
 
   useEffect(() => {
     const bringFilesByName = async () => {
@@ -189,6 +210,25 @@ const ImageDropzone = (props) => {
     };
     bringFilesByName();
   }, [props.fileNames]);
+
+  useEffect(() => {
+    if (!selectedFilesPath) return;
+
+    let files = [];
+    let selectedFiles = selectedFilesPath.split(',');
+    for (let i = 0; i < selectedFiles.length; i++) {
+      let item = selectedFiles[i];
+      let fileName = item.substr(item.lastIndexOf('/') + 1);
+      files.push({
+        name: fileName,
+        file: {
+          name: fileName,
+        },
+      });
+    }
+    setFiles(files);
+    acceptedFiles = acceptedFiles.concat(files);
+  }, [selectedFilesPath]);
 
   // const updateFilesByNames = (fileNames) => {
   //   store.dispatch({
@@ -336,10 +376,10 @@ const ImageDropzone = (props) => {
           key={index}
         >
           <FileIcon
-            extension={file.name.split('.').pop()}
+            extension={file.file.name.split('.').pop()}
             {...defaultStyles.tif}
           />
-          <label style={{ overflow: 'hidden' }}>{file.name}</label>
+          <label style={{ overflow: 'hidden' }}>{file.file.name}</label>
         </div>
       ))}
     </Dropzone>
@@ -1013,7 +1053,10 @@ const OpenPositionDialog = (props) => {
   );
   const [cloudDialog, setCloudDialog] = useState(false);
   const [experimentDialog, setExperimentDialog] = useState(false);
-
+  const [folderDialog, setFolderDialog] = useState(false);
+  const [_folderDialogClose, setFolderDialogClose] = useState(false);
+  const [treeData] = useState([]);
+  const [folderDialogFlag] = useState(false);
   const [experiment_name] = useState('');
   const [fileNames] = useState([]);
   const [metaDatas] = useState([]);
@@ -1022,8 +1065,10 @@ const OpenPositionDialog = (props) => {
     setSelectedTab(newValue);
   };
 
-  const handleCloudDialog = () => {
-    setCloudDialog(!cloudDialog);
+  const handleFolderClose = () => {
+    // setFolderDialog(false);
+    // setFolderDialogClose(true);
+    setExperimentDialog(false);
   };
 
   const handleExperimentDialog = () => {
@@ -1389,7 +1434,10 @@ const OpenPositionDialog = (props) => {
                 <div style={{ width: '580px' }}></div>
               )}
               {cloudDialog && (
-                <OpenCloudDialog handleClose={handleCloudDialog} />
+                <OpenFolderUpload
+                  handleClose={handleFolderClose}
+                  treeData={treeData}
+                />
               )}
             </div>
           )}
@@ -1421,7 +1469,13 @@ const OpenPositionDialog = (props) => {
                         handleexperiment_nameChange={handleexperiment_nameChange}
                     />
                 */}
-        {experimentDialog && <OpenCloudUploadNew />}
+        {experimentDialog && (
+          <OpenFolderUpload
+            handleClose={handleFolderClose}
+            treeData={treeData}
+            folderDialogFlag={true}
+          />
+        )}
       </Dialog>
     </>
   );

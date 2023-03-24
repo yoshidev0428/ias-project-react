@@ -87,7 +87,7 @@ async def upload_image_tiles(
     current_user: UserModelDB = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[TileModelDB]:
-    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)), 'images')
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
     else:
@@ -103,7 +103,7 @@ async def upload_image_tiles(
         current_user=current_user,
         db=db,
     )
-    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)))
+    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)), 'images')
     return JSONResponse(result)
 
 

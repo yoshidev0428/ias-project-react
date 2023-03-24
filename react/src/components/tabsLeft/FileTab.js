@@ -67,8 +67,8 @@ const FileTab = (props) => {
     for (let i = 0; i < content.length; i++) {
       if (
         isEntire ||
-        (content[i].row == selectedVesselHole.row &&
-          content[i].col == selectedVesselHole.col)
+        (content[i].row === selectedVesselHole.row &&
+          content[i].col === selectedVesselHole.col)
       ) {
         let tempContent = { ...content[i] };
         const tempVal = tempContent.z;
@@ -104,6 +104,7 @@ const FileTab = (props) => {
   const [_folderDialogClose, setFolderDialogClose] = useState(false);
   const [_filesUploaded] = useState([]);
   const [treeData] = useState([]);
+  const [folderDialogFlag, setFolderDialogFlag] = useState(false);
 
   const showPositionDialog = () => {
     setpositionDialog(true);
@@ -217,6 +218,7 @@ const FileTab = (props) => {
           <OpenFolderUpload
             handleClose={handleFolderClose}
             treeData={treeData}
+            // folderDialogFlag = {true}
           />
         )}
         <CustomButton
