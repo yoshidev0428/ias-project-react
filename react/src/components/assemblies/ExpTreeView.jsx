@@ -53,7 +53,7 @@ const ExpTreeView = ({ data, onSelectFile, onSelectExp }) => {
   );
 
   const handleSelect = (_event, nodeId) => {
-    if (/\.(tif(f?)|jpg|png)/i.test(nodeId)) {
+    if (/\.\w+$/i.test(nodeId)) {
       onSelectFile(nodeId);
     } else {
       onSelectExp(nodeId);
