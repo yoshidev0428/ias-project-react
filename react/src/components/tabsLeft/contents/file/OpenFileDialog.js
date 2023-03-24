@@ -36,9 +36,9 @@ const OpenFileDialog = ({ handleClose }) => {
   }, []);
 
   const handleLoadFile = async () => {
-    const path = selectedFile.endsWith('.ome.tiff')
+    const path = /\.ome\.tif?f$/.test(selectedFile)
       ? selectedFile
-      : selectedFile.replace(/\.\w+/, '.ome.tiff');
+      : selectedFile.replace(/\.\w+$/, '.ome.tiff');
     const file = await getImageByPath(path);
     const files = [];
     if (file) files.push(file);
