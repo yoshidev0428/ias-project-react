@@ -7,22 +7,16 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
-import * as api_experiment from '../../../../api/experiment';
-import store from '../../../../reducers';
-import {
-  selectImage,
-  cancelImage,
-} from '../../../../reducers/actions/filesAction';
+import * as api_experiment from '@/api/experiment';
+import store from '@/reducers';
+import { selectImage, cancelImage } from '@/reducers/actions/filesAction';
 import { useSelector } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import {
-  setNullView,
-  initView,
-} from '../../../../reducers/actions/vesselAction';
+import { setNullView, initView } from '@/reducers/actions/vesselAction';
 import Dropzone from 'react-dropzone';
 
 import { MdFolderOpen, MdInsertDriveFile } from 'react-icons/md';
@@ -137,7 +131,7 @@ const OpenCloudDialogExp = (props) => {
   //     setFiles(event.target.files)
   // }
   const getTree = async () => {
-    let response = await api_experiment.getExperimentDatas();
+    let response = await api_experiment.getExperiments();
     let data = response.data;
     // if (data.experiment_name.length!=0) {
 

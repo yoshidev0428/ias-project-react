@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import 'react-checkbox-tree/lib/react-checkbox-tree.css';
-import * as api_experiment from '../../../../api/experiment';
+import * as api_experiment from '@/api/experiment';
 import store from '../../../../reducers';
 import { cancelImage } from '../../../../reducers/actions/filesAction';
 import { useSelector } from 'react-redux';
@@ -173,7 +173,7 @@ const OpenCloudUploadNew = (props) => {
   //     setFiles(event.target.files)
   // }
   const getTree = async () => {
-    let response = await api_experiment.getExperimentDatas();
+    let response = await api_experiment.getExperiments();
     let data = response.data;
 
     if (data.error) {

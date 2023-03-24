@@ -202,7 +202,7 @@ const OpenFolderUpload = (props) => {
   //     setFiles(event.target.files)
   // }
   const getTree = async () => {
-    let response = await api_experiment.getExperimentDatas();
+    let response = await api_experiment.getExperiments();
     let data = response.data;
 
     if (data.error) {

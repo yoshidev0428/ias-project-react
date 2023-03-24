@@ -1,184 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import SimpleDialog from '@/components/custom/SimpleDialog';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import 'react-checkbox-tree/lib/react-checkbox-tree.css';
-import * as api_experiment from '@/api/experiment';
-import store from '@/reducers';
-import Grid from '@mui/material/Grid';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import Dropzone from 'react-dropzone';
-import ExpTreeView from './ExpTreeView';
-import {
-  Autocomplete,
-  Box,
-  CircularProgress,
-  createFilterOptions,
-  Divider,
-} from '@mui/material';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
 
-const DeleteSureDialog = ({
-  open,
-  selectedNum,
-  setDialogStatus,
-  sureDelete,
-}) => {
-  const handleClose = () => {
-    setDialogStatus(false);
-  };
-  const handleDelete = () => {
-    setDialogStatus(false);
-    sureDelete();
-  };
+import ExpTreeView from '@/components/assemblies/ExpTreeView';
+import ExpAutoComplete from '@/components/assemblies/ExpAutoComplete';
+import InfoDialog from '@/components/dialogs/InfoDialog';
+import ClosableDialog from '@/components/dialogs/ClosableDialog';
 
-  return (
-    <Dialog open={open}>
-      <DialogTitle>Delete {selectedNum} files </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Deleted files cannot be recovered forever, are you sure?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" color="error" onClick={handleDelete}>
-          Yes, sure
-        </Button>
-        <Button variant="outlined" onClick={handleClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
+import { setExperiment_folder } from '@/api/experiment';
+import { getImageByPath } from '@/api/image';
 
-const SuccessDialog = ({ open, setsuccessStatus }) => {
-  const handleClose = () => {
-    setsuccessStatus(false);
-  };
-  return (
-    <Dialog open={open}>
-      <DialogTitle>Uploading files </DialogTitle>
-      <DialogContent>
-        <DialogContentText>Uploading is Successful</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={handleClose}>
-          Ok
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
+import store from '@/reducers';
+import { useExperimentStore } from '@/stores/useExperimentStore';
 
-const getImageByUrl = async function (imagePath) {
-  try {
-    const state = store.getState();
+const OpenFileDialog = ({ handleClose }) => {
+  const { experiments, loadExperiments } = useExperimentStore();
 
-    const response = await fetch(
-      process.env.REACT_APP_BASE_API_URL +
-        'static/' +
-        state.auth.user._id +
-        '/' +
-        imagePath,
-      {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods':
-            'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
-          Authorization: state.auth.tokenType + ' ' + state.auth.token,
-        },
-      },
-    );
-    const blob = await response.blob();
-    const file = new File([blob], imagePath, { type: 'image/tiff' });
-    file.path = imagePath;
-    return file;
-  } catch (err) {
-    return null;
-  }
-};
-
-const filter = createFilterOptions();
-
-const OpenFileDialog = ({ experiments, handleClose }) => {
   const [experiment, setExperiment] = useState(null);
-  const [checked] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [sureDialog, setSureDialog] = useState(false);
   const [successDialog, setSuccessDialog] = useState(false);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedExp, setSelectedExp] = useState(null);
 
-  const getTree = async () => {
-    let response = await api_experiment.getExperimentDatas();
-    let data = response.data;
-
-    if (!data.error) {
-      store.dispatch({ type: 'set_experiment_data', content: data.data });
-    }
-    setUploading(false);
-  };
-
-  const deleteFiles = async () => {
-    setUploading(true);
-    try {
-      let response = await api_experiment.deleteImageFiles(checked);
-      let data = response.data;
-      if (data.success) {
-        getTree();
-      }
-    } catch (err) {
-      setUploading(false);
-      throw err;
-    }
-  };
-
   useEffect(() => {
     setUploading(true);
-    setExperiment('');
-    getTree();
+    setExperiment(null);
+    loadExperiments();
     setUploading(false);
   }, []);
 
-  const sureDelete = () => {
-    deleteFiles();
-  };
-
   const handleLoadFile = async () => {
-    let filePath = selectedFile;
-    let pos = filePath.lastIndexOf('.');
-    if (!filePath.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
-      filePath = filePath.substring(0, pos) + '.ome.tiff';
-    }
-    const file = await getImageByUrl(filePath);
+    const path = selectedFile.endsWith('.ome.tiff')
+      ? selectedFile
+      : selectedFile.replace(/\.\w+/, '.ome.tiff');
+    const file = await getImageByPath(path);
     const files = [];
     if (file) files.push(file);
     store.dispatch({ type: 'set_image_path_for_avivator', content: files });
     handleClose();
   };
 
-  const handleDelete = () => {};
-
   const handleUpload = async () => {
     setUploading(true);
 
-    const response = await api_experiment.setExperiment_folder(
+    const response = await setExperiment_folder(
       experiment.experiment_name,
       uploadFiles,
     );
 
     if (response.status === 200 && response.data === true) {
       setSuccessDialog(true);
-      getTree();
+      loadExperiments(true);
     } else if (response.data.error) {
       alert(response.data.error);
     } else if (response.status !== 200) {
@@ -190,7 +68,7 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
 
   return (
     <>
-      <SimpleDialog title="Files" onClose={handleClose} maxWidth="sm">
+      <ClosableDialog title="Files" onClose={handleClose} maxWidth="sm">
         <Grid container direction="row">
           <Grid
             container
@@ -201,68 +79,11 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
           >
             <Box flexGrow={1} display="flex" flexDirection="column">
               <Typography mb={2}>Upload Experiment data</Typography>
-              <Autocomplete
+              <ExpAutoComplete
                 value={experiment}
-                fullWidth
-                sx={{ mb: 2 }}
-                onChange={(_event, newValue) => {
-                  if (typeof newValue === 'string') {
-                    setExperiment({
-                      experiment_name: newValue,
-                    });
-                  } else if (newValue && newValue.inputValue) {
-                    // Create a new value from the user input
-                    setExperiment({
-                      experiment_name: newValue.inputValue,
-                    });
-                  } else {
-                    setExperiment(newValue);
-                  }
-                }}
-                filterOptions={(options, params) => {
-                  const filtered = filter(options, params);
-
-                  const { inputValue } = params;
-                  // Suggest the creation of a new value
-                  const isExisting = options.some(
-                    (option) => inputValue === option.experiment_name,
-                  );
-                  if (inputValue !== '' && !isExisting) {
-                    filtered.push({
-                      inputValue,
-                      experiment_name: `Add "${inputValue}"`,
-                    });
-                  }
-
-                  return filtered;
-                }}
-                selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
+                onChange={setExperiment}
                 options={experiments}
-                getOptionLabel={(option) => {
-                  // Value selected with enter, right from the input
-                  if (typeof option === 'string') {
-                    return option;
-                  }
-                  // Add "xxx" option created dynamically
-                  if (option.inputValue) {
-                    return option.inputValue;
-                  }
-                  // Regular option
-                  return option.experiment_name;
-                }}
-                renderOption={(props, option) => (
-                  <li {...props}>{option.experiment_name}</li>
-                )}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select experiment"
-                    size="small"
-                  />
-                )}
+                sx={{ mb: 2 }}
               />
               <Dropzone onDrop={(files) => setUploadFiles(files)}>
                 {({ getRootProps, getInputProps }) => (
@@ -350,7 +171,6 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
                   color="error"
                   fullWidth
                   disabled={!selectedFile && !selectedExp}
-                  onClick={handleDelete}
                 >
                   Delete
                 </Button>
@@ -358,22 +178,16 @@ const OpenFileDialog = ({ experiments, handleClose }) => {
             </Grid>
           </Grid>
         </Grid>
-      </SimpleDialog>
-      <DeleteSureDialog
-        open={sureDialog}
-        setDialogStatus={setSureDialog}
-        sureDelete={sureDelete}
-        selectedNum={checked.length}
-      />
-      <SuccessDialog open={successDialog} setsuccessStatus={setSuccessDialog} />
+      </ClosableDialog>
+      <InfoDialog
+        open={successDialog}
+        title="Uploading images"
+        onClose={() => setSuccessDialog(false)}
+      >
+        Uploading completed successfully
+      </InfoDialog>
     </>
   );
 };
 
-const mapStateToProps = (state) => ({
-  experiments: state.experiment.experiments,
-  uploading: state.experiment.uploading,
-});
-OpenFileDialog.propTypes = { handleClose: PropTypes.func.isRequired };
-
-export default connect(mapStateToProps)(OpenFileDialog);
+export default OpenFileDialog;
