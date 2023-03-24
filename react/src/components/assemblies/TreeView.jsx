@@ -16,7 +16,7 @@ const TreeView = ({ rootNode, onNodeSelect }) => {
             textOverflow: 'ellipsis',
             overflow: 'hidden',
             whiteSpace: 'nowrap',
-            width: 180,
+            width: 150,
           }}
         >
           {node.label}
@@ -35,6 +35,7 @@ const TreeView = ({ rootNode, onNodeSelect }) => {
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeSelect={onNodeSelect}
+      multiSelect
     >
       {rootNode.map((node) => renderTree(node))}
     </MuiTreeView>

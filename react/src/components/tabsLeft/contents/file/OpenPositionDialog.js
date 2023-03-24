@@ -1322,7 +1322,7 @@ const OpenPositionDialog = (props) => {
                   <Button
                     className="cloud-btn"
                     variant="contained"
-                    onClick={handleExperimentDialog}
+                    onClick={props.setCloudDialog}
                     color="primary"
                     style={{
                       height: 'fit-content',
@@ -1336,7 +1336,7 @@ const OpenPositionDialog = (props) => {
                     setLoading={(loading) => setIsLoading(loading)}
                     fileNames={fileNames}
                     metaDatas={metaDatas}
-                    handleExperimentDialog={handleExperimentDialog}
+                    handleExperimentDialog={props.setCloudDialog}
                   />
                 </div>
               </TabContainer>
