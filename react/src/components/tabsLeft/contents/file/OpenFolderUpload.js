@@ -25,7 +25,7 @@ import TreeViewFoldersExp from './TreeViewFolders';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
+import ImageDropZone from './OpenPositionDialog';
 // function LinearProgressWithLabel(props) {
 //     return (
 //         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -386,29 +386,37 @@ const OpenFolderUpload = (props) => {
 
   const imagePathForTree = useSelector((state) => state.files.imagePathForTree);
   const onClickTreeSelectBtn = async () => {
-    if (imagePathForTree.length <= 0) {
-      store.dispatch({ type: 'set_image_path_for_avivator', content: null });
-      props.handleClose();
-      return;
-    }
-    const imagePathList = imagePathForTree.split(',');
-    const imagePathForAvivator = [];
-    for (const imagePath of imagePathList) {
-      if (imagePath.length > 0) {
-        let path = imagePath;
-        let pos = path.lastIndexOf('.');
-        if (!path.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
-          path = path.substring(0, pos) + '.ome.tiff';
-        }
-        const file = await getImageByUrl(path);
-        if (file) imagePathForAvivator.push(file);
+    if (props.folderDialogFlag === true) {
+      store.dispatch({
+        type: 'set_selected_files_for_dropzone',
+        content: imagePathForTree,
+      });
+    } else {
+      if (imagePathForTree.length <= 0) {
+        store.dispatch({ type: 'set_image_path_for_avivator', content: null });
+        props.handleClose();
+        return;
       }
+      const imagePathList = imagePathForTree.split(',');
+      const imagePathForAvivator = [];
+      for (const imagePath of imagePathList) {
+        if (imagePath.length > 0) {
+          let path = imagePath;
+          let pos = path.lastIndexOf('.');
+          if (!path.toLowerCase().endsWith('.ome.tiff') && pos >= 0) {
+            path = path.substring(0, pos) + '.ome.tiff';
+          }
+          const file = await getImageByUrl(path);
+          if (file) imagePathForAvivator.push(file);
+        }
+      }
+      if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
+      store.dispatch({
+        type: 'set_image_path_for_avivator',
+        content: imagePathForAvivator,
+      });
     }
-    if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
-    store.dispatch({
-      type: 'set_image_path_for_avivator',
-      content: imagePathForAvivator,
-    });
+
     props.handleClose();
   };
 
@@ -592,7 +600,10 @@ const OpenFolderUpload = (props) => {
                   }}
                 >
                   {props.experiments.length ? (
-                    <TreeViewFoldersExp data={props.experiments} />
+                    <TreeViewFoldersExp
+                      data={props.experiments}
+                      selectedPath={imagePathForTree}
+                    />
                   ) : (
                     <label>No data found, please upload..</label>
                   )}

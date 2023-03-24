@@ -76,7 +76,7 @@ async def add_image_tiles(path: Path,
                 cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
                     inputPath=inputPath, outputPath=outputPath
                 )
-                subprocess.run(cmd_str, shell=True)
+                await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
 
             filenames.append(file_name)
 

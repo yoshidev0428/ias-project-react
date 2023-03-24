@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 // import { useDropzone } from "react-dropzone"
 // import { borderBottom } from "@mui/system";
 import PropTypes from 'prop-types';
@@ -164,6 +164,26 @@ TabContainer.propTypes = {
 const ImageDropzone = (props) => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState(acceptedFiles);
+  const selectedFilesPath = useSelector(
+    (state) => state.files.selectedFilesForDropZone,
+  );
+
+  // if (selectedFilesPath) {
+  //   console.log('drop-zone-selected-files:', selectedFilesPath);
+  //
+  //   let files = [];
+  //   let selectedFiles = selectedFilesPath.split(',');
+  //   for (let i = 0; i < selectedFiles.length; i ++) {
+  //     let item = selectedFiles[i];
+  //     let fileName =item.substr(item.lastIndexOf('/') + 1);
+  //     files.push({
+  //       file: {
+  //         name: fileName
+  //       }
+  //     });
+  //   }
+  //   setFiles(files);
+  // }
 
   useEffect(() => {
     const bringFilesByName = async () => {
@@ -190,6 +210,25 @@ const ImageDropzone = (props) => {
     };
     bringFilesByName();
   }, [props.fileNames]);
+
+  useEffect(() => {
+    if (!selectedFilesPath) return;
+
+    let files = [];
+    let selectedFiles = selectedFilesPath.split(',');
+    for (let i = 0; i < selectedFiles.length; i++) {
+      let item = selectedFiles[i];
+      let fileName = item.substr(item.lastIndexOf('/') + 1);
+      files.push({
+        name: fileName,
+        file: {
+          name: fileName,
+        },
+      });
+    }
+    setFiles(files);
+    acceptedFiles = acceptedFiles.concat(files);
+  }, [selectedFilesPath]);
 
   // const updateFilesByNames = (fileNames) => {
   //   store.dispatch({
@@ -1017,7 +1056,7 @@ const OpenPositionDialog = (props) => {
   const [folderDialog, setFolderDialog] = useState(false);
   const [_folderDialogClose, setFolderDialogClose] = useState(false);
   const [treeData] = useState([]);
-
+  const [folderDialogFlag] = useState(false);
   const [experiment_name] = useState('');
   const [fileNames] = useState([]);
   const [metaDatas] = useState([]);
@@ -1027,8 +1066,9 @@ const OpenPositionDialog = (props) => {
   };
 
   const handleFolderClose = () => {
-    setFolderDialog(false);
-    setFolderDialogClose(true);
+    // setFolderDialog(false);
+    // setFolderDialogClose(true);
+    setExperimentDialog(false);
   };
 
   const handleExperimentDialog = () => {
@@ -1433,6 +1473,7 @@ const OpenPositionDialog = (props) => {
           <OpenFolderUpload
             handleClose={handleFolderClose}
             treeData={treeData}
+            folderDialogFlag={true}
           />
         )}
       </Dialog>
