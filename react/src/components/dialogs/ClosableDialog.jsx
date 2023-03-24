@@ -5,9 +5,9 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ClosableDialog = ({ title, children, onClose, ...other }) => {
+const ClosableDialog = ({ open, title, children, onClose, ...other }) => {
   return (
-    <Dialog open={true} onClose={onClose} {...other}>
+    <Dialog open={open} onClose={onClose} {...other}>
       <DialogTitle sx={{ m: 0, px: 3, py: 2 }}>
         {title}
         {onClose ? (

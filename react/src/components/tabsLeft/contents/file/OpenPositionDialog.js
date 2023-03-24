@@ -21,8 +21,6 @@ import TextField from '@mui/material/TextField';
 import store from '@/reducers';
 import * as api_tiles from '@/api/tiles';
 import * as api_experiment from '@/api/experiment';
-import OpenCloudDialog from './OpenCloudDialog';
-import OpenCloudUploadNew from './OpenCloudUpload';
 import Tiling from './Tiling';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import Box from '@mui/material/Box';
@@ -1388,9 +1386,6 @@ const OpenPositionDialog = (props) => {
               ) : (
                 <div style={{ width: '580px' }}></div>
               )}
-              {cloudDialog && (
-                <OpenCloudDialog handleClose={handleCloudDialog} />
-              )}
             </div>
           )}
           {selectedTab === 3 && (
@@ -1412,16 +1407,6 @@ const OpenPositionDialog = (props) => {
             Cancel
           </Button>
         </DialogActions>
-        {/*
-                    <OpenExperimentDialog
-                        onOpen={experimentDialog}
-                        cloudDialogClose = {props.cloudDialogClose}
-                        setCloudDialog={props.setCloudDialog}
-                        setDialogStatus={setDialogStatus}
-                        handleexperiment_nameChange={handleexperiment_nameChange}
-                    />
-                */}
-        {experimentDialog && <OpenCloudUploadNew />}
       </Dialog>
     </>
   );

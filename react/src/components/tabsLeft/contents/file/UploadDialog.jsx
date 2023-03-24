@@ -18,7 +18,7 @@ import { getImageByPath } from '@/api/image';
 import store from '@/reducers';
 import { useExperimentStore } from '@/stores/useExperimentStore';
 
-const UploadDialog = ({ onClose, folderUploadable = false }) => {
+const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
   const { experiments, loadExperiments } = useExperimentStore();
 
   const [experiment, setExperiment] = useState(null);
@@ -40,7 +40,7 @@ const UploadDialog = ({ onClose, folderUploadable = false }) => {
       ? selectedFile
       : selectedFile.replace(/\.\w+$/, '.ome.tiff');
     const file = await getImageByPath(path);
-    store.dispatch({ type: 'set_image_path_for_avivator', content: [...file] });
+    store.dispatch({ type: 'set_image_path_for_avivator', content: [file] });
     onClose();
   };
 
@@ -67,6 +67,7 @@ const UploadDialog = ({ onClose, folderUploadable = false }) => {
   return (
     <>
       <ClosableDialog
+        open={open}
         title={folderUploadable ? 'Upload images in folder' : 'Upload images'}
         onClose={onClose}
         maxWidth="sm"
