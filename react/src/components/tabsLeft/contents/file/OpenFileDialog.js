@@ -18,7 +18,7 @@ import { getImageByPath } from '@/api/image';
 import store from '@/reducers';
 import { useExperimentStore } from '@/stores/useExperimentStore';
 
-const OpenFileDialog = ({ handleClose }) => {
+const UploadDialog = ({ onClose, folderUploadable = false }) => {
   const { experiments, loadExperiments } = useExperimentStore();
 
   const [experiment, setExperiment] = useState(null);
@@ -40,10 +40,8 @@ const OpenFileDialog = ({ handleClose }) => {
       ? selectedFile
       : selectedFile.replace(/\.\w+$/, '.ome.tiff');
     const file = await getImageByPath(path);
-    const files = [];
-    if (file) files.push(file);
-    store.dispatch({ type: 'set_image_path_for_avivator', content: files });
-    handleClose();
+    store.dispatch({ type: 'set_image_path_for_avivator', content: [...file] });
+    onClose();
   };
 
   const handleUpload = async () => {
@@ -68,7 +66,11 @@ const OpenFileDialog = ({ handleClose }) => {
 
   return (
     <>
-      <ClosableDialog title="Files" onClose={handleClose} maxWidth="sm">
+      <ClosableDialog
+        title={folderUploadable ? 'Upload images in folder' : 'Upload images'}
+        onClose={onClose}
+        maxWidth="sm"
+      >
         <Grid container direction="row">
           <Grid
             container
@@ -88,7 +90,14 @@ const OpenFileDialog = ({ handleClose }) => {
               <Dropzone onDrop={(files) => setUploadFiles(files)}>
                 {({ getRootProps, getInputProps }) => (
                   <Box {...getRootProps()} flexGrow={1} mb={2}>
-                    <input {...getInputProps()} multiple />
+                    <input
+                      {...getInputProps()}
+                      {...(folderUploadable && {
+                        directory: '',
+                        webkitdirectory: '',
+                      })}
+                      multiple
+                    />
                     <Box
                       sx={{
                         p: 2,
@@ -190,4 +199,4 @@ const OpenFileDialog = ({ handleClose }) => {
   );
 };
 
-export default OpenFileDialog;
+export default UploadDialog;

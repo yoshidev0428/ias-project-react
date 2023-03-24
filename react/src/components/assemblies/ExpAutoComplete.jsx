@@ -15,7 +15,11 @@ export default function ExpAutoComplete({
       fullWidth
       onChange={(_event, newValue) => {
         if (typeof newValue === 'string') {
-          onChange(options.find((exp) => exp.experiment_name === newValue));
+          onChange(
+            options.find((exp) => exp.experiment_name === newValue) ?? {
+              experiment_name: newValue,
+            },
+          );
         } else if (newValue && newValue.inputValue) {
           // Create a new value from the user input
           onChange(
