@@ -40,22 +40,23 @@ const ExperimentDialog = ({
     setUploading(false);
   }, [loadExperiments]);
 
-  const handleSelectExp = (exp) => {
-    setSelectedExp(exp);
-    setSelectedFiles(null);
+  const handleSelectFiles = (files) => {
+    setSelectedFiles(files);
   };
-
-  const handleSelectFiles = (files) => {};
 
   const handleLoadFile = async () => {
     if (onSelectFiles) {
       onSelectFiles(selectedFiles);
     } else {
-      const path = /\.ome\.tif?f$/.test(selectedFiles)
-        ? selectedFiles
-        : selectedFiles.replace(/\.\w+$/, '.ome.tiff');
-      const file = await getImageByPath(path);
-      store.dispatch({ type: 'set_image_path_for_avivator', content: [file] });
+      const files = await Promise.all(
+        selectedFiles.map(async (file) => {
+          const path = /\.ome\.tif?f$/.test(file)
+            ? file
+            : file.replace(/\.\w+$/, '.ome.tiff');
+          return await getImageByPath(path);
+        }),
+      );
+      store.dispatch({ type: 'set_image_path_for_avivator', content: files });
     }
     onClose();
   };
@@ -172,7 +173,6 @@ const ExperimentDialog = ({
                 <ExpTreeView
                   experiments={experiments}
                   onSelectFiles={handleSelectFiles}
-                  onSelectExp={handleSelectExp}
                 />
               </Box>
             </Grid>
