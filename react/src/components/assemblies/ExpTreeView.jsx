@@ -1,14 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import TreeView from './TreeView';
 
-const ExpTreeView = ({ data, onSelectFile, onSelectExp }) => {
-  const rootNode = useMemo(
+const ExpTreeView = ({
+  experiments,
+  onSelectFiles,
+  onSelectExp = () => void 0,
+  onSelectFolder = () => void 0,
+}) => {
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const nodes = useMemo(
     () =>
-      data.map((experiment) => {
+      experiments.map((experiment) => {
         const treeData = {
           id: experiment.experiment_name,
           label: experiment.experiment_name,
-          checked: false,
           children: [],
           type: 'experiment',
         };
@@ -30,7 +36,6 @@ const ExpTreeView = ({ data, onSelectFile, onSelectExp }) => {
               const item = {
                 id: path,
                 label: folders[i],
-                checked: false,
                 children: [],
                 type: 'folder',
               };
@@ -42,24 +47,61 @@ const ExpTreeView = ({ data, onSelectFile, onSelectExp }) => {
             tree.push({
               id: path + '/' + file,
               label: file,
-              checked: false,
               type: 'file',
             }),
           );
         });
         return treeData;
       }),
-    [data],
+    [experiments],
   );
 
-  const handleSelect = (_event, nodeId) => {
-    if (/\.\w+$/i.test(nodeId)) {
-      onSelectFile(nodeId);
-    } else {
-      onSelectExp(nodeId);
-    }
+  const handleSelect = (_event, nodeIds) => {
+    const files = nodeIds.reduce((acc, nodeId) => {
+      if (/\.\w+$/i.test(nodeId)) {
+        // file
+        acc.push(nodeId);
+      } else if (nodeId.includes('/')) {
+        // folder
+        const expName = nodeId.split('/')[0]; // experiment name
+        const folderName = nodeId.split('/').slice(1).join('/'); // folder name
+        const exp = experiments.find((e) => e.experiment_name === expName);
+        const folder = exp.experiment_data.find(
+          (f) => f.folder === `/${folderName}`,
+        );
+        folder.files.forEach((file) => {
+          const path = `${nodeId}/${file}`;
+          if (acc.findIndex((fpath) => fpath === path) < 0) {
+            acc.push(path);
+          }
+        });
+        onSelectFolder(nodeId);
+      } else {
+        // experiment
+        const exp = experiments.find((e) => e.experiment_name === nodeId);
+        exp.experiment_data.forEach((folder) => {
+          folder.files.forEach((file) => {
+            const path = `${nodeId}${folder.folder}/${file}`;
+            if (acc.findIndex((fpath) => fpath === path) < 0) {
+              acc.push(path);
+            }
+          });
+        });
+        onSelectExp(nodeId);
+      }
+      return acc;
+    }, []);
+
+    setSelectedFiles(files);
+    onSelectFiles(files);
   };
 
-  return <TreeView rootNode={rootNode} onNodeSelect={handleSelect} />;
+  return (
+    <TreeView
+      nodes={nodes}
+      selected={selectedFiles}
+      onNodeSelect={handleSelect}
+    />
+  );
 };
 export default ExpTreeView;

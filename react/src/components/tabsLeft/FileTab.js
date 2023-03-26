@@ -3,9 +3,8 @@ import TabItem from '../custom/TabItem';
 import SmallCard from '../custom/SmallCard';
 import CustomButton from '../custom/CustomButton';
 import Divider from '@mui/material/Divider';
-import UploadDialog from './contents/file/UploadDialog';
+import ExperimentDialog from './contents/file/ExperimentDialog';
 import OpenPositionDialog from './contents/file/OpenPositionDialog';
-// import * as api_experiment from "../../api/experiment";
 import {
   mdiCloudDownloadOutline,
   mdiEmailNewsletter,
@@ -190,7 +189,7 @@ const FileTab = (props) => {
         />
         <CustomButton icon={mdiCog} label="Set" click={onChangeDimensionSet} />
       </SmallCard>
-      <UploadDialog
+      <ExperimentDialog
         open={openUploadFile || openUploadFolder}
         onClose={handleCloseUpload}
         folderUploadable={openUploadFolder}

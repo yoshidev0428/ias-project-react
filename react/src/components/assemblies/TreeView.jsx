@@ -3,9 +3,10 @@ import TreeItem from '@mui/lab/TreeItem';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
-const TreeView = ({ rootNode, onNodeSelect }) => {
+const TreeView = ({ nodes, selected, onNodeSelect }) => {
   const renderTree = (node) => (
     <TreeItem
       key={node.id}
@@ -22,7 +23,13 @@ const TreeView = ({ rootNode, onNodeSelect }) => {
           {node.label}
         </Typography>
       }
-      endIcon={<InsertDriveFileOutlinedIcon />}
+      endIcon={
+        selected.includes(node.id) ? (
+          <CheckBoxIcon />
+        ) : (
+          <CheckBoxOutlineBlankIcon />
+        )
+      }
     >
       {Array.isArray(node.children)
         ? node.children.map((child) => renderTree(child))
@@ -35,8 +42,9 @@ const TreeView = ({ rootNode, onNodeSelect }) => {
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandIcon={<ChevronRightIcon />}
       onNodeSelect={onNodeSelect}
+      multiSelect
     >
-      {rootNode.map((node) => renderTree(node))}
+      {nodes.map((node) => renderTree(node))}
     </MuiTreeView>
   );
 };

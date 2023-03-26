@@ -18,14 +18,19 @@ import { getImageByPath } from '@/api/image';
 import store from '@/reducers';
 import { useExperimentStore } from '@/stores/useExperimentStore';
 
-const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
+const ExperimentDialog = ({
+  open,
+  onClose,
+  onSelectFiles,
+  folderUploadable = false,
+}) => {
   const { experiments, loadExperiments } = useExperimentStore();
 
   const [experiment, setExperiment] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [successDialog, setSuccessDialog] = useState(false);
   const [uploadFiles, setUploadFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectedExp, setSelectedExp] = useState(null);
 
   useEffect(() => {
@@ -33,14 +38,25 @@ const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
     setExperiment(null);
     loadExperiments();
     setUploading(false);
-  }, []);
+  }, [loadExperiments]);
+
+  const handleSelectExp = (exp) => {
+    setSelectedExp(exp);
+    setSelectedFiles(null);
+  };
+
+  const handleSelectFiles = (files) => {};
 
   const handleLoadFile = async () => {
-    const path = /\.ome\.tif?f$/.test(selectedFile)
-      ? selectedFile
-      : selectedFile.replace(/\.\w+$/, '.ome.tiff');
-    const file = await getImageByPath(path);
-    store.dispatch({ type: 'set_image_path_for_avivator', content: [file] });
+    if (onSelectFiles) {
+      onSelectFiles(selectedFiles);
+    } else {
+      const path = /\.ome\.tif?f$/.test(selectedFiles)
+        ? selectedFiles
+        : selectedFiles.replace(/\.\w+$/, '.ome.tiff');
+      const file = await getImageByPath(path);
+      store.dispatch({ type: 'set_image_path_for_avivator', content: [file] });
+    }
     onClose();
   };
 
@@ -154,12 +170,9 @@ const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
                 }}
               >
                 <ExpTreeView
-                  data={experiments}
-                  onSelectFile={(file) => setSelectedFile(file)}
-                  onSelectExp={(exp) => {
-                    setSelectedExp(exp);
-                    setSelectedFile(null);
-                  }}
+                  experiments={experiments}
+                  onSelectFiles={handleSelectFiles}
+                  onSelectExp={handleSelectExp}
                 />
               </Box>
             </Grid>
@@ -169,7 +182,7 @@ const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  disabled={!selectedFile}
+                  disabled={!selectedFiles}
                   onClick={handleLoadFile}
                 >
                   Load
@@ -180,7 +193,7 @@ const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
                   variant="outlined"
                   color="error"
                   fullWidth
-                  disabled={!selectedFile && !selectedExp}
+                  disabled={!selectedFiles && !selectedExp}
                 >
                   Delete
                 </Button>
@@ -200,4 +213,4 @@ const UploadDialog = ({ open, onClose, folderUploadable = false }) => {
   );
 };
 
-export default UploadDialog;
+export default ExperimentDialog;
