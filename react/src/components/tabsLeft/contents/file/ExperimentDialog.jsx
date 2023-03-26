@@ -28,10 +28,10 @@ const ExperimentDialog = ({
 
   const [experiment, setExperiment] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [successDialog, setSuccessDialog] = useState(false);
   const [uploadFiles, setUploadFiles] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [selectedExp, setSelectedExp] = useState(null);
 
   useEffect(() => {
     setUploading(true);
@@ -48,6 +48,7 @@ const ExperimentDialog = ({
     if (onSelectFiles) {
       onSelectFiles(selectedFiles);
     } else {
+      setLoading(true);
       const files = await Promise.all(
         selectedFiles.map(async (file) => {
           const path = /\.ome\.tif?f$/.test(file)
@@ -57,6 +58,7 @@ const ExperimentDialog = ({
         }),
       );
       store.dispatch({ type: 'set_image_path_for_avivator', content: files });
+      setLoading(false);
     }
     onClose();
   };
@@ -176,16 +178,21 @@ const ExperimentDialog = ({
                 />
               </Box>
             </Grid>
+            <Grid item xs={12}>
+              <Typography align="right">
+                {selectedFiles.length} files selected
+              </Typography>
+            </Grid>
             <Grid item container xs={12} spacing={2}>
               <Grid item xs={6}>
                 <Button
                   variant="contained"
                   color="primary"
                   fullWidth
-                  disabled={!selectedFiles}
+                  disabled={!selectedFiles.length || loading}
                   onClick={handleLoadFile}
                 >
-                  Load
+                  {loading ? <CircularProgress size={24} /> : 'Load'}
                 </Button>
               </Grid>
               <Grid item xs={6}>
@@ -193,7 +200,7 @@ const ExperimentDialog = ({
                   variant="outlined"
                   color="error"
                   fullWidth
-                  disabled={!selectedFiles && !selectedExp}
+                  disabled={!selectedFiles.length}
                 >
                   Delete
                 </Button>
