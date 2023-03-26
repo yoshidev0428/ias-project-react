@@ -1,14 +1,18 @@
 import TreeItem from '@mui/lab/TreeItem';
 import { FormControlLabel, Checkbox } from '@mui/material';
 import store from '../../../../reducers';
+import { useState } from 'react';
 
 const TreeViewFoldersExp = (props) => {
   const experiments = props.data;
+  const selectedPath = props.selectedPath;
+
   const makeTree = (experiment) => {
     let treeData = {
       id: experiment.experiment_name,
       label: experiment.experiment_name,
-      checked: false,
+      checked:
+        selectedPath.indexOf(experiment.experiment_name) >= 0 ? true : false,
       children: [],
       type: 'experiment',
     };
@@ -28,7 +32,7 @@ const TreeViewFoldersExp = (props) => {
           const item = {
             id: path,
             label: folders[i],
-            checked: false,
+            checked: selectedPath.indexOf(path) >= 0 ? true : false,
             children: [],
             type: 'folder',
           };
@@ -40,7 +44,7 @@ const TreeViewFoldersExp = (props) => {
         tree.push({
           id: path + '/' + file,
           label: file,
-          checked: false,
+          checked: selectedPath.indexOf(path + '/' + file) >= 0 ? true : false,
           type: 'file',
         }),
       );
@@ -54,17 +58,40 @@ const TreeViewFoldersExp = (props) => {
     root_node.push(experiment_node);
   });
 
-  let checkedFile = '';
-  const handleChange = (e) => {
-    const path = e.target.id;
-    if (path.indexOf('.') < 0) return;
-    if (e.target.checked) {
-      checkedFile = checkedFile.concat(',' + path);
+  let checkedFile = selectedPath;
+  const handleChange = (e, node) => {
+    // const path = e.target.id;
+    // if (path.indexOf('.') < 0) return;
+    checkCheckedNode(node, e.target.checked);
+  };
+
+  const checkCheckedNode = (e, isChecked) => {
+    updateRootNodeForChecked(root_node, isChecked, e);
+    if (Array.isArray(e.children) && e.children.length > 0) {
+      for (let i = 0; i < e.children.length; i++) {
+        checkCheckedNode(e.children[i], isChecked);
+      }
+    } else {
+      let selectedFiles = checkedFile ? checkedFile.split(',') : [];
+      if (isChecked) {
+        selectedFiles.push(e.id);
+      } else {
+        selectedFiles.splice(selectedFiles.indexOf(e.id), 1);
+      }
+      checkedFile = selectedFiles.join(',');
       store.dispatch({ type: 'set_image_path_for_tree', content: checkedFile });
-      return;
     }
-    checkedFile = checkedFile.replaceAll(',' + path, '');
-    store.dispatch({ type: 'set_image_path_for_tree', content: checkedFile });
+  };
+
+  const updateRootNodeForChecked = (nodes, isChecked, targetNode) => {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id == targetNode.id) {
+        nodes[i].checked = isChecked;
+      }
+      if (Array.isArray(nodes[i].children)) {
+        updateRootNodeForChecked(nodes[i].children, isChecked, targetNode);
+      }
+    }
   };
 
   const renderTree = (node) => (
@@ -75,7 +102,15 @@ const TreeViewFoldersExp = (props) => {
         nodeId={node.id}
         label={
           <FormControlLabel
-            control={<Checkbox id={node.id} onChange={handleChange} />}
+            control={
+              <Checkbox
+                id={node.id}
+                checked={node.checked}
+                onChange={(e) => {
+                  handleChange(e, node);
+                }}
+              />
+            }
             label={<>{node.label}</>}
           />
         }

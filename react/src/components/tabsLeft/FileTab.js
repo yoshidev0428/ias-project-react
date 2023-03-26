@@ -60,8 +60,8 @@ const FileTab = (props) => {
     for (let i = 0; i < content.length; i++) {
       if (
         isEntire ||
-        (content[i].row == selectedVesselHole.row &&
-          content[i].col == selectedVesselHole.col)
+        (content[i].row === selectedVesselHole.row &&
+          content[i].col === selectedVesselHole.col)
       ) {
         let tempContent = { ...content[i] };
         const tempVal = tempContent.z;
