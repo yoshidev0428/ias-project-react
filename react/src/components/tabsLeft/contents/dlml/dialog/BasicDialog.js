@@ -15,7 +15,7 @@ import imgNuchel from '../../../../../assets/cell/nuchel.png';
 import imgCyto from '../../../../../assets/cell/cyto.png';
 import imgLayer from '../../../../../assets/cell/layer.png';
 import imgWafer from '../../../../../assets/cell/wafer.png';
-import CellposeDialog from './CellposeDialog';
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 0 }}>
@@ -29,9 +29,7 @@ TabContainer.propTypes = {
 };
 
 const BasicDialog = () => {
-  const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const DialogBasicFlag = useFlagsStore((store) => store.DialogBasicFlag);
-  const state = store.getState();
   const showCellposeDialog = () => {
     useFlagsStore.setState({ DialogBasicFlag: false });
     useFlagsStore.setState({ DialogCellposeFlag: true });
@@ -40,7 +38,6 @@ const BasicDialog = () => {
   };
   const close = () => {
     useFlagsStore.setState({ DialogBasicFlag: false });
-    console.log('flag Status--->' + DialogBasicFlag);
   };
 
   const [rightTabVal, setRightTabVal] = useState(0);
@@ -60,15 +57,15 @@ const BasicDialog = () => {
     wafer: imgWafer,
     livecell: imgCyto,
     cyto2: imgCyto,
-    cp: imgLayer,
-    cpx: imgWafer,
-    tn1: imgTissueNet,
-    tn2: imgNuchel,
-    tn3: imgTissueNet,
-    lc1: imgLayer,
-    lc2: imgCyto,
-    lc3: imgTissueNet,
-    lc4: imgWafer,
+    CP: imgLayer,
+    CPx: imgWafer,
+    TN1: imgTissueNet,
+    TN2: imgNuchel,
+    TN3: imgTissueNet,
+    LC1: imgLayer,
+    LC2: imgCyto,
+    LC3: imgTissueNet,
+    LC4: imgWafer,
   };
 
   const ImageBox = (props) => {
@@ -159,39 +156,39 @@ const BasicDialog = () => {
                         <div className="label-text text-center">Cyto2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="cp" />
+                        <ImageBox methodName="CP" />
                         <div className="label-text text-center">CP</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="cpx" />
+                        <ImageBox methodName="CPx" />
                         <div className="label-text text-center">CPx</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn1" />
+                        <ImageBox methodName="TN1" />
                         <div className="label-text text-center">TN1</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn2" />
+                        <ImageBox methodName="TN2" />
                         <div className="label-text text-center">TN2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn3" />
+                        <ImageBox methodName="TN3" />
                         <div className="label-text text-center">TN3</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc1" />
+                        <ImageBox methodName="LC1" />
                         <div className="label-text text-center">LC1</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc2" />
+                        <ImageBox methodName="LC2" />
                         <div className="label-text text-center">LC2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc3" />
+                        <ImageBox methodName="LC3" />
                         <div className="label-text text-center">LC3</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc4" />
+                        <ImageBox methodName="LC4" />
                         <div className="label-text text-center">LC4</div>
                       </div>
                     </div>

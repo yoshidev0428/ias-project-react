@@ -27,18 +27,17 @@ const generateToggles = (defaults, set) => {
 const DEFAUlT_CHANNEL_STATE = {
   channelsVisible: [],
   contrastLimits: [],
+  selectedChannel: -1,
   colors: [],
   domains: [],
   channelMap: [],
-  tiffNames: [],
-  experimentName: '',
   selections: [],
   ids: [],
   loader: [{ labels: [], shape: [] }],
   image: 0,
-  brightness: 0,
-  contrast: 0,
-  gamma: 50,
+  brightness: [],
+  contrast: [],
+  gamma: [],
   deblur: {
     size: 1,
     kernel: [],
@@ -48,10 +47,13 @@ const DEFAUlT_CHANNEL_STATE = {
 
 const DEFAUlT_CHANNEL_VALUES = {
   contrastLimits: [0, 65535],
-  colors: [255, 255, 255],
+  colors: [255, 0, 0],
   domains: [0, 65535],
   selections: { z: 0, c: 0, t: 0 },
   ids: '',
+  brightness: 0,
+  contrast: 0,
+  gamma: 0,
 };
 
 export const useChannelsStore = create((set) => ({
@@ -63,11 +65,6 @@ export const useChannelsStore = create((set) => ({
       channelsVisible: state.channelsVisible.map((v, idx) =>
         idx === index ? !v : v,
       ),
-    })),
-  setChannelsVisible: (visibilities) =>
-    set((state) => ({
-      ...state,
-      channelsVisible: visibilities,
     })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((state) => {
@@ -104,10 +101,8 @@ export const useChannelsStore = create((set) => ({
       });
       return newState;
     }),
-  setBrightness: (newValue) =>
-    set((state) => ({ ...state, brightness: newValue })),
-  setContrast: (newValue) => set((state) => ({ ...state, contrast: newValue })),
-  setGamma: (newValue) => set((state) => ({ ...state, gamma: newValue })),
+  selectChannel: (chId) =>
+    set((state) => ({ ...state, selectedChannel: chId })),
   setDeConv2D: (method, size, sigma) =>
     set((state) => ({
       ...state,
@@ -236,6 +231,7 @@ const DEFAUlT_FLAG_STATE = {
   DialogCellposeFlag: false,
   DialogVisualFlag: false,
   DialogLoadingFlag: false,
+  UserCanvasFlag: false,
 };
 
 export const useFlagsStore = create((set) => ({

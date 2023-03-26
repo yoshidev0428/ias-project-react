@@ -30,12 +30,10 @@ const CustomNameDialog = () => {
     if (reason != 'backdropClick') {
       useFlagsStore.setState({ DialogCellposeFlag: true });
       useFlagsStore.setState({ DialogCustomNameFlag: false });
-      console.log('flag Status--->' + DialogCustomNameFlag);
     }
   };
 
   const action = async () => {
-    console.log('flag Status---> Action');
     if (modelName === '') {
       alert('Please enter your model name.');
       return;
@@ -47,8 +45,7 @@ const CustomNameDialog = () => {
 
     if (respond.data.error) {
       alert('Please choose another model name');
-      let respond = await api_experiment.get_model('all');
-      console.log('models', respond.data.data);
+      await api_experiment.get_model('all');
     } else if (respond.data.success == 'OK') {
       useFlagsStore.setState({ DialogCustomNameFlag: false });
       useFlagsStore.setState({ DialogCustomFlag: true });

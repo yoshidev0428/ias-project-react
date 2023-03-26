@@ -153,7 +153,6 @@ export const getMetaData = async () => {
 };
 
 export const testSegment = async (file_url, exp_name, model_name) => {
-  console.log('file_url', file_url);
   const state = store.getState();
   const formData = new FormData();
   formData.append('file_url', file_url);
@@ -195,11 +194,27 @@ export const save_model = async (model_info) => {
   });
 };
 
-export const get_model = async (model) => {
+export const get_model = async () => {
   const state = store.getState();
   const formData = new FormData();
   formData.append('model', 'experiment_name');
   return api.post('image/tile/get_models', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};
+
+export const get_outlines = async (file_url, exp_name) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  return api.post('image/tile/get_outlines', formData, {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',

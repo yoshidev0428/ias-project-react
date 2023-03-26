@@ -1,10 +1,7 @@
-import { Col, Row, Button } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CloseIcon from '@mui/icons-material/Close';
-import { max } from 'lodash';
-import TabItem from '@/components/custom/TabItem';
-import SmallCard from '@/components/custom/SmallCard';
 
 const PageHeader = (props) => {
   const setFilter = props.setFilter;
@@ -13,16 +10,15 @@ const PageHeader = (props) => {
   const currentItem = items[currentID];
   const nextItem = items[Math.min(currentID + 1, 2)];
   const prevItem = items[Math.max(currentID - 1, 0)];
-  const onClickFilterNext = (e) => {
+  const onClickFilterNext = () => {
     setFilter(nextItem);
   };
-  const onClickFilterPrev = (e) => {
+  const onClickFilterPrev = () => {
     setFilter(prevItem);
   };
-  const onClickFilterMenu = (e) => {
+  const onClickFilterMenu = () => {
     setFilter('menu');
   };
-  console.log(currentItem, nextItem);
   return (
     <Row>
       <Col xs={8}>

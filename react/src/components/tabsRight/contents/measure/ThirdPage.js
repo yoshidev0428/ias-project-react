@@ -9,51 +9,15 @@ import {
   classSettingRows,
 } from '@/constants/class-setting';
 import SortAreaDialog from '../itemSetting/SortAreaDialog';
-// import Divider from '@mui/material/Divider';
-// import CustomButton from "../../../custom/CustomButton";
-// import {
-//     mdiContentSave,
-//     mdiContentSaveEdit,
-//     mdiPlayCircleOutline,
-//     mdiStopCircleOutline,
-//     mdiContentSaveOutline,
-//     mdiCloseCircleOutline,
-// } from '@mdi/js'
 
 export default function FourthPage() {
   const [showMeasureItemDialog, setShowMeasureItemDialog] = useState(false);
   const [showSortAreaDialog, setShowSortAreaDialog] = useState(false);
 
-  const onClick1 = () => {
-    console.log('onClick Measure Item');
-  };
-  const onClick2 = () => {
-    console.log('onClick Sort Area');
-  };
-  const onClick3 = () => {
-    console.log('onClick Save');
-  };
-  const onClick4 = () => {
-    console.log('onClick Save As');
-  };
-  const onClick5 = () => {
-    console.log('onClick Learning-Method Go');
-  };
-  const onClick6 = () => {
-    console.log('onClick Go');
-  };
-  const onClick7 = () => {
-    console.log('onClick Stop');
-  };
-  const onClick8 = () => {
-    console.log('onClick Stop');
-  };
-  const onClick9 = () => {
-    console.log('onClick Stop');
-  };
-  const onClick10 = () => {
-    console.log('onClick Stop');
-  };
+  const onClick7 = () => {};
+  const onClick8 = () => {};
+  const onClick9 = () => {};
+  const onClick10 = () => {};
 
   return (
     <>

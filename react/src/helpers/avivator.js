@@ -6,7 +6,10 @@ import { fromBlob, fromUrl } from 'geotiff';
 import { getWindowDimensions } from '@/helpers/browser';
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from '@/constants';
 import { api } from '@/api/base';
-import { MAX_CHANNELS_WARNING } from '@/constants/avivator';
+import {
+  MAX_CHANNELS_WARNING,
+  MAX_NON_GLOBAL_DIMENSIONS,
+} from '@/constants/avivator';
 
 class UnsupportedBrowserError extends Error {
   constructor(message) {
@@ -360,7 +363,11 @@ export function buildDefaultSelection(pixelSource) {
     .map((name, i) => ({ name, size: pixelSource.shape[i] }))
     .find((d) => !GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name) && d.size);
 
-  for (let i = 0; i < Math.min(4, firstNonGlobalDimension.size); i += 1) {
+  for (
+    let i = 0;
+    i < Math.min(MAX_NON_GLOBAL_DIMENSIONS, firstNonGlobalDimension.size);
+    i += 1
+  ) {
     selection.push({
       [firstNonGlobalDimension.name]: i,
       ...globalSelection,
@@ -478,4 +485,11 @@ export function getBoundingCube(loader) {
     physicalSizeScalingMatrix[10] * shape[labels.indexOf('z')],
   ];
   return [xSlice, ySlice, zSlice];
+}
+
+/**
+ * Get random hexidemical id
+ */
+export function randomId() {
+  return Math.random().toString(16).slice(2);
 }

@@ -28,6 +28,15 @@ const DEFAULT_PARAMS = {
     s_threshold: 0,
   },
   models: [],
+  canvas_info: {
+    outlines: [],
+    draw_style: '',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    zoom: 1,
+  },
 };
 
 const initState = {
@@ -53,6 +62,9 @@ const experiment = (state = initState, action) => {
       break;
     case 'set_models':
       state.models = action.content;
+      break;
+    case 'set_canvas':
+      state.canvas_info = action.content;
       break;
     default:
       break;

@@ -1,17 +1,10 @@
 import * as React from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import { useFlagsStore } from '@/state';
 import { useState } from 'react';
-import { Row, Col, Form, Button, Image } from 'react-bootstrap';
-// import CustomButton from "../../../custom/Custom
+import { Row, Col } from 'react-bootstrap';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
-import DirectionsIcon from '@mui/icons-material/Directions';
 import Icon from '@mdi/react';
 import {
   mdiArrowLeftBold,
@@ -26,18 +19,10 @@ const VisualToolbar = () => {
   const changeURL = (e) => {
     setURL(e.target.value);
   };
-  const next = () => {
-    console.log('onClick->next');
-  };
-  const before = () => {
-    console.log('onClick->before');
-  };
-  const exit = () => {
-    console.log('onClick->exit');
-  };
-  const home = () => {
-    console.log('onClick->home');
-  };
+  const next = () => {};
+  const before = () => {};
+  const exit = () => {};
+  const home = () => {};
   return (
     <Row style={{ width: '100%' }}>
       <Col xs={4}>

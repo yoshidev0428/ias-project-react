@@ -291,9 +291,15 @@
     border: 1px solid black!important;
 }
 
+.user-custom-canvas {
+    z-index: 9999!important;
+    position: absolute!important;
+}
+
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
     padding: 10px 15px;
 }
+
 .topInput:nth-of-type(3){
     margin-top: 15px;
 }

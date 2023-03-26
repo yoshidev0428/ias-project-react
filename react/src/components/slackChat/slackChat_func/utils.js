@@ -1,6 +1,5 @@
-export const debugLog = (...args) => {
+export const debugLog = () => {
   if (process.env.NODE_ENV !== 'production') {
-    return console.log('[ReactSlackChat]', ...args);
   }
 };
 

@@ -496,3 +496,23 @@ h6 {
 .min_height-250{
     min-height: 250px !important;
 }
+
+.channel-box-container {
+    width: calc(100% - 26px);
+    height: 56px;
+    overflow-y: scroll;
+
+    .channel-box {
+        float: left;
+        padding: 0 5px;
+    }
+}
+
+.render-container {
+    .row {
+        margin: 0;
+    }
+    .col-6, .col-3, .col-4 {
+        padding: 0
+    }
+}
