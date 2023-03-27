@@ -21,9 +21,6 @@ import TextField from '@mui/material/TextField';
 import store from '@/reducers';
 import * as api_tiles from '@/api/tiles';
 import * as api_experiment from '@/api/experiment';
-import OpenCloudDialog from './OpenCloudDialog';
-import OpenCloudUploadNew from './OpenCloudUpload';
-import OpenFolderUpload from './OpenFolderUpload';
 import Tiling from './Tiling';
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import Box from '@mui/material/Box';
@@ -1369,7 +1366,7 @@ const OpenPositionDialog = (props) => {
                   <Button
                     className="cloud-btn"
                     variant="contained"
-                    onClick={handleExperimentDialog}
+                    onClick={props.setCloudDialog}
                     color="primary"
                     style={{
                       height: 'fit-content',
@@ -1383,7 +1380,7 @@ const OpenPositionDialog = (props) => {
                     setLoading={(loading) => setIsLoading(loading)}
                     fileNames={fileNames}
                     metaDatas={metaDatas}
-                    handleExperimentDialog={handleExperimentDialog}
+                    handleExperimentDialog={props.setCloudDialog}
                   />
                 </div>
               </TabContainer>
@@ -1433,12 +1430,6 @@ const OpenPositionDialog = (props) => {
               ) : (
                 <div style={{ width: '580px' }}></div>
               )}
-              {cloudDialog && (
-                <OpenFolderUpload
-                  handleClose={handleFolderClose}
-                  treeData={treeData}
-                />
-              )}
             </div>
           )}
           {selectedTab === 3 && (
@@ -1460,22 +1451,6 @@ const OpenPositionDialog = (props) => {
             Cancel
           </Button>
         </DialogActions>
-        {/*
-                    <OpenExperimentDialog
-                        onOpen={experimentDialog}
-                        cloudDialogClose = {props.cloudDialogClose}
-                        setCloudDialog={props.setCloudDialog}
-                        setDialogStatus={setDialogStatus}
-                        handleexperiment_nameChange={handleexperiment_nameChange}
-                    />
-                */}
-        {experimentDialog && (
-          <OpenFolderUpload
-            handleClose={handleFolderClose}
-            treeData={treeData}
-            folderDialogFlag={true}
-          />
-        )}
       </Dialog>
     </>
   );
