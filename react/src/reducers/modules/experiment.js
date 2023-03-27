@@ -19,7 +19,7 @@ const DEFAULT_PARAMS = {
     custom_name: 'New Model',
     custom_icon: 'tissuenet',
     viewValue: 'image',
-    outline: false,
+    outline: 0,
     cell_diam: 0,
     chan_segment: 0,
     chan_2: 0,

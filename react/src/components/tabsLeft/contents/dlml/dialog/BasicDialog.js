@@ -33,6 +33,7 @@ const BasicDialog = () => {
   const showCellposeDialog = () => {
     useFlagsStore.setState({ DialogBasicFlag: false });
     useFlagsStore.setState({ DialogCellposeFlag: true });
+    console.log('method', selectedMethod)
     store.dispatch({ type: 'setMethod', content: selectedMethod });
     store.dispatch({ type: 'set_custom_name', content: 'New Model' });
   };

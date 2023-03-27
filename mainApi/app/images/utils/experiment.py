@@ -310,20 +310,27 @@ async def convert_npy_to_jpg(file_full_path: str,
     inputPath = ""
     outputPath = ""
     out_file_name = ""
-    if model_info['outline'] == True :
+    if model_info['outline'] == 0 :
         im = Image.fromarray(imgout, 'RGB')
         rgb_im = im.convert('RGB')
         inputPath = file_full_path + file_name + "_conv_outlines.jpg"
         rgb_im.save(inputPath, 'JPEG')
         outputPath = file_full_path + file_name + "_conv_outlines.ome.tiff"
         out_file_name = file_name + "_conv_outlines.ome.tiff"
-    else :
+    if model_info['outline'] == 1 :
         im = Image.fromarray(overlay, 'RGB')
         rgb_im = im.convert('RGB')
         inputPath = file_full_path + file_name + "_conv_masks.jpg"
         rgb_im.save(inputPath, 'JPEG')
         outputPath = file_full_path + file_name + "_conv_masks.ome.tiff"
         out_file_name = file_name + "_conv_masks.ome.tiff"
+    if model_info['outline'] == 2 :
+        im = Image.fromarray(flows, 'RGB')
+        rgb_im = im.convert('RGB')
+        inputPath = file_full_path + file_name + "_conv_flows.jpg"
+        rgb_im.save(inputPath, 'JPEG')
+        outputPath = file_full_path + file_name + "_conv_flows.ome.tiff"
+        out_file_name = file_name + "_conv_flows.ome.tiff"
     print('out_name', out_file_name)
     cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
     print('=====>', out_file, outputPath, cmd_str)

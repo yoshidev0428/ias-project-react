@@ -10,17 +10,17 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import store from '../../../../../reducers';
+import store from '@/reducers';
 
 const CellposeDialog = () => {
   const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const state = store.getState();
-  const [selectedMethod] = React.useState(state.experiment.method);
+  const [selectedMethod, setSelectedMethod] = React.useState(state.experiment.method);
   const [customName] = React.useState(state.experiment.custom_name);
   const segInfo = state.experiment.seg_info;
   const methods = {
     tissuenet: 'TissueNet',
-    nuchel: 'Nuchel',
+    nuclei: 'Nuclei',
     cyto: 'Cyto',
     layer: 'Layer',
     Wafer: 'wafer',
@@ -59,9 +59,9 @@ const CellposeDialog = () => {
     useFlagsStore.setState({ DialogCustomNameFlag: true });
   };
 
-  const [outline, setOutline] = React.useState(false);
+  const [outline, setOutline] = React.useState(0);
   const handleOutline = (event) => {
-    setOutline(event.target.checked);
+    setOutline(event.target.value);
   };
 
   const [diameter, setDiameter] = React.useState(30);
@@ -124,20 +124,26 @@ const CellposeDialog = () => {
             <Col xs={12}>
               <div className="pt-3 px-3 pb-1 border-bottom">
                 {/* <h6>Drawing</h6> */}
-                <h6>Outline</h6>
+                <h6>Select the result image</h6>
                 <div>
                   <Row className="mt-3">
-                    <Col xs={6} className="pr-0">
-                      <FormControlLabel
-                        className="mt-2"
-                        control={
-                          <Checkbox
-                            checked={outline}
-                            onChange={(e) => handleOutline(e)}
-                          />
-                        }
-                        label="outlines on [Z]"
-                      />
+                    <Col xs={6} className="mt-3">
+                      <FormControl fullWidth>
+                        <InputLabel id="segment-label">
+                          Result Image
+                        </InputLabel>
+                        <Select
+                          labelId="segment-label"
+                          id="segment-label-select"
+                          value={outline}
+                          label="result type"
+                          onChange={handleOutline}
+                        >
+                          <MenuItem value={0}>Predicted Outlines</MenuItem>
+                          <MenuItem value={1}>Predicted Masks</MenuItem>
+                          <MenuItem value={2}>Predicted Cell pose</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Col>
                   </Row>
                 </div>
@@ -165,7 +171,7 @@ const CellposeDialog = () => {
                   <Col xs={6}>
                     {/* <Button variant="primary">callbrate</Button> */}
                   </Col>
-                  <Col xs={6} className="mt-3">
+                  {/* <Col xs={6} className="mt-3">
                     <FormControl fullWidth>
                       <InputLabel id="segment-label">
                         chan to segment
@@ -200,7 +206,7 @@ const CellposeDialog = () => {
                         <MenuItem value={3}>3: blue</MenuItem>
                       </Select>
                     </FormControl>
-                  </Col>
+                  </Col> */}
                   <Col xs={6} className="mt-3">
                     <Form.Label className="mt-1">flow_threshold</Form.Label>
                   </Col>
