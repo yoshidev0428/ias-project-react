@@ -36,7 +36,8 @@ const Viewer = ({ isFullScreen }) => {
     contrast,
     gamma,
     deblur,
-    iterNum,
+    inputNum_1,
+    inputNum_2,
   } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
@@ -57,8 +58,8 @@ const Viewer = ({ isFullScreen }) => {
   const loader = useLoader();
   const shaderModule = useMemo(
     // const centerCoors = viewState.target;
-    () => generateShaderModule(Math.floor(deblur.size / 2), iterNum),
-    [deblur, iterNum],
+    () => generateShaderModule(Math.floor(deblur.size / 2), deblur.filterIndex),
+    [deblur],
   );
   let target = viewState.target;
   if (typeof target === 'undefined') {
@@ -68,9 +69,11 @@ const Viewer = ({ isFullScreen }) => {
   console.log("========>", xSlice, ySlice)
   console.log("========>", target)
   console.log("========>", viewState.zoom)
-
+  console.log("U_iternum .................", typeof inputNum_1)
   const postProcessEffect = useMemo(
+    
     () =>
+    
       new PostProcessEffect(shaderModule, {
         u_brightness: brightness,
         u_contrast: contrast,
@@ -79,7 +82,7 @@ const Viewer = ({ isFullScreen }) => {
         u_Slice: [xSlice[1], ySlice[1]],
         u_target: target,
         u_zoom: viewState.zoom,
-
+        u_iterNum: [inputNum_1, inputNum_2],
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
@@ -96,7 +99,6 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-  // debugger;
   return use3d ? (
     <VolumeViewer
       loader={loader}

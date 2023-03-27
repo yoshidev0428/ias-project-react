@@ -7130,6 +7130,18 @@ globby@^11.0.4, globby@^11.1.0:
     merge2 "^1.4.1"
     slash "^3.0.0"
 
+glsl-canny-edge-detection@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/glsl-canny-edge-detection/-/glsl-canny-edge-detection-1.0.1.tgz"
+  integrity sha512-yGu2zmlz/CIVfWLIBW/JcCq9fr0XYLSfBysEk+dDMxNRUq04NGnzEOPtLY+GGBZ1euhdqEIeBXhRB/iKEdovcQ==
+  dependencies:
+    glsl-fast-gaussian-blur "^1.0.2"
+
+glsl-fast-gaussian-blur@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/glsl-fast-gaussian-blur/-/glsl-fast-gaussian-blur-1.0.2.tgz"
+  integrity sha512-+jkGGhe+3twjyxnmvP3uxVnAUqLdW0tXvvKLCwM/wD7jV5TMEk1w4ZlPIVRt7hexk9jkFEsWGkr9H+1b/aJYrw==
+
 gopd@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/gopd/-/gopd-1.0.1.tgz"

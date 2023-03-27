@@ -80,7 +80,8 @@ const Filter2D = ({ setFilter }) => {
     );
   };
   const setFilter2D = useChannelsStore((state) => state.setFilter2D);
-  const setPasses = useChannelsStore((state) => state.setPasses);
+  const setPasses_1 = useChannelsStore((state) => state.setPasses_1);
+  const setPasses_2 = useChannelsStore((state) => state.setPasses_2);
 
   const options = Options(3);
   const filterList = Object.keys(options);
@@ -126,7 +127,7 @@ const Filter2D = ({ setFilter }) => {
     };
     return (
       <FormControl>
-        {/* <FormLabel id="demo-radio-buttons-group-label" style={{ height: '35px' }}>
+        {/* <FormLa bel id="demo-radio-buttons-group-label" style={{ height: '35px' }}>
                 {radioName}
             </FormLabel> */}
         <RadioGroup
@@ -159,8 +160,12 @@ const Filter2D = ({ setFilter }) => {
 
     const selectedVals = Object.values(options[item]);
     const [radioName, radio, inputNum] = selectedVals;
-    const inputNumKeys = Object.keys(inputNum);
+    const [formData, setFormData] = useState(inputNum);
+    useEffect(()=>{
+      setFormData(inputNum)
+    }, [inputNum])
 
+    const inputNumKeys = Object.keys(inputNum);
     const InputNum = (props) => {
       const [inputLabel, index, pad] = props.content;
       return (
@@ -169,25 +174,35 @@ const Filter2D = ({ setFilter }) => {
             id="outlined-number"
             label={inputLabel}
             type="number"
-            value={formData[inputLabel]}
+            inputProps={{
+              value: formData[inputLabel],
+              min: 0,
+              max: 100,
+            }}            
+            // value={formData[inputLabel]}
             name={inputLabel}
-            onChange={onChangeInput}
+            onChange={(e) => onChangeInput(e.target.name, e.target.value, index)}
+            // onChange={onChangeInput(index)}
             InputLabelProps={{
               shrink: true,
             }}
-            style={{ paddingTop: '5px' }}
+            style={{ paddingTop: '5px', width: '100%'}}
           />
         </div>
       );
     };
 
-    const [formData, setFormData] = useState(inputNum);
-    const onChangeInput = (e) => {
+    
+    const onChangeInput = (name, value, index) => {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.value,
+        [name]: value,
       });
-      setPasses(e.target.value);
+      if (index === 0) {
+        setPasses_1(parseInt(value));
+      } else {
+        setPasses_2(parseInt(value));
+      }
     };
 
     return (
@@ -197,57 +212,63 @@ const Filter2D = ({ setFilter }) => {
             <GetKernel content={[item, radioName, radio]} />
           </Col>
         </Row>
-        {inputNumKeys.map((item, index) => (
-          <InputNum content={[item, index, '5px']} />
+        {inputNumKeys.map((i, index) => (
+          <InputNum content={[i, index, '5px']} />
         ))}
       </>
     );
     // }, [click]); // eslint-disable-line react-hooks/exhaustive-deps
   };
 
-  const SubSelect = (props) => {
-    const filterNames = props.name;
-    const [selectedValue, setSelectedValue] = useState('Low_pass');
-
-    function handleChange(event) {
-      setSelectedValue(event.target.value);
-    }
-
-    return (
-      <Box sx={{ minWidth: 120 }}>
-        <FormControl fullWidth>
-          <div
-            style={{
-              backgroundColor: 'white',
-              fontSize: '12px',
-              height: '20px',
-            }}
-          ></div>
-          <NativeSelect
-            defaultValue={30}
-            value={selectedValue}
-            onChange={handleChange}
-            inputProps={{
-              name: 'select',
-              id: 'uncontrolled-native',
-            }}
-          >
-            {filterNames.map((item, index) => (
-              <option key={index} value={item}>
-                {item}
-              </option>
-            ))}
-          </NativeSelect>
-        </FormControl>
-        <div style={{ backgroundColor: 'white', height: '10px' }}></div>
-        <FormControl fullWidth>
-          <FilterProperty item={selectedValue} />
-        </FormControl>
-      </Box>
-    );
-  };
 
   const SelectMenu = () => {
+
+
+    const [filterName, setfilterName] = useState('Low_pass');
+    const SubSelect = (props) => {
+      
+      const filterNames = props.name;
+      const [selectedValue, setSelectedValue] = useState('Low_pass');
+  
+      function handleChange(event) {
+        setSelectedValue(event.target.value);
+      }
+  
+      return (
+        <Box sx={{ minWidth: 120 }}>
+          <FormControl fullWidth>
+            <div
+              style={{
+                backgroundColor: 'white',
+                fontSize: '12px',
+                height: '20px',
+              }}
+            ></div>
+            <NativeSelect
+              defaultValue={30}
+              value={selectedValue}
+              onChange={handleChange}
+              inputProps={{
+                name: 'select',
+                id: 'uncontrolled-native',
+              }}
+            >
+              {filterNames.map((item, index) => (
+                <option key={index} value={item}>
+                  {item}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControl>
+          <div style={{ backgroundColor: 'white', height: '10px' }}></div>
+          <FormControl fullWidth>
+            <FilterProperty item={selectedValue} />
+          </FormControl>
+        </Box>
+      );
+    };
+  
+
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <Tab.Container id="list-group-tabs-example" defaultActiveKey="link1">
@@ -311,19 +332,19 @@ const Filter2D = ({ setFilter }) => {
           <div style={{ backgroundColor: 'white', height: '10px' }}></div>
           <Tab.Content>
             <Tab.Pane eventKey="link1">
-              <SubSelect name={emhasisList} />
-            </Tab.Pane>
+              <SubSelect name={emhasisList} firstItem={'Low_pass'} />
+            </Tab.Pane> 
             <Tab.Pane eventKey="link2">
-              <SubSelect name={edgeList} />
+              <SubSelect name={edgeList} firstItem={'Sobel'} />
             </Tab.Pane>
             <Tab.Pane eventKey="link3">
-              <SubSelect name={morphologicalList} />
+              <SubSelect name={morphologicalList} firstItem={'Open'} />
             </Tab.Pane>
             <Tab.Pane eventKey="link4">
-              <SubSelect name={kernelList} />
+              <SubSelect name={kernelList} firstItem={'Convolution'} />
             </Tab.Pane>
             <Tab.Pane eventKey="link5">
-              <SubSelect name={leargeList} />
+              <SubSelect name={leargeList} firstItem={'Low_Pass'} />
             </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
