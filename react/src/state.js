@@ -231,6 +231,9 @@ const DEFAUlT_FLAG_STATE = {
   DialogCellposeFlag: false,
   DialogVisualFlag: false,
   DialogLoadingFlag: false,
+  UserCanvasFlag: false,
+  MLCanvasFlag: false, // added by QmQ
+  selectedLabel: {}, //added by QmQ
 };
 
 export const useFlagsStore = create((set) => ({

@@ -8,6 +8,8 @@ import store from './reducers';
 import reportWebVitals from './reportWebVitals';
 import theme from './constants/theme';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '@/styles/index.css';
 
 const container = document.getElementById('root');
@@ -16,6 +18,7 @@ const root = createRoot(container);
 root.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <App />
     </ThemeProvider>
   </Provider>,

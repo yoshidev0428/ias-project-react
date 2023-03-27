@@ -9,7 +9,7 @@ import {
   mdiTrashCanOutline,
 } from '@mdi/js';
 import Icon from '@mdi/react';
-export default function ObjectSelect() {
+export default function MLPredictionExport() {
   const onLight = () => {};
   const onBlack = () => {};
   const onObject = () => {};
@@ -20,7 +20,7 @@ export default function ObjectSelect() {
   return (
     <div className="common-border">
       {/* <h6>Object Select</h6> */}
-      <SmallCard title="Object brightness" child={true}>
+      <SmallCard title="Prediction Export" child={true}>
         <button className="btn btn-light btn-sm w-50" onClick={onLight}>
           <Icon
             size={0.8}
