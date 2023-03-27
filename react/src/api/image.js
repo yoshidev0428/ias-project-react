@@ -1,11 +1,13 @@
+import store from '@/reducers';
 import mainApiService from '@/services/mainApiService';
 
-export const getImageByPath = async (folder, imagePath) => {
-  const blob = await mainApiService.get(`/static/${folder}/${imagePath}`, {
+export const getImageByPath = async (path) => {
+  const userId = store.getState().auth.user._id;
+  const blob = await mainApiService.get(`/static/${userId}/${path}`, {
     responseType: 'blob',
   });
-  const file = new File([blob], imagePath, { type: 'image/tiff' });
-  file.path = imagePath;
+  const file = new File([blob], path, { type: 'image/tiff' });
+  file.path = path;
   return file;
 };
 

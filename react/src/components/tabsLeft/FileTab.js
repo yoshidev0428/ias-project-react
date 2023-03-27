@@ -3,11 +3,8 @@ import TabItem from '../custom/TabItem';
 import SmallCard from '../custom/SmallCard';
 import CustomButton from '../custom/CustomButton';
 import Divider from '@mui/material/Divider';
-import OpenFileDialog from './contents/file/OpenFileDialog';
-import OpenFolderUpload from './contents/file/OpenFolderUpload';
+import ExperimentDialog from './contents/file/ExperimentDialog';
 import OpenPositionDialog from './contents/file/OpenPositionDialog';
-import OpenCloudUploadNew from './contents/file/OpenCloudUpload';
-// import * as api_experiment from "../../api/experiment";
 import {
   mdiCloudDownloadOutline,
   mdiEmailNewsletter,
@@ -45,11 +42,6 @@ const mapStateToProps = (state) => ({
 });
 
 const FileTab = (props) => {
-  // const refresh = () => {
-  // };
-  // const help = () => {
-  // };
-  // buttons={true} refresh={refresh} help={help}
   const onSave = () => {};
   const onSaveAs = () => {};
   const onExport = () => {};
@@ -67,8 +59,8 @@ const FileTab = (props) => {
     for (let i = 0; i < content.length; i++) {
       if (
         isEntire ||
-        (content[i].row == selectedVesselHole.row &&
-          content[i].col == selectedVesselHole.col)
+        (content[i].row === selectedVesselHole.row &&
+          content[i].col === selectedVesselHole.col)
       ) {
         let tempContent = { ...content[i] };
         const tempVal = tempContent.z;
@@ -94,131 +86,41 @@ const FileTab = (props) => {
     swapDimension(true);
   };
 
-  const [cloudDialog, setcloudDialog] = useState(false);
-  const [folderDialog, setFolderDialog] = useState(false);
-  const [fileDialog, setfileDialog] = useState(false);
-  const [selectTab, setSelectTab] = useState(0);
+  const [openUploadFile, setOpenUploadFile] = useState(false);
+  const [openUploadFolder, setOpenUploadFolder] = useState(false);
   const [positionDialog, setpositionDialog] = useState(false);
-  const [cloudDialogClose, setCloudDialogClose] = useState(false);
-  const [_fileDialogClose, setfileDialogClose] = useState(false);
-  const [_folderDialogClose, setFolderDialogClose] = useState(false);
-  const [_filesUploaded] = useState([]);
-  const [treeData] = useState([]);
 
   const showPositionDialog = () => {
     setpositionDialog(true);
   };
-  const setCloudDialog = () => {
-    setcloudDialog(true);
-    setCloudDialogClose(false);
+
+  const handleCloseUpload = () => {
+    setOpenUploadFile(false);
+    setOpenUploadFolder(false);
   };
 
   const handleClose = () => {
     setpositionDialog(false);
   };
-  const handleCloudClose = () => {
-    setcloudDialog(false);
-    setCloudDialogClose(true);
-  };
-  const setFileDialog = () => {
-    setfileDialog(true);
-    setfileDialogClose(false);
-  };
-  const handleFileClose = () => {
-    setfileDialog(false);
-    setfileDialogClose(true);
-  };
-  // const setfolderDialog = () => {
-  //     setFolderDialog(true);
-  //     setFolderDialogClose(false);
-  // }
-  const handleFolderClose = () => {
-    setFolderDialog(false);
-    setFolderDialogClose(true);
-  };
 
-  const inputFile = useRef(null);
-  // const OpenFileDialog = () => {
-  //     inputFile.current.click();
-  // };
-  const onFileChangeCapture = () => {};
-
-  const folderInput = useRef(null);
-  // const OpenFolderDialog = () => {
-  //     folderInput.current.click();
-  //     // inputFile.current.click();
-  // };
-  const onFolderChangeCapture = () => {
-    setSelectTab(3);
-    showPositionDialog(true);
-  };
-
-  // useEffect(() => {
-  //     const getImageTree = async () => {
-  //         let response = await api_experiment.getImageTree()
-  //         let data = response.data
-  //         if(data.error) {
-  //             setTreeData([])
-  //             // alert("Error occured while getting the tree");
-  //         } else {
-  //             setTreeData(data.data);
-  //         }
-  //     }
-  //     getImageTree()
-  //         .catch(console.error)
-  // }, [])
   return (
     <TabItem title="File/Edit">
-      <input
-        type="file"
-        id="file"
-        ref={inputFile}
-        onChange={onFileChangeCapture}
-        style={{ display: 'none' }}
-      />
-      <input
-        directory=""
-        webkitdirectory=""
-        type="file"
-        ref={folderInput}
-        onChange={onFolderChangeCapture}
-        style={{ display: 'none' }}
-      />
       <SmallCard title="Open">
         <CustomButton
           icon={mdiCloudDownloadOutline}
           label="Cloud"
-          click={() => setCloudDialog(true)}
+          click={() => setOpenUploadFolder(true)}
         />
-        {cloudDialog && (
-          <OpenCloudUploadNew
-            handleClose={handleCloudClose}
-            treeData={treeData}
-          />
-        )}
         <CustomButton
           icon={mdiEmailNewsletter}
           label="File"
-          click={() => {
-            setFileDialog(true);
-          }}
+          click={() => setOpenUploadFile(true)}
         />
-        {fileDialog && (
-          <OpenFileDialog handleClose={handleFileClose} treeData={treeData} />
-        )}
         <CustomButton
           icon={mdiFolderOpenOutline}
           label="Folder"
-          click={() => {
-            setFolderDialog(true);
-          }}
+          click={() => setOpenUploadFolder(true)}
         />
-        {folderDialog && (
-          <OpenFolderUpload
-            handleClose={handleFolderClose}
-            treeData={treeData}
-          />
-        )}
         <CustomButton
           icon={mdiDotsGrid}
           label="Position"
@@ -228,9 +130,8 @@ const FileTab = (props) => {
           <OpenPositionDialog
             title=" "
             handleClose={handleClose}
-            setCloudDialog={setCloudDialog}
-            cloudDialogClose={cloudDialogClose}
-            selectTab={selectTab}
+            setCloudDialog={() => setOpenUploadFolder(true)}
+            cloudDialogClose={() => setOpenUploadFolder(false)}
           />
         )}
       </SmallCard>
@@ -288,6 +189,11 @@ const FileTab = (props) => {
         />
         <CustomButton icon={mdiCog} label="Set" click={onChangeDimensionSet} />
       </SmallCard>
+      <ExperimentDialog
+        open={openUploadFile || openUploadFolder}
+        onClose={handleCloseUpload}
+        folderUploadable={openUploadFolder}
+      />
     </TabItem>
   );
 };

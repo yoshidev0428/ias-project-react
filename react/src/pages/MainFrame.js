@@ -49,7 +49,7 @@ import AccountPage from './account';
 import { useSelector } from 'react-redux';
 
 import LoadingDialog from '@/components/custom/LoadingDialog';
-import UserCanvas from '@/components/custom/UserCanvas';
+import UserCanvas from '@/components/custom/UserCanvas'
 import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
