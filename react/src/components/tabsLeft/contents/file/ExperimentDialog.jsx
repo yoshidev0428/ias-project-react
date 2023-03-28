@@ -60,6 +60,7 @@ const ExperimentDialog = ({
       store.dispatch({ type: 'set_image_path_for_avivator', content: files });
       setLoading(false);
     }
+
     onClose();
   };
 
