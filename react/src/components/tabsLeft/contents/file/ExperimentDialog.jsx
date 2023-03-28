@@ -23,6 +23,7 @@ const ExperimentDialog = ({
   onClose,
   onSelectFiles,
   folderUploadable = false,
+  isOnPosition = false,
 }) => {
   const { experiments, loadExperiments } = useExperimentStore();
 
@@ -45,21 +46,29 @@ const ExperimentDialog = ({
   };
 
   const handleLoadFile = async () => {
-    if (onSelectFiles) {
-      onSelectFiles(selectedFiles);
+    if (isOnPosition) {
+      store.dispatch({
+        type: 'set_selected_files_for_dropzone',
+        content: selectedFiles.join(','),
+      });
     } else {
-      setLoading(true);
-      const files = await Promise.all(
-        selectedFiles.map(async (file) => {
-          const path = /\.ome\.tif?f$/.test(file)
-            ? file
-            : file.replace(/\.\w+$/, '.ome.tiff');
-          return await getImageByPath(path);
-        }),
-      );
-      store.dispatch({ type: 'set_image_path_for_avivator', content: files });
-      setLoading(false);
+      if (onSelectFiles) {
+        onSelectFiles(selectedFiles);
+      } else {
+        setLoading(true);
+        const files = await Promise.all(
+          selectedFiles.map(async (file) => {
+            const path = /\.ome\.tif?f$/.test(file)
+              ? file
+              : file.replace(/\.\w+$/, '.ome.tiff');
+            return await getImageByPath(path);
+          }),
+        );
+        store.dispatch({ type: 'set_image_path_for_avivator', content: files });
+        setLoading(false);
+      }
     }
+
     onClose();
   };
 

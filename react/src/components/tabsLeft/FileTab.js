@@ -88,6 +88,7 @@ const FileTab = (props) => {
 
   const [openUploadFile, setOpenUploadFile] = useState(false);
   const [openUploadFolder, setOpenUploadFolder] = useState(false);
+  const [isOnPosition, setIsOnPosition] = useState(false);
   const [positionDialog, setpositionDialog] = useState(false);
 
   const showPositionDialog = () => {
@@ -109,7 +110,10 @@ const FileTab = (props) => {
         <CustomButton
           icon={mdiCloudDownloadOutline}
           label="Cloud"
-          click={() => setOpenUploadFolder(true)}
+          click={() => {
+            setIsOnPosition(false);
+            setOpenUploadFolder(true);
+          }}
         />
         <CustomButton
           icon={mdiEmailNewsletter}
@@ -119,7 +123,10 @@ const FileTab = (props) => {
         <CustomButton
           icon={mdiFolderOpenOutline}
           label="Folder"
-          click={() => setOpenUploadFolder(true)}
+          click={() => {
+            setIsOnPosition(false);
+            setOpenUploadFolder(true);
+          }}
         />
         <CustomButton
           icon={mdiDotsGrid}
@@ -130,8 +137,14 @@ const FileTab = (props) => {
           <OpenPositionDialog
             title=" "
             handleClose={handleClose}
-            setCloudDialog={() => setOpenUploadFolder(true)}
-            cloudDialogClose={() => setOpenUploadFolder(false)}
+            setCloudDialog={() => {
+              setIsOnPosition(true);
+              setOpenUploadFolder(true);
+            }}
+            cloudDialogClose={() => {
+              setOpenUploadFolder(false);
+              setIsOnPosition(false);
+            }}
           />
         )}
       </SmallCard>
@@ -193,6 +206,7 @@ const FileTab = (props) => {
         open={openUploadFile || openUploadFolder}
         onClose={handleCloseUpload}
         folderUploadable={openUploadFolder}
+        isOnPosition={isOnPosition}
       />
     </TabItem>
   );
