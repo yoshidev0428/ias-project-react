@@ -15,7 +15,9 @@ import store from '@/reducers';
 const CellposeDialog = () => {
   const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const state = store.getState();
-  const [selectedMethod, setSelectedMethod] = React.useState(state.experiment.method);
+  const [selectedMethod, setSelectedMethod] = React.useState(
+    state.experiment.method,
+  );
   const [customName] = React.useState(state.experiment.custom_name);
   const segInfo = state.experiment.seg_info;
   const methods = {
@@ -129,9 +131,7 @@ const CellposeDialog = () => {
                   <Row className="mt-3">
                     <Col xs={6} className="mt-3">
                       <FormControl fullWidth>
-                        <InputLabel id="segment-label">
-                          Result Image
-                        </InputLabel>
+                        <InputLabel id="segment-label">Result Image</InputLabel>
                         <Select
                           labelId="segment-label"
                           id="segment-label-select"

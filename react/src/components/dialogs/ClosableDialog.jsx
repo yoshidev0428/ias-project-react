@@ -4,8 +4,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { DialogActions } from '@mui/material';
 
-const ClosableDialog = ({ open, title, children, onClose, ...other }) => {
+const ClosableDialog = ({
+  open,
+  title,
+  children,
+  onClose,
+  actions,
+  ...other
+}) => {
   return (
     <Dialog open={open} onClose={onClose} {...other}>
       <DialogTitle sx={{ m: 0, px: 3, py: 2 }}>
@@ -16,8 +24,8 @@ const ClosableDialog = ({ open, title, children, onClose, ...other }) => {
             onClick={onClose}
             sx={{
               position: 'absolute',
-              right: 8,
-              top: 8,
+              right: 12,
+              top: 12,
               color: (theme) => theme.palette.grey[500],
             }}
           >
@@ -28,6 +36,9 @@ const ClosableDialog = ({ open, title, children, onClose, ...other }) => {
       <DialogContent sx={{ px: 3, pb: 3 }} dividers>
         {children}
       </DialogContent>
+      {actions && (
+        <DialogActions sx={{ px: 3, py: 2 }}>{actions}</DialogActions>
+      )}
     </Dialog>
   );
 };
