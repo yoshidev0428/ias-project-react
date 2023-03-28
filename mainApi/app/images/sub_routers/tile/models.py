@@ -120,7 +120,7 @@ class UserCustomModel(BaseModel):
     custom_name: Optional[str] = ""
     custom_icon: Optional[str] = ""
     viewValue: Optional[str] = ""
-    outline: Optional[bool] = ""
+    outline: Optional[int] = 0
     cell_diam: Optional[int] = 0
     chan_segment: Optional[int] = 0
     chan_2: Optional[int] = 0
