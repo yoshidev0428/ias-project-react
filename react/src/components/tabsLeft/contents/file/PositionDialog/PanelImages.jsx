@@ -22,7 +22,18 @@ export default function PanelImages({ images, onRemoveImage }) {
 
   return images.length ? (
     <>
-      <ImageList sx={{ maxHeight: 300 }} cols={5}>
+      <Typography variant="subtitle1" gutterBottom>
+        Experiments:{' '}
+        <Typography
+          component="span"
+          fontWeight="bold"
+          variant="subtitle1"
+          sx={{ textTransform: 'uppercase' }}
+        >
+          {expNames.join(', ')}
+        </Typography>
+      </Typography>
+      <ImageList sx={{ maxHeight: 280, mb: 0 }} cols={5}>
         {images.map((item) => (
           <ImageListItem key={item.url}>
             {/\.tif?f$/.test(item.url) ? (
@@ -54,17 +65,6 @@ export default function PanelImages({ images, onRemoveImage }) {
           </ImageListItem>
         ))}
       </ImageList>
-      <Typography variant="subtitle1" align="right">
-        Experiments:{' '}
-        <Typography
-          component="span"
-          fontWeight="bold"
-          variant="subtitle1"
-          sx={{ textTransform: 'uppercase' }}
-        >
-          {expNames.join(', ')}
-        </Typography>
-      </Typography>
     </>
   ) : (
     <Box
