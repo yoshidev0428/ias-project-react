@@ -9,12 +9,8 @@ import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, Image } from 'react-bootstrap';
-import store from '../../../../../reducers';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import imgNuchel from '../../../../../assets/cell/nuchel.png';
-import imgCyto from '../../../../../assets/cell/cyto.png';
-import imgLayer from '../../../../../assets/cell/layer.png';
-import imgWafer from '../../../../../assets/cell/wafer.png';
+import store from '@/reducers';
+import * as Icon from './ModelIcons'
 
 function TabContainer(props) {
   return (
@@ -50,22 +46,22 @@ const BasicDialog = () => {
   };
 
   const imgArray = {
-    tissuenet: imgTissueNet,
-    nuclei: imgNuchel,
-    cyto: imgCyto,
-    layer: imgLayer,
-    wafer: imgWafer,
-    livecell: imgCyto,
-    cyto2: imgCyto,
-    CP: imgLayer,
-    CPx: imgWafer,
-    TN1: imgTissueNet,
-    TN2: imgNuchel,
-    TN3: imgTissueNet,
-    LC1: imgLayer,
-    LC2: imgCyto,
-    LC3: imgTissueNet,
-    LC4: imgWafer,
+    tissuenet: Icon.imgTissueNet,
+    nuclei: Icon.imgNuchel,
+    cyto: Icon.imgCyto,
+    layer: Icon.imgLayer,
+    wafer: Icon.imgWafer,
+    livecell: Icon.imgNoun1,
+    cyto2: Icon.imgNoun7,
+    CP: Icon.imgNoun2,
+    CPx: Icon.imgNoun8,
+    TN1: Icon.imgNoun20,
+    TN2: Icon.imgNoun15,
+    TN3: Icon.imgNoun18,
+    LC1: Icon.imgNoun9,
+    LC2: Icon.imgNoun10,
+    LC3: Icon.imgNoun11,
+    LC4: Icon.imgNoun12
   };
 
   const ImageBox = (props) => {
