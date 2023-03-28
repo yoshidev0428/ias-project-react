@@ -35,11 +35,10 @@ const ExperimentDialog = ({
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   useEffect(() => {
-    setUploading(true);
     setExperiment(null);
+    setSelectedFiles([]);
     loadExperiments();
-    setUploading(false);
-  }, [loadExperiments]);
+  }, [loadExperiments, open]);
 
   const handleSelectFiles = (files) => {
     setSelectedFiles(files);

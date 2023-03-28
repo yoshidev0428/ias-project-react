@@ -43,6 +43,7 @@ export default function PanelImages({ images, onRemoveImage }) {
                 alignItems="center"
                 height="100%"
                 bgcolor="lightgray"
+                minHeight={120}
               >
                 <ImageIcon fontSize="large" />
               </Box>
