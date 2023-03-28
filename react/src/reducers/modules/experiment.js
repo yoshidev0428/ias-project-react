@@ -13,6 +13,7 @@ const DEFAULT_PARAMS = {
   },
   metadatas: [],
   method: 'tissuenet',
+  MLMethod: 'pc',
   custom_name: 'New Model',
   seg_info: {
     custom_method: 'tissuenet',
@@ -53,6 +54,9 @@ const experiment = (state = initState, action) => {
       break;
     case 'setMethod':
       state.method = action.content;
+      break;
+    case 'setMLMethod':
+      state.MLMethod = action.content;
       break;
     case 'set_custom_name':
       state.custom_name = action.content;

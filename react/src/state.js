@@ -234,6 +234,9 @@ const DEFAUlT_FLAG_STATE = {
   UserCanvasFlag: false,
   MLCanvasFlag: false, // added by QmQ
   selectedLabel: {}, //added by QmQ
+  MLDialogMethodSelecFlag: false, //added by QmQ
+  MLDialogFeatureSelecFlag: false, //added by QmQ
+  MLDialogLabelSelecFlag: false, //added by QmQ
 };
 
 export const useFlagsStore = create((set) => ({

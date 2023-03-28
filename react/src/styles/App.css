@@ -291,6 +291,12 @@
     border: 1px solid black!important;
 }
 
+.ml-method-img-selected {
+    cursor: pointer;
+    border: 2px solid black!important;
+    box-shadow: #555555 4px 4px;
+}
+
 .user-custom-canvas {
     z-index: 9999!important;
     position: absolute!important;
