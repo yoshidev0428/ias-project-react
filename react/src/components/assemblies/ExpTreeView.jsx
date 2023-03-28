@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react';
 import TreeView from './TreeView';
+import Box from '@mui/material/Box';
+import { Typography } from 'react-md';
 
 const ExpTreeView = ({
   experiments,
   onSelectFiles,
   onSelectExp = () => void 0,
   onSelectFolder = () => void 0,
+  ...others
 }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
 
@@ -97,11 +100,28 @@ const ExpTreeView = ({
   };
 
   return (
-    <TreeView
-      nodes={nodes}
-      selected={selectedFiles}
-      onNodeSelect={handleSelect}
-    />
+    <>
+      <Box
+        {...others}
+        sx={{
+          height: others.height ?? 250,
+          pt: 1,
+          overflow: 'auto',
+          border: 'solid lightgray thin',
+          borderRadius: 1,
+          ...others.sx,
+        }}
+      >
+        <TreeView
+          nodes={nodes}
+          selected={selectedFiles}
+          onNodeSelect={handleSelect}
+        />
+      </Box>
+      <Typography align="right">
+        {selectedFiles.length} files selected
+      </Typography>
+    </>
   );
 };
 export default ExpTreeView;

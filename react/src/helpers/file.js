@@ -1,3 +1,4 @@
+import store from '@/reducers';
 import { FILE_TYPES } from '../constants/file-types';
 
 export const getFileName = (fname) => {
@@ -72,8 +73,15 @@ export const loadImage = (src) => {
   });
 };
 
-export const getStaticPath = (path) => {
-  return `${process.env.REACT_APP_BASE_API_URL}/static/${path}`.replaceAll(
+export const getStaticPath = (path, userDir = false) => {
+  let newPath = path;
+
+  if (userDir) {
+    const userId = store.getState().auth.user._id;
+    newPath = `${userId}/${path}`;
+  }
+
+  return `${process.env.REACT_APP_BASE_API_URL}/static/${newPath}`.replaceAll(
     /\/+/g,
     '/',
   );
