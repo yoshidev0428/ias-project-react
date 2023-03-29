@@ -27,7 +27,6 @@ import matplotlib
 import json
 from cellpose import plot, utils
 from matplotlib import pyplot as plt
-import cv2
 
 
 async def add_experiment(

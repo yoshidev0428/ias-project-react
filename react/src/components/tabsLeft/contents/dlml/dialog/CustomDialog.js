@@ -11,18 +11,11 @@ import PropTypes from 'prop-types';
 import { Row, Col, Button, Image } from 'react-bootstrap';
 import CustomNameDialog from './CustomNameDialog';
 //This is James Wang's code//
-import store from '../../../../../reducers';
+import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
 import { isNull } from 'lodash';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import imgNuchel from '../../../../../assets/cell/nuchel.png';
-import imgCyto from '../../../../../assets/cell/cyto.png';
-import imgLayer from '../../../../../assets/cell/layer.png';
-import imgWafer from '../../../../../assets/cell/wafer.png';
-import imgAnimal from '../../../../../assets/cell/animal.png';
-import imgBacteria from '../../../../../assets/cell/bacteria.png';
-import imgHuman from '../../../../../assets/cell/human.png';
-import imgStem from '../../../../../assets/cell/embryonic_stem.png';
+import * as Icon from './ModelIcons';
+
 
 function TabContainer(props) {
   return (
@@ -149,15 +142,42 @@ const CustomDialog = () => {
   }, []);
 
   const imgArray = {
-    tissuenet: imgTissueNet,
-    nuclei: imgNuchel,
-    cyto: imgCyto,
-    layer: imgLayer,
-    wafer: imgWafer,
-    animal: imgAnimal,
-    bacteria: imgBacteria,
-    human: imgHuman,
-    stem: imgStem,
+    tissuenet: Icon.imgTissueNet,
+    nuclei: Icon.imgNuchel,
+    cyto: Icon.imgCyto,
+    layer: Icon.imgLayer,
+    wafer: Icon.imgWafer,
+    animal: Icon.imgAnimal,
+    bacteria: Icon.imgBacteria,
+    human: Icon.imgHuman,
+    stem: Icon.imgStem,
+    dl: Icon.imgDL,
+    dna1: Icon.imgDNA1,
+    dna2: Icon.imgDNA2,
+    human2: Icon.imgHuman2,
+    ml: Icon.imgML,
+    noun1: Icon.imgNoun1,
+    noun2: Icon.imgNoun2,
+    noun3: Icon.imgNoun3,
+    noun4: Icon.imgNoun4,
+    noun5: Icon.imgNoun5,
+    noun6: Icon.imgNoun6,
+    noun7: Icon.imgNoun7,
+    noun8: Icon.imgNoun8,
+    noun9: Icon.imgNoun9,
+    noun10: Icon.imgNoun10,
+    noun11: Icon.imgNoun11,
+    noun12: Icon.imgNoun12,
+    noun13: Icon.imgNoun13,
+    noun14: Icon.imgNoun14,
+    noun15: Icon.imgNoun15,
+    noun16: Icon.imgNoun16,
+    noun17: Icon.imgNoun17,
+    noun18: Icon.imgNoun18,
+    noun19: Icon.imgNoun19,
+    noun20: Icon.imgNoun20,
+    noun21: Icon.imgNoun21,
+    noun22: Icon.imgNoun22
   };
 
   const [selectedIcon, setSelectedIcon] = useState('');

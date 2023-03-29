@@ -21,6 +21,7 @@ import { useExperimentStore } from '@/stores/useExperimentStore';
 const ExperimentDialog = ({
   open,
   onClose,
+  title,
   onSelectFiles,
   folderUploadable = false,
 }) => {
@@ -34,11 +35,10 @@ const ExperimentDialog = ({
   const [selectedFiles, setSelectedFiles] = useState([]);
 
   useEffect(() => {
-    setUploading(true);
     setExperiment(null);
+    setSelectedFiles([]);
     loadExperiments();
-    setUploading(false);
-  }, [loadExperiments]);
+  }, [loadExperiments, open]);
 
   const handleSelectFiles = (files) => {
     setSelectedFiles(files);
@@ -60,6 +60,7 @@ const ExperimentDialog = ({
       store.dispatch({ type: 'set_image_path_for_avivator', content: files });
       setLoading(false);
     }
+
     onClose();
   };
 
@@ -87,7 +88,10 @@ const ExperimentDialog = ({
     <>
       <ClosableDialog
         open={open}
-        title={folderUploadable ? 'Upload images in folder' : 'Upload images'}
+        title={
+          title ??
+          (folderUploadable ? 'Upload images in folder' : 'Upload images')
+        }
         onClose={onClose}
         maxWidth="sm"
       >
@@ -158,30 +162,16 @@ const ExperimentDialog = ({
             flexItem
             sx={{ mx: 3, my: -3 }}
           />
-          <Grid container item xs spacing={2}>
+          <Grid container item xs={6} spacing={2}>
             <Grid item xs={12}>
               <Typography>Experiment Data Sources</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Box
-                sx={{
-                  height: 300,
-                  pt: 1,
-                  overflow: 'auto',
-                  border: 'solid lightgray thin',
-                  borderRadius: 1,
-                }}
-              >
-                <ExpTreeView
-                  experiments={experiments}
-                  onSelectFiles={handleSelectFiles}
-                />
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography align="right">
-                {selectedFiles.length} files selected
-              </Typography>
+              <ExpTreeView
+                height={300}
+                experiments={experiments}
+                onSelectFiles={handleSelectFiles}
+              />
             </Grid>
             <Grid item container xs={12} spacing={2}>
               <Grid item xs={6}>
