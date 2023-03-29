@@ -2,21 +2,27 @@ import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
-import { useFlagsStore } from '@/state';
 import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { Row, Col, Image } from 'react-bootstrap';
+import Avatar from '@mui/material/Avatar';
 import { Button } from '@mui/material';
 import Icon from '@mdi/react';
 import { mdiCloseCircle } from '@mdi/js';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
+import TextField from '@mui/material/TextField';
+import { toast } from 'react-toastify';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import MLMethodItem from '../widgets/MLMethodItem';
+import Divider from '@mui/material/Divider';
 
+import { useFlagsStore } from '@/state';
 import store from '../../../../../reducers';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import pcImg from '../../../../../assets/images/PC.png';
-import ocImg from '../../../../../assets/images/OC.png';
-import ncImg from '../../../../../assets/images/NC.png';
+import { useSelector } from 'react-redux';
 
 function TabContainer(props) {
   return (
@@ -31,8 +37,10 @@ TabContainer.propTypes = {
 };
 
 const MLMethodSelectDialog = () => {
+  const MLMethodList = useSelector((state) => state.experiment.MLMethodList);
+  // console.log('ML method list', MLMethodList)
   const MLDialogMethodSelecFlag = useFlagsStore(
-    (store) => store.MLDialogMethodSelecFlag,
+    (store) => store.MLDialogMethodSelectFlag,
   );
   // const showCellposeDialog = () => {
   //   useFlagsStore.setState({ MLDialogMethodSelecFlag: false });
@@ -40,43 +48,21 @@ const MLMethodSelectDialog = () => {
   //   store.dispatch({ type: 'setMethod', content: selectedMethod });
   //   store.dispatch({ type: 'set_custom_name', content: 'New Model' });
   // };
+  const [selectedMethod, setSelectedMethod] = useState({});
+
+  const handleSelectedMethod = (mth) => {
+    setSelectedMethod(mth);
+  };
+  const handleDeleteMethod = (mth) => {
+    store.dispatch({ type: 'deleteMLMethod', content: mth });
+  };
+
   const setMLMethod = () => {
-    useFlagsStore.setState({ MLDialogMethodSelecFlag: false });
+    useFlagsStore.setState({ MLDialogMethodSelectFlag: false });
     store.dispatch({ type: 'setMLMethod', content: selectedMethod });
   };
   const close = () => {
-    useFlagsStore.setState({ MLDialogMethodSelecFlag: false });
-  };
-
-  const [selectedMethod, setSelectedMethod] = useState('pc');
-  const handleSelectedMethod = (newValue) => {
-    setSelectedMethod(newValue);
-  };
-
-  const imgArray = {
-    tissuenet: imgTissueNet,
-    pc: pcImg,
-    oc: ocImg,
-    nc: ncImg,
-  };
-
-  const ImageBox = (props) => {
-    return (
-      <div
-        className={
-          selectedMethod !== props.methodName
-            ? 'border method-img'
-            : 'ml-method-img-selected'
-        }
-        onClick={() => handleSelectedMethod(props.methodName)}
-      >
-        <Image
-          style={{ margin: '0 auto', width: '65px', height: '65px' }}
-          src={imgArray[props.methodName]}
-          alt="no image"
-        />
-      </div>
-    );
+    useFlagsStore.setState({ MLDialogMethodSelectFlag: false });
   };
 
   return (
@@ -93,29 +79,30 @@ const MLMethodSelectDialog = () => {
             <Icon path={mdiCloseCircle} size={1} />
           </IconButton>
         </div>
-        <div className="mx-3 my-2" style={{ width: 450 }}>
-          <Row>
-            <Col xs={12}>
-              <div className="overflow-auto d-flex  flex-row justify-content-around p-2">
-                <div style={{ width: '65px' }} className="mr-3">
-                  <ImageBox methodName="pc" />
-                  <div className="label-text text-center">
-                    Pixel Classification
-                  </div>
-                </div>
-                <div style={{ width: '65px' }} className="mr-3">
-                  <ImageBox methodName="oc" />
-                  <div className="label-text text-center">
-                    Pixel Classification
-                  </div>
-                </div>
-                <div style={{ width: '65px' }} className="mr-3">
-                  <ImageBox methodName="nc" />
-                  <div className="label-text text-center">Neutral Network</div>
-                </div>
-              </div>
-            </Col>
-          </Row>
+
+        <div>
+          <List
+            sx={{
+              width: '400px',
+              marginX: 'auto',
+              maxWidth: 450,
+              bgcolor: 'background.paper',
+            }}
+          >
+            {MLMethodList?.map((mth) => {
+              return (
+                <ListItem>
+                  <MLMethodItem
+                    method={mth}
+                    onDelete={() => handleDeleteMethod(mth)}
+                    onSelect={() => handleSelectedMethod(mth)}
+                    selectedMethod={selectedMethod}
+                  />
+                  <Divider />
+                </ListItem>
+              );
+            })}
+          </List>
         </div>
         <div className="border-top mt-2">
           <DialogActions>
@@ -125,7 +112,7 @@ const MLMethodSelectDialog = () => {
               component="label"
               onClick={setMLMethod}
             >
-              SET
+              Set
             </Button>
             <Button variant="outlined" onClick={close}>
               Cancel

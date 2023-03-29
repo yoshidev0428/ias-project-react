@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import SmallCard from '../../../custom/SmallCard';
 import CustomButton from '../../../custom/CustomButton';
@@ -13,6 +14,7 @@ import {
   mdiCheckboxBlankCircleOutline,
   mdiVectorRectangle,
   mdiTrashCanOutline,
+  mdiUpdate,
 } from '@mdi/js';
 import { toast } from 'react-toastify';
 
@@ -25,9 +27,13 @@ const defaultLabelList = [
 ];
 
 export default function MLBoxSelect() {
-  // const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag);
-  const selectedLabel = useFlagsStore((store) => store.selectedLabel);
-  const [labelList, setLabelList] = useState(defaultLabelList);
+  const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag);
+  const MLSelectTargetMode = useSelector(
+    (state) => state.experiment.MLSelectTargetMode,
+  );
+
+  // const selectedLabel = useFlagsStore((store) => store.selectedLabel);
+  // const [labelList, setLabelList] = useState(defaultLabelList);
 
   // useEffect(()=>{
   //   return ()=>{
@@ -50,39 +56,41 @@ export default function MLBoxSelect() {
     exp_name = exp_name[0];
     // console.log("file information ======>")
     // console.log(imgPath, exp_name)
-    let result = await api_experiment.get_outlines(imgPath, exp_name);
-    if (result.data.error) {
-      alert('Error occured while getting the data');
-    } else {
-      if (result.data.success === 'NO') {
-        alert('Your custom model is not applied to your image.');
-        return;
-      }
-      let temp = [];
-      for (let i in result.data.success) {
-        let temp_row = result.data.success[i];
-        temp_row.replace(/\\n/g, '');
-        temp_row = temp_row.split(',');
-        let num_temp_row = temp_row.map(Number);
-        temp.push(num_temp_row);
-      }
-      let canvas_info = state.experiment.canvas_info;
-      let canv_info = {
-        ...canvas_info,
-        outlines: temp,
-      };
-      store.dispatch({
-        type: 'set_canvas',
-        content: canv_info,
-      });
-    }
+    // let result = await api_experiment.get_outlines(imgPath, exp_name);
+    // if (result.data.error) {
+    //   alert('Error occured while getting the data');
+    // } else {
+    //   if (result.data.success === 'NO') {
+    //     alert('Your custom model is not applied to your image.');
+    //     return;
+    //   }
+    //   let temp = [];
+    //   for (let i in result.data.success) {
+    //     let temp_row = result.data.success[i];
+    //     temp_row.replace(/\\n/g, '');
+    //     temp_row = temp_row.split(',');
+    //     let num_temp_row = temp_row.map(Number);
+    //     temp.push(num_temp_row);
+    //   }
+    //   let canvas_info = state.experiment.canvas_info;
+    //   let canv_info = {
+    //     ...canvas_info,
+    //     outlines: temp,
+    //   };
+    //   store.dispatch({
+    //     type: 'set_canvas',
+    //     content: canv_info,
+    //   });
+    // }
   };
 
   const stop = () => {
     useFlagsStore.setState({ MLCanvasFlag: false });
   };
 
-  const select2 = () => {
+  const liveUpdate = () => {};
+
+  const drawCurve = () => {
     // useFlagsStore.setState({ MLCanvasFlag: !MLCanvasFlag });
     const state = store.getState();
     let canvas_info = state.experiment.canvas_info;
@@ -94,10 +102,9 @@ export default function MLBoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
-    // console.log("Select-2");
   };
 
-  const select3 = () => {
+  const drawCircle = () => {
     const state = store.getState();
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
@@ -108,7 +115,6 @@ export default function MLBoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
-    // console.log("Select-3");
   };
 
   const select5 = () => {
@@ -124,47 +130,45 @@ export default function MLBoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
-    // console.log("Select-5");
   };
 
   const ClearRegion = () => {
     useFlagsStore.setState({ MLCanvasFlag: false });
-    // console.log("Select-7")
   };
 
-  const onSelectLabel = (label) => {
-    useFlagsStore.setState({ selectedLabel: label });
-  };
+  // const onSelectLabel = (label) => {
+  //   useFlagsStore.setState({ selectedLabel: label });
+  // };
 
-  const onDeleteLabel = (label) => {
-    const _labelList = labelList?.filter((lb) => lb.name !== label.name);
-    setLabelList(_labelList);
-  };
+  // const onDeleteLabel = (label) => {
+  //   const _labelList = labelList?.filter((lb) => lb.name !== label.name);
+  //   setLabelList(_labelList);
+  // };
 
-  const onAddLabel = (label) => {
-    if (label.name === '') {
-      toast.error('Please input the label name', {
-        position: 'top-center',
-      });
-      return;
-    }
+  // const onAddLabel = (label) => {
+  //   if (label.name === '') {
+  //     toast.error('Please input the label name', {
+  //       position: 'top-center',
+  //     });
+  //     return;
+  //   }
 
-    for (let i = 0; i < labelList.length; i++) {
-      if (labelList[i].name === label.name) {
-        toast.error('Same Label Exist. Please input another name', {
-          position: 'top-center',
-        });
-        return;
-      }
-    }
-    const _labelList = [...labelList, label];
-    // console.log('======> after add, ', _labelList)
-    setLabelList(_labelList);
-  };
+  //   for (let i = 0; i < labelList.length; i++) {
+  //     if (labelList[i].name === label.name) {
+  //       toast.error('Same Label Exist. Please input another name', {
+  //         position: 'top-center',
+  //       });
+  //       return;
+  //     }
+  //   }
+  //   const _labelList = [...labelList, label];
+  //   // console.log('======> after add, ', _labelList)
+  //   setLabelList(_labelList);
+  // };
 
   return (
     <div className="">
-      <div className="pt-2 pl-1" style={{ padding: '2px' }}>
+      {/* <div className="pt-2 pl-1" style={{ padding: '2px' }}>
         <div
           className={'mb-2'}
           style={{ fontWeight: 'bold', fontSize: '14px' }}
@@ -188,19 +192,44 @@ export default function MLBoxSelect() {
             <LabelItemInput onAdd={onAddLabel} />
           </div>
         </div>
-      </div>
+      </div> */}
 
       <SmallCard title="Training">
         <div className="d-flex flex-row justify-content-around w-100 ">
-          <CustomButton icon={mdiPlayCircle} click={() => start()} />
-          <CustomButton icon={mdiStopCircle} click={() => stop()} />
-          <CustomButton icon={mdiTrashCanOutline} click={() => ClearRegion()} />
-          <CustomButton icon={mdiPencil} click={() => select2()} />
+          {!MLCanvasFlag ? (
+            <CustomButton
+              icon={mdiPlayCircle}
+              label={'play'}
+              click={() => start()}
+            />
+          ) : (
+            <CustomButton
+              icon={mdiStopCircle}
+              label={'stop'}
+              click={() => stop()}
+            />
+          )}
+          <CustomButton
+            icon={mdiPencil}
+            label={'pencil'}
+            click={() => drawCurve()}
+          />
           <CustomButton
             icon={mdiCheckboxBlankCircleOutline}
-            click={() => select3()}
+            label={'ellipse'}
+            click={() => drawCircle()}
           />
-          <CustomButton icon={mdiVectorRectangle} click={() => select5()} />
+          {/* <CustomButton icon={mdiVectorRectangle} click={() => select5()} /> */}
+          <CustomButton
+            icon={mdiTrashCanOutline}
+            label={'delete'}
+            click={() => ClearRegion()}
+          />
+          <CustomButton
+            icon={mdiUpdate}
+            label={'update'}
+            click={() => liveUpdate()}
+          />
         </div>
       </SmallCard>
     </div>

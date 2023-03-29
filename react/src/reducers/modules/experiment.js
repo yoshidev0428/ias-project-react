@@ -14,6 +14,9 @@ const DEFAULT_PARAMS = {
   metadatas: [],
   method: 'tissuenet',
   MLMethod: 'pc',
+  MLMethodList: [],
+  MLObjectBrightnessMode: 'light',
+  MLSelectTargetMode: 'object',
   custom_name: 'New Model',
   seg_info: {
     custom_method: 'tissuenet',
@@ -57,6 +60,21 @@ const experiment = (state = initState, action) => {
       break;
     case 'setMLMethod':
       state.MLMethod = action.content;
+      break;
+    case 'addMLMethod':
+      const _content = action.content;
+      state.MLMethodList = [...state.MLMethodList, _content];
+      break;
+    case 'deleteMLMethod':
+      state.MLMethodList = state.MLMethodList.filter(
+        (mth) => mth.name !== action.content.name,
+      );
+      break;
+    case 'setMLObjectBrightnessMode':
+      state.MLObjectBrightnessMode = action.content;
+      break;
+    case 'setMLSelectTargetMode':
+      state.MLSelectTargetMode = action.content;
       break;
     case 'set_custom_name':
       state.custom_name = action.content;

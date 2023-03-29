@@ -4,19 +4,18 @@ import CustomButton from '../../../custom/CustomButton';
 import { mdiPlusBox, mdiPlayBox } from '@mdi/js';
 import { useFlagsStore } from '@/state';
 import MLMethodSelectDialog from './dialog/MLMethodSelectDialog';
+import MLMethodAddDialog from './dialog/MLMethodAddDialog';
 
 export default function MLMethodSelection() {
-  const MLDialogMethodSelecFlag = useFlagsStore(
-    (store) => store.MLDialogMethodSelecFlag,
-  );
   const showMLDialogMethodSelect = () => {
-    useFlagsStore.setState({ MLDialogMethodSelecFlag: true });
+    useFlagsStore.setState({ MLDialogMethodSelectFlag: true });
+  };
+  const showMLDialogMethodAdd = () => {
+    useFlagsStore.setState({ MLDialogMethodAddFlag: true });
   };
   // const closeMLDialogMethodSelect = () => {
   //   useFlagsStore.setState({MLDialogMethodSelecFlag: false})
   // }
-
-  const onCall = () => {};
 
   return (
     <SmallCard title="Method Selection">
@@ -26,11 +25,16 @@ export default function MLMethodSelection() {
       >
         <CustomButton
           icon={mdiPlusBox}
-          click={() => showMLDialogMethodSelect()}
-          onClick={() => showMLDialogMethodSelect()}
+          label={`New`}
+          click={() => showMLDialogMethodAdd()}
         />
-        <CustomButton icon={mdiPlayBox} onClick={() => onCall()} />
+        <CustomButton
+          icon={mdiPlayBox}
+          label={`Set`}
+          click={() => showMLDialogMethodSelect()}
+        />
       </div>
+      {<MLMethodAddDialog />}
       {<MLMethodSelectDialog />}
     </SmallCard>
   );

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useFlagsStore } from '@/state';
 
@@ -9,6 +9,9 @@ const mapStateToProps = (state) => ({
 
 function MLLabelCanvas(props) {
   const selectedLabel = useFlagsStore((store) => store.selectedLabel);
+  const MLSelectTargetMode = useSelector(
+    (state) => state.experiment.MLSelectTargetMode,
+  );
 
   const canvas = useRef(null);
   const [drawing, setDrawing] = useState(false);
@@ -92,7 +95,8 @@ function MLLabelCanvas(props) {
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
       context.closePath();
-      context.strokeStyle = selectedLabel?.color ?? '#FF0000';
+      context.strokeStyle =
+        MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
       context.stroke();
       handleDraw(context.getImageData(0, 0, width, height));
     }
@@ -110,7 +114,8 @@ function MLLabelCanvas(props) {
     let rwidth = newPosition.x - originalPosition.x;
     let rheight = newPosition.y - originalPosition.y;
     context.rect(originalPosition.x, originalPosition.y, rwidth, rheight);
-    context.strokeStyle = selectedLabel?.color ?? '#FF0000';
+    context.strokeStyle =
+      MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
     context.stroke();
     handleDraw(context.getImageData(0, 0, width, height));
   };
@@ -137,7 +142,8 @@ function MLLabelCanvas(props) {
       0,
       2 * Math.PI,
     );
-    context.strokeStyle = selectedLabel?.color ?? '#FF0000';
+    context.strokeStyle =
+      MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
     context.stroke();
     handleDraw(context.getImageData(0, 0, width, height));
   };
