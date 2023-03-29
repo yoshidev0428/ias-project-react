@@ -70,7 +70,7 @@ const PositionDialog = ({ open, onClose }) => {
     setSelectedImages((images) => images.filter((img) => img.path !== path));
   };
 
-  const handleCancel = () => {
+  const handleExit = () => {
     setSelectedTab(PositionTabs.images);
     setSelectedImages([]);
     onClose();
@@ -92,8 +92,11 @@ const PositionDialog = ({ open, onClose }) => {
         actions={
           <>
             {dialogActions}
-            <Button color="warning" variant="outlined" onClick={handleCancel}>
-              Cancel
+            <Button color="error" variant="outlined" onClick={handleExit}>
+              Exit
+            </Button>
+            <Button color="warning" variant="outlined" onClick={onClose}>
+              Close
             </Button>
           </>
         }
