@@ -171,10 +171,10 @@ const CellposeDialog = () => {
                   <Col xs={6}>
                     {/* <Button variant="primary">callbrate</Button> */}
                   </Col>
-                  {/* <Col xs={6} className="mt-3">
+                  <Col xs={6} className="mt-3">
                     <FormControl fullWidth>
                       <InputLabel id="segment-label">
-                        chan to segment
+                        Segment Color
                       </InputLabel>
                       <Select
                         labelId="segment-label"
@@ -184,15 +184,15 @@ const CellposeDialog = () => {
                         onChange={handleChangeSegment}
                       >
                         <MenuItem value={0}>0: gray</MenuItem>
-                        <MenuItem value={1}>1: red</MenuItem>
-                        <MenuItem value={2}>2: green</MenuItem>
-                        <MenuItem value={3}>3: blue</MenuItem>
+                        <MenuItem value={1}>1: R</MenuItem>
+                        <MenuItem value={2}>2: G</MenuItem>
+                        <MenuItem value={3}>3: B</MenuItem>
                       </Select>
                     </FormControl>
                   </Col>
                   <Col xs={6} className="mt-3">
                     <FormControl fullWidth>
-                      <InputLabel id="chan2-label">chan2 (optional)</InputLabel>
+                      <InputLabel id="chan2-label">Nuclei Color</InputLabel>
                       <Select
                         labelId="chan2-label"
                         id="chan2-select"
@@ -201,12 +201,12 @@ const CellposeDialog = () => {
                         onChange={handleChangeChan2}
                       >
                         <MenuItem value={0}>0: none</MenuItem>
-                        <MenuItem value={1}>1: red</MenuItem>
-                        <MenuItem value={2}>2: green</MenuItem>
-                        <MenuItem value={3}>3: blue</MenuItem>
+                        <MenuItem value={1}>1: R</MenuItem>
+                        <MenuItem value={2}>2: G</MenuItem>
+                        <MenuItem value={3}>3: B</MenuItem>
                       </Select>
                     </FormControl>
-                  </Col> */}
+                  </Col>
                   <Col xs={6} className="mt-3">
                     <Form.Label className="mt-1">flow_threshold</Form.Label>
                   </Col>
