@@ -6,10 +6,7 @@ import { fromBlob, fromUrl } from 'geotiff';
 import { getWindowDimensions } from '@/helpers/browser';
 import { GLOBAL_SLIDER_DIMENSION_FIELDS } from '@/constants';
 import { api } from '@/api/base';
-import {
-  MAX_CHANNELS_WARNING,
-  MAX_NON_GLOBAL_DIMENSIONS,
-} from '@/constants/avivator';
+import { MAX_NON_GLOBAL_DIMENSIONS } from '@/constants/avivator';
 
 class UnsupportedBrowserError extends Error {
   constructor(message) {
@@ -25,7 +22,7 @@ class UnsupportedBrowserError extends Error {
  * @param {number} levels
  * @param {TiffPixelSource[]} data
  */
-async function getTotalImageCount(src, rootMeta, data) {
+export async function getTotalImageCount(src, rootMeta, data) {
   const from = typeof src === 'string' ? fromUrl : fromBlob;
   const tiff = await from(src);
   const firstImage = await tiff.getImage(0);
@@ -135,11 +132,7 @@ async function generateMultiTiffSources(urlOrFiles) {
  * @param {File | File[]} file
  * @param {*} handleLoaderError
  */
-export async function createLoader(
-  urlOrFile,
-  handleOffsetsNotFound,
-  handleLoaderError,
-) {
+export async function createLoader(urlOrFile, handleLoaderError) {
   // If the loader fails to load, handle the error (show an error snackbar).
   // Otherwise load.
   try {
@@ -151,21 +144,6 @@ export async function createLoader(
         pool: false,
       });
 
-      if (urlOrFile instanceof File) {
-        return source;
-      }
-
-      // Show a warning if the total number of channels/images exceeds a fixed amount.
-      // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
-      // built in to the format for them, hence the ternary.
-      const totalImageCount = await getTotalImageCount(
-        urlOrFile,
-        source.map((s) => s.metadata),
-        source.map((s) => s.data),
-      );
-      if (totalImageCount > MAX_CHANNELS_WARNING) {
-        handleOffsetsNotFound(true);
-      }
       return source;
     }
 

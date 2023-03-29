@@ -8,7 +8,7 @@ import ClosableDialog from '@/components/dialogs/ClosableDialog';
 import TabImage from './tabs/TabImage';
 import ExperimentDialog from '../ExperimentDialog';
 import { PositionTabLabels, PositionTabs } from './constants';
-import { getStaticPath } from '@/helpers/file';
+import { getImageUrl } from '@/helpers/file';
 import TabMetadata from './tabs/TabMetadata';
 import { toTiffPath } from '@/helpers/avivator';
 
@@ -61,8 +61,8 @@ const PositionDialog = ({ open, onClose }) => {
 
   const handleSelectImages = (files) => {
     const images = files.map((path) => ({
-      url: getStaticPath(path, true),
-      tiffUrl: getStaticPath(toTiffPath(path), true),
+      url: getImageUrl(path, true),
+      tiffUrl: getImageUrl(toTiffPath(path), true, true),
       filename: path.split('/').slice(-1)[0],
       path: path,
     }));

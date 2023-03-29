@@ -20,12 +20,14 @@ export default function useMetadata(urls, onLoading = () => void 0) {
           return createLoader(url);
         }),
       );
-      const metadata = tiffs.map((data) => data[0]?.metadata);
+      const metadata = tiffs.map((data) =>
+        data.length ? data[0].metadata : data.metadata,
+      );
       const map = metadata.reduce(
         (acc, data, idx) => (data ? { ...acc, [urls[idx]]: data } : acc),
         {},
       );
-      setMetadata(metadata);
+      setMetadata(metadata.filter(Boolean));
       updateMetadataMap(map);
       setLoading(false);
       onLoading(false);
