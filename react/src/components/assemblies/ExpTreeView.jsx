@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import TreeView from './TreeView';
+import TreeView from '@/components/mui/TreeView';
 import Box from '@mui/material/Box';
 import { Typography } from 'react-md';
 

@@ -9,6 +9,8 @@ import TabImage from './tabs/TabImage';
 import ExperimentDialog from '../ExperimentDialog';
 import { PositionTabLabels, PositionTabs } from './constants';
 import { getStaticPath } from '@/helpers/file';
+import TabMetadata from './tabs/TabMetadata';
+import { toTiffPath } from '@/helpers/avivator';
 
 const PositionDialog = ({ open, onClose }) => {
   const [selectedTab, setSelectedTab] = useState(PositionTabs.images);
@@ -60,6 +62,7 @@ const PositionDialog = ({ open, onClose }) => {
   const handleSelectImages = (files) => {
     const images = files.map((path) => ({
       url: getStaticPath(path, true),
+      tiffUrl: getStaticPath(toTiffPath(path), true),
       filename: path.split('/').slice(-1)[0],
       path: path,
     }));
@@ -121,7 +124,9 @@ const PositionDialog = ({ open, onClose }) => {
               />
             </TabPanel>
             <TabPanel value={PositionTabs.tiling}></TabPanel>
-            <TabPanel value={PositionTabs.metadata}></TabPanel>
+            <TabPanel value={PositionTabs.metadata}>
+              <TabMetadata images={selectedImages} />
+            </TabPanel>
             <TabPanel value={PositionTabs.naming}></TabPanel>
           </Box>
         </TabContext>

@@ -8,7 +8,7 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import Viewer from './Viewer';
 import Loader from './Loader';
-import { useImage } from '@/hooks/use-image';
+import { useImage } from '@/hooks/useImage';
 import { useViewerStore } from '@/state';
 import { VIEWER_ZOOM_FACTOR } from '@/constants/avivator';
 
