@@ -8,7 +8,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { Box, Typography } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 
-export default function PanelImages({ images, onRemoveImage }) {
+export default function TabImage({ images, onRemoveImage }) {
   const expNames = useMemo(
     () =>
       Object.keys(

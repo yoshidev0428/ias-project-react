@@ -33,23 +33,6 @@ const PositionDialog = ({ open, onClose }) => {
     }
   }, [selectedTab]);
 
-  const handleTabChange = (_event, newValue) => {
-    setSelectedTab(newValue);
-  };
-
-  const handleSelectImages = (files) => {
-    const images = files.map((path) => ({
-      url: getStaticPath(path, true),
-      filename: path.split('/').slice(-1)[0],
-      path: path,
-    }));
-    setSelectedImages(images);
-  };
-
-  const handleRemoveImage = (path) => {
-    setSelectedImages((images) => images.filter((img) => img.path !== path));
-  };
-
   const TabPanel = useCallback(
     (props) => (
       <MuiTabPanel {...props} sx={{ p: 0 }}>
@@ -70,6 +53,29 @@ const PositionDialog = ({ open, onClose }) => {
     [selectedImages],
   );
 
+  const handleTabChange = (_event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const handleSelectImages = (files) => {
+    const images = files.map((path) => ({
+      url: getStaticPath(path, true),
+      filename: path.split('/').slice(-1)[0],
+      path: path,
+    }));
+    setSelectedImages(images);
+  };
+
+  const handleRemoveImage = (path) => {
+    setSelectedImages((images) => images.filter((img) => img.path !== path));
+  };
+
+  const handleCancel = () => {
+    setSelectedTab(PositionTabs.images);
+    setSelectedImages([]);
+    onClose();
+  };
+
   return (
     <>
       <ClosableDialog
@@ -86,7 +92,7 @@ const PositionDialog = ({ open, onClose }) => {
         actions={
           <>
             {dialogActions}
-            <Button color="warning" variant="outlined" onClick={onClose}>
+            <Button color="warning" variant="outlined" onClick={handleCancel}>
               Cancel
             </Button>
           </>
