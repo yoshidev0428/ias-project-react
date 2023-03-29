@@ -1,22 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
-import { PositionTabLabels, PositionTabs } from './constants';
+import Typography from '@mui/material/Typography';
 import { TabContext, TabList, TabPanel as MuiTabPanel } from '@mui/lab';
 import ClosableDialog from '@/components/dialogs/ClosableDialog';
-import PanelImages from './PanelImages';
+import TabImage from './tabs/TabImage';
 import ExperimentDialog from '../ExperimentDialog';
+import { PositionTabLabels, PositionTabs } from './constants';
 import { getStaticPath } from '@/helpers/file';
 
-const TabPanel = (props) => (
-  <MuiTabPanel {...props} sx={{ p: 0 }}>
-    {props.children}
-  </MuiTabPanel>
-);
-
 const PositionDialog = ({ open, onClose }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(PositionTabs.images);
 
   const [openExpDlg, setOpenExpDlg] = useState(false);
@@ -56,6 +50,26 @@ const PositionDialog = ({ open, onClose }) => {
     setSelectedImages((images) => images.filter((img) => img.path !== path));
   };
 
+  const TabPanel = useCallback(
+    (props) => (
+      <MuiTabPanel {...props} sx={{ p: 0 }}>
+        {selectedImages.length === 0 ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height={300}
+          >
+            <Typography>No images selected</Typography>
+          </Box>
+        ) : (
+          props.children
+        )}
+      </MuiTabPanel>
+    ),
+    [selectedImages],
+  );
+
   return (
     <>
       <ClosableDialog
@@ -90,15 +104,17 @@ const PositionDialog = ({ open, onClose }) => {
               ))}
             </TabList>
           </Box>
-          <TabPanel value={PositionTabs.images}>
-            <PanelImages
-              images={selectedImages}
-              onRemoveImage={handleRemoveImage}
-            />
-          </TabPanel>
-          <TabPanel value={PositionTabs.tiling}></TabPanel>
-          <TabPanel value={PositionTabs.metadata}></TabPanel>
-          <TabPanel value={PositionTabs.naming}></TabPanel>
+          <Box sx={{ minHeight: 300 }}>
+            <TabPanel value={PositionTabs.images}>
+              <TabImage
+                images={selectedImages}
+                onRemoveImage={handleRemoveImage}
+              />
+            </TabPanel>
+            <TabPanel value={PositionTabs.tiling}></TabPanel>
+            <TabPanel value={PositionTabs.metadata}></TabPanel>
+            <TabPanel value={PositionTabs.naming}></TabPanel>
+          </Box>
         </TabContext>
       </ClosableDialog>
       <ExperimentDialog

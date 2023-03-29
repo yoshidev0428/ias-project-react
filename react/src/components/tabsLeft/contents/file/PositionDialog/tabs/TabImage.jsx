@@ -20,7 +20,7 @@ export default function PanelImages({ images, onRemoveImage }) {
     [images],
   );
 
-  return images.length ? (
+  return (
     <>
       <Typography variant="subtitle1" gutterBottom>
         Experiments:{' '}
@@ -48,7 +48,7 @@ export default function PanelImages({ images, onRemoveImage }) {
                 <ImageIcon fontSize="large" />
               </Box>
             ) : (
-              <img src={item.url} alt={item.filename} loading="lazy" />
+              <img src={item.url} alt={item.filename} />
             )}
 
             <ImageListItemBar
@@ -67,14 +67,5 @@ export default function PanelImages({ images, onRemoveImage }) {
         ))}
       </ImageList>
     </>
-  ) : (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      height={300}
-    >
-      <Typography>No images selected</Typography>
-    </Box>
   );
 }
