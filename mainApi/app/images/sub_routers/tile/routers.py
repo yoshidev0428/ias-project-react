@@ -1011,3 +1011,49 @@ async def get_models(request: Request,
     if len(models) == 0:
         return JSONResponse({"error": "NO"})
     return JSONResponse({"success": True, "data": models})
+
+@router.post("/get_outlines",
+             response_description="Get outlines",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def get_outlines(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    # print(request)
+    data = await request.form()
+    file_url = data.get("file_url")
+    exp_url = data.get("exp_url")
+    #Get file's full abs path
+    exp_path = os.path.join(current_user_path, file_url)
+    exp_path = os.path.abspath(exp_path)
+    directory = exp_path.split('/')
+    directory_length = len(directory)
+    make_new_folder = ""
+    for i in range(directory_length - 2):
+        make_new_folder = make_new_folder + '/' + directory[i+1]
+    make_new_folder = make_new_folder + "/"
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
+    file_name_array = file_full_name.split(".")
+    file_name = ""
+    file_name_length = len(file_name_array)
+    for i in range(file_name_length - 1):
+        if(i == 0):
+            file_name = file_name + file_name_array[i]
+        if(i>0):
+            file_name = file_name + '.' + file_name_array[i]
+    outlines = []
+    valid_file_name = file_name
+    if file_name.find('_conv_masks') == -1 :
+        valid_file_name = file_name
+    else :
+        valid_file_name = file_name.split('_conv_masks')[0]
+    if os.path.isfile(make_new_folder + valid_file_name + '_cp_outlines.txt') == False :
+        return JSONResponse({"success": 'NO'})
+    else :
+        with open(make_new_folder + valid_file_name + '_cp_outlines.txt') as file:
+            for item in file:
+                outlines.append(item)
+    return JSONResponse({"success": outlines})

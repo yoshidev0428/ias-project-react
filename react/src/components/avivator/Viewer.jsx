@@ -86,6 +86,10 @@ const Viewer = ({ isFullScreen }) => {
       deck_width / 2 -
         initialViewState.target[0] * Math.pow(2, initialViewState.zoom),
     );
+    localStorage.setItem(
+      'CANV_ZOOM',
+      initialViewState.zoom
+    );
     store.dispatch({
       type: 'set_canvas',
       content: canvas_save,
@@ -113,6 +117,10 @@ const Viewer = ({ isFullScreen }) => {
     localStorage.setItem(
       'CANV_LEFT',
       deck_width / 2 - viewState.target[0] * Math.pow(2, viewState.zoom),
+    );
+    localStorage.setItem(
+      'CANV_ZOOM',
+      viewState.zoom
     );
     store.dispatch({
       type: 'set_canvas',

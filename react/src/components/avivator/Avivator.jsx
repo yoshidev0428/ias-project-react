@@ -55,6 +55,10 @@ const Avivator = function ({ source }) {
       'CANV_LEFT',
       deck_width / 2 - viewState.target[0] * Math.pow(2, viewState.zoom),
     );
+    localStorage.setItem(
+      'CANV_ZOOM',
+      viewState.zoom - VIEWER_ZOOM_FACTOR
+    );
     store.dispatch({
       type: 'set_canvas',
       content: canv_info,
@@ -84,6 +88,10 @@ const Avivator = function ({ source }) {
     localStorage.setItem(
       'CANV_LEFT',
       deck_width / 2 - viewState.target[0] * Math.pow(2, viewState.zoom),
+    );
+    localStorage.setItem(
+      'CANV_ZOOM',
+      viewState.zoom - VIEWER_ZOOM_FACTOR
     );
     store.dispatch({
       type: 'set_canvas',

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react'; // add useMemo be Wang
+import React, { useState, useRef, useEffect, Fragment, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -49,6 +49,7 @@ import AccountPage from './account';
 import { useSelector } from 'react-redux';
 
 import LoadingDialog from '@/components/custom/LoadingDialog';
+import UserCanvas from '@/components/custom/UserCanvas'
 import MLLabelCanvas from '@/components/custom/MLLabelCanvas'; // added by Wang
 import { useFlagsStore } from '@/state';
 function TabContainer(props) {
@@ -91,6 +92,7 @@ const MainFrame = (props) => {
   );
 
   const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
+  const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
   const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag); //added by Wang
 
   const imageViewAreaRef = useRef(null);
@@ -268,28 +270,26 @@ const MainFrame = (props) => {
       </>
     );
   };
-  // added by Wang
-  // const renderPart = (rowCount, index) => {
-  //   return (
-  //     <Col
-  //       ref={imageViewAreaRef}
-  //       style={{
-  //         backgroundColor: '#ddd',
-  //         height: ((height - fixedBarHeight) / rowCount).toString() + 'px',
-  //         overflowY: 'auto',
-  //         border: '1px solid black',
-  //         display: 'flex',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}
-  //     >
-  //       {userPage && <UserPage />}
-  //       {accountPage && <AccountPage />}
-  //       {vivPage && <Avivator source={imagePathForAvivator} />}
-  //     </Col>
-  //   );
-  // };
-
+  const renderPart = (rowCount, index) => {
+    return (
+      <Col
+        ref={imageViewAreaRef}
+        style={{
+          backgroundColor: '#ddd',
+          height: ((height - fixedBarHeight) / rowCount).toString() + 'px',
+          overflowY: 'auto',
+          border: '1px solid black',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {userPage && <UserPage />}
+        {accountPage && <AccountPage />}
+        {vivPage && <Avivator source={imagePathForAvivator} />}
+      </Col>
+    );
+  };
   return (
     <>
       <HeaderContent />
@@ -396,6 +396,7 @@ const MainFrame = (props) => {
               {userPage && <UserPage />}
               {accountPage && <AccountPage />}
               {vivPage && <Avivator source={imagePathForAvivator} />}
+              {UserCanvasFlag && <UserCanvas />}
               {MLCanvasFlag && <MLLabelCanvas />}
             </Col>
           )}
@@ -418,6 +419,7 @@ const MainFrame = (props) => {
                 {userPage && <UserPage />}
                 {accountPage && <AccountPage />}
                 {vivPage && <Avivator source={imagePathForAvivator} />}
+                {UserCanvasFlag && <UserCanvas />}
                 {MLCanvasFlag && <MLLabelCanvas />}
               </Col>
               <Col
@@ -434,6 +436,7 @@ const MainFrame = (props) => {
                 {userPage && <UserPage />}
                 {accountPage && <AccountPage />}
                 {vivPage && <Avivator source={imagePathForAvivator} />}
+                {UserCanvasFlag && <UserCanvas />}
                 {MLCanvasFlag && <MLLabelCanvas />}
               </Col>
             </Col>
@@ -458,6 +461,7 @@ const MainFrame = (props) => {
                   {userPage && <UserPage />}
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
+                  {UserCanvasFlag && <UserCanvas />}
                   {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
                 <Col
@@ -474,6 +478,7 @@ const MainFrame = (props) => {
                   {userPage && <UserPage />}
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
+                  {UserCanvasFlag && <UserCanvas />}
                   {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
               </Col>
@@ -495,6 +500,7 @@ const MainFrame = (props) => {
                   {userPage && <UserPage />}
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
+                  {UserCanvasFlag && <UserCanvas />}
                   {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
                 <Col
@@ -511,6 +517,7 @@ const MainFrame = (props) => {
                   {userPage && <UserPage />}
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
+                  {UserCanvasFlag && <UserCanvas />}
                   {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
               </Col>
