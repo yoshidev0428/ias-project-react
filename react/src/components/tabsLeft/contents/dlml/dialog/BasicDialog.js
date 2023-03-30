@@ -9,12 +9,8 @@ import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { Row, Col, Button, Image } from 'react-bootstrap';
-import store from '../../../../../reducers';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import imgNuchel from '../../../../../assets/cell/nuchel.png';
-import imgCyto from '../../../../../assets/cell/cyto.png';
-import imgLayer from '../../../../../assets/cell/layer.png';
-import imgWafer from '../../../../../assets/cell/wafer.png';
+import store from '@/reducers';
+import * as Icon from './ModelIcons'
 
 function TabContainer(props) {
   return (
@@ -50,22 +46,22 @@ const BasicDialog = () => {
   };
 
   const imgArray = {
-    tissuenet: imgTissueNet,
-    nuclei: imgNuchel,
-    cyto: imgCyto,
-    layer: imgLayer,
-    wafer: imgWafer,
-    livecell: imgCyto,
-    cyto2: imgCyto,
-    cp: imgLayer,
-    cpx: imgWafer,
-    tn1: imgTissueNet,
-    tn2: imgNuchel,
-    tn3: imgTissueNet,
-    lc1: imgLayer,
-    lc2: imgCyto,
-    lc3: imgTissueNet,
-    lc4: imgWafer,
+    tissuenet: Icon.imgTissueNet,
+    nuclei: Icon.imgNuchel,
+    cyto: Icon.imgCyto,
+    layer: Icon.imgLayer,
+    wafer: Icon.imgWafer,
+    livecell: Icon.imgNoun1,
+    cyto2: Icon.imgNoun7,
+    CP: Icon.imgNoun2,
+    CPx: Icon.imgNoun8,
+    TN1: Icon.imgNoun20,
+    TN2: Icon.imgNoun15,
+    TN3: Icon.imgNoun18,
+    LC1: Icon.imgNoun9,
+    LC2: Icon.imgNoun10,
+    LC3: Icon.imgNoun11,
+    LC4: Icon.imgNoun12
   };
 
   const ImageBox = (props) => {
@@ -139,15 +135,15 @@ const BasicDialog = () => {
                 {rightTabVal === 1 && (
                   <TabContainer>
                     <div className="p-3 img-container">
-                      <div style={{ width: '65px' }} className="mr-3">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="nuclei" />
                         <div className="label-text text-center">Nuclei</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-3">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="cyto" />
                         <div className="label-text text-center">Cyto</div>
                       </div>
-                      <div style={{ width: '65px' }} className="mr-3">
+                      <div style={{ width: '65px' }} className="m-2">
                         <ImageBox methodName="livecell" />
                         <div className="label-text text-center">Livecell</div>
                       </div>
@@ -156,39 +152,39 @@ const BasicDialog = () => {
                         <div className="label-text text-center">Cyto2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="cp" />
+                        <ImageBox methodName="CP" />
                         <div className="label-text text-center">CP</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="cpx" />
+                        <ImageBox methodName="CPx" />
                         <div className="label-text text-center">CPx</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn1" />
+                        <ImageBox methodName="TN1" />
                         <div className="label-text text-center">TN1</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn2" />
+                        <ImageBox methodName="TN2" />
                         <div className="label-text text-center">TN2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="tn3" />
+                        <ImageBox methodName="TN3" />
                         <div className="label-text text-center">TN3</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc1" />
+                        <ImageBox methodName="LC1" />
                         <div className="label-text text-center">LC1</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc2" />
+                        <ImageBox methodName="LC2" />
                         <div className="label-text text-center">LC2</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc3" />
+                        <ImageBox methodName="LC3" />
                         <div className="label-text text-center">LC3</div>
                       </div>
                       <div style={{ width: '65px' }} className="m-2">
-                        <ImageBox methodName="lc4" />
+                        <ImageBox methodName="LC4" />
                         <div className="label-text text-center">LC4</div>
                       </div>
                     </div>

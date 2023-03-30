@@ -1,5 +1,6 @@
 import { api } from './base';
-import store from '../reducers';
+import store from '@/reducers';
+import mainApiService from '@/services/mainApiService';
 // API_URL,
 // SET_IMAGE: `${API_URL}set-image`,
 // CHANGE_IMAGE: `${API_URL}change-image`,
@@ -140,12 +141,8 @@ export const getExperimentNames = async () => {
   return response;
 };
 
-export const getExperimentDatas = async () => {
-  // const state = store.getState();
-  let response = await api.get('image/tile/get_experiments_datas');
-  return response;
-  // let response = await api.get("image/tile/get_experiment_names")
-  // return response
+export const getExperiments = async () => {
+  return await mainApiService.get('image/tile/get_experiments_datas');
 };
 
 export const getMetaData = async () => {

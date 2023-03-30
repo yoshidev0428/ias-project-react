@@ -1,0 +1,18 @@
+FROM tiangolo/uvicorn-gunicorn:python3.8-slim
+
+# additional dependencies
+# netcat used for checking for resources on the network before start, see start.sh for use
+RUN apt-get update && \
+    apt-get install -y netcat
+
+WORKDIR /app
+
+COPY ./ilastik/requirements.txt /app/ilastik_requirements.txt
+
+RUN pip install --upgrade -r /app/ilastik_requirements.txt
+
+EXPOSE 8000
+
+COPY ./ilastikApi /app/ilastikApi/
+
+
