@@ -1,4 +1,3 @@
-export const MAX_CHANNELS = 6;
 export const DEFAULT_OVERVIEW = {
   margin: 25,
   scale: 0.15,
@@ -16,8 +15,7 @@ export const COLORMAP_OPTIONS = [
   'density',
   'inferno',
 ];
-export const COLOR_PALLETE = [
-  [255, 255, 255],
+export const COLOR_PALETTE = [
   [0, 0, 255],
   [0, 255, 0],
   [255, 0, 0],

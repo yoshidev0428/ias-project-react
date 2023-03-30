@@ -22,12 +22,12 @@ from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
 import subprocess
-import asyncio
 from mainApi.app.images.utils.convert import get_metadata
 import matplotlib
 import json
 from cellpose import plot, utils
 from matplotlib import pyplot as plt
+import cv2
 
 
 async def add_experiment(
@@ -164,7 +164,7 @@ async def add_experiment_with_folders(
             cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
                 inputPath=inputPath, outputPath=outputPath
             )
-            await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
+            subprocess.run(cmd_str, shell=True)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
@@ -273,39 +273,69 @@ async def convert_npy_to_jpg(file_full_path: str,
 
 
     file_full_name = file_full_path + file_name + "_seg.npy"
-    dat = np.load(file_full_name, allow_pickle=True).item()
+    fname = file_full_name
 
-    # plot image with masks overlaid
-    mask_RGB = plot.mask_rgb( dat['masks'])
+    dat = np.load(fname, allow_pickle=True).item()
+    masks = dat['masks']
+    flows = dat['flows'][0][0]
+    img0 = dat['img'].copy()
 
-    # plot image with outlines overlaid in red
+    if img0.shape[0] < 4:
+        img0 = np.transpose(img0, (1,2,0))
+    if img0.shape[-1] < 3 or img0.ndim < 3:
+        img0 = plot.image_to_rgb(img0)
+    else:
+        if img0.max()<=50.0:
+            img0 = np.uint8(np.clip(img0*255, 0, 1))
     outlines = utils.outlines_list(dat['masks'])
-    # plt.imshow(dat['img'])
-    for o in outlines:
-        plt.plot(o[:,0], o[:,1], color='b')
-    # im = Image.fromarray(mask_RGB, 'RGB')
-    if model_info['outline'] == True :
-        # mask_RGB = plot.mask_overlay(outlines, mask_RGB)
-        out_file = file_full_path + file_name + "_outlines.png"
-        img = Image.open(out_file)
-        inputPath = file_full_path + file_name + "_outlines.jpg"
-        img.save(inputPath, 'JPEG')
-        outputPath = file_full_path + file_name + "_outlines.ome.tiff"
-        out_file_name = file_name + "_outlines.ome.tiff"
-        cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
-        print('=====>', out_file, outputPath, cmd_str)
-        subprocess.run(cmd_str, shell=True)
-        return out_file_name
-    else :
-        im = Image.fromarray(mask_RGB, 'RGB')
-        out_file = file_full_path + file_name + "_seg.jpg"
-        im.save(out_file)
-        outputPath = file_full_path + file_name + "_seg.ome.tiff"
-        out_file_name = file_name + "_seg.ome.tiff"
-        cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + out_file + "' '" + outputPath + "'"
-        print('=====>', out_file, outputPath, cmd_str)
-        subprocess.run(cmd_str, shell=True)
-        return out_file_name
+    with open(file_full_path + file_name + '_cp_outlines.txt', 'w') as f:
+        for o in outlines:
+            xy = list(o.flatten())
+            xy_str = ','.join(map(str, xy))
+            f.write(xy_str)
+            f.write('\n')
+    print('num_rois', len(outlines))
+    outlines = utils.masks_to_outlines(masks)
+    overlay = plot.mask_overlay(img0, masks)
+    outX, outY = np.nonzero(outlines)
+    imgout= img0.copy()
+    imgout[outX, outY] = np.array([255,0,0]) # pure red
+    im = Image.fromarray(overlay, 'RGB')
+    rgb_im = im.convert('RGB')
+    rgb_im.save(file_full_path + file_name + '_mask.jpg', 'JPEG')
+    #check the selected model is suitable for this image
+    out_file = file_full_path + file_name + "_outlines.png"
+    if os.path.isfile(out_file) == False :
+        return "NO"
+    inputPath = ""
+    outputPath = ""
+    out_file_name = ""
+    if model_info['outline'] == 0 :
+        im = Image.fromarray(imgout, 'RGB')
+        rgb_im = im.convert('RGB')
+        inputPath = file_full_path + file_name + "_conv_outlines.jpg"
+        rgb_im.save(inputPath, 'JPEG')
+        outputPath = file_full_path + file_name + "_conv_outlines.ome.tiff"
+        out_file_name = file_name + "_conv_outlines.ome.tiff"
+    if model_info['outline'] == 1 :
+        im = Image.fromarray(overlay, 'RGB')
+        rgb_im = im.convert('RGB')
+        inputPath = file_full_path + file_name + "_conv_masks.jpg"
+        rgb_im.save(inputPath, 'JPEG')
+        outputPath = file_full_path + file_name + "_conv_masks.ome.tiff"
+        out_file_name = file_name + "_conv_masks.ome.tiff"
+    if model_info['outline'] == 2 :
+        im = Image.fromarray(flows, 'RGB')
+        rgb_im = im.convert('RGB')
+        inputPath = file_full_path + file_name + "_conv_flows.jpg"
+        rgb_im.save(inputPath, 'JPEG')
+        outputPath = file_full_path + file_name + "_conv_flows.ome.tiff"
+        out_file_name = file_name + "_conv_flows.ome.tiff"
+    print('out_name', out_file_name)
+    cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
+    print('=====>', out_file, outputPath, cmd_str)
+    subprocess.run(cmd_str, shell=True)
+    return out_file_name
     
 
 async def get_model(model_name: str,

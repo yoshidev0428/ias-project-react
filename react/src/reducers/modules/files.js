@@ -11,6 +11,7 @@ const DEFAULT_PARAMS = {
   selectedImage: null,
   imagePathForAvivator: null,
   imagePathForTree: [],
+  selectedFilesForDropZone: '',
 };
 
 const initState = {
@@ -51,6 +52,9 @@ const files = (state = initState, action) => {
       break;
     case 'set_image_path_for_tree':
       state.imagePathForTree = action.content;
+      break;
+    case 'set_selected_files_for_dropzone':
+      state.selectedFilesForDropZone = action.content;
       break;
     default:
       break;

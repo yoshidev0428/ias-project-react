@@ -1,3 +1,4 @@
+import store from '@/reducers';
 import { FILE_TYPES } from '../constants/file-types';
 
 export const getFileName = (fname) => {
@@ -72,9 +73,26 @@ export const loadImage = (src) => {
   });
 };
 
-export const getStaticPath = (path) => {
-  return `${process.env.REACT_APP_BASE_API_URL}/static/${path}`.replaceAll(
-    /\/+/g,
-    '/',
-  );
+export const cleanUrl = (urlStr) =>
+  urlStr.replaceAll(/\/+/g, '/').replace(':/', '://');
+
+export const getImageUrl = (
+  path,
+  userDir = false,
+  resumeDowloading = false,
+) => {
+  let url = path;
+
+  if (userDir) {
+    const userId = store.getState().auth.user._id;
+    url = `${userId}/${path}`;
+  }
+
+  if (resumeDowloading) {
+    url = `image/download/?path=${url}`;
+  } else {
+    url = `static/${url}`;
+  }
+
+  return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/${url}`);
 };

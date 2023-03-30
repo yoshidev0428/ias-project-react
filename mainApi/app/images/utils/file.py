@@ -5,6 +5,7 @@ import datetime
 from fastapi import UploadFile
 import aiofiles
 import PIL
+from PIL import Image
 import tifffile
 from skimage import io
 import numpy as np
@@ -18,6 +19,7 @@ from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
 from mainApi.config import STATIC_PATH
 from mainApi.app.images.utils.convert import convert_to_ome_format
+import subprocess
 
 
 async def save_upload_file(upload_file: UploadFile, destination: Path, chunk_size: int = 1024) -> None:
@@ -57,6 +59,27 @@ async def add_image_tiles(path: Path,
         #     filenames.append(file_name)
         #     with PIL.Image.open(file_path) as im:
         #         width_px, height_px = im.size
+
+            if file_name[-9:].lower() != ".ome.tiff":
+                fileFormat = file_name.split(".")
+                inputPath = os.path.abspath(file_path)
+                if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
+                    img = Image.open(inputPath)
+                    inputPath = os.path.abspath(
+                        path + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
+                    )
+                    img.save(inputPath, "JPEG")
+
+                outputPath = os.path.abspath(
+                    path + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
+                )
+                cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
+                    inputPath=inputPath, outputPath=outputPath
+                )
+                await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
+
+            filenames.append(file_name)
+
             tile = FileModelDB(
                 user_id=PyObjectId(current_user.id),
                 absolute_path=str(path),

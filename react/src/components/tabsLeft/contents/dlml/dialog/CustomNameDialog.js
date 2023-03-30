@@ -4,16 +4,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import { useFlagsStore } from '@/state';
 import { Row, Col, Button, Form, Image } from 'react-bootstrap';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import imgNuchel from '../../../../../assets/cell/nuchel.png';
-import imgCyto from '../../../../../assets/cell/cyto.png';
-import imgLayer from '../../../../../assets/cell/layer.png';
-import imgWafer from '../../../../../assets/cell/wafer.png';
-import imgAnimal from '../../../../../assets/cell/animal.png';
-import imgBacteria from '../../../../../assets/cell/bacteria.png';
-import imgHuman from '../../../../../assets/cell/human.png';
-import imgStem from '../../../../../assets/cell/embryonic_stem.png';
-import store from '../../../../../reducers';
+import * as Icon from './ModelIcons';
+import store from '@/reducers';
 import { useState } from 'react';
 import * as api_experiment from '@/api/experiment';
 
@@ -30,12 +22,10 @@ const CustomNameDialog = () => {
     if (reason != 'backdropClick') {
       useFlagsStore.setState({ DialogCellposeFlag: true });
       useFlagsStore.setState({ DialogCustomNameFlag: false });
-      console.log('flag Status--->' + DialogCustomNameFlag);
     }
   };
 
   const action = async () => {
-    console.log('flag Status---> Action');
     if (modelName === '') {
       alert('Please enter your model name.');
       return;
@@ -47,8 +37,7 @@ const CustomNameDialog = () => {
 
     if (respond.data.error) {
       alert('Please choose another model name');
-      let respond = await api_experiment.get_model('all');
-      console.log('models', respond.data.data);
+      await api_experiment.get_model('all');
     } else if (respond.data.success == 'OK') {
       useFlagsStore.setState({ DialogCustomNameFlag: false });
       useFlagsStore.setState({ DialogCustomFlag: true });
@@ -62,38 +51,78 @@ const CustomNameDialog = () => {
   };
 
   const imgArray = {
-    tissuenet: imgTissueNet,
-    nuclei: imgNuchel,
-    cyto: imgCyto,
-    layer: imgLayer,
-    wafer: imgWafer,
-    animal: imgAnimal,
-    bacteria: imgBacteria,
-    human: imgHuman,
-    stem: imgStem,
+    tissuenet: Icon.imgTissueNet,
+    nuclei: Icon.imgNuchel,
+    cyto: Icon.imgCyto,
+    layer: Icon.imgLayer,
+    wafer: Icon.imgWafer,
+    animal: Icon.imgAnimal,
+    bacteria: Icon.imgBacteria,
+    human: Icon.imgHuman,
+    stem: Icon.imgStem,
+    dl: Icon.imgDL,
+    dna1: Icon.imgDNA1,
+    dna2: Icon.imgDNA2,
+    human2: Icon.imgHuman2,
+    ml: Icon.imgML,
+    noun1: Icon.imgNoun1,
+    noun2: Icon.imgNoun2,
+    noun3: Icon.imgNoun3,
+    noun4: Icon.imgNoun4,
+    noun5: Icon.imgNoun5,
+    noun6: Icon.imgNoun6,
+    noun7: Icon.imgNoun7,
+    noun8: Icon.imgNoun8,
+    noun9: Icon.imgNoun9,
+    noun10: Icon.imgNoun10,
+    noun11: Icon.imgNoun11,
+    noun12: Icon.imgNoun12,
+    noun13: Icon.imgNoun13,
+    noun14: Icon.imgNoun14,
+    noun15: Icon.imgNoun15,
+    noun16: Icon.imgNoun16,
+    noun17: Icon.imgNoun17,
+    noun18: Icon.imgNoun18,
+    noun19: Icon.imgNoun19,
+    noun20: Icon.imgNoun20,
+    noun21: Icon.imgNoun21,
+    noun22: Icon.imgNoun22
   };
 
   const handleSelectedMethod = (newValue) => {
     setSelectedIcon(newValue);
   };
 
-  const ImageBox = (props) => {
-    return (
-      <div
-        className={
-          selectedIcon !== props.methodName
-            ? 'border method-img'
-            : 'method-img-selected'
-        }
-        onClick={() => handleSelectedMethod(props.methodName)}
-      >
-        <Image
-          style={{ margin: '0 auto', width: '65px', height: '65px' }}
-          src={imgArray[props.methodName]}
-          alt="no image"
-        />
-      </div>
-    );
+  const ImageBox = () => {
+    let icons = Object.keys(imgArray)
+    if (icons.length > 0)
+      return icons.map((icon) => (
+        <div className="m-2" key={icon} style={{ width: '65px' }}>
+          <div
+            className={
+              selectedIcon !== icon
+                ? 'border method-img'
+                : 'method-img-selected'
+            }
+            onClick={() => handleSelectedMethod(icon)}
+          >
+            <Image
+              style={{ margin: '0 auto', width: '65px', height: '65px' }}
+              src={imgArray[icon]}
+              alt="no image"
+            />
+          </div>
+        </div>
+      ));
+    else
+      return (
+        <>
+          <div className="m-2" style={{ width: '65px' }}>
+            <div className="border method-img"></div>
+            <div className="label-text text-center">There is no icons.</div>
+          </div>
+        </>
+      );
   };
 
   return (
@@ -133,16 +162,8 @@ const CustomNameDialog = () => {
                       <p className="mb-0 mt-1">Icon</p>
                     </Col>
                     <Col xs={9}>
-                      <div className="border overflow-auto d-flex p-2">
-                        <ImageBox methodName="tissuenet" />
-                        <ImageBox methodName="nuclei" />
-                        <ImageBox methodName="cyto" />
-                        <ImageBox methodName="layer" />
-                        <ImageBox methodName="wafer" />
-                        <ImageBox methodName="animal" />
-                        <ImageBox methodName="bacteria" />
-                        <ImageBox methodName="human" />
-                        <ImageBox methodName="stem" />
+                      <div className="img-container border p-2">
+                        <ImageBox />
                       </div>
                     </Col>
                   </Row>

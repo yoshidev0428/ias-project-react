@@ -1,5 +1,6 @@
 import { api } from './base';
-import store from '../reducers';
+import store from '@/reducers';
+import mainApiService from '@/services/mainApiService';
 // API_URL,
 // SET_IMAGE: `${API_URL}set-image`,
 // CHANGE_IMAGE: `${API_URL}change-image`,
@@ -31,6 +32,7 @@ export const deleteImageFiles = async (images) => {
   });
 };
 
+// added by Wang
 export const registerExperiment = async (experiment_name, images) => {
   const state = store.getState();
   const formData = new FormData();
@@ -139,21 +141,15 @@ export const getExperimentNames = async () => {
   return response;
 };
 
-export const getExperimentDatas = async () => {
-  // const state = store.getState();
-  let response = await api.get('image/tile/get_experiments_datas');
-  return response;
-  // let response = await api.get("image/tile/get_experiment_names")
-  // return response
+export const getExperiments = async () => {
+  return await mainApiService.get('image/tile/get_experiments_datas');
 };
 
-export const getMetaData = async () => {
-  let response = await api.get('image/tile/get_meta_datas');
-  return response;
+export const getMetadata = async () => {
+  return await mainApiService.get('image/tile/get_meta_datas');
 };
 
 export const testSegment = async (file_url, exp_name, model_name) => {
-  console.log('file_url', file_url);
   const state = store.getState();
   const formData = new FormData();
   formData.append('file_url', file_url);
@@ -195,7 +191,7 @@ export const save_model = async (model_info) => {
   });
 };
 
-export const get_model = async (model) => {
+export const get_model = async () => {
   const state = store.getState();
   const formData = new FormData();
   formData.append('model', 'experiment_name');
@@ -208,4 +204,34 @@ export const get_model = async (model) => {
       Authorization: state.auth.tokenType + ' ' + state.auth.token,
     },
   });
+};
+
+export const get_outlines = async (file_url, exp_name) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  return api.post('image/tile/get_outlines', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};
+
+/**
+ * @author QmQ
+ * @description send the image and receive the processed image using Machine Learning method.
+ *
+ */
+
+export const MLGetProcessedImage = async (file_url, exp_name, setting) => {
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('ext_url', exp_name);
+  // console.log('============> ML get processed image', file_url, exp_name)
+  return api.post('image/tile/ml_get_processe_image', formData);
 };

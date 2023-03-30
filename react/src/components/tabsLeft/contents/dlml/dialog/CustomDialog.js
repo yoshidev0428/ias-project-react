@@ -11,19 +11,11 @@ import PropTypes from 'prop-types';
 import { Row, Col, Button, Image } from 'react-bootstrap';
 import CustomNameDialog from './CustomNameDialog';
 //This is James Wang's code//
-import store from '../../../../../reducers';
+import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
 import { isNull } from 'lodash';
-import { mdiConsoleLine } from '@mdi/js';
-import imgTissueNet from '../../../../../assets/cell/tissue_net.png';
-import imgNuchel from '../../../../../assets/cell/nuchel.png';
-import imgCyto from '../../../../../assets/cell/cyto.png';
-import imgLayer from '../../../../../assets/cell/layer.png';
-import imgWafer from '../../../../../assets/cell/wafer.png';
-import imgAnimal from '../../../../../assets/cell/animal.png';
-import imgBacteria from '../../../../../assets/cell/bacteria.png';
-import imgHuman from '../../../../../assets/cell/human.png';
-import imgStem from '../../../../../assets/cell/embryonic_stem.png';
+import * as Icon from './ModelIcons';
+
 
 function TabContainer(props) {
   return (
@@ -72,7 +64,6 @@ const CustomDialog = () => {
   const DialogCustomNameFlag = useFlagsStore(
     (store) => store.DialogCustomNameFlag,
   );
-  const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
 
   const showCustomNameDialog = async () => {
     const state = store.getState();
@@ -80,13 +71,16 @@ const CustomDialog = () => {
       alert('Please enter your image file!');
       return;
     }
-    useFlagsStore.setState({ DialogCustomFlag: false });
+    if (selectedIcon === '') {
+      alert('Please select your model!');
+      useFlagsStore.setState({ DialogLoadingFlag: false });
+      return;
+    }
 
-    console.log('image-path', state.files.imagePathForAvivator[0].path);
     let imgPath = state.files.imagePathForAvivator[0].path;
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
-    console.log('experiment', exp_name);
+    useFlagsStore.setState({ DialogCustomFlag: false });
     useFlagsStore.setState({ DialogLoadingFlag: true });
     let result = await api_experiment.testSegment(
       imgPath,
@@ -95,14 +89,18 @@ const CustomDialog = () => {
     );
     const imagePathForAvivator = [];
     if (result.data.error) {
-      console.log('Error occured while invoking getImageTree api');
       //alert("Error occured while getting the tree")
     } else {
+      if (result.data.success == 'NO') {
+        alert(
+          'Your custom model is not suitable for this image. Please choose another model',
+        );
+        useFlagsStore.setState({ DialogLoadingFlag: false });
+        return;
+      }
       let file_path = result.data.success;
 
-      console.log('cell-segmant', file_path);
       const file = await getImageByUrl(exp_name + '/' + file_path);
-      console.log('file', file);
       if (file) imagePathForAvivator.push(file);
     }
     if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
@@ -116,7 +114,6 @@ const CustomDialog = () => {
   const close = (event, reason) => {
     if (reason != 'backdropClick') {
       useFlagsStore.setState({ DialogCustomFlag: false });
-      console.log('flag Status--->' + DialogCustomFlag);
     }
   };
 
@@ -138,8 +135,6 @@ const CustomDialog = () => {
       setModels(response.data.data);
       store.dispatch({ type: 'set_models', content: response.data.data });
     }
-    const state = store.getState();
-    console.log('models-store', models);
   };
 
   useEffect(() => {
@@ -147,18 +142,45 @@ const CustomDialog = () => {
   }, []);
 
   const imgArray = {
-    tissuenet: imgTissueNet,
-    nuclei: imgNuchel,
-    cyto: imgCyto,
-    layer: imgLayer,
-    wafer: imgWafer,
-    animal: imgAnimal,
-    bacteria: imgBacteria,
-    human: imgHuman,
-    stem: imgStem,
+    tissuenet: Icon.imgTissueNet,
+    nuclei: Icon.imgNuchel,
+    cyto: Icon.imgCyto,
+    layer: Icon.imgLayer,
+    wafer: Icon.imgWafer,
+    animal: Icon.imgAnimal,
+    bacteria: Icon.imgBacteria,
+    human: Icon.imgHuman,
+    stem: Icon.imgStem,
+    dl: Icon.imgDL,
+    dna1: Icon.imgDNA1,
+    dna2: Icon.imgDNA2,
+    human2: Icon.imgHuman2,
+    ml: Icon.imgML,
+    noun1: Icon.imgNoun1,
+    noun2: Icon.imgNoun2,
+    noun3: Icon.imgNoun3,
+    noun4: Icon.imgNoun4,
+    noun5: Icon.imgNoun5,
+    noun6: Icon.imgNoun6,
+    noun7: Icon.imgNoun7,
+    noun8: Icon.imgNoun8,
+    noun9: Icon.imgNoun9,
+    noun10: Icon.imgNoun10,
+    noun11: Icon.imgNoun11,
+    noun12: Icon.imgNoun12,
+    noun13: Icon.imgNoun13,
+    noun14: Icon.imgNoun14,
+    noun15: Icon.imgNoun15,
+    noun16: Icon.imgNoun16,
+    noun17: Icon.imgNoun17,
+    noun18: Icon.imgNoun18,
+    noun19: Icon.imgNoun19,
+    noun20: Icon.imgNoun20,
+    noun21: Icon.imgNoun21,
+    noun22: Icon.imgNoun22
   };
 
-  const [selectedIcon, setSelectedIcon] = useState('tissuenet');
+  const [selectedIcon, setSelectedIcon] = useState('');
 
   const handleSelectedMethod = (newValue) => {
     setSelectedIcon(newValue);
@@ -167,7 +189,7 @@ const CustomDialog = () => {
   const ImageBox = () => {
     if (models.length > 0)
       return models.map((model) => (
-        <div className="m-1" key={model.custom_name} style={{ width: '65px' }}>
+        <div className="m-3" key={model.custom_name} style={{ width: '65px' }}>
           <div
             className={
               selectedIcon !== model.custom_name
@@ -188,7 +210,7 @@ const CustomDialog = () => {
     else
       return (
         <>
-          <div className="m-1" style={{ width: '65px' }}>
+          <div className="m-3" style={{ width: '65px' }}>
             <div className="border method-img"></div>
             <div className="label-text text-center">There is no models.</div>
           </div>
@@ -223,8 +245,8 @@ const CustomDialog = () => {
                   />
                 </Tabs>
                 {rightTabVal === 0 && (
-                  <TabContainer>
-                    <div className="p-3 border overflow-auto d-flex p-2">
+                  <TabContainer className="d-flex justify-content-center">
+                    <div className="img-container p-3 border overflow-auto d-flex p-2">
                       <ImageBox />
                     </div>
                   </TabContainer>

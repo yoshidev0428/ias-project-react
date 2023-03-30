@@ -1,0 +1,29 @@
+{
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": [
+    "react-app",
+    "plugin:react-hooks/recommended"
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "no-unused-vars": [
+      "off",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-console": "error",
+    "no-template-curly-in-string": "error"
+  }
+}

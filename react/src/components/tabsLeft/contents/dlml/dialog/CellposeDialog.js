@@ -3,57 +3,50 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import { useFlagsStore } from '@/state';
-import { Row, Col, Button, Form, Image } from 'react-bootstrap';
+import { Row, Col, Button, Form } from 'react-bootstrap';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import store from '../../../../../reducers';
+import store from '@/reducers';
 
 const CellposeDialog = () => {
-  const DialogCustomNameFlag = useFlagsStore(
-    (store) => store.DialogCustomNameFlag,
-  );
   const DialogCellposeFlag = useFlagsStore((store) => store.DialogCellposeFlag);
   const state = store.getState();
   const [selectedMethod, setSelectedMethod] = React.useState(
     state.experiment.method,
   );
-  const [customName, setCustomName] = React.useState(
-    state.experiment.custom_name,
-  );
+  const [customName] = React.useState(state.experiment.custom_name);
   const segInfo = state.experiment.seg_info;
   const methods = {
     tissuenet: 'TissueNet',
-    nuchel: 'Nuchel',
+    nuclei: 'Nuclei',
     cyto: 'Cyto',
     layer: 'Layer',
     Wafer: 'wafer',
     livecell: 'LiveCell',
     cyto2: 'Cyto2',
-    cp: 'CP',
-    cpx: 'CPx',
-    tn1: 'TN1',
-    tn2: 'TN2',
-    tn3: 'TN3',
-    lc1: 'LC1',
-    lc2: 'LC2',
-    lc3: 'LC3',
-    lc4: 'LC4',
+    CP: 'CP',
+    CPx: 'CPx',
+    TN1: 'TN1',
+    TN2: 'TN2',
+    TN3: 'TN3',
+    LC1: 'LC1',
+    LC2: 'LC2',
+    LC3: 'LC3',
+    LC4: 'LC4',
   };
 
-  const close = (event, reason) => {
+  const close = (_event, reason) => {
     if (reason !== 'backdropClick') {
       useFlagsStore.setState({ DialogBasicFlag: true });
       useFlagsStore.setState({ DialogCellposeFlag: false });
-      console.log('flag Status--->' + DialogCellposeFlag);
     }
   };
 
   const action = () => {
-    console.log('flag Status---> Action');
     segInfo.custom_name = customName;
     segInfo.custom_method = selectedMethod;
     segInfo.outline = outline;
@@ -68,9 +61,9 @@ const CellposeDialog = () => {
     useFlagsStore.setState({ DialogCustomNameFlag: true });
   };
 
-  const [outline, setOutline] = React.useState(false);
+  const [outline, setOutline] = React.useState(0);
   const handleOutline = (event) => {
-    setOutline(event.target.checked);
+    setOutline(event.target.value);
   };
 
   const [diameter, setDiameter] = React.useState(30);
@@ -133,20 +126,24 @@ const CellposeDialog = () => {
             <Col xs={12}>
               <div className="pt-3 px-3 pb-1 border-bottom">
                 {/* <h6>Drawing</h6> */}
-                <h6>Outline</h6>
+                <h6>Select the result image</h6>
                 <div>
                   <Row className="mt-3">
-                    <Col xs={6} className="pr-0">
-                      <FormControlLabel
-                        className="mt-2"
-                        control={
-                          <Checkbox
-                            checked={outline}
-                            onChange={(e) => handleOutline(e)}
-                          />
-                        }
-                        label="outlines on [Z]"
-                      />
+                    <Col xs={6} className="mt-3">
+                      <FormControl fullWidth>
+                        <InputLabel id="segment-label">Result Image</InputLabel>
+                        <Select
+                          labelId="segment-label"
+                          id="segment-label-select"
+                          value={outline}
+                          label="result type"
+                          onChange={handleOutline}
+                        >
+                          <MenuItem value={0}>Predicted Outlines</MenuItem>
+                          <MenuItem value={1}>Predicted Masks</MenuItem>
+                          <MenuItem value={2}>Predicted Cell pose</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Col>
                   </Row>
                 </div>
@@ -177,7 +174,7 @@ const CellposeDialog = () => {
                   <Col xs={6} className="mt-3">
                     <FormControl fullWidth>
                       <InputLabel id="segment-label">
-                        chan to segment
+                        Segment Color
                       </InputLabel>
                       <Select
                         labelId="segment-label"
@@ -187,15 +184,15 @@ const CellposeDialog = () => {
                         onChange={handleChangeSegment}
                       >
                         <MenuItem value={0}>0: gray</MenuItem>
-                        <MenuItem value={1}>1: red</MenuItem>
-                        <MenuItem value={2}>2: green</MenuItem>
-                        <MenuItem value={3}>3: blue</MenuItem>
+                        <MenuItem value={1}>1: R</MenuItem>
+                        <MenuItem value={2}>2: G</MenuItem>
+                        <MenuItem value={3}>3: B</MenuItem>
                       </Select>
                     </FormControl>
                   </Col>
                   <Col xs={6} className="mt-3">
                     <FormControl fullWidth>
-                      <InputLabel id="chan2-label">chan2 (optional)</InputLabel>
+                      <InputLabel id="chan2-label">Nuclei Color</InputLabel>
                       <Select
                         labelId="chan2-label"
                         id="chan2-select"
@@ -204,9 +201,9 @@ const CellposeDialog = () => {
                         onChange={handleChangeChan2}
                       >
                         <MenuItem value={0}>0: none</MenuItem>
-                        <MenuItem value={1}>1: red</MenuItem>
-                        <MenuItem value={2}>2: green</MenuItem>
-                        <MenuItem value={3}>3: blue</MenuItem>
+                        <MenuItem value={1}>1: R</MenuItem>
+                        <MenuItem value={2}>2: G</MenuItem>
+                        <MenuItem value={3}>3: B</MenuItem>
                       </Select>
                     </FormControl>
                   </Col>

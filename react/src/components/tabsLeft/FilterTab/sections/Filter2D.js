@@ -1,41 +1,24 @@
 import React from 'react';
 import { useState } from 'react';
-import { useEffect } from 'react';
 import TabItem from '@/components/custom/TabItem';
 import SmallCard from '@/components/custom/SmallCard';
 import PageHeader from './PageHeader';
 import Divider from '@mui/material/Divider';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
-import SuperResolution from './SuperResolution';
 import { Col, Row } from 'react-bootstrap';
-import Draggable from 'react-draggable';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import { styled } from '@mui/material/styles';
-import MuiInput from '@mui/material/Input';
-import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import NativeSelect from '@mui/material/NativeSelect';
-import PreviewIcon from '@mui/icons-material/Preview';
-import CheckIcon from '@mui/icons-material/Check';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import { mdiPagePrevious, mdiPageNext, mdiCheck, mdiCamera } from '@mdi/js';
+import { mdiCheck, mdiCamera } from '@mdi/js';
 import Icon from '@mdi/react';
 import TextField from '@mui/material/TextField';
 import { useChannelsStore } from '@/state';
-// import { DeblurMethods } from '@/viv/constants/enums';
 import { Options } from '@/constants/filterOptions';
 
 const Filter2D = ({ setFilter }) => {
@@ -115,9 +98,7 @@ const Filter2D = ({ setFilter }) => {
     index: PropTypes.number.isRequired,
     value: PropTypes.number.isRequired,
   };
-  const FilterApply = () => {
-    console.log('xxxxxxx');
-  };
+  const FilterApply = () => {};
   const GetKernel = (props) => {
     const [item, radioName, radio] = props.content;
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -212,7 +193,7 @@ const Filter2D = ({ setFilter }) => {
 
     const inputNumKeys = Object.keys(inputNum);
     const InputNum = (props) => {
-      const [inputLabel, index, pad] = props.content;
+      const [inputLabel] = props.content;
       return (
         <div className="topInput">
           <TextField

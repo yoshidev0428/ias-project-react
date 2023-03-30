@@ -13,13 +13,17 @@ const DEFAULT_PARAMS = {
   },
   metadatas: [],
   method: 'tissuenet',
+  MLMethod: 'pc',
+  MLMethodList: [],
+  MLObjectBrightnessMode: 'light',
+  MLSelectTargetMode: 'object',
   custom_name: 'New Model',
   seg_info: {
     custom_method: 'tissuenet',
     custom_name: 'New Model',
     custom_icon: 'tissuenet',
     viewValue: 'image',
-    outline: false,
+    outline: 0,
     cell_diam: 0,
     chan_segment: 0,
     chan_2: 0,
@@ -28,6 +32,15 @@ const DEFAULT_PARAMS = {
     s_threshold: 0,
   },
   models: [],
+  canvas_info: {
+    outlines: [],
+    draw_style: '',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    zoom: 1,
+  },
 };
 
 const initState = {
@@ -45,6 +58,24 @@ const experiment = (state = initState, action) => {
     case 'setMethod':
       state.method = action.content;
       break;
+    case 'setMLMethod':
+      state.MLMethod = action.content;
+      break;
+    case 'addMLMethod':
+      const _content = action.content;
+      state.MLMethodList = [...state.MLMethodList, _content];
+      break;
+    case 'deleteMLMethod':
+      state.MLMethodList = state.MLMethodList.filter(
+        (mth) => mth.name !== action.content.name,
+      );
+      break;
+    case 'setMLObjectBrightnessMode':
+      state.MLObjectBrightnessMode = action.content;
+      break;
+    case 'setMLSelectTargetMode':
+      state.MLSelectTargetMode = action.content;
+      break;
     case 'set_custom_name':
       state.custom_name = action.content;
       break;
@@ -53,6 +84,9 @@ const experiment = (state = initState, action) => {
       break;
     case 'set_models':
       state.models = action.content;
+      break;
+    case 'set_canvas':
+      state.canvas_info = action.content;
       break;
     default:
       break;

@@ -262,7 +262,6 @@
     position: fixed;
     width: 100%;
     height: 100%;
-    background-color: rgba(194, 194, 194, 0.5);
     z-index: 9999;
     top: 0;
     display: flex;
@@ -276,6 +275,13 @@
     height: auto;
 }
 
+.img-container {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 .method-img {
     cursor: pointer;
 }
@@ -283,6 +289,17 @@
 .method-img-selected {
     cursor: pointer;
     border: 1px solid black!important;
+}
+
+.ml-method-img-selected {
+    cursor: pointer;
+    border: 2px solid black!important;
+    box-shadow: #555555 4px 4px;
+}
+
+.user-custom-canvas {
+    z-index: 9999!important;
+    position: absolute!important;
 }
 
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{

@@ -7,12 +7,9 @@ import { useFlagsStore } from '@/state';
 export default function Dec3D() {
   const Dialog3dflag = useFlagsStore((store) => store.Dialog3dflag);
   const select1 = () => {
-    console.log('Select-1');
     useFlagsStore.setState({ Dialog3dflag: true });
   };
-  const select2 = () => {
-    console.log('Select-2');
-  };
+  const select2 = () => {};
   return (
     <div className="">
       <SmallCard title="3D Deconvolution">
