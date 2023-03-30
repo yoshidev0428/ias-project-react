@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-const VisualImageList = (props) => {
-  const [itemData, setitemData] = useState([
+const VisualImageList = () => {
+  const [itemData] = useState([
     {
       img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
       title: 'Breakfast',
@@ -53,8 +53,7 @@ const VisualImageList = (props) => {
     },
   ]);
   const [selectedIndex, setSelectedIndex] = useState('Breakfast');
-  const selectImg = (event, item) => {
-    console.log(item);
+  const selectImg = (_event, item) => {
     setSelectedIndex(item);
   };
 

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Divider from '@mui/material/Divider';
-import { Container } from 'react-bootstrap';
 import SmallCard from '../../../custom/SmallCard';
 import CustomButton from '../../../custom/CustomButton';
 import {
@@ -13,27 +11,13 @@ import {
 } from '@mdi/js';
 
 export default function FirstPage() {
-  const onClick1 = () => {
-    console.log('onClick Set Call');
-  };
-  const onClick2 = () => {
-    console.log('onClick Go');
-  };
-  const onClick3 = () => {
-    console.log('onClick Learning-Method DLCall');
-  };
-  const onClick4 = () => {
-    console.log('onClick Learning-Method MLCall');
-  };
-  const onClick5 = () => {
-    console.log('onClick Learning-Method Go');
-  };
-  const onClick6 = () => {
-    console.log('onClick Object-Method DLCall');
-  };
-  const onClick7 = () => {
-    console.log('onClick Object-Method MLCall');
-  };
+  const onClick1 = () => {};
+  const onClick2 = () => {};
+  const onClick3 = () => {};
+  const onClick4 = () => {};
+  const onClick5 = () => {};
+  const onClick6 = () => {};
+  const onClick7 = () => {};
   return (
     <>
       <p>Method Setting</p>

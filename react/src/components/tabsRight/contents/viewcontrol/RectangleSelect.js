@@ -8,12 +8,11 @@ import {
   mdiSquareEditOutline,
   mdiTrashCanOutline,
 } from '@mdi/js';
-import CustomButton from '../../../custom/CustomButton';
-import SmallCard from '../../../custom/SmallCard';
-export default function RectangleSelect(props) {
-  const onSelect1 = () => {
-    console.log('click onSelect1');
-  };
+import CustomButton from '@/components/custom/CustomButton';
+import SmallCard from '@/components/custom/SmallCard';
+
+export default function RectangleSelect() {
+  const onSelect1 = () => {};
 
   return (
     <SmallCard title="RectangleSelect">

@@ -7,13 +7,13 @@ import ListItemText from '@mui/material/ListItemText';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 
-import _6well from '../../../../assets/images/6well.png';
-import _12well from '../../../../assets/images/12well.png';
-import _24well from '../../../../assets/images/24well.png';
-import _35dish from '../../../../assets/images/35dish.png';
+import _6well from '@/assets/images/6well.png';
+import _12well from '@/assets/images/12well.png';
+import _24well from '@/assets/images/24well.png';
+import _35dish from '@/assets/images/35dish.png';
 
-const AnalysisList = (props) => {
-  const [items, setItem] = useState([
+const AnalysisList = () => {
+  const [items] = useState([
     { id: 0, name: 'area' },
     { id: 1, name: 'number' },
     { id: 2, name: 'max intensity' },
@@ -33,7 +33,7 @@ const AnalysisList = (props) => {
 
   const [selectedIndex, setSelectedIndex] = React.useState(1);
 
-  const [selects, setSelects] = useState([
+  const [selects] = useState([
     { id: 0, name: '6well', img: _6well },
     { id: 1, name: '12well', img: _12well },
     { id: 2, name: '24well', img: _24well },
@@ -41,10 +41,6 @@ const AnalysisList = (props) => {
   ]);
 
   const [selectedImg, setSelectedImgx] = useState(0);
-
-  const selectItem = (e) => {
-    setSelectedIndex(e.target.value);
-  };
 
   const handleImgCheckboxClick = (e) => {
     setSelectedImgx(e.target.value);

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import SmallCard from '../../../custom/SmallCard';
-import ObjectiveButton from '../../../custom/ObjectiveButton';
-export default function Objective(props) {
+import React, { useState } from 'react';
+import SmallCard from '@/components/custom/SmallCard';
+import ObjectiveButton from '@/components/custom/ObjectiveButton';
+export default function Objective() {
   const [activeButton, setActiveButton] = useState(0); //id
 
   const objectives = [
@@ -14,12 +14,11 @@ export default function Objective(props) {
 
   const handleClickButton = (e, id) => {
     setActiveButton(id);
-    console.log('OBJECTIVE: handleClickButton ', id, e);
   };
 
   return (
     <SmallCard title="Objective">
-      {objectives.map((item, i) => {
+      {objectives.map((item) => {
         return (
           <ObjectiveButton
             onClick={(e, id) => handleClickButton(e, id)}

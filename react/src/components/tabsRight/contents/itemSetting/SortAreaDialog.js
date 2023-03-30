@@ -1,29 +1,15 @@
 import React, { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Container from '@mui/material/Container';
-import Icon from '@mdi/react';
-import {
-  mdiNoteMultipleOutline,
-  mdiArrowLeftRight,
-  mdiArrowUpDown,
-} from '@mdi/js';
 import SortItemTop from './contents/sortItem/SortItemTop';
 import SortItemBottom from './contents/sortItem/SortItemBottom';
 
 export default function SortAreaDialog(props) {
-  const [open, setOpen] = useState(true);
+  const [open] = useState(true);
   const maxDialogWidth = 800;
 
   const handleClose = () => {

@@ -16,9 +16,8 @@ import {
 } from '@mdi/js';
 import { connect } from 'react-redux';
 import StepRangeSlider from 'react-step-range-slider';
-import { useSelector } from 'react-redux';
 
-import store from '../../../../reducers';
+import store from '@/reducers';
 
 const Input = styled(TextField)`
   width: 50px;
@@ -57,36 +56,26 @@ const Timeline = (props) => {
   };
 
   const SliderChange = (newValue) => {
-    console.log(' Timeline.js SliderChange newValue : ', newValue);
     setIsLoading(false);
     setValue(newValue);
     updateTime(newValue);
     setIsLoading(true);
   };
 
-  const onRefresh = () => {
-    console.log('onRefresh clicked');
-  };
-  const onSetting = () => {
-    console.log('onSetting clicked');
-  };
+  const onRefresh = () => {};
+  const onSetting = () => {};
   // const onPlay = () => {
-  //     console.log("onPlay clicked")
   // }
   // const onStop = () => {
-  //     console.log("onStop clicked")
   // }
   // const onRewind = () => {
-  //     console.log("onRewind clicked")
   // }
   // const onFForward = () => {
-  //     console.log("onFForward clicked")
   // }
 
   const InputChange = (event) => {
     let currentValue =
       event.target.value === '' ? '' : Number(event.target.value);
-    console.log('Timeline InputChange currentValue : ', currentValue);
     if (currentValue < minSlider) {
       setValue(minSlider);
     } else if (currentValue > maxSlider) {
@@ -98,15 +87,8 @@ const Timeline = (props) => {
       setIsLoading(true);
     }
   };
-  const getTimeLine = useSelector(
-    (state) => state.experiment.viewinfo.timeline,
-  );
   useEffect(() => {
     if (props.selectedVesselHole && props.content) {
-      console.log(
-        ' ==== timeline.js useEffect props.selectedVesselHole : ',
-        props.selectedVesselHole,
-      );
       if (props.content.length > 0) {
         // let contents = props.content; let zMin = 0; let zMax = 0;
         // for (let i = 0; i < contents.length; i++) {
@@ -134,10 +116,6 @@ const Timeline = (props) => {
 
   useEffect(() => {
     if (props.content) {
-      console.log(
-        ' ==== Timeline.js useEffect props.content : ',
-        props.content,
-      );
       if (props.content.length > 0) {
         setIsLoading(false);
         contents = props.content;
@@ -157,7 +135,6 @@ const Timeline = (props) => {
             rangeValues.push({ value: i, step: 1 });
           }
           // rangeValues.sort((a, b) => a.value - b.value);
-          console.log(' Timeline.js useEffect rangeValues : ', rangeValues);
           setValue(timeMin);
           setRange(rangeValues);
           setMinSlider(timeMin);

@@ -45,7 +45,7 @@ const WellPlates = (props) => {
       : radiusCalculated / 2,
   );
   const [holeClicked, setHoleClicked] = useState(0);
-  const [content, setContent] = useState(props.content);
+  const [_content, setContent] = useState(props.content);
   const [activeHoles, setActiveHoles] = useState([]);
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const WellPlates = (props) => {
     return new_array_content;
   };
 
-  const getViewConfigs = (dataHoleChosen) => {
+  const _getViewConfigs = (dataHoleChosen) => {
     let old_content = [...dataHoleChosen.data];
     let zPosS = [];
     let timePointS = [];

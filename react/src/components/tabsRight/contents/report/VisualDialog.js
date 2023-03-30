@@ -2,32 +2,20 @@ import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useFlagsStore } from '@/state';
-import { useState } from 'react';
-import { Row, Col, Form, Button, Image } from 'react-bootstrap';
-// import CustomButton from "../../../custom/CustomButton";
 import VisualToolbar from './VisualToolbar';
 import AnalysisList from './AnalysisList';
 import VisualImageList from './VisualImageList';
 import VisualLineChart from './VisualLineChart';
 import VisualTable from './VisualTable';
-import Icon from '@mdi/react';
-import {
-  mdiArrowLeftBold,
-  mdiArrowRightBold,
-  mdiAlphaX,
-  mdiHomeOutline,
-} from '@mdi/js';
 
 const VisualDialog = () => {
   const DialogVisualFlag = useFlagsStore((store) => store.DialogVisualFlag);
   const close = () => {
     useFlagsStore.setState({ DialogVisualFlag: false });
-    console.log('flag state=>', DialogVisualFlag);
   };
 
   return (
     <>
-      {console.log(DialogVisualFlag)}
       <Dialog
         open={DialogVisualFlag}
         onClose={close}

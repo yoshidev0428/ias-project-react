@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useTable, useSortBy } from 'react-table';
-import Paper from '@mui/material/Paper';
-import { Dayjs } from 'dayjs';
 import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -67,7 +65,7 @@ const VisualTable = () => {
     },
   ]);
 
-  const [columns, setColumns] = useState([
+  const [columns] = useState([
     {
       Header: 'Name(Job Title)',
       accessor: 'col1', // accessor is the "key" in the data

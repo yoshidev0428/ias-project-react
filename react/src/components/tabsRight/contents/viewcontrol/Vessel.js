@@ -28,13 +28,16 @@ const Vessel = (props) => {
   const [currentVessel, setCurrentVessel] = useState(getVesselById(1));
   const [showSelectDialog, setShowSelectDialog] = useState(false);
   const [showExpansionDialog, setShowExpansionDialog] = useState(false);
-  const [contents, setContents] = useState(props.content);
+  const [contents, setContents] = useState(props.content ?? []); //added ?? by QmQ
   const [ref, { width }] = useElementSize();
-  console.log('props--->', currentVessel);
-  store.dispatch({
-    type: 'SET_VESSEL_STATUS_COUNT',
-    count: currentVessel.count,
-  });
+
+  // updated by QmQ
+  useEffect(() => {
+    store.dispatch({
+      type: 'SET_VESSEL_STATUS_COUNT',
+      count: currentVessel.count ?? 1,
+    });
+  }, [currentVessel]);
 
   const getCorrectVesselID = (seriesStr, maxRow, maxCol) => {
     let vesselID = -1;
@@ -49,7 +52,6 @@ const Vessel = (props) => {
         break;
       }
     }
-    // console.log("Vessel.js getCorrectVesselID  currentVesselTypeGroup : ", currentVesselTypeGroup[0]);
     if (currentVesselTypeGroup.length > 0) {
       for (let i = 0; i < currentVesselTypeGroup.length; i++) {
         if (currentVesselTypeGroup[0].type === 'WellPlate') {
@@ -99,11 +101,6 @@ const Vessel = (props) => {
       if (current_contents[i].col > maxCol) maxCol = current_contents[i].col;
     }
     let seriesStr = currentVessel.type;
-    console.log(
-      'Vessl.js changeVesselSeries',
-      direction,
-      current_VesselGroupIndex,
-    );
     if (direction) {
       if (current_VesselGroupIndex === VESSELS.length - 1) {
         seriesStr = VESSELS[0][0].type;
@@ -117,14 +114,12 @@ const Vessel = (props) => {
         seriesStr = VESSELS[current_VesselGroupIndex - 1][0].type;
       }
     }
-    // console.log(seriesStr, maxRow + 1, maxCol);
     let vesselID = getCorrectVesselID(seriesStr, maxRow + 1, maxCol);
     setCurrentVessel(getVesselById(vesselID));
     setCurrentVesselId(vesselID);
   };
 
   useEffect(() => {
-    // console.log("View Control Vessel.js : NEW CONTENT : ", props.content);
     if (props.content && props.content !== []) {
       let current_contents = JSON.parse(JSON.stringify(props.content));
       setContents(JSON.parse(JSON.stringify(current_contents)));
