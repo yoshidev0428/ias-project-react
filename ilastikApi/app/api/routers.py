@@ -3,7 +3,7 @@ from ilastik.shell.projectManager import ProjectManager
 from ilastik.shell.headless.headlessShell import HeadlessShell
 from ilastik.workflows.pixelClassification import PixelClassificationWorkflow
 from fastapi.responses import JSONResponse, FileResponse
-from mainApi.config import STATIC_PATH, CURRENT_STATIC
+from ilastikApi.config import STATIC_PATH, CURRENT_STATIC
 from fastapi import (
     Request,
     Body,
