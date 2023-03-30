@@ -85,12 +85,11 @@ export const getImageUrl = (
     url = `${userId}/${path}`;
   }
 
-  // 20230331
-  // if (resumeDowloading) {
-  //   url = `image/download/?path=${url}`;
-  // } else {
-  url = `static/${url}`;
-  // }
+  if (resumeDowloading) {
+    url = `image/download/?path=${url}`;
+  } else {
+    url = `static/${url}`;
+  }
 
   return `${process.env.REACT_APP_BASE_API_URL}/${url}`.replaceAll(/\/+/g, '/');
 };
