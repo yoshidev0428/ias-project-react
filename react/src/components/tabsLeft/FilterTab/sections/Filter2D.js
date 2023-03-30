@@ -1,21 +1,36 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import TabItem from '@/components/custom/TabItem';
 import SmallCard from '@/components/custom/SmallCard';
 import PageHeader from './PageHeader';
 import Divider from '@mui/material/Divider';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Tab from 'react-bootstrap/Tab';
+import SuperResolution from './SuperResolution';
 import { Col, Row } from 'react-bootstrap';
+import Draggable from 'react-draggable';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import { styled } from '@mui/material/styles';
+import MuiInput from '@mui/material/Input';
+import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
 import NativeSelect from '@mui/material/NativeSelect';
-import { mdiCheck, mdiCamera } from '@mdi/js';
+import PreviewIcon from '@mui/icons-material/Preview';
+import CheckIcon from '@mui/icons-material/Check';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import { mdiPagePrevious, mdiPageNext, mdiCheck, mdiCamera } from '@mdi/js';
 import Icon from '@mdi/react';
 import TextField from '@mui/material/TextField';
 import { useChannelsStore } from '@/state';
@@ -117,42 +132,40 @@ const Filter2D = ({ setFilter }) => {
       if (item === 'Convolution') {
         const kernelSize = parseInt(event.target.value);
         setSelectedIndex(kernelSize);
-        if (kernelSize===0) {
+        if (kernelSize === 0) {
           setFilter2D('Gauss', 3);
-        } else if (kernelSize===1) {
+        } else if (kernelSize === 1) {
           setFilter2D('Gauss', 5);
-        } else if (kernelSize===2) {
+        } else if (kernelSize === 2) {
           setFilter2D('Gauss', 7);
-        } else if (kernelSize===3) {
+        } else if (kernelSize === 3) {
           setFilter2D('High_pass', 3);
-        } else if (kernelSize===4) {
+        } else if (kernelSize === 4) {
           setFilter2D('High_pass', 5);
-        } else if (kernelSize===5) {
+        } else if (kernelSize === 5) {
           setFilter2D('High_pass', 7);
-        } else if (kernelSize===6) {
+        } else if (kernelSize === 6) {
           setFilter2D('Horizontal_edge', 3);
-        } else if (kernelSize===7) {
+        } else if (kernelSize === 7) {
           setFilter2D('Vertical_edge', 3);
         }
-         
       } else if (item === 'Morphological') {
         const kernelSize = parseInt(event.target.value);
         setSelectedIndex(kernelSize);
-        if (kernelSize===0) {
+        if (kernelSize === 0) {
           setFilter2D('Open', 3);
-        } else if (kernelSize===1) {
+        } else if (kernelSize === 1) {
           setFilter2D('Close', 3);
-        } else if (kernelSize===2) {
+        } else if (kernelSize === 2) {
           setFilter2D('Erode', 4);
-        } else if (kernelSize===3) {
+        } else if (kernelSize === 3) {
           setFilter2D('Dilate', 3);
-        }     
+        }
       } else {
         const kernelSize = parseInt(event.target.value);
         setSelectedIndex(kernelSize);
         setFilter2D(item, 3 + 2 * kernelSize);
       }
-
     };
     return (
       <FormControl>
@@ -187,13 +200,13 @@ const Filter2D = ({ setFilter }) => {
     const selectedVals = Object.values(options[item]);
     const [radioName, radio, inputNum] = selectedVals;
     const [formData, setFormData] = useState(inputNum);
-    useEffect(()=>{
-      setFormData(inputNum)
-    }, [inputNum])
+    useEffect(() => {
+      setFormData(inputNum);
+    }, [inputNum]);
 
     const inputNumKeys = Object.keys(inputNum);
     const InputNum = (props) => {
-      const [inputLabel] = props.content;
+      const [inputLabel, index] = props.content;
       return (
         <div className="topInput">
           <TextField
@@ -204,21 +217,22 @@ const Filter2D = ({ setFilter }) => {
               value: formData[inputLabel],
               min: 0,
               max: 100,
-            }}            
+            }}
             // value={formData[inputLabel]}
             name={inputLabel}
-            onChange={(e) => onChangeInput(e.target.name, e.target.value, index)}
+            onChange={(e) =>
+              onChangeInput(e.target.name, e.target.value, index)
+            }
             // onChange={onChangeInput(index)}
             InputLabelProps={{
               shrink: true,
             }}
-            style={{ paddingTop: '5px',paddingBottom: '10px', width: '100%'}}
+            style={{ paddingTop: '5px', paddingBottom: '10px', width: '100%' }}
           />
         </div>
       );
     };
 
-    
     const onChangeInput = (name, value, index) => {
       setFormData({
         ...formData,
@@ -252,10 +266,10 @@ const Filter2D = ({ setFilter }) => {
     const filterNames = props.name;
     const [selectedValue, setSelectedValue] = useState('Low_pass');
     firstName = filterNames[0];
-    useEffect(()=>{
+    useEffect(() => {
       setSelectedValue(firstName);
-    }, [firstName])
-    
+    }, [firstName]);
+
     function handleChange(event) {
       setSelectedValue(event.target.value);
     }
@@ -269,8 +283,8 @@ const Filter2D = ({ setFilter }) => {
             }}
           ></div>
           <NativeSelect
-            defaultValue={30}                           
-            value={selectedValue}                                                                                     
+            defaultValue={30}
+            value={selectedValue}
             onChange={handleChange}
             inputProps={{
               name: 'select',
@@ -293,7 +307,6 @@ const Filter2D = ({ setFilter }) => {
   };
 
   const SelectMenu = () => {
-
     const [filterOption, setFilterOption] = useState(emhasisList);
     return (
       <div style={{ width: '100%', height: '100%' }}>
