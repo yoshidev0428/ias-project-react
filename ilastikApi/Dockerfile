@@ -26,8 +26,8 @@ ENV PATH /opt/conda/bin:$PATH
 
 CMD [ "/bin/bash" ]
 
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -O miniconda.sh -q && \
-    echo "fc96109ea96493e31f70abbc5cae58e80634480c0686ab46924549ac41176812 miniconda.sh" > shasum && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh -O miniconda.sh -q && \
+    echo "4dc4214839c60b2f5eb3efbdee1ef5d9b45e74f2c09fcae6c8934a13f36ffc3e miniconda.sh" > shasum && \
     mkdir -p /opt && \
     bash miniconda.sh -b -p /opt/conda && \
     rm miniconda.sh shasum && \
@@ -43,6 +43,9 @@ WORKDIR /app
 
 COPY ./ilastikApi/requirements.txt /requirements.txt
 
+RUN conda install mamba -n base -c conda-forge && \
+    mamba install --override-channels -c pytorch -c ilastik-forge -c conda-forge ilastik
+
 # additional dependencies
 # netcat used for checking for resources on the network before start, see start.sh for use
 RUN apt-get update && \
@@ -54,8 +57,6 @@ RUN apt install -y openslide-tools && \
     apt install -y git && \
     apt install -y default-jdk && \
     apt install -y curl && \
-    conda install mamba -n base -c conda-forge && \
-    mamba install --override-channels -c pytorch -c ilastik-forge -c conda-forge ilastik && \
     pip install -r /requirements.txt && \
     pip install --upgrade pyopenssl
 
