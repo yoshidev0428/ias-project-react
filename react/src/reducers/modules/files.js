@@ -10,7 +10,7 @@ const DEFAULT_PARAMS = {
   experimentName: null,
   selectedImage: null,
   imagePathForAvivator: null,
-  imagePathForTree: '',
+  imagePathForTree: [],
   selectedFilesForDropZone: '',
 };
 

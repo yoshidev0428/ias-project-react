@@ -50,6 +50,7 @@ import { useSelector } from 'react-redux';
 
 import LoadingDialog from '@/components/custom/LoadingDialog';
 import UserCanvas from '@/components/custom/UserCanvas'
+import MLLabelCanvas from '@/components/custom/MLLabelCanvas'; // added by Wang
 import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
@@ -92,6 +93,7 @@ const MainFrame = (props) => {
 
   const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
   const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
+  const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag); //added by Wang
 
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
@@ -103,6 +105,7 @@ const MainFrame = (props) => {
       imageViewAreaRef.current.offsetWidth,
     );
     localStorage.setItem('imageViewSizeHeight', height - fixedBarHeight);
+    // added by Wang
     localStorage.setItem(
       'imageViewSizeTop',
       imageViewAreaRef.current.offsetTop,
@@ -387,12 +390,14 @@ const MainFrame = (props) => {
                 alignItems: 'center',
               }}
             >
-              {' '}
+              {``}
+
               {/* Central Panel, Viv Image Viewer */}
               {userPage && <UserPage />}
               {accountPage && <AccountPage />}
               {vivPage && <Avivator source={imagePathForAvivator} />}
               {UserCanvasFlag && <UserCanvas />}
+              {MLCanvasFlag && <MLLabelCanvas />}
             </Col>
           )}
           {currentVesseelCount === 2 && (
@@ -415,6 +420,7 @@ const MainFrame = (props) => {
                 {accountPage && <AccountPage />}
                 {vivPage && <Avivator source={imagePathForAvivator} />}
                 {UserCanvasFlag && <UserCanvas />}
+                {MLCanvasFlag && <MLLabelCanvas />}
               </Col>
               <Col
                 ref={imageViewAreaRef}
@@ -431,6 +437,7 @@ const MainFrame = (props) => {
                 {accountPage && <AccountPage />}
                 {vivPage && <Avivator source={imagePathForAvivator} />}
                 {UserCanvasFlag && <UserCanvas />}
+                {MLCanvasFlag && <MLLabelCanvas />}
               </Col>
             </Col>
           )}
@@ -455,6 +462,7 @@ const MainFrame = (props) => {
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
                   {UserCanvasFlag && <UserCanvas />}
+                  {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
                 <Col
                   ref={imageViewAreaRef}
@@ -471,6 +479,7 @@ const MainFrame = (props) => {
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
                   {UserCanvasFlag && <UserCanvas />}
+                  {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
               </Col>
               <Col xs={4}>
@@ -492,6 +501,7 @@ const MainFrame = (props) => {
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
                   {UserCanvasFlag && <UserCanvas />}
+                  {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
                 <Col
                   ref={imageViewAreaRef}
@@ -508,6 +518,7 @@ const MainFrame = (props) => {
                   {accountPage && <AccountPage />}
                   {vivPage && <Avivator source={imagePathForAvivator} />}
                   {UserCanvasFlag && <UserCanvas />}
+                  {MLCanvasFlag && <MLLabelCanvas />}
                 </Col>
               </Col>
             </Fragment>

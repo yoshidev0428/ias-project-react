@@ -10,13 +10,8 @@ import Judge from './contents/dlml/Judge';
 import MethodSelect from './contents/dlml/MethodSelect';
 import BoxSelect from './contents/dlml/BoxSelect';
 import ObjectSelect from './contents/dlml/ObjectSelect';
-import MethodSelect2 from './contents/dlml/MethodSelect2';
-import BoxSelect2 from './contents/dlml/BoxSelect2';
-import ObjectSelect2 from './contents/dlml/ObjectSelect2';
-import Count from './contents/dlml/Count';
-import ObjectClass2 from './contents/dlml/ObjectClass2';
-import ClassObjectStatus2 from './contents/dlml/ClassObjectStatus2';
 import { Divider } from 'semantic-ui-react';
+import MLContainer from './MLContainer';
 
 export default function DLMLTab() {
   const [expanded, setExpanded] = useState(false);
@@ -62,17 +57,7 @@ export default function DLMLTab() {
           <Typography>Machine Learning</Typography>
         </AccordionSummary>
         <AccordionDetails className="p-0">
-          <MethodSelect2 />
-          <Divider />
-          <BoxSelect2 />
-          <Divider />
-          <ObjectSelect2 />
-          <Divider />
-          <Count />
-          <Divider />
-          <ObjectClass2 />
-          <Divider />
-          <ClassObjectStatus2 />
+          <MLContainer />
         </AccordionDetails>
       </Accordion>
     </TabItem>
