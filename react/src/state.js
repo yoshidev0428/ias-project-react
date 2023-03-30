@@ -231,6 +231,7 @@ const DEFAUlT_FLAG_STATE = {
   DialogCellposeFlag: false,
   DialogVisualFlag: false,
   DialogLoadingFlag: false,
+  UserCanvasFlag: false,
 };
 
 export const useFlagsStore = create((set) => ({

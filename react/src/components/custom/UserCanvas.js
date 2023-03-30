@@ -12,7 +12,7 @@ function Usercanvas(props) {
   const canvas = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const [position, setPosition] = useState(null);
-  const [activeColor, setActiveColor] = useState(props.colors[0]);
+  const [activeColor, setActiveColor] = useState('red');
   const [width, setWidth] = React.useState(
     props.canvas_info.width * Math.pow(2, props.canvas_info.zoom),
   );
@@ -22,14 +22,23 @@ function Usercanvas(props) {
   const [top, setTop] = React.useState(props.canvas_info.top);
   const [left, setLeft] = React.useState(props.canvas_info.left);
   const [outlines, setOutlines] = React.useState(props.canvas_info.outlines);
-  const selected_rois = [];
+  let selected_rois = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
+    if(localStorage.getItem('CANV_ROIS') !== '') {
+      selected_rois = localStorage.getItem('CANV_ROIS');
+      selected_rois = selected_rois.split(',');
+    }
     for (let i in outlines) {
       // let temp = outlines[i];
       // let temp_border = get_roi_border(i);
       if (check_roi_valid(i, pos, new_pos) === true) {
-        if (selected_rois.indexOf(i) == -1) selected_rois.push(i);
+        if (selected_rois.indexOf(i) == -1) {
+          selected_rois.push(i);
+          localStorage.setItem(
+            'CANV_ROIS',selected_rois
+          );
+        }
       }
     }
   };
@@ -80,7 +89,7 @@ function Usercanvas(props) {
   };
 
   const get_roi_border = (roi_num) => {
-    let zoom = props.canvas_info.zoom;
+    let zoom = localStorage.getItem('CANV_ZOOM');
     if (outlines.length > 0) {
       let roi_now = outlines[roi_num];
       let minX = 10000;
@@ -186,9 +195,7 @@ function Usercanvas(props) {
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
       context.closePath();
-
       context.stroke();
-      handleDraw(context.getImageData(0, 0, width, height));
     }
   };
 
@@ -205,7 +212,6 @@ function Usercanvas(props) {
     let rheight = newPosition.y - originalPosition.y;
     context.rect(originalPosition.x, originalPosition.y, rwidth, rheight);
     context.stroke();
-    // handleDraw(context.getImageData(0, 0, width, height));
   };
 
   const drawEllipse = (originalPosition, newPosition) => {
@@ -214,7 +220,7 @@ function Usercanvas(props) {
     }
 
     const context = canvas.current.getContext('2d');
-    context.fillStyle = activeColor;
+    context.fillStyle = 'red';
     context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
     context.beginPath();
     let radiusX = (newPosition.x - originalPosition.x) / 2;
@@ -231,12 +237,11 @@ function Usercanvas(props) {
       2 * Math.PI,
     );
     context.stroke();
-    // handleDraw(context.getImageData(0, 0, width, height));
   };
 
   const drawOutlines = () => {
     // console.log('cells', selected_rois)
-    let zoom = props.canvas_info.zoom;
+    let zoom = localStorage.getItem('CANV_ZOOM')
     const context = canvas.current.getContext('2d');
     context.fillStyle = activeColor;
     for (let i in selected_rois) {
@@ -250,12 +255,6 @@ function Usercanvas(props) {
     // console.log('draw-outlines')
   };
 
-  const handleDraw = (data) => {
-    if (typeof props.onDraw === 'function') {
-      props.onDraw(data);
-    }
-  };
-
   const initCanvas = () => {
     const context = canvas.current.getContext('2d');
     context.fillStyle = 'blue';
@@ -263,16 +262,26 @@ function Usercanvas(props) {
   };
 
   useEffect(() => {
+    localStorage.setItem('CANV_ROIS', '');
+  }, [])
+
+  useEffect(() => {
     // initCanvas();
     // SetCanvasInfo(props.canvas_info)
-    setWidth(props.canvas_info.width * Math.pow(2, props.canvas_info.zoom));
-    setHeight(props.canvas_info.height * Math.pow(2, props.canvas_info.zoom));
+    let zoom = localStorage.getItem('CANV_ZOOM');
+    console.log('--zoom: ',  zoom)
+    setWidth(props.canvas_info.width * Math.pow(2, zoom));
+    setHeight(props.canvas_info.height * Math.pow(2, zoom));
     setOutlines(props.canvas_info.outlines);
+    drawOutlines();
   }, [props, width, height]);
 
   useEffect(() => {
-    setTop(props.canvas_info.top);
+    // console.log('left: ',  props.canvas_info.zoom)
+    let zoom = localStorage.getItem('CANV_ZOOM');
+    setTop(props.canvas_info.top );
     setLeft(props.canvas_info.left);
+    drawOutlines();
   }, [props.canvas_info.left, props.canvas_info.top]);
 
   return (
