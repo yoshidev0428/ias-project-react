@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import shallow from 'zustand/shallow';
 import debounce from 'lodash/debounce';
 import {
@@ -18,6 +18,8 @@ import {
 } from '@/state';
 import { useWindowSize } from '@/helpers/avivator';
 import { DEFAULT_OVERVIEW } from '@/constants';
+import { PostProcessEffect } from '@deck.gl/core';
+import generateShaderModule from '@/helpers/generate-module';
 import CustomPaletteExtension from './extensions/custom-palette-extension';
 import CustomPipViewer from './viewers/CustomPipViewer';
 import store from '@/reducers';
@@ -66,14 +68,12 @@ const Viewer = ({ isFullScreen }) => {
     target = [255, 255];
   }
   // debugger;
-  console.log("========>", xSlice, ySlice)
-  console.log("========>", target)
-  console.log("========>", viewState.zoom)
-  console.log("U_iternum .................", typeof inputNum_1)
+  //console.log("========>", xSlice, ySlice)
+  //console.log("========>", target)
+  //console.log("========>", viewState.zoom)
+  //console.log("U_iternum .................", typeof inputNum_1)
   const postProcessEffect = useMemo(
-    
     () =>
-    
       new PostProcessEffect(shaderModule, {
         u_brightness: brightness,
         u_contrast: contrast,
@@ -119,10 +119,7 @@ const Viewer = ({ isFullScreen }) => {
       deck_width / 2 -
         initialViewState.target[0] * Math.pow(2, initialViewState.zoom),
     );
-    localStorage.setItem(
-      'CANV_ZOOM',
-      initialViewState.zoom
-    );
+    localStorage.setItem('CANV_ZOOM', initialViewState.zoom);
     store.dispatch({
       type: 'set_canvas',
       content: canvas_save,
@@ -151,10 +148,7 @@ const Viewer = ({ isFullScreen }) => {
       'CANV_LEFT',
       deck_width / 2 - viewState.target[0] * Math.pow(2, viewState.zoom),
     );
-    localStorage.setItem(
-      'CANV_ZOOM',
-      viewState.zoom
-    );
+    localStorage.setItem('CANV_ZOOM', viewState.zoom);
     store.dispatch({
       type: 'set_canvas',
       content: canvas_save,
