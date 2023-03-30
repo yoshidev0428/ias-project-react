@@ -1,10 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import React from 'react';
 import AccountProfile from './user/account-profile';
-import { AccountProfileDetails } from './user/account-profile-details';
 
-const AccountPage = (props) => {
+const AccountPage = () => {
   return (
     <>
       <title>Account | Material Kit</title>

@@ -64,7 +64,7 @@ export default function RecursiveTreeView() {
   function getOnChange(checked, nodes) {
     //gets all freshly selected or unselected nodes
     const allNode = getChildById(data, nodes.id);
-    //console.log("This is all nodes", allNode)
+    console.log('This is all nodes', allNode);
     //combines newly selected nodes with existing selection
     //or filters out newly deselected nodes from existing selection
     let array = checked

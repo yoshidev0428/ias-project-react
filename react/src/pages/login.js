@@ -15,6 +15,16 @@ const Login = (props) => {
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
   const [remember, setRemember] = useState(false);
+  if (localStorage.getItem('rememberFlag', true)) {
+    store.dispatch({
+      type: 'auth_loggedIn',
+      payload: {
+        token: localStorage.getItem('token'),
+        tokenType: localStorage.getItem('tokenType'),
+        user: JSON.parse(localStorage.getItem('user')),
+      },
+    });
+  }
   // Function to call submit
   const handleLogin = async (e) => {
     // Prevents page reload on wrongs creds
@@ -44,6 +54,12 @@ const Login = (props) => {
               user: response.data.user,
             },
           });
+          if (remember === true) {
+            localStorage.setItem('rememberFlag', true);
+            localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('tokenType', response.data.tokenType);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+          }
           store.dispatch({ type: 'auth_setAuthPage', page: null });
         }
       })
@@ -76,11 +92,11 @@ const Login = (props) => {
       });
   };
 
-  const showRegistration = async (e) => {
+  const showRegistration = async () => {
     store.dispatch({ type: 'auth_setAuthPage', page: 'registrationPage' });
   };
 
-  const showForgetPassword = async (e) => {};
+  const showForgetPassword = async () => {};
 
   return (
     <div className="login-container">
@@ -123,7 +139,7 @@ const Login = (props) => {
           >
             <Form.Control
               type="checkbox"
-              onChange={(p) => setRemember(!remember)}
+              onChange={() => setRemember(!remember)}
               style={{ width: '20px' }}
             />
             <span style={{ margin: 'auto', marginLeft: '15px' }}>
