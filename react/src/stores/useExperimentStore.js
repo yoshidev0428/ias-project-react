@@ -1,8 +1,9 @@
-import { getExperiments } from '@/api/experiment';
 import create from 'zustand';
+import { getExperiments } from '@/api/experiment';
 
 const DEFAULT_EXPERIMENT_STATE = {
   experiments: [],
+  metadataMap: {},
   error: null,
 };
 
@@ -19,4 +20,9 @@ export const useExperimentStore = create((set, get) => ({
       set((state) => ({ ...state, error: err }));
     }
   },
+  updateMetadataMap: (metadata) =>
+    set((state) => ({
+      ...state,
+      metadataMap: { ...state.metadataMap, ...metadata },
+    })),
 }));

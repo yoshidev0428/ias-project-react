@@ -6,7 +6,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
-const TreeView = ({ nodes, selected, onNodeSelect, width = 400 }) => {
+const TreeView = ({ nodes, selected, onNodeSelect }) => {
   const renderTree = (node) => (
     <TreeItem
       key={node.id}

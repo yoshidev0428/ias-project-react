@@ -1,22 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
-import { PositionTabLabels, PositionTabs } from './constants';
+import Typography from '@mui/material/Typography';
 import { TabContext, TabList, TabPanel as MuiTabPanel } from '@mui/lab';
 import ClosableDialog from '@/components/dialogs/ClosableDialog';
-import PanelImages from './PanelImages';
+import TabImage from './tabs/TabImage';
 import ExperimentDialog from '../ExperimentDialog';
-import { getStaticPath } from '@/helpers/file';
-
-const TabPanel = (props) => (
-  <MuiTabPanel {...props} sx={{ p: 0 }}>
-    {props.children}
-  </MuiTabPanel>
-);
+import { PositionTabLabels, PositionTabs } from './constants';
+import { getImageUrl } from '@/helpers/file';
+import TabMetadata from './tabs/TabMetadata';
+import { toTiffPath } from '@/helpers/avivator';
+import TabNaming from './tabs/TabNaming';
 
 const PositionDialog = ({ open, onClose }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(PositionTabs.images);
 
   const [openExpDlg, setOpenExpDlg] = useState(false);
@@ -34,10 +31,41 @@ const PositionDialog = ({ open, onClose }) => {
             Cloud
           </Button>
         );
+      case PositionTabs.naming:
+        return (
+          <>
+            <Button variant="contained" color="primary">
+              Update
+            </Button>
+            <Button variant="contained" color="error">
+              Clear
+            </Button>
+          </>
+        );
       default:
         return null;
     }
   }, [selectedTab]);
+
+  const TabPanel = useCallback(
+    (props) => (
+      <MuiTabPanel {...props} sx={{ p: 0 }}>
+        {selectedImages.length === 0 ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            height={300}
+          >
+            <Typography>No images selected</Typography>
+          </Box>
+        ) : (
+          props.children
+        )}
+      </MuiTabPanel>
+    ),
+    [selectedImages],
+  );
 
   const handleTabChange = (_event, newValue) => {
     setSelectedTab(newValue);
@@ -45,7 +73,8 @@ const PositionDialog = ({ open, onClose }) => {
 
   const handleSelectImages = (files) => {
     const images = files.map((path) => ({
-      url: getStaticPath(path, true),
+      url: getImageUrl(path, true),
+      tiffUrl: getImageUrl(toTiffPath(path), true, true),
       filename: path.split('/').slice(-1)[0],
       path: path,
     }));
@@ -90,15 +119,21 @@ const PositionDialog = ({ open, onClose }) => {
               ))}
             </TabList>
           </Box>
-          <TabPanel value={PositionTabs.images}>
-            <PanelImages
-              images={selectedImages}
-              onRemoveImage={handleRemoveImage}
-            />
-          </TabPanel>
-          <TabPanel value={PositionTabs.tiling}></TabPanel>
-          <TabPanel value={PositionTabs.metadata}></TabPanel>
-          <TabPanel value={PositionTabs.naming}></TabPanel>
+          <Box sx={{ minHeight: 300 }}>
+            <TabPanel value={PositionTabs.images}>
+              <TabImage
+                images={selectedImages}
+                onRemoveImage={handleRemoveImage}
+              />
+            </TabPanel>
+            <TabPanel value={PositionTabs.tiling}></TabPanel>
+            <TabPanel value={PositionTabs.metadata}>
+              <TabMetadata images={selectedImages} />
+            </TabPanel>
+            <TabPanel value={PositionTabs.naming}>
+              <TabNaming images={selectedImages} />
+            </TabPanel>
+          </Box>
         </TabContext>
       </ClosableDialog>
       <ExperimentDialog

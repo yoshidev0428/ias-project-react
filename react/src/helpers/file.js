@@ -73,16 +73,23 @@ export const loadImage = (src) => {
   });
 };
 
-export const getStaticPath = (path, userDir = false) => {
-  let newPath = path;
+export const getImageUrl = (
+  path,
+  userDir = false,
+  resumeDowloading = false,
+) => {
+  let url = path;
 
   if (userDir) {
     const userId = store.getState().auth.user._id;
-    newPath = `${userId}/${path}`;
+    url = `${userId}/${path}`;
   }
 
-  return `${process.env.REACT_APP_BASE_API_URL}/static/${newPath}`.replaceAll(
-    /\/+/g,
-    '/',
-  );
+  if (resumeDowloading) {
+    url = `image/download/?path=${url}`;
+  } else {
+    url = `static/${url}`;
+  }
+
+  return `${process.env.REACT_APP_BASE_API_URL}/${url}`.replaceAll(/\/+/g, '/');
 };

@@ -145,9 +145,8 @@ export const getExperiments = async () => {
   return await mainApiService.get('image/tile/get_experiments_datas');
 };
 
-export const getMetaData = async () => {
-  let response = await api.get('image/tile/get_meta_datas');
-  return response;
+export const getMetadata = async () => {
+  return await mainApiService.get('image/tile/get_meta_datas');
 };
 
 export const testSegment = async (file_url, exp_name, model_name) => {
