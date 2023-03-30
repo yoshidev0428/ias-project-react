@@ -41,7 +41,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_
 
 WORKDIR /app
 
-COPY ./mainApi/requirements.txt /requirements.txt
+COPY ./ilastikApi/requirements.txt /requirements.txt
 
 # additional dependencies
 # netcat used for checking for resources on the network before start, see start.sh for use

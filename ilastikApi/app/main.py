@@ -6,8 +6,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
 
 import os
-from mainApi.app.api.routers import router as api_router
-from mainApi.config import ALLOWED_HOSTS
+from ilastikApi.app.api.routers import router as api_router
+from ilastikApi.config import ALLOWED_HOSTS
 from fastapi.staticfiles import StaticFiles
 
 middleware = [
