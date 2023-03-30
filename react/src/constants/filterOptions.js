@@ -347,7 +347,7 @@ export const Options = (kerSize) => {
       radioName: '', 
       radio: [], 
       inputNum: { Width: 100, Height: 1 },
-      index: 99,
+      index: 15,
       kernel: (kerSize) => {
         return [0, -1, 0, -1, 4, -1, 0, -1, 0];
       },      
@@ -357,7 +357,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 15,
+      index: 16,
       kernel: (kerSize) => {
         return [];
       },
@@ -366,7 +366,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 16,
+      index: 17,
       kernel: (kerSize) => {
         return [1, 2, 1, 0, 0, 0, -1, -2, -1];
       },
@@ -375,7 +375,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 17,
+      index: 18,
       kernel: (kerSize) => {
         return [1, 0, -1, 2, 0, -2, 1, 0, -1];
       },
@@ -384,7 +384,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Low: 7, High: 10 },
-      index: 18,
+      index: 19,
       kernel: (kerSize) => {
         return [];
       },
@@ -393,7 +393,7 @@ export const Options = (kerSize) => {
         radioName: '', 
         radio: [], 
         inputNum: { Period: 100, Angle: 1 },
-        index: 19,
+        index: 20,
         kernel: (kerSize) => {
             return [];
         },
@@ -402,7 +402,7 @@ export const Options = (kerSize) => {
         radioName: '', 
         radio: [], 
         inputNum: { Angle: 0 },
-      index: 20,
+      index: 21,
       kernel: (kerSize) => {
         return [];
       },        
@@ -412,7 +412,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['3X3 Square', '5X5 Square', '7X7 Square', '9X9 Square', '11X11 Square'],
       inputNum: { Passes: 1 },
-      index: 21,
+      index: 22,
       kernel: (kerSize) => {
         return [];
       },
@@ -421,7 +421,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['3X3 Square', '5X5 Square', '7X7 Square', '9X9 Square', '11X11 Square'],
       inputNum: { Passes: 1 },
-      index: 22,
+      index: 23,
       kernel: (kerSize) => {
         return [];
       },
@@ -430,7 +430,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['3X3 Square', '5X5 Square', '7X7 Square', '9X9 Square', '11X11 Square'],
       inputNum: { Passes: 1 },
-      index: 23,
+      index: 24,
       kernel: (kerSize) => {
         return [];
       },
@@ -439,7 +439,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['3X3 Square', '5X5 Square', '7X7 Square', '9X9 Square', '11X11 Square'],
       inputNum: { Passes: 1 },
-      index: 24,
+      index: 25,
       kernel: (kerSize) => {
         return [];
       },
@@ -448,7 +448,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 25,
+      index: 26,
       kernel: (kerSize) => {
         return [];
       },
@@ -457,26 +457,71 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 26,
+      index: 27,
       kernel: (kerSize) => {
         return [];
       },
     },
+    Watershed: {
+      radioName: 'Kernel Size',
+      radio: ['4 Neighbor', '8 Neighbor', '16 Neighbor'],
+      inputNum: { Threshold_1: 99, Threshold_2: 100 },
+      index: 28,
+      kernel: (kerSize) => {
+        return [];
+      },
+    },    
+    Thinning: {
+      radioName: 'Kernel Size',
+      radio: [],
+      inputNum: { Threshold_1: 50, Threshold_2: 128, Passes: 1},
+      index: 29,
+      kernel: (kerSize) => {
+        return [];
+      },
+    },       
+    Pruning: {
+      radioName: 'Kernel Size',
+      radio: [],
+      inputNum: { Threshold_1: 50, Threshold_2: 128, Passes: 1},
+      index: 30,
+      kernel: (kerSize) => {
+        return [];
+      },
+    }, 
+    Distance_Map: {
+      radioName: 'Kernel Size',
+      radio: ['Square', 'Diagonal', 'Euclidian'],
+      inputNum: { Threshold_1: 50, Threshold_2: 128 },
+      index: 31,
+      kernel: (kerSize) => {
+        return [];
+      },
+    },     
+    Reduce: {
+      radioName: 'Kernel Size',
+      radio: ['4 Neighbor', '8 Neighbor', '16 Neighbor'],
+      inputNum: { Threshold_1: 99, Threshold_2: 100 },
+      index: 32,
+      kernel: (kerSize) => {
+        return [];
+      },
+    },         
     // Kernels
     Convolution: {
       radioName: 'Shape',
-      radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
-      inputNum: { Passes: 1 },
-      index: 27,
+      radio: ['Gauss 3X3', 'Gauss 5X5', 'Gauss 7X7', 'Hi-pass 3X3', 'Hi-pass 5X5', 'Hi-pass 7X7', 'Ho-Edge', 'Ver-Edge'],
+      inputNum: { },
+      index: 33,
       kernel: (kerSize) => {
         return [];
       },
     },
     Morphological: {
       radioName: 'Shape',
-      radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
-      inputNum: { Passes: 1 },
-      index: 28,
+      radio: ['Open', 'Close', 'Erode', 'Dilate'],
+      inputNum: { },
+      index: 34,
       kernel: (kerSize) => {
         return [];
       },
@@ -485,7 +530,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      index: 29,
+      index: 35,
       kernel: (kerSize) => {
         return [];
       },
@@ -494,7 +539,7 @@ export const Options = (kerSize) => {
       radioName: 'Shape',
       radio: ['2X2 Square', '3X1 Row', '3X3 Cross'],
       inputNum: { Passes: 1 },
-      index: 30,
+      index: 36,
       kernel: (kerSize) => {
         return [];
       },
@@ -505,7 +550,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '7X7'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 31,
+      index: 37,
       kernel: (kerSize) => {
         return [];
       },
@@ -514,7 +559,7 @@ export const Options = (kerSize) => {
       radioName: 'Kernel Size',
       radio: ['3X3', '5X5', '11X11'],
       inputNum: { Strength: 100, Passes: 1 },
-      index: 32,
+      index: 38,
       kernel: (kerSize) => {
         return [];
       },

@@ -87,9 +87,9 @@ const Filter2D = ({ setFilter }) => {
   const filterList = Object.keys(options);
   const emhasisList = filterList.slice(0, 12);
   const edgeList = filterList.slice(12, 22);
-  const morphologicalList = filterList.slice(22, 29);
-  const kernelList = filterList.slice(29, 33);
-  const leargeList = filterList.slice(33, 37);
+  const morphologicalList = filterList.slice(22, 33);
+  const kernelList = filterList.slice(33, 35);
+  const leargeList = filterList.slice(37, 39);
 
   const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -120,19 +120,64 @@ const Filter2D = ({ setFilter }) => {
   };
   const GetKernel = (props) => {
     const [item, radioName, radio] = props.content;
-    setFilter2D(item, 3);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    useEffect(() => {
+      setSelectedIndex(0);
+      if (item === 'Convolution') {
+        setFilter2D('Gauss', 3);
+      } else if (item === 'Morphological') {
+        setFilter2D('Open', 3);
+      } else {
+        setFilter2D(item, 3);
+      }
+    }, [radio]);
+
     const handleSet = (event) => {
-      const kernelSize = parseInt(event.target.value);
-      setFilter2D(item, 3 + 2 * kernelSize);
+      if (item === 'Convolution') {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        if (kernelSize===0) {
+          setFilter2D('Gauss', 3);
+        } else if (kernelSize===1) {
+          setFilter2D('Gauss', 5);
+        } else if (kernelSize===2) {
+          setFilter2D('Gauss', 7);
+        } else if (kernelSize===3) {
+          setFilter2D('High_pass', 3);
+        } else if (kernelSize===4) {
+          setFilter2D('High_pass', 5);
+        } else if (kernelSize===5) {
+          setFilter2D('High_pass', 7);
+        } else if (kernelSize===6) {
+          setFilter2D('Horizontal_edge', 3);
+        } else if (kernelSize===7) {
+          setFilter2D('Vertical_edge', 3);
+        }
+         
+      } else if (item === 'Morphological') {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        if (kernelSize===0) {
+          setFilter2D('Open', 3);
+        } else if (kernelSize===1) {
+          setFilter2D('Close', 3);
+        } else if (kernelSize===2) {
+          setFilter2D('Erode', 4);
+        } else if (kernelSize===3) {
+          setFilter2D('Dilate', 3);
+        }     
+      } else {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        setFilter2D(item, 3 + 2 * kernelSize);
+      }
+
     };
     return (
       <FormControl>
-        {/* <FormLa bel id="demo-radio-buttons-group-label" style={{ height: '35px' }}>
-                {radioName}
-            </FormLabel> */}
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
-          defaultValue="0"
+          value={selectedIndex}
           name="radio-buttons-group"
           onChange={(event) => handleSet(event)}
         >
@@ -186,7 +231,7 @@ const Filter2D = ({ setFilter }) => {
             InputLabelProps={{
               shrink: true,
             }}
-            style={{ paddingTop: '5px', width: '100%'}}
+            style={{ paddingTop: '5px',paddingBottom: '10px', width: '100%'}}
           />
         </div>
       );
@@ -220,55 +265,55 @@ const Filter2D = ({ setFilter }) => {
     // }, [click]); // eslint-disable-line react-hooks/exhaustive-deps
   };
 
+  let firstName = 'Low_pass';
+
+  const SubSelect = (props) => {
+    const filterNames = props.name;
+    const [selectedValue, setSelectedValue] = useState('Low_pass');
+    firstName = filterNames[0];
+    useEffect(()=>{
+      setSelectedValue(firstName);
+    }, [firstName])
+    
+    function handleChange(event) {
+      setSelectedValue(event.target.value);
+    }
+    return (
+      <Box sx={{ minWidth: 120 }}>
+        <FormControl fullWidth>
+          <div
+            style={{
+              backgroundColor: 'white',
+              fontSize: '12px',
+            }}
+          ></div>
+          <NativeSelect
+            defaultValue={30}                           
+            value={selectedValue}                                                                                     
+            onChange={handleChange}
+            inputProps={{
+              name: 'select',
+              id: 'uncontrolled-native',
+            }}
+          >
+            {filterNames.map((item, index) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </NativeSelect>
+        </FormControl>
+        <div style={{ backgroundColor: 'white', height: '10px' }}></div>
+        <FormControl fullWidth>
+          <FilterProperty item={selectedValue} />
+        </FormControl>
+      </Box>
+    );
+  };
 
   const SelectMenu = () => {
 
-
-    const [filterName, setfilterName] = useState('Low_pass');
-    const SubSelect = (props) => {
-      
-      const filterNames = props.name;
-      const [selectedValue, setSelectedValue] = useState('Low_pass');
-  
-      function handleChange(event) {
-        setSelectedValue(event.target.value);
-      }
-  
-      return (
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <div
-              style={{
-                backgroundColor: 'white',
-                fontSize: '12px',
-                height: '20px',
-              }}
-            ></div>
-            <NativeSelect
-              defaultValue={30}
-              value={selectedValue}
-              onChange={handleChange}
-              inputProps={{
-                name: 'select',
-                id: 'uncontrolled-native',
-              }}
-            >
-              {filterNames.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-          <div style={{ backgroundColor: 'white', height: '10px' }}></div>
-          <FormControl fullWidth>
-            <FilterProperty item={selectedValue} />
-          </FormControl>
-        </Box>
-      );
-    };
-  
-
+    const [filterOption, setFilterOption] = useState(emhasisList);
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <Tab.Container id="list-group-tabs-example" defaultActiveKey="link1">
@@ -281,6 +326,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link1"
+              onClick={() => setFilterOption(emhasisList)}
             >
               Eamhasis
             </ListGroup.Item>
@@ -292,6 +338,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link2"
+              onClick={() => setFilterOption(edgeList)}
             >
               Edge
             </ListGroup.Item>
@@ -303,6 +350,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link3"
+              onClick={() => setFilterOption(morphologicalList)}
             >
               Morphological
             </ListGroup.Item>
@@ -314,6 +362,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link4"
+              onClick={() => setFilterOption(kernelList)}
             >
               Kernel
             </ListGroup.Item>
@@ -325,30 +374,14 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link5"
+              onClick={() => setFilterOption(leargeList)}
             >
               Learge
             </ListGroup.Item>
           </ListGroup>
           <div style={{ backgroundColor: 'white', height: '10px' }}></div>
-          <Tab.Content>
-            <Tab.Pane eventKey="link1">
-              <SubSelect name={emhasisList} firstItem={'Low_pass'} />
-            </Tab.Pane> 
-            <Tab.Pane eventKey="link2">
-              <SubSelect name={edgeList} firstItem={'Sobel'} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link3">
-              <SubSelect name={morphologicalList} firstItem={'Open'} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link4">
-              <SubSelect name={kernelList} firstItem={'Convolution'} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link5">
-              <SubSelect name={leargeList} firstItem={'Low_Pass'} />
-            </Tab.Pane>
-          </Tab.Content>
+          <SubSelect name={filterOption} />
         </Tab.Container>
-        {/* </SmallCard> */}
       </div>
     );
   };
