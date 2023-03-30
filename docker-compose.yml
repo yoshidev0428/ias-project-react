@@ -21,7 +21,7 @@ services:
             - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rw,shared
         command: [ "sh", "./mainApi/start.sh" ]
         restart: always
-    ilastikApi:
+    ilastikapi:
         build:
             context: .
             dockerfile: ./ilastikApi/Dockerfile
@@ -30,6 +30,8 @@ services:
         env_file:
             - ./env_files/fastApi.env
             - ./env_files/celery_tasks.env
+        depends_on:
+            - rabbitmq
         volumes:
             - image-storage:/image-storage
             - cache-storage:/cache-storage
