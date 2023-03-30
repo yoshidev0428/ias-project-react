@@ -41,7 +41,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64
 
 WORKDIR /app
 
-COPY ./ilastikApi/requirements.txt /requirements.txt
+COPY ./ilastikApi/requirements.txt /ilastik_requirements.txt
 
 RUN conda install mamba -n base -c conda-forge && \
     mamba install --override-channels -c pytorch -c ilastik-forge -c conda-forge ilastik
@@ -57,7 +57,7 @@ RUN apt install -y openslide-tools && \
     apt install -y git && \
     apt install -y default-jdk && \
     apt install -y curl && \
-    pip install -r /requirements.txt && \
+    pip install -r /ilastik_requirements.txt && \
     pip install --upgrade pyopenssl
 
 EXPOSE 8000
