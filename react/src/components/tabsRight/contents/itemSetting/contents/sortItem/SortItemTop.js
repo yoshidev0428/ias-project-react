@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Icon from "@mdi/react";
+import React, { useState } from 'react';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Icon from '@mdi/react';
 import {
   mdiNoteMultipleOutline,
   mdiArrowLeftRight,
   mdiArrowUpDown,
-} from "@mdi/js";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import Button from "@mui/material/Button";
+} from '@mdi/js';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import Button from '@mui/material/Button';
 
 export default function SortItemTop() {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('');
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -23,14 +23,14 @@ export default function SortItemTop() {
   const options = Array.from(Array(31).keys());
 
   return (
-    <Container sx={{ marginBottom: "16px" }}>
+    <Container sx={{ marginBottom: '16px' }}>
       <Grid
         container
         spacing={2}
-        sx={{ display: "flex", justifyContent: "space-between" }}
+        sx={{ display: 'flex', justifyContent: 'space-between' }}
       >
         <Grid item xs={2}>
-          <FormControl sx={{ width: "100%" }}>
+          <FormControl sx={{ width: '100%' }}>
             <InputLabel labelid="measure-class-label">Class</InputLabel>
             <Select labelid="measure-class-label" id="my-select">
               <MenuItem value="Class1">Class1</MenuItem>
@@ -44,7 +44,7 @@ export default function SortItemTop() {
           </FormControl>
         </Grid>
         <Grid item xs={5}>
-          <FormControl sx={{ width: "100%" }}>
+          <FormControl sx={{ width: '100%' }}>
             {/* <FormControl sx={{ width: "250px" }}></FormControl> */}
             <InputLabel labelid="measure-selected-item-label">
               Measure Selected Item
@@ -60,14 +60,14 @@ export default function SortItemTop() {
           </FormControl>
         </Grid>
         <Grid item xs={2}>
-          <FormControl sx={{ width: "100%" }}>
+          <FormControl sx={{ width: '100%' }}>
             <InputLabel labelid="bins-label">Bins</InputLabel>
             <Select
               value={value}
               onChange={handleChange}
               inputProps={{
-                name: "number",
-                id: "number-select",
+                name: 'number',
+                id: 'number-select',
               }}
             >
               {options.map((option) => (
@@ -78,7 +78,7 @@ export default function SortItemTop() {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={1} sx={{ display: "flex" }}>
+        <Grid item xs={1} sx={{ display: 'flex' }}>
           <Button>
             <Icon
               size={1}
@@ -90,7 +90,7 @@ export default function SortItemTop() {
             ></Icon>
           </Button>
         </Grid>
-        <Grid item xs={1} sx={{ display: "flex" }}>
+        <Grid item xs={1} sx={{ display: 'flex' }}>
           <Button>
             <Icon
               size={1}
@@ -102,7 +102,7 @@ export default function SortItemTop() {
             ></Icon>
           </Button>
         </Grid>
-        <Grid item xs={1} sx={{ display: "flex" }}>
+        <Grid item xs={1} sx={{ display: 'flex' }}>
           <Button>
             <Icon
               size={1}

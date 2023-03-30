@@ -146,7 +146,7 @@ const MainFrame = (props) => {
     };
   }, [imageViewAreaRef]);
   console.log('vessel--->', currentVesseelCount);
-  console.log('xxxxxxxxSource', imagePathForAvivator)
+  console.log('xxxxxxxxSource', imagePathForAvivator);
   const HeaderContent = () => {
     // const [showChatFlag, setShowChatFlag] = useState(false);
     const user = useSelector((state) => state.auth.user);

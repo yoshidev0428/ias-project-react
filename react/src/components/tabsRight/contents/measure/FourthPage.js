@@ -1,20 +1,20 @@
-import * as React from "react";
+import * as React from 'react';
 // import Divider from '@mui/material/Divider';
-import SmallCard from "../../../custom/SmallCard";
-import { Button } from "react-bootstrap";
+import SmallCard from '../../../custom/SmallCard';
+import { Button } from 'react-bootstrap';
 
 export default function FifthPage() {
   const onClick1 = () => {
-    console.log("onClick Measure Item");
+    console.log('onClick Measure Item');
   };
   const onClick2 = () => {
-    console.log("onClick Sort Area");
+    console.log('onClick Sort Area');
   };
   const onClick3 = () => {
-    console.log("onClick Save");
+    console.log('onClick Save');
   };
   const onClick4 = () => {
-    console.log("onClick Save As");
+    console.log('onClick Save As');
   };
   return (
     <>
