@@ -54,10 +54,9 @@ RUN apt install -y openslide-tools && \
     apt install -y git && \
     apt install -y default-jdk && \
     apt install -y curl && \
-    pip install numpy==1.23.5 && \
+    conda install mamba -n base -c conda-forge && \
+    mamba install --override-channels -c pytorch -c ilastik-forge -c conda-forge ilastik && \
     pip install -r /requirements.txt && \
-    pip install --upgrade pyopenssl && \
-    conda install mamba -y -n base -c conda-forge && \
-    mamba install -c pytorch -c ilastik-forge -c conda-forge ilastik
+    pip install --upgrade pyopenssl
 
 EXPOSE 8000
