@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+// import { useState } from 'react';
 import SmallCard from '../../../custom/SmallCard';
 import CustomButton from '../../../custom/CustomButton';
 import { useFlagsStore } from '@/state';
-import LabelItem from './widgets/LabelItem';
-import LabelItemInput from './widgets/LabelItemInput';
+// import LabelItem from './widgets/LabelItem';
+// import LabelItemInput from './widgets/LabelItemInput';
 
 import {
   mdiPlayCircle,
@@ -54,8 +54,7 @@ export default function MLBoxSelect() {
     let imgPath = state.files.imagePathForAvivator[0].path;
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
-    // console.log("file information ======>")
-    // console.log(imgPath, exp_name)
+
     // let result = await api_experiment.get_outlines(imgPath, exp_name);
     // if (result.data.error) {
     //   alert('Error occured while getting the data');
@@ -88,7 +87,15 @@ export default function MLBoxSelect() {
     useFlagsStore.setState({ MLCanvasFlag: false });
   };
 
-  const liveUpdate = () => {};
+  const liveUpdate = async () => {
+    const state = store.getState();
+    let imgPath = state.files.imagePathForAvivator[0].path;
+    let exp_name = imgPath.split('/');
+    exp_name = exp_name[0];
+    // console.log('===============>')
+    // console.log(imgPath, exp_name)
+    let res = await api_experiment.MLGetProcessedImage(imgPath, exp_name, {});
+  };
 
   const drawCurve = () => {
     // useFlagsStore.setState({ MLCanvasFlag: !MLCanvasFlag });

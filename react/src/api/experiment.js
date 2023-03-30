@@ -225,3 +225,17 @@ export const get_outlines = async (file_url, exp_name) => {
     },
   });
 };
+
+/**
+ * @author QmQ
+ * @description send the image and receive the processed image using Machine Learning method.
+ *
+ */
+
+export const MLGetProcessedImage = async (file_url, exp_name, setting) => {
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('ext_url', exp_name);
+  // console.log('============> ML get processed image', file_url, exp_name)
+  return api.post('image/tile/ml_get_processe_image', formData);
+};

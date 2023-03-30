@@ -52,7 +52,6 @@ export default function BoxSelect() {
       });
     }
     useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
-    // console.log("Select-1");
   };
   const select2 = () => {
     // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
