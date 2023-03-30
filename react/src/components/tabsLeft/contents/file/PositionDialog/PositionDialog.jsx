@@ -11,6 +11,7 @@ import { PositionTabLabels, PositionTabs } from './constants';
 import { getImageUrl } from '@/helpers/file';
 import TabMetadata from './tabs/TabMetadata';
 import { toTiffPath } from '@/helpers/avivator';
+import TabNaming from './tabs/TabNaming';
 
 const PositionDialog = ({ open, onClose }) => {
   const [selectedTab, setSelectedTab] = useState(PositionTabs.images);
@@ -29,6 +30,17 @@ const PositionDialog = ({ open, onClose }) => {
           >
             Cloud
           </Button>
+        );
+      case PositionTabs.naming:
+        return (
+          <>
+            <Button variant="contained" color="primary">
+              Update
+            </Button>
+            <Button variant="contained" color="error">
+              Clear
+            </Button>
+          </>
         );
       default:
         return null;
@@ -73,12 +85,6 @@ const PositionDialog = ({ open, onClose }) => {
     setSelectedImages((images) => images.filter((img) => img.path !== path));
   };
 
-  const handleExit = () => {
-    setSelectedTab(PositionTabs.images);
-    setSelectedImages([]);
-    onClose();
-  };
-
   return (
     <>
       <ClosableDialog
@@ -95,11 +101,8 @@ const PositionDialog = ({ open, onClose }) => {
         actions={
           <>
             {dialogActions}
-            <Button color="error" variant="outlined" onClick={handleExit}>
-              Exit
-            </Button>
             <Button color="warning" variant="outlined" onClick={onClose}>
-              Close
+              Cancel
             </Button>
           </>
         }
@@ -127,7 +130,9 @@ const PositionDialog = ({ open, onClose }) => {
             <TabPanel value={PositionTabs.metadata}>
               <TabMetadata images={selectedImages} />
             </TabPanel>
-            <TabPanel value={PositionTabs.naming}></TabPanel>
+            <TabPanel value={PositionTabs.naming}>
+              <TabNaming images={selectedImages} />
+            </TabPanel>
           </Box>
         </TabContext>
       </ClosableDialog>

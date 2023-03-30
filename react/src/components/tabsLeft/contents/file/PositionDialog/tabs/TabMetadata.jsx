@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import CenterBox from '@/components/mui/CenterBox';
+import CenterBox from '@/components/mui/BoxCenter';
 import useMetadata from '@/hooks/useMetadata';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid } from '@mui/x-data-grid';
