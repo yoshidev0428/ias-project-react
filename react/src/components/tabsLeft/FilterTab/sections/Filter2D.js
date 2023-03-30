@@ -63,15 +63,16 @@ const Filter2D = ({ setFilter }) => {
     );
   };
   const setFilter2D = useChannelsStore((state) => state.setFilter2D);
-  const setPasses = useChannelsStore((state) => state.setPasses);
+  const setPasses_1 = useChannelsStore((state) => state.setPasses_1);
+  const setPasses_2 = useChannelsStore((state) => state.setPasses_2);
 
   const options = Options(3);
   const filterList = Object.keys(options);
   const emhasisList = filterList.slice(0, 12);
   const edgeList = filterList.slice(12, 22);
-  const morphologicalList = filterList.slice(22, 29);
-  const kernelList = filterList.slice(29, 33);
-  const leargeList = filterList.slice(33, 37);
+  const morphologicalList = filterList.slice(22, 33);
+  const kernelList = filterList.slice(33, 35);
+  const leargeList = filterList.slice(37, 39);
 
   const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -99,20 +100,65 @@ const Filter2D = ({ setFilter }) => {
   };
   const FilterApply = () => {};
   const GetKernel = (props) => {
-    const [item, _radioName, radio] = props.content;
-    setFilter2D(item, 3);
+    const [item, radioName, radio] = props.content;
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    useEffect(() => {
+      setSelectedIndex(0);
+      if (item === 'Convolution') {
+        setFilter2D('Gauss', 3);
+      } else if (item === 'Morphological') {
+        setFilter2D('Open', 3);
+      } else {
+        setFilter2D(item, 3);
+      }
+    }, [radio]);
+
     const handleSet = (event) => {
-      const kernelSize = parseInt(event.target.value);
-      setFilter2D(item, 3 + 2 * kernelSize);
+      if (item === 'Convolution') {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        if (kernelSize===0) {
+          setFilter2D('Gauss', 3);
+        } else if (kernelSize===1) {
+          setFilter2D('Gauss', 5);
+        } else if (kernelSize===2) {
+          setFilter2D('Gauss', 7);
+        } else if (kernelSize===3) {
+          setFilter2D('High_pass', 3);
+        } else if (kernelSize===4) {
+          setFilter2D('High_pass', 5);
+        } else if (kernelSize===5) {
+          setFilter2D('High_pass', 7);
+        } else if (kernelSize===6) {
+          setFilter2D('Horizontal_edge', 3);
+        } else if (kernelSize===7) {
+          setFilter2D('Vertical_edge', 3);
+        }
+         
+      } else if (item === 'Morphological') {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        if (kernelSize===0) {
+          setFilter2D('Open', 3);
+        } else if (kernelSize===1) {
+          setFilter2D('Close', 3);
+        } else if (kernelSize===2) {
+          setFilter2D('Erode', 4);
+        } else if (kernelSize===3) {
+          setFilter2D('Dilate', 3);
+        }     
+      } else {
+        const kernelSize = parseInt(event.target.value);
+        setSelectedIndex(kernelSize);
+        setFilter2D(item, 3 + 2 * kernelSize);
+      }
+
     };
     return (
       <FormControl>
-        {/* <FormLabel id="demo-radio-buttons-group-label" style={{ height: '35px' }}>
-                {radioName}
-            </FormLabel> */}
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
-          defaultValue="0"
+          value={selectedIndex}
           name="radio-buttons-group"
           onChange={(event) => handleSet(event)}
         >
@@ -140,8 +186,12 @@ const Filter2D = ({ setFilter }) => {
 
     const selectedVals = Object.values(options[item]);
     const [radioName, radio, inputNum] = selectedVals;
-    const inputNumKeys = Object.keys(inputNum);
+    const [formData, setFormData] = useState(inputNum);
+    useEffect(()=>{
+      setFormData(inputNum)
+    }, [inputNum])
 
+    const inputNumKeys = Object.keys(inputNum);
     const InputNum = (props) => {
       const [inputLabel] = props.content;
       return (
@@ -150,25 +200,35 @@ const Filter2D = ({ setFilter }) => {
             id="outlined-number"
             label={inputLabel}
             type="number"
-            value={formData[inputLabel]}
+            inputProps={{
+              value: formData[inputLabel],
+              min: 0,
+              max: 100,
+            }}            
+            // value={formData[inputLabel]}
             name={inputLabel}
-            onChange={onChangeInput}
+            onChange={(e) => onChangeInput(e.target.name, e.target.value, index)}
+            // onChange={onChangeInput(index)}
             InputLabelProps={{
               shrink: true,
             }}
-            style={{ paddingTop: '5px' }}
+            style={{ paddingTop: '5px',paddingBottom: '10px', width: '100%'}}
           />
         </div>
       );
     };
 
-    const [formData, setFormData] = useState(inputNum);
-    const onChangeInput = (e) => {
+    
+    const onChangeInput = (name, value, index) => {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.value,
+        [name]: value,
       });
-      setPasses(e.target.value);
+      if (index === 0) {
+        setPasses_1(parseInt(value));
+      } else {
+        setPasses_2(parseInt(value));
+      }
     };
 
     return (
@@ -178,22 +238,27 @@ const Filter2D = ({ setFilter }) => {
             <GetKernel content={[item, radioName, radio]} />
           </Col>
         </Row>
-        {inputNumKeys.map((item, index) => (
-          <InputNum content={[item, index, '5px']} />
+        {inputNumKeys.map((i, index) => (
+          <InputNum content={[i, index, '5px']} />
         ))}
       </>
     );
     // }, [click]); // eslint-disable-line react-hooks/exhaustive-deps
   };
 
+  let firstName = 'Low_pass';
+
   const SubSelect = (props) => {
     const filterNames = props.name;
     const [selectedValue, setSelectedValue] = useState('Low_pass');
-
+    firstName = filterNames[0];
+    useEffect(()=>{
+      setSelectedValue(firstName);
+    }, [firstName])
+    
     function handleChange(event) {
       setSelectedValue(event.target.value);
     }
-
     return (
       <Box sx={{ minWidth: 120 }}>
         <FormControl fullWidth>
@@ -201,12 +266,11 @@ const Filter2D = ({ setFilter }) => {
             style={{
               backgroundColor: 'white',
               fontSize: '12px',
-              height: '20px',
             }}
           ></div>
           <NativeSelect
-            defaultValue={30}
-            value={selectedValue}
+            defaultValue={30}                           
+            value={selectedValue}                                                                                     
             onChange={handleChange}
             inputProps={{
               name: 'select',
@@ -229,6 +293,8 @@ const Filter2D = ({ setFilter }) => {
   };
 
   const SelectMenu = () => {
+
+    const [filterOption, setFilterOption] = useState(emhasisList);
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <Tab.Container id="list-group-tabs-example" defaultActiveKey="link1">
@@ -241,6 +307,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link1"
+              onClick={() => setFilterOption(emhasisList)}
             >
               Eamhasis
             </ListGroup.Item>
@@ -252,6 +319,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link2"
+              onClick={() => setFilterOption(edgeList)}
             >
               Edge
             </ListGroup.Item>
@@ -263,6 +331,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link3"
+              onClick={() => setFilterOption(morphologicalList)}
             >
               Morphological
             </ListGroup.Item>
@@ -274,6 +343,7 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link4"
+              onClick={() => setFilterOption(kernelList)}
             >
               Kernel
             </ListGroup.Item>
@@ -285,30 +355,14 @@ const Filter2D = ({ setFilter }) => {
               }}
               action
               eventKey="link5"
+              onClick={() => setFilterOption(leargeList)}
             >
               Learge
             </ListGroup.Item>
           </ListGroup>
           <div style={{ backgroundColor: 'white', height: '10px' }}></div>
-          <Tab.Content>
-            <Tab.Pane eventKey="link1">
-              <SubSelect name={emhasisList} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link2">
-              <SubSelect name={edgeList} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link3">
-              <SubSelect name={morphologicalList} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link4">
-              <SubSelect name={kernelList} />
-            </Tab.Pane>
-            <Tab.Pane eventKey="link5">
-              <SubSelect name={leargeList} />
-            </Tab.Pane>
-          </Tab.Content>
+          <SubSelect name={filterOption} />
         </Tab.Container>
-        {/* </SmallCard> */}
       </div>
     );
   };

@@ -33,6 +33,9 @@ const Viewer = ({ isFullScreen }) => {
     brightness,
     contrast,
     gamma,
+    deblur,
+    inputNum_1,
+    inputNum_2,
     channelsVisible,
     selections,
   } = useChannelsStore((state) => state, shallow);
@@ -53,6 +56,36 @@ const Viewer = ({ isFullScreen }) => {
   } = useImageSettingsStore((store) => store, shallow);
 
   const loader = useLoader();
+  const shaderModule = useMemo(
+    // const centerCoors = viewState.target;
+    () => generateShaderModule(Math.floor(deblur.size / 2), deblur.filterIndex),
+    [deblur],
+  );
+  let target = viewState.target;
+  if (typeof target === 'undefined') {
+    target = [255, 255];
+  }
+  // debugger;
+  console.log("========>", xSlice, ySlice)
+  console.log("========>", target)
+  console.log("========>", viewState.zoom)
+  console.log("U_iternum .................", typeof inputNum_1)
+  const postProcessEffect = useMemo(
+    
+    () =>
+    
+      new PostProcessEffect(shaderModule, {
+        u_brightness: brightness,
+        u_contrast: contrast,
+        u_gamma: gamma,
+        u_deblurKernel: deblur.kernel,
+        u_Slice: [xSlice[1], ySlice[1]],
+        u_target: target,
+        u_zoom: viewState.zoom,
+        u_iterNum: [inputNum_1, inputNum_2],
+      }),
+    [brightness, contrast, gamma, deblur, target, shaderModule],
+  );
   const viewSize = useWindowSize(isFullScreen, 1, 1);
 
   useEffect(() => {
@@ -130,7 +163,6 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-
   return use3d ? (
     <VolumeViewer
       loader={loader}

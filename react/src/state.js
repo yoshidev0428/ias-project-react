@@ -40,9 +40,11 @@ const DEFAUlT_CHANNEL_STATE = {
   gamma: [],
   deblur: {
     size: 1,
+    filterIndex: 1,
     kernel: [],
   },
-  iterNum: 1,
+  inputNum_1: 7,
+  inputNum_2: 10,
 };
 
 const DEFAUlT_CHANNEL_VALUES = {
@@ -124,10 +126,14 @@ export const useChannelsStore = create((set) => ({
       ...state,
       deblur: {
         size,
+        filterIndex: Options(size)[method].index,
         kernel: Options(size)[method].kernel(size),
       },
     })),
-  setPasses: (newValue) => set((state) => ({ ...state, iterNum: newValue })),
+  setPasses_1: (newValue) =>
+    set((state) => ({ ...state, inputNum_1: newValue })),
+  setPasses_2: (newValue) =>
+    set((state) => ({ ...state, inputNum_2: newValue })),
 }));
 
 const DEFAULT_IMAGE_STATE = {
