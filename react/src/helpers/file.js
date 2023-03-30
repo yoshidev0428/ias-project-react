@@ -73,6 +73,9 @@ export const loadImage = (src) => {
   });
 };
 
+export const cleanUrl = (urlStr) =>
+  urlStr.replaceAll(/\/+/g, '/').replace(':/', '://');
+
 export const getImageUrl = (
   path,
   userDir = false,
@@ -91,5 +94,5 @@ export const getImageUrl = (
     url = `static/${url}`;
   }
 
-  return `${process.env.REACT_APP_BASE_API_URL}/${url}`.replaceAll(/\/+/g, '/');
+  return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/${url}`);
 };
