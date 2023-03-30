@@ -20,13 +20,7 @@ RUN apt install -y openslide-tools && \
     apt install -y build-essential && \
     apt install -y git && \
     apt install -y default-jdk && \
-    apt install -y curl && \
     pip install numpy==1.23.5 && \
-    pip install -r /requirements.txt && \
-    curl https://repo.anaconda.com/miniconda/Miniconda3-py39_23.1.0-1-Linux-x86_64.sh -o ~/miniconda.sh && \
-    bash ~/miniconda.sh -b && \
-    ~/miniconda3/bin/conda install mamba -y -n base -c conda-forge && \
-    ~/miniconda3/bin/mamba create -y -n ilastik --override-channels -c pytorch -c ilastik-forge -c conda-forge ilastik && \
-    ~/miniconda3/bin/conda init
+    pip install -r /requirements.txt
 
 EXPOSE 8000
