@@ -40,6 +40,7 @@ from ilastik.utility.slicingtools import sl, slicing2shape
 from ilastik.shell.projectManager import ProjectManager
 from ilastik.shell.headless.headlessShell import HeadlessShell
 from ilastik.workflows.pixelClassification import PixelClassificationWorkflow
+from ilastikApi.config import STATIC_PATH, CURRENT_STATIC
 
 import logging
 
@@ -49,9 +50,10 @@ logger = logging.getLogger(__name__)
 
 class TestPixelClassificationHeadless(object):
 
+    testsPath = os.path.join(STATIC_PATH, 'unit_tests')
     # Project and data are kept in different directories so we can test both absolute and relative paths.
-    project_dir = tempfile.mkdtemp()
-    data_dir = tempfile.mkdtemp()
+    project_dir = testsPath + '/' + tempfile.mkdtemp()
+    data_dir = testsPath + '/' + tempfile.mkdtemp()
     PROJECT_FILE = os.path.join(project_dir, "test_project.ilp")
     PROJECT_FILE_RAW_DATA = os.path.join(project_dir, "test_project_raw_data.ilp")
     # To be deleted after creating the project file in order to test headless with no raw data
