@@ -17,6 +17,7 @@ import { getImageByPath } from '@/api/image';
 
 import store from '@/reducers';
 import { useExperimentStore } from '@/stores/useExperimentStore';
+import { toTiffPath } from '@/helpers/avivator';
 
 const ExperimentDialog = ({
   open,
@@ -50,12 +51,7 @@ const ExperimentDialog = ({
     } else {
       setLoading(true);
       const files = await Promise.all(
-        selectedFiles.map(async (file) => {
-          const path = /\.ome\.tif?f$/.test(file)
-            ? file
-            : file.replace(/\.\w+$/, '.ome.tiff');
-          return await getImageByPath(path);
-        }),
+        selectedFiles.map((path) => getImageByPath(toTiffPath(path))),
       );
       store.dispatch({ type: 'set_image_path_for_avivator', content: files });
       setLoading(false);

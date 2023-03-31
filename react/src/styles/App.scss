@@ -1,4 +1,4 @@
-@use "react-md"as *;
+@use "react-md" as *;
 @include react-md-utils;
 
 .container-fluid {
@@ -515,4 +515,8 @@ h6 {
     .col-6, .col-3, .col-4 {
         padding: 0
     }
+}
+
+p {
+    margin-bottom: 0 !important;
 }

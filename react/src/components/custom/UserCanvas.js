@@ -2,7 +2,8 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import store from '@/reducers';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useViewerStore } from '@/state';
+import { useViewerStore, useFlagsStore } from '@/state';
+import DLRightContext from './DLRightContext';
 
 const mapStateToProps = (state) => ({
   canvas_info: state.experiment.canvas_info,
@@ -22,6 +23,10 @@ function Usercanvas(props) {
   const [top, setTop] = React.useState(props.canvas_info.top);
   const [left, setLeft] = React.useState(props.canvas_info.left);
   const [outlines, setOutlines] = React.useState(props.canvas_info.outlines);
+  const [context, setContext] = React.useState(false);
+  const [contLeft, setContLeft] = React.useState(0);
+  const [contTop, setContTop] = React.useState(0);
+  const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
   let selected_rois = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
@@ -117,15 +122,18 @@ function Usercanvas(props) {
     a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2;
 
   const onDown = useCallback((event) => {
-    const coordinates = getCoordinates(event);
-    if (coordinates) {
-      setPosition(coordinates);
-      setDrawing(true);
-      if (props.canvas_info.draw_style === 'user_custom_select') {
-        get_selected_rois(coordinates);
-        drawOutlines();
+    // if(event.button === 0) {
+      setContext(false);
+      const coordinates = getCoordinates(event);
+      if (coordinates) {
+        setPosition(coordinates);
+        setDrawing(true);
+        if (props.canvas_info.draw_style === 'user_custom_select') {
+          get_selected_rois(coordinates);
+          drawOutlines();
+        }
       }
-    }
+    // }
   }, []);
 
   const onUp = useCallback(() => {
@@ -261,6 +269,32 @@ function Usercanvas(props) {
     context.fillRect(0, 0, canvas.current.width, canvas.current.height);
   };
 
+  const showNav = useCallback((event) => {
+    event.preventDefault();
+    const coordinates = getCoordinates(event);
+    if (coordinates) {
+      setContext(true);
+      setContLeft(coordinates.x);
+      setContTop(coordinates.y);
+    }
+  }, []);
+
+  const ContextItem = (item) => {
+    if(item === 'clear') {
+      const context = canvas.current.getContext('2d');
+      context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
+      localStorage.setItem('CANV_ROIS', '');
+      selected_rois = []
+      setContext(false);
+    }
+    if(item === 'close') {
+      useFlagsStore.setState({ UserCanvasFlag: false });
+      localStorage.setItem('CANV_ROIS', '');
+      selected_rois = [];
+      setContext(false);
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem('CANV_ROIS', '');
   }, [])
@@ -298,9 +332,11 @@ function Usercanvas(props) {
         onMouseLeave={props.viewOnly ? undefined : onUp}
         onMouseMove={props.viewOnly ? undefined : onMove}
         onTouchMove={props.viewOnly ? undefined : onMove}
+        onContextMenu={props.viewOnly ? undefined : showNav}
         width={width}
         height={height}
       />
+      {context && <DLRightContext left={contLeft} top={contTop} handleItem={ContextItem}/>}
     </div>
   );
 }
