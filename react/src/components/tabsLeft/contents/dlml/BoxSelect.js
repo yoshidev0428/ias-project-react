@@ -16,12 +16,16 @@ import * as api_experiment from '@/api/experiment';
 
 export default function BoxSelect() {
   const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
+
   const select1 = async () => {
     const state = store.getState();
-    let outlines = await get_outline();
-    if(outlines === 'NO') {
-      alert('Please enter your image file and rocess with cellpose!');
-      return;
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
     }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
@@ -33,15 +37,19 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_select');
     useFlagsStore.setState({ UserCanvasFlag: true });
   };
   const select2 = async () => {
     // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
     const state = store.getState();
-    let outlines = await get_outline();
-    if(outlines === 'NO') {
-      alert('Please enter your image file and rocess with cellpose!');
-      return;
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
     }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
@@ -53,16 +61,20 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_area');
     useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-2");
   };
   const select3 = async () => {
-    let outlines = await get_outline();
-    if(outlines === 'NO') {
-      alert('Please enter your image file and rocess with cellpose!');
-      return;
-    }
     const state = store.getState();
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
@@ -73,17 +85,21 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_ellipse');
     useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-3");
   };
   const select4 = () => {};
   const select5 = async () => {
-    let outlines = await get_outline();
-    if(outlines === 'NO') {
-      alert('Please enter your image file and rocess with cellpose!');
-      return;
-    }
     const state = store.getState();
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
@@ -94,6 +110,7 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_rectangle');
     useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-5");
   };

@@ -26,7 +26,6 @@ function Usercanvas(props) {
   const [context, setContext] = React.useState(false);
   const [contLeft, setContLeft] = React.useState(0);
   const [contTop, setContTop] = React.useState(0);
-  const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
   let selected_rois = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
@@ -38,7 +37,7 @@ function Usercanvas(props) {
       // let temp = outlines[i];
       // let temp_border = get_roi_border(i);
       if (check_roi_valid(i, pos, new_pos) === true) {
-        if (selected_rois.indexOf(i) == -1) {
+        if (selected_rois.indexOf(i) === -1) {
           selected_rois.push(i);
           localStorage.setItem(
             'CANV_ROIS',selected_rois
@@ -49,19 +48,8 @@ function Usercanvas(props) {
   };
 
   const check_roi_valid = (roi_num, pos, new_pos = null) => {
-    // let zoom = props.canvas_info.zoom
-    // let count = 0;
-    // if(outlines > 0) {
-    //   let temp_row = outlines[roi_num];
-    //   for (let j = 0; j < temp_row.length; j += 2) {
-    //     let x = temp_row[j] * Math.pow(2, zoom);
-    //     let y = temp_row[j + 1] * Math.pow(2, zoom);
-    //     if((pos.y === y) && (pos.x <= x))
-    //       count++;
-    //   }
-    // }
+    let draw_style = localStorage.getItem('CANV_STYLE');
     let now_border = get_roi_border(roi_num);
-    let draw_style = props.canvas_info.draw_style;
     if (draw_style === 'user_custom_select') {
       if (
         pos.x >= now_border.minX &&
@@ -122,18 +110,18 @@ function Usercanvas(props) {
     a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2;
 
   const onDown = useCallback((event) => {
-    // if(event.button === 0) {
+    if(event.button === 0) {
       setContext(false);
       const coordinates = getCoordinates(event);
       if (coordinates) {
         setPosition(coordinates);
         setDrawing(true);
-        if (props.canvas_info.draw_style === 'user_custom_select') {
+        // if (props.canvas_info.draw_style === 'user_custom_select') {
           get_selected_rois(coordinates);
           drawOutlines();
-        }
+        // }
       }
-    // }
+    }
   }, []);
 
   const onUp = useCallback(() => {
@@ -154,7 +142,6 @@ function Usercanvas(props) {
 
     const x = event.pageX || event.touches[0].pageX;
     const y = event.pageY || event.touches[0].pageY;
-    // console.log(`X: ${x} PL: ${left} PPL: ${parent_left}`)
 
     return {
       x: x - canv_left - parent_left,
@@ -166,17 +153,16 @@ function Usercanvas(props) {
     (event) => {
       if (drawing) {
         const newPosition = getCoordinates(event);
-        // console.log(`MouseX: ${event.pageX} MouseY: ${event.pageY}`)
-        // console.log(`CaX: ${newPosition.x} CaY: ${newPosition.y}`)
+        let draw_style = localStorage.getItem('CANV_STYLE');
         if (position && newPosition) {
-          if (props.canvas_info.draw_style === 'user_custom_area') {
+          if (draw_style === 'user_custom_area') {
             drawLine(position, newPosition);
             setPosition(newPosition);
-          } else if (props.canvas_info.draw_style === 'user_custom_rectangle') {
+          } else if (draw_style === 'user_custom_rectangle') {
             drawRectangle(position, newPosition);
             get_selected_rois(position, newPosition);
             drawOutlines();
-          } else if (props.canvas_info.draw_style === 'user_custom_ellipse') {
+          } else if (draw_style === 'user_custom_ellipse') {
             drawEllipse(position, newPosition);
             get_selected_rois(position, newPosition);
             drawOutlines();
@@ -248,7 +234,6 @@ function Usercanvas(props) {
   };
 
   const drawOutlines = () => {
-    // console.log('cells', selected_rois)
     let zoom = localStorage.getItem('CANV_ZOOM')
     const context = canvas.current.getContext('2d');
     context.fillStyle = activeColor;
@@ -260,13 +245,6 @@ function Usercanvas(props) {
         context.fillRect(x, y, 2, 2);
       }
     }
-    // console.log('draw-outlines')
-  };
-
-  const initCanvas = () => {
-    const context = canvas.current.getContext('2d');
-    context.fillStyle = 'blue';
-    context.fillRect(0, 0, canvas.current.width, canvas.current.height);
   };
 
   const showNav = useCallback((event) => {
@@ -303,7 +281,6 @@ function Usercanvas(props) {
     // initCanvas();
     // SetCanvasInfo(props.canvas_info)
     let zoom = localStorage.getItem('CANV_ZOOM');
-    console.log('--zoom: ',  zoom)
     setWidth(props.canvas_info.width * Math.pow(2, zoom));
     setHeight(props.canvas_info.height * Math.pow(2, zoom));
     setOutlines(props.canvas_info.outlines);
@@ -311,8 +288,6 @@ function Usercanvas(props) {
   }, [props, width, height]);
 
   useEffect(() => {
-    // console.log('left: ',  props.canvas_info.zoom)
-    let zoom = localStorage.getItem('CANV_ZOOM');
     setTop(props.canvas_info.top );
     setLeft(props.canvas_info.left);
     drawOutlines();
