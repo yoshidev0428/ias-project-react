@@ -18,7 +18,6 @@ import { getImageByPath } from '@/api/image';
 import store from '@/reducers';
 import { useExperimentStore } from '@/stores/useExperimentStore';
 import { toTiffPath } from '@/helpers/avivator';
-import { getImageUrl } from '@/helpers/file';
 
 const ExperimentDialog = ({
   open,
@@ -51,17 +50,10 @@ const ExperimentDialog = ({
       onSelectFiles(selectedFiles);
     } else {
       setLoading(true);
-
-      let source = null;
-      if (selectedFiles.length > 1) {
-        source = await Promise.all(
-          selectedFiles.map((path) => getImageByPath(toTiffPath(path))),
-        );
-      } else if (selectedFiles.length === 1) {
-        source = getImageUrl(toTiffPath(selectedFiles[0]), true, true);
-      }
-
-      store.dispatch({ type: 'set_image_path_for_avivator', content: source });
+      const files = await Promise.all(
+        selectedFiles.map((path) => getImageByPath(toTiffPath(path))),
+      );
+      store.dispatch({ type: 'set_image_path_for_avivator', content: files });
       setLoading(false);
     }
 
