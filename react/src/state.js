@@ -35,9 +35,9 @@ const DEFAUlT_CHANNEL_STATE = {
   ids: [],
   loader: [{ labels: [], shape: [] }],
   image: 0,
-  brightness: [],
-  contrast: [],
-  gamma: [],
+  brightness: 0,
+  contrast: 0,
+  gamma: 50,
   deblur: {
     size: 1,
     filterIndex: 1,
@@ -53,9 +53,6 @@ const DEFAUlT_CHANNEL_VALUES = {
   domains: [0, 65535],
   selections: { z: 0, c: 0, t: 0 },
   ids: '',
-  brightness: 0,
-  contrast: 0,
-  gamma: 0,
 };
 
 export const useChannelsStore = create((set) => ({

@@ -232,6 +232,9 @@ const Viewer = ({ isFullScreen }) => {
       colormap={colormap || 'viridis'}
       viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}
+      deckProps={{
+        effects: [postProcessEffect],
+      }}      
     />
   );
 };
