@@ -52,10 +52,10 @@ class TestPixelClassificationHeadless(object):
 
     testsPath = os.path.join(STATIC_PATH, 'unit_tests')
     # Project and data are kept in different directories so we can test both absolute and relative paths.
-    project_dir = testsPath + '/' + tempfile.mkdtemp()
+    # project_dir = testsPath + '/' + tempfile.mkdtemp()
     data_dir = testsPath + '/' + tempfile.mkdtemp()
-    PROJECT_FILE = os.path.join(project_dir, "test_project.ilp")
-    PROJECT_FILE_RAW_DATA = os.path.join(project_dir, "test_project_raw_data.ilp")
+    PROJECT_FILE = os.path.join(data_dir, "test_project.ilp")
+    PROJECT_FILE_RAW_DATA = os.path.join(data_dir, "test_project_raw_data.ilp")
     # To be deleted after creating the project file in order to test headless with no raw data
     RAW_DATA = os.path.join(data_dir, "raw_data.npy")
     SAMPLE_DATA = os.path.join(data_dir, "random_data.npy")
@@ -66,6 +66,10 @@ class TestPixelClassificationHeadless(object):
         print("looking for ilastik.py...")
 
         print("starting setup...")
+
+        if not os.path.exists(cls.data_dir):
+            os.makedirs(cls.data_dir)
+
         cls.original_cwd = os.getcwd()
         os.chdir(cls.data_dir)
 
