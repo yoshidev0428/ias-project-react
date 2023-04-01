@@ -4,37 +4,27 @@ import TabItem from '@/components/custom/TabItem';
 import SmallCard from '@/components/custom/SmallCard';
 import PageHeader from './PageHeader';
 import Divider from '@mui/material/Divider';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Tab from 'react-bootstrap/Tab';
-import SuperResolution from './SuperResolution';
 import { Col, Row } from 'react-bootstrap';
-import Draggable from 'react-draggable';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
 import { styled } from '@mui/material/styles';
-import MuiInput from '@mui/material/Input';
-import Paper from '@mui/material/Paper';
-import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import NativeSelect from '@mui/material/NativeSelect';
-import PreviewIcon from '@mui/icons-material/Preview';
-import CheckIcon from '@mui/icons-material/Check';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { mdiPagePrevious, mdiPageNext, mdiCheck, mdiCamera } from '@mdi/js';
 import Icon from '@mdi/react';
 import TextField from '@mui/material/TextField';
 import { useChannelsStore } from '@/state';
 import { Options } from '@/constants/filterOptions';
+
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
 
 const Filter2D = ({ setFilter }) => {
   const IconLabelButtons = () => {
@@ -67,14 +57,6 @@ const Filter2D = ({ setFilter }) => {
           Apply
         </button>
       </SmallCard>
-      // <Stack direction="row" spacing={2} style={{position:'absolute', top:'650px', width:'100%'}}>
-      //   <Button variant="outlined" startIcon={<PreviewIcon />}>
-      //     Preview
-      //   </Button>
-      //   <Button variant="flat" endIcon={<CheckIcon />}>
-      //     Apply
-      //   </Button>
-      // </Stack>
     );
   };
   const setFilter2D = useChannelsStore((state) => state.setFilter2D);
@@ -89,30 +71,6 @@ const Filter2D = ({ setFilter }) => {
   const kernelList = filterList.slice(33, 35);
   const leargeList = filterList.slice(37, 39);
 
-  const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  };
-
-  TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-  };
   const FilterApply = () => {};
   const GetKernel = (props) => {
     const [item, radioName, radio] = props.content;
@@ -188,7 +146,6 @@ const Filter2D = ({ setFilter }) => {
       </FormControl>
     );
   };
-
   const FilterProperty = (props) => {
     let item = props.item;
     try {
@@ -259,9 +216,7 @@ const Filter2D = ({ setFilter }) => {
     );
     // }, [click]); // eslint-disable-line react-hooks/exhaustive-deps
   };
-
   let firstName = 'Low_pass';
-
   const SubSelect = (props) => {
     const filterNames = props.name;
     const [selectedValue, setSelectedValue] = useState('Low_pass');
@@ -307,78 +262,109 @@ const Filter2D = ({ setFilter }) => {
   };
 
   const SelectMenu = () => {
+
+    const Accordion = styled((props) => (
+      <MuiAccordion disableGutters elevation={0} square {...props} />
+    ))(({ theme }) => ({
+      border: `1px solid ${theme.palette.divider}`,
+      '&:not(:last-child)': {
+        borderBottom: 0,
+      },
+      '&:before': {
+        display: 'none',
+      },
+    }));
+    
+    const AccordionSummary = styled((props) => (
+      <MuiAccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+        {...props}
+      />
+    ))(({ theme }) => ({
+      backgroundColor:
+        theme.palette.mode === 'dark'
+          ? 'rgba(255, 255, 255, .05)'
+          : 'rgba(0, 0, 0, .03)',
+      flexDirection: 'row-reverse',
+      '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+        transform: 'rotate(90deg)',
+      },
+      '& .MuiAccordionSummary-content': {
+        marginLeft: theme.spacing(1),
+      },
+    }));
+    
+    const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+      padding: theme.spacing(2),
+      borderTop: '1px solid rgba(0, 0, 0, .125)',
+    }));
+    
+    const [expanded, setExpanded] = useState('panel1');
     const [filterOption, setFilterOption] = useState(emhasisList);
+    const handleChange = (panel, op) => (event, newExpanded) => {
+      setExpanded(newExpanded ? panel : false);
+      console.log('dddddddddd', op)
+      setFilterOption(op);
+    };
+    const activeStyle = {
+      backgroundColor: '#1976d2',
+      color: 'white',
+    };
     return (
-      <div style={{ width: '100%', height: '100%' }}>
-        <Tab.Container id="list-group-tabs-example" defaultActiveKey="link1">
-          <ListGroup>
-            <ListGroup.Item
-              style={{
-                paddingTop: '1px',
-                paddingBottom: '1px',
-                whiteSpace: 'nowrap',
-              }}
-              action
-              eventKey="link1"
-              onClick={() => setFilterOption(emhasisList)}
-            >
-              Eamhasis
-            </ListGroup.Item>
-            <ListGroup.Item
-              style={{
-                paddingTop: '1px',
-                paddingBottom: '1px',
-                whiteSpace: 'nowrap',
-              }}
-              action
-              eventKey="link2"
-              onClick={() => setFilterOption(edgeList)}
-            >
-              Edge
-            </ListGroup.Item>
-            <ListGroup.Item
-              style={{
-                paddingTop: '1px',
-                paddingBottom: '1px',
-                whiteSpace: 'nowrap',
-              }}
-              action
-              eventKey="link3"
-              onClick={() => setFilterOption(morphologicalList)}
-            >
-              Morphological
-            </ListGroup.Item>
-            <ListGroup.Item
-              style={{
-                paddingTop: '1px',
-                paddingBottom: '1px',
-                whiteSpace: 'nowrap',
-              }}
-              action
-              eventKey="link4"
-              onClick={() => setFilterOption(kernelList)}
-            >
-              Kernel
-            </ListGroup.Item>
-            <ListGroup.Item
-              style={{
-                paddingTop: '1px',
-                paddingBottom: '1px',
-                whiteSpace: 'nowrap',
-              }}
-              action
-              eventKey="link5"
-              onClick={() => setFilterOption(leargeList)}
-            >
-              Learge
-            </ListGroup.Item>
-          </ListGroup>
-          <div style={{ backgroundColor: 'white', height: '10px' }}></div>
+    <div>
+      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1', emhasisList)}>
+        <AccordionSummary className={expanded === 'panel1' ? 'active' : ''} aria-controls="panel1d-content" id="panel1d-header" style={expanded === 'panel1' ? activeStyle : {}} >
+          <Typography>Eamhasis</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <SubSelect name={filterOption} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2', edgeList)}>
+        <AccordionSummary className={expanded === 'panel2' ? 'active' : ''} aria-controls="panel2d-content" id="panel2d-header" style={expanded === 'panel2' ? activeStyle : {}} >
+          <Typography>Edge</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
           <SubSelect name={filterOption} />
-        </Tab.Container>
-      </div>
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3', morphologicalList)}>
+        <AccordionSummary className={expanded === 'panel3' ? 'active' : ''} aria-controls="panel3d-content" id="panel3d-header" style={expanded === 'panel3' ? activeStyle : {}} >
+          <Typography>Morphological</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+          <SubSelect name={filterOption} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4', kernelList)}>
+        <AccordionSummary className={expanded === 'panel4' ? 'active' : ''} aria-controls="panel4d-content" id="panel4d-header" style={expanded === 'panel4' ? activeStyle : {}} >
+          <Typography>Kernel</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <SubSelect name={filterOption} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5', leargeList)}>
+        <AccordionSummary className={expanded === 'panel5' ? 'active' : ''} aria-controls="panel5d-content" id="panel5d-header" style={expanded === 'panel5' ? activeStyle : {}} >
+          <Typography>Learge</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography>
+            <SubSelect name={filterOption} />
+          </Typography>
+        </AccordionDetails>
+      </Accordion>      
+    </div>
     );
-  };
+  }
 
   return (
     <TabItem title="Filter">
