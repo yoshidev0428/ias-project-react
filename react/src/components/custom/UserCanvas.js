@@ -26,6 +26,8 @@ function Usercanvas(props) {
   const [contLeft, setContLeft] = React.useState(0);
   const [contTop, setContTop] = React.useState(0);
   let selected_rois = [];
+  let mouse_track = [];
+  let user_custom_areas = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
     if(localStorage.getItem('CANV_ROIS') !== '') {
@@ -124,6 +126,13 @@ function Usercanvas(props) {
   }, []);
 
   const onUp = useCallback(() => {
+    let draw_style = localStorage.getItem('CANV_STYLE');
+    // console.log('track', mouse_track);
+    if(draw_style === 'user_custom_area') {
+      user_custom_areas.push(mouse_track);
+      // mouse_track = [];
+    }
+    console.log('user_area', user_custom_areas)
     drawOutlines();
     setDrawing(false);
     setPosition(null);
@@ -183,7 +192,8 @@ function Usercanvas(props) {
       // context.strokeStyle = activeColor
       context.lineJoin = 'round';
       context.lineWidth = props.strokeWidth;
-
+      mouse_track.push(originalPosition);
+      console.log('track', mouse_track);
       context.beginPath();
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
