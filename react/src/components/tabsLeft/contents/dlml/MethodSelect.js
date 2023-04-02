@@ -20,7 +20,9 @@ export default function MethodSelect() {
   const showCustomDialog = () => {
     useFlagsStore.setState({ DialogCustomFlag: true });
   };
-  const onCall = () => {};
+  const onCall = () => {
+    useFlagsStore.setState({ DialogLockFlag: true });
+  };
 
   return (
     <div className="">

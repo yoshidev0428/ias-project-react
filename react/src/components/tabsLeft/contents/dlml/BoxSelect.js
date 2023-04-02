@@ -16,7 +16,6 @@ import * as api_experiment from '@/api/experiment';
 
 export default function BoxSelect() {
   const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
-
   const select1 = async () => {
     const state = store.getState();
     let outlines = state.experiment.canvas_info.outlines;

@@ -324,10 +324,18 @@ background: #9d9e9e;
     box-shadow: #555555 4px 4px;
 }
 
+.user-custom-canvas {
+    z-index: 9999!important;
+    position: absolute!important;
+}
+
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
     padding: 10px 15px;
 }
-
 .topInput:nth-of-type(3){
     margin-top: 15px;
+}
+
+.MuiPaper-root .active svg{
+    color: white;
 }
