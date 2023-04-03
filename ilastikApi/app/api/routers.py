@@ -56,14 +56,14 @@ async def processImage(request: Request):
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     projectPath = projectPath + tempfile.mkdtemp()
 
-    SAMPLE_MASK = os.path.join(projectPath, "mask.npy")
-    numpy.save(SAMPLE_MASK, numpy.ones((2, 20, 20, 5, 1), dtype=numpy.uint8))
-
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
 
     if not os.path.exists(dataImagePath):
         os.makedirs(dataImagePath)
+
+    SAMPLE_MASK = os.path.join(projectPath, "mask.npy")
+    numpy.save(SAMPLE_MASK, numpy.ones((2, 20, 20, 5, 1), dtype=numpy.uint8))
 
     project_file_path = os.path.join(projectPath, 'MyProject.ilp')
 
