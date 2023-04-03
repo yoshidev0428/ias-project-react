@@ -51,6 +51,7 @@ import { useSelector } from 'react-redux';
 import LoadingDialog from '@/components/custom/LoadingDialog';
 import UserCanvas from '@/components/custom/UserCanvas';
 import MLLabelCanvas from '@/components/custom/MLLabelCanvas'; // added by Wang
+import LockScreen from '@/components/custom/LockScreen';
 import { useFlagsStore } from '@/state';
 function TabContainer(props) {
   return (
@@ -93,7 +94,8 @@ const MainFrame = (props) => {
 
   const DialogLoadingFlag = useFlagsStore((store) => store.DialogLoadingFlag);
   const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
-  const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag); //added by Wang
+  const DialogLockFlag = useFlagsStore((store) => store.DialogLockFlag); //added by Wang
+  const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag); 
 
   const imageViewAreaRef = useRef(null);
   const [height, setHeight] = useState(100);
@@ -598,6 +600,7 @@ const MainFrame = (props) => {
         />
       )}
       {DialogLoadingFlag && <LoadingDialog />}
+      {DialogLockFlag && <LockScreen/>}
       <FooterContent />
     </>
   );

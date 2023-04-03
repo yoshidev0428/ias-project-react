@@ -282,6 +282,33 @@
     overflow-y: auto;
 }
 
+.user-custom-canvas {
+    z-index: 9999!important;
+    position: absolute!important;
+}
+
+.contextContainer {
+    z-index: 10000!important;
+    position: absolute!important;
+}
+
+.rightClick {
+z-index: 12;
+position: fixed;
+background: rgb(255, 255, 255);
+}
+
+.menuElement {
+color: #222222;
+cursor: pointer;
+padding: 5px 12px;
+}
+
+.menuElement:hover {
+color: #050505;
+background: #9d9e9e;
+}
+
 .method-img {
     cursor: pointer;
 }
@@ -295,11 +322,6 @@
     cursor: pointer;
     border: 2px solid black!important;
     box-shadow: #555555 4px 4px;
-}
-
-.user-custom-canvas {
-    z-index: 9999!important;
-    position: absolute!important;
 }
 
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
