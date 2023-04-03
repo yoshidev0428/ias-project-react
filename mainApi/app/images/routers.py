@@ -55,17 +55,18 @@ async def download_exp_image(
 async def processImage(request: Request):
     data = await request.form()
     imagePath = '/app/mainApi/app' + data.get("origial_image_url")
-    sharedImagePath = os.path.join(SHARED_PATH, date.today().strftime("%y%m%d%H%M%s"))
+    folderName = date.today().strftime("%y%m%d%H%M%s")
+    sharedImagePath = os.path.join(SHARED_PATH, folderName)
 
     if not os.path.exists(sharedImagePath):
         os.makedirs(sharedImagePath)
 
     fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
-    newImagePath = os.path.join(sharedImagePath, fileName)
+    newImagePath = os.path.join('/app/shared_static', folderName, fileName)
 
-    cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
+    cmd_str = "cp '{inputPath}' '{outputPath}'".format(
         inputPath=imagePath, outputPath=newImagePath
     )
-    subprocess.run(cmd_str, shell=True)
+    subprocess.call(cmd_str, shell=True)
 
     return JSONResponse({"success": "success", "image_path": newImagePath})
