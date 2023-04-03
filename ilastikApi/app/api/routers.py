@@ -1,3 +1,4 @@
+import asyncio
 import os
 from ilastik.shell.projectManager import ProjectManager
 from ilastik.shell.headless.headlessShell import HeadlessShell
@@ -20,6 +21,7 @@ import tempfile
 import numpy
 import sys
 import ilastik.__main__
+import subprocess
 
 ilastik_startup = ilastik.__main__
 
@@ -51,10 +53,22 @@ async def testCreateProject():
 async def processImage(request: Request):
     data = await request.form()
     imagePath = '/app/mainApi/app/' + data.get("origial_image_url")
-
+    dataImagePath = os.path.join(STATIC_PATH, 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects', tempfile.mkdtemp())
+
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
+
+    if not os.path.exists(dataImagePath):
+        os.makedirs(dataImagePath)
+
+    fileName = imagePath.filename.split("/")[len(imagePath.filename.split("/")) - 1]
+    newImagePath = os.path.join(dataImagePath, fileName)
+
+    cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
+        inputPath=imagePath, outputPath=newImagePath
+    )
+    await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
 
     project_file_path = os.path.join(projectPath, 'MyProject.ilp')
 
