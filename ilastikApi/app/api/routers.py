@@ -56,6 +56,9 @@ async def processImage(request: Request):
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     projectPath = projectPath + tempfile.mkdtemp()
 
+    SAMPLE_MASK = os.path.join(projectPath, "mask.npy")
+    numpy.save(SAMPLE_MASK, numpy.ones((2, 20, 20, 5, 1), dtype=numpy.uint8))
+
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
 
@@ -138,7 +141,11 @@ async def processImage(request: Request):
     args += " --output_internal_path=volume/pred_volume"
     args += " --raw_data"
     # test that relative path works correctly: should be relative to cwd, not project file.
-    args += " " + imagePath
+    args += " " + os.path.normpath(os.path.relpath(imagePath, os.getcwd()))
+    args += " --prediction_mask"
+    args += " " + SAMPLE_MASK
+
+    print('ilastik-arg:', args)
 
     old_sys_argv = list(sys.argv)
     sys.argv = ["ilastik.py"]  # Clear the existing commandline args so it looks like we're starting fresh.
