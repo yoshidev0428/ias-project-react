@@ -85,15 +85,15 @@ class TestPixelClassificationHeadless(object):
 
     @classmethod
     def teardown_class(cls):
-        os.chdir(cls.original_cwd)
-        # Clean up: Delete any test files we generated
-        removeFiles = [cls.PROJECT_FILE, cls.PROJECT_FILE_RAW_DATA, cls.SAMPLE_DATA, cls.SAMPLE_MASK]
-
-        for f in removeFiles:
-            try:
-                os.remove(f)
-            except:
-                pass
+        # os.chdir(cls.original_cwd)
+        # # Clean up: Delete any test files we generated
+        # removeFiles = [cls.PROJECT_FILE, cls.PROJECT_FILE_RAW_DATA, cls.SAMPLE_DATA, cls.SAMPLE_MASK]
+        #
+        # for f in removeFiles:
+        #     try:
+        #         os.remove(f)
+        #     except:
+        #         pass
 
     @classmethod
     def create_random_data(cls, file_path):
@@ -191,6 +191,8 @@ class TestPixelClassificationHeadless(object):
         args += " " + os.path.normpath(os.path.relpath(self.SAMPLE_DATA, os.getcwd()))
         args += " --prediction_mask"
         args += " " + self.SAMPLE_MASK
+
+        print("ilastik-unittest-arg:", args)
 
         old_sys_argv = list(sys.argv)
         sys.argv = ["ilastik.py"]  # Clear the existing commandline args so it looks like we're starting fresh.
