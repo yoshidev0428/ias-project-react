@@ -297,11 +297,6 @@
     box-shadow: #555555 4px 4px;
 }
 
-.user-custom-canvas {
-    z-index: 9999!important;
-    position: absolute!important;
-}
-
 .topInput .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input{
     padding: 10px 15px;
 }
