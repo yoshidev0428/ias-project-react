@@ -62,7 +62,7 @@ async def processImage(request: Request):
     if not os.path.exists(dataImagePath):
         os.makedirs(dataImagePath)
 
-    fileName = imagePath.filename.split("/")[len(imagePath.filename.split("/")) - 1]
+    fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
     newImagePath = os.path.join(dataImagePath, fileName)
 
     cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
