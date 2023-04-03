@@ -3,3 +3,4 @@ starlette==0.22.0
 uvicorn==0.20.0
 pytest==7.2.1
 pytest-asyncio==0.20.3
+python-multipart==0.0.5
