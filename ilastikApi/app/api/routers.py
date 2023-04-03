@@ -21,7 +21,6 @@ import tempfile
 import numpy
 import sys
 import ilastik.__main__
-import subprocess
 
 ilastik_startup = ilastik.__main__
 
@@ -52,8 +51,8 @@ async def testCreateProject():
 )
 async def processImage(request: Request):
     data = await request.form()
-    imagePath = '/app/mainApi/app/' + data.get("origial_image_url")
-    dataImagePath = os.path.join(STATIC_PATH, 'processed_images', tempfile.mkdtemp())
+    imagePath = data.get("origial_image_url")
+    dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects', tempfile.mkdtemp())
 
     if not os.path.exists(projectPath):
@@ -61,14 +60,6 @@ async def processImage(request: Request):
 
     if not os.path.exists(dataImagePath):
         os.makedirs(dataImagePath)
-
-    fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
-    newImagePath = os.path.join(dataImagePath, fileName)
-
-    cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
-        inputPath=imagePath, outputPath=newImagePath
-    )
-    subprocess.run(cmd_str, shell=True)
 
     project_file_path = os.path.join(projectPath, 'MyProject.ilp')
 
