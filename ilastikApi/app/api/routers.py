@@ -68,7 +68,7 @@ async def processImage(request: Request):
     cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
         inputPath=imagePath, outputPath=newImagePath
     )
-    await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
+    subprocess.run(cmd_str, shell=True)
 
     project_file_path = os.path.join(projectPath, 'MyProject.ilp')
 
