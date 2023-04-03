@@ -8,7 +8,7 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse, FileResponse
 from mainApi.app.images.sub_routers.tile.routers import router as tile_router
-from mainApi.config import STATIC_PATH, SHARED_PATH
+from mainApi.config import STATIC_PATH
 import subprocess
 from datetime import date
 
@@ -56,13 +56,13 @@ async def processImage(request: Request):
     data = await request.form()
     imagePath = '/app/mainApi/app' + data.get("origial_image_url")
     folderName = date.today().strftime("%y%m%d%H%M%s")
-    sharedImagePath = os.path.join(SHARED_PATH, folderName)
+    sharedImagePath = os.path.join("/app/shared_static", folderName)
 
     if not os.path.exists(sharedImagePath):
         os.makedirs(sharedImagePath)
 
     fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
-    newImagePath = os.path.join('/app/shared_static', folderName, fileName)
+    newImagePath = os.path.join(sharedImagePath, fileName)
 
     cmd_str = "cp '{inputPath}' '{outputPath}'".format(
         inputPath=imagePath, outputPath=newImagePath
