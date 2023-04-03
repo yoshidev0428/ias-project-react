@@ -85,7 +85,7 @@ class TestPixelClassificationHeadless(object):
 
     @classmethod
     def teardown_class(cls):
-        # os.chdir(cls.original_cwd)
+        os.chdir(cls.original_cwd)
         # # Clean up: Delete any test files we generated
         # removeFiles = [cls.PROJECT_FILE, cls.PROJECT_FILE_RAW_DATA, cls.SAMPLE_DATA, cls.SAMPLE_MASK]
         #
