@@ -67,11 +67,7 @@ const Viewer = ({ isFullScreen }) => {
   if (typeof target === 'undefined') {
     target = [255, 255];
   }
-  // debugger;
-  //console.log("========>", xSlice, ySlice)
-  //console.log("========>", target)
-  //console.log("========>", viewState.zoom)
-  //console.log("U_iternum .................", typeof inputNum_1)
+
   const postProcessEffect = useMemo(
     () =>
       new PostProcessEffect(shaderModule, {
@@ -83,6 +79,7 @@ const Viewer = ({ isFullScreen }) => {
         u_target: target,
         u_zoom: viewState.zoom,
         u_iterNum: [inputNum_1, inputNum_2],
+        disWH:[localStorage.getItem('imageViewSizeWidth'), localStorage.getItem('imageViewSizeHeight')]
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
@@ -157,6 +154,7 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
+  debugger;
   return use3d ? (
     <VolumeViewer
       loader={loader}
@@ -232,6 +230,9 @@ const Viewer = ({ isFullScreen }) => {
       colormap={colormap || 'viridis'}
       viewStates={[{ ...viewState, id: DETAIL_VIEW_ID }]}
       onViewStateChange={onViewStateChange}
+      deckProps={{
+        effects: [postProcessEffect],
+      }}      
     />
   );
 };

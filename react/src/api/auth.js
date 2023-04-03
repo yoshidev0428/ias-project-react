@@ -42,3 +42,11 @@ export const submit_message = async (msg) => {
     return res;
   }
 };
+
+export const confirm_password = (password) => {
+  const formData = new FormData();
+  formData.append('password', password);
+  return api.post('auth/confirm_password', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
