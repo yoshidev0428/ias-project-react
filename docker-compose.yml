@@ -19,6 +19,7 @@ services:
             - ./mainApi:/app/mainApi:rw,shared
             - ./docker_compose_libs/shared_utils:/app/shared_utils:rw,shared
             - ./docker_compose_libs/celery_tasks:/app/celery_tasks:rw,shared
+            - ./docker_compose_shared/static:/app/shared_static:rw,shared
         command: [ "sh", "./mainApi/start.sh" ]
         restart: always
     ilastikapi:
@@ -36,6 +37,7 @@ services:
             - image-storage:/image-storage
             - cache-storage:/cache-storage
             - ./ilastikApi:/app/ilastikApi:rw,shared
+            - ./docker_compose_shared/static:/app/shared_static:rw,shared
         command: [ "sh", "./ilastikApi/start.sh" ]
         restart: always   
     # nginx:
