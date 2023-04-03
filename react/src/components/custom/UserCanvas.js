@@ -23,6 +23,9 @@ function Usercanvas(props) {
   const [top, setTop] = React.useState(props.canvas_info.top);
   const [left, setLeft] = React.useState(props.canvas_info.left);
   const [outlines, setOutlines] = React.useState(props.canvas_info.outlines);
+  const [context, setContext] = React.useState(false);
+  const [contLeft, setContLeft] = React.useState(0);
+  const [contTop, setContTop] = React.useState(0);
   let selected_rois = [];
   let mouse_track = [];
   let user_custom_areas = [];
@@ -252,14 +255,33 @@ function Usercanvas(props) {
         context.fillRect(x, y, 2, 2);
       }
     }
-    // console.log('draw-outlines')
   };
 
-  const initCanvas = () => {
-    const context = canvas.current.getContext('2d');
-    context.fillStyle = 'blue';
-    context.fillRect(0, 0, canvas.current.width, canvas.current.height);
-  };
+  const showNav = useCallback((event) => {
+    event.preventDefault();
+    const coordinates = getCoordinates(event);
+    if (coordinates) {
+      setContext(true);
+      setContLeft(coordinates.x);
+      setContTop(coordinates.y);
+    }
+  }, []);
+
+  const ContextItem = (item) => {
+    if(item === 'clear') {
+      const context = canvas.current.getContext('2d');
+      context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
+      localStorage.setItem('CANV_ROIS', '');
+      selected_rois = []
+      setContext(false);
+    }
+    if(item === 'close') {
+      useFlagsStore.setState({ UserCanvasFlag: false });
+      localStorage.setItem('CANV_ROIS', '');
+      selected_rois = [];
+      setContext(false);
+    }
+  }
 
   useEffect(() => {
     localStorage.setItem('CANV_ROIS', '');
