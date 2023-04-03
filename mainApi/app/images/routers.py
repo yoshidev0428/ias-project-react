@@ -6,10 +6,11 @@ from fastapi import (
     Request,
     Response
 )
-from fastapi.responses import FileResponse
-
+from fastapi.responses import JSONResponse, FileResponse
 from mainApi.app.images.sub_routers.tile.routers import router as tile_router
-from mainApi.config import STATIC_PATH
+from mainApi.config import STATIC_PATH, SHARED_PATH
+import subprocess
+from datetime import date
 
 router = APIRouter(prefix="/image", tags=[])
 
@@ -46,3 +47,25 @@ async def download_exp_image(
         file.seek(range_start)
         content = file.read(content_length)
         return Response(content, headers=headers, status_code=206)
+
+@router.post(
+    "/before_process",
+    response_description="Process image",
+)
+async def processImage(request: Request):
+    data = await request.form()
+    imagePath = '/app/mainApi/app' + data.get("origial_image_url")
+    sharedImagePath = os.path.join(SHARED_PATH, date.today().strftime("%y%m%d%H%M%s"))
+
+    if not os.path.exists(sharedImagePath):
+        os.makedirs(sharedImagePath)
+
+    fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
+    newImagePath = os.path.join(sharedImagePath, fileName)
+
+    cmd_str = "sh cp '{inputPath}' '{outputPath}'".format(
+        inputPath=imagePath, outputPath=newImagePath
+    )
+    subprocess.run(cmd_str, shell=True)
+
+    return JSONResponse({"success": "success", "image_path": newImagePath})
