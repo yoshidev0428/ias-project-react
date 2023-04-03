@@ -45,7 +45,7 @@ const LockScreen = () => {
             </Col>
             <Col xs={6}>
               <Form.Control
-                type="text"
+                type="password"
                 value={password}
                 onChange={handleInput}
               />
