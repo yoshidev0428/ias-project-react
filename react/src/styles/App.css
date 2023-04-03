@@ -282,6 +282,33 @@
     overflow-y: auto;
 }
 
+.user-custom-canvas {
+    z-index: 9999!important;
+    position: absolute!important;
+}
+
+.contextContainer {
+    z-index: 10000!important;
+    position: absolute!important;
+}
+
+.rightClick {
+z-index: 12;
+position: fixed;
+background: rgb(255, 255, 255);
+}
+
+.menuElement {
+color: #222222;
+cursor: pointer;
+padding: 5px 12px;
+}
+
+.menuElement:hover {
+color: #050505;
+background: #9d9e9e;
+}
+
 .method-img {
     cursor: pointer;
 }

@@ -2,7 +2,8 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import store from '@/reducers';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useViewerStore } from '@/state';
+import { useViewerStore, useFlagsStore } from '@/state';
+import DLRightContext from './DLRightContext';
 
 const mapStateToProps = (state) => ({
   canvas_info: state.experiment.canvas_info,
@@ -22,9 +23,6 @@ function Usercanvas(props) {
   const [top, setTop] = React.useState(props.canvas_info.top);
   const [left, setLeft] = React.useState(props.canvas_info.left);
   const [outlines, setOutlines] = React.useState(props.canvas_info.outlines);
-  const [context, setContext] = React.useState(false);
-  const [contLeft, setContLeft] = React.useState(0);
-  const [contTop, setContTop] = React.useState(0);
   let selected_rois = [];
   let mouse_track = [];
   let user_custom_areas = [];
@@ -254,6 +252,13 @@ function Usercanvas(props) {
         context.fillRect(x, y, 2, 2);
       }
     }
+    // console.log('draw-outlines')
+  };
+
+  const initCanvas = () => {
+    const context = canvas.current.getContext('2d');
+    context.fillStyle = 'blue';
+    context.fillRect(0, 0, canvas.current.width, canvas.current.height);
   };
 
   useEffect(() => {
@@ -290,9 +295,11 @@ function Usercanvas(props) {
         onMouseLeave={props.viewOnly ? undefined : onUp}
         onMouseMove={props.viewOnly ? undefined : onMove}
         onTouchMove={props.viewOnly ? undefined : onMove}
+        onContextMenu={props.viewOnly ? undefined : showNav}
         width={width}
         height={height}
       />
+      {context && <DLRightContext left={contLeft} top={contTop} handleItem={ContextItem}/>}
     </div>
   );
 }
