@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 function DLRightContext(props) {
   const [xYPosition, setXyPosition] = React.useState({ x: 0, y: 0 });
-  const initMenu = (chosen) => {
-    props.handleItem(chosen);
+  const [current_model, setCurrentModel] = React.useState(null);
+  const initMenu = (chosen, model=null) => {
+    props.handleItem(chosen, model);
   };
 
   useEffect(() => {
     setXyPosition({ x: props.left, y: props.top });
+    setCurrentModel(props.selectedModel);
   }, [props])
 
   return (
@@ -18,6 +20,12 @@ function DLRightContext(props) {
         <div
           className="rightClick"
         >
+          { current_model && <div className="menuElement" onClick={() => initMenu('train', current_model)}>
+            {`Train (${current_model.custom_name})`}
+          </div> }
+          {/* <div className="menuElement" onClick={() => initMenu('train', 'current_mode')}>
+            Train
+          </div> */}
           <div className="menuElement" onClick={() => initMenu("clear")}>
             Clear Drawing Area
           </div> 
