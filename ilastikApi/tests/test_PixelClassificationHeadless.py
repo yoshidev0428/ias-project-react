@@ -179,7 +179,7 @@ class TestPixelClassificationHeadless(object):
         # NOTE: In this test, cmd-line args to tests will also end up getting "parsed" by ilastik.
         #       That shouldn't be an issue, since the pixel classification workflow ignores unrecognized options.
         #       See if __name__ == __main__ section, below.
-        args = "--project=" + sampleData
+        args = "--project=" + self.PROJECT_FILE
         args += " --headless"
 
         # args += " --sys_tmp_dir=/tmp"
@@ -190,7 +190,7 @@ class TestPixelClassificationHeadless(object):
         args += " --output_internal_path=volume/pred_volume"
         args += " --raw_data"
         # test that relative path works correctly: should be relative to cwd, not project file.
-        args += " " + os.path.normpath(os.path.relpath(self.SAMPLE_DATA, os.getcwd()))
+        args += " " + os.path.normpath(os.path.relpath(sampleData, os.getcwd()))
         args += " --prediction_mask"
         args += " " + sampleMask
 
