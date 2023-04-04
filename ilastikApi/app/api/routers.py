@@ -107,13 +107,13 @@ async def testProcess():
 
     opPixelClass.LabelNames.setValue(["Label 1", "Label 2"])
 
-    slicing1 = sl[0:30, 0:10, 0:1]
-    labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
-    opPixelClass.LabelInputs[0][slicing1] = labels1
-
-    slicing2 = sl[0:30, 0:10, 0:1]
-    labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
-    opPixelClass.LabelInputs[0][slicing2] = labels2
+    # slicing1 = sl[0:30, 0:10, 0:1]
+    # labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
+    # opPixelClass.LabelInputs[0][slicing1] = labels1
+    #
+    # slicing2 = sl[0:30, 0:10, 0:1]
+    # labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
+    # opPixelClass.LabelInputs[0][slicing2] = labels2
 
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
