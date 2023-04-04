@@ -204,7 +204,7 @@ async def processImage(request: Request):
     opFeatures.SelectionMatrix.setValue(selections)
 
     # Add some labels directly to the operator
-    # opPixelClass = workflow.pcApplet.topLevelOperator
+    opPixelClass = workflow.pcApplet.topLevelOperator
     #
     # opPixelClass.LabelNames.setValue(["Label 1", "Label 2"])
     #
@@ -217,8 +217,8 @@ async def processImage(request: Request):
     # opPixelClass.LabelInputs[0][slicing2] = labels2
 
     # Train the classifier
-    # opPixelClass.FreezePredictions.setValue(False)
-    # _ = opPixelClass.Classifier.value
+    opPixelClass.FreezePredictions.setValue(False)
+    _ = opPixelClass.Classifier.value
 
     # Save and close
     shell.projectManager.saveProject()
