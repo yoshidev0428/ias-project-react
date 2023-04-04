@@ -173,11 +173,13 @@ class TestPixelClassificationHeadless(object):
         del shell
 
     @timeLogged(logger)
-    def testBasic(self):
+    def testTiff(self):
+        sampleData = "/app/shared_static/at3.ome.tiff"
+        sampleMask = "/app/shared_static/at3_mask.jpg"
         # NOTE: In this test, cmd-line args to tests will also end up getting "parsed" by ilastik.
         #       That shouldn't be an issue, since the pixel classification workflow ignores unrecognized options.
         #       See if __name__ == __main__ section, below.
-        args = "--project=" + self.PROJECT_FILE
+        args = "--project=" + sampleData
         args += " --headless"
 
         # args += " --sys_tmp_dir=/tmp"
@@ -190,7 +192,7 @@ class TestPixelClassificationHeadless(object):
         # test that relative path works correctly: should be relative to cwd, not project file.
         args += " " + os.path.normpath(os.path.relpath(self.SAMPLE_DATA, os.getcwd()))
         args += " --prediction_mask"
-        args += " " + self.SAMPLE_MASK
+        args += " " + sampleMask
 
         old_sys_argv = list(sys.argv)
         sys.argv = ["ilastik.py"]  # Clear the existing commandline args so it looks like we're starting fresh.
@@ -201,6 +203,36 @@ class TestPixelClassificationHeadless(object):
             self.ilastik_startup.main()
         finally:
             sys.argv = old_sys_argv
+
+    # @timeLogged(logger)
+    # def testBasic(self):
+    #     # NOTE: In this test, cmd-line args to tests will also end up getting "parsed" by ilastik.
+    #     #       That shouldn't be an issue, since the pixel classification workflow ignores unrecognized options.
+    #     #       See if __name__ == __main__ section, below.
+    #     args = "--project=" + self.PROJECT_FILE
+    #     args += " --headless"
+    #
+    #     # args += " --sys_tmp_dir=/tmp"
+    #
+    #     # Batch export options
+    #     args += " --output_format=hdf5"
+    #     args += " --output_filename_format={dataset_dir}/{nickname}_prediction.h5"
+    #     args += " --output_internal_path=volume/pred_volume"
+    #     args += " --raw_data"
+    #     # test that relative path works correctly: should be relative to cwd, not project file.
+    #     args += " " + os.path.normpath(os.path.relpath(self.SAMPLE_DATA, os.getcwd()))
+    #     args += " --prediction_mask"
+    #     args += " " + self.SAMPLE_MASK
+    #
+    #     old_sys_argv = list(sys.argv)
+    #     sys.argv = ["ilastik.py"]  # Clear the existing commandline args so it looks like we're starting fresh.
+    #     sys.argv += args.split()
+    #
+    #     # Start up the ilastik.py entry script as if we had launched it from the command line
+    #     try:
+    #         self.ilastik_startup.main()
+    #     finally:
+    #         sys.argv = old_sys_argv
 
         # Examine the output for basic attributes
         # output_path = self.SAMPLE_DATA[:-4] + "_prediction.h5"
