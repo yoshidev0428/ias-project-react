@@ -1,16 +1,25 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+
+import CloseIcon from '@mui/icons-material/Close';
+import MuiTabPanel from '@mui/lab/TabPanel';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import { TabContext, TabList, TabPanel as MuiTabPanel } from '@mui/lab';
-import ClosableDialog from '@/components/dialogs/ClosableDialog';
-import TabImage from './tabs/TabImage';
-import ExperimentDialog from '../ExperimentDialog';
-import { PositionTabLabels, PositionTabs } from './constants';
-import { getImageUrl } from '@/helpers/file';
-import TabMetadata from './tabs/TabMetadata';
+
 import { toTiffPath } from '@/helpers/avivator';
+import { getImageUrl } from '@/helpers/file';
+import { PositionTabLabels, PositionTabs } from './constants';
+import ExperimentDialog from '../ExperimentDialog';
+import TabImage from './tabs/TabImage';
+import TabMetadata from './tabs/TabMetadata';
 import TabNaming from './tabs/TabNaming';
 
 const PositionDialog = ({ open, onClose }) => {
@@ -87,55 +96,71 @@ const PositionDialog = ({ open, onClose }) => {
 
   return (
     <>
-      <ClosableDialog
-        title="Position Dialog"
-        fullWidth
-        maxWidth="md"
+      <Dialog
         open={open}
         onClose={onClose}
+        fullWidth
+        maxWidth="md"
         sx={{
           '& .MuiDialog-container': {
             alignItems: 'start',
           },
         }}
-        actions={
-          <>
+      >
+        <TabContext value={selectedTab}>
+          <DialogTitle sx={{ m: 0, p: 0 }}>
+            <Box sx={{ px: 3, pt: 2, pb: 1 }}>
+              Position Dialog
+              <IconButton
+                aria-label="close"
+                onClick={onClose}
+                sx={{
+                  position: 'absolute',
+                  right: 12,
+                  top: 12,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ borderTop: 1, borderColor: 'divider', px: 3 }}>
+              <TabList onChange={handleTabChange}>
+                {Object.keys(PositionTabs).map((tabId) => (
+                  <Tab
+                    key={tabId}
+                    value={tabId}
+                    label={PositionTabLabels[tabId]}
+                  />
+                ))}
+              </TabList>
+            </Box>
+          </DialogTitle>
+          <DialogContent sx={{ px: 3, pb: 3 }} dividers>
+            <Box sx={{ minHeight: 300 }}>
+              <TabPanel value={PositionTabs.images}>
+                <TabImage
+                  images={selectedImages}
+                  onRemoveImage={handleRemoveImage}
+                />
+              </TabPanel>
+              <TabPanel value={PositionTabs.tiling}></TabPanel>
+              <TabPanel value={PositionTabs.metadata}>
+                <TabMetadata images={selectedImages} />
+              </TabPanel>
+              <TabPanel value={PositionTabs.naming}>
+                <TabNaming images={selectedImages} />
+              </TabPanel>
+            </Box>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, py: 2 }}>
             {dialogActions}
             <Button color="warning" variant="outlined" onClick={onClose}>
               Cancel
             </Button>
-          </>
-        }
-      >
-        <TabContext value={selectedTab}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 1 }}>
-            <TabList onChange={handleTabChange}>
-              {Object.keys(PositionTabs).map((tabId) => (
-                <Tab
-                  key={tabId}
-                  value={tabId}
-                  label={PositionTabLabels[tabId]}
-                />
-              ))}
-            </TabList>
-          </Box>
-          <Box sx={{ minHeight: 300 }}>
-            <TabPanel value={PositionTabs.images}>
-              <TabImage
-                images={selectedImages}
-                onRemoveImage={handleRemoveImage}
-              />
-            </TabPanel>
-            <TabPanel value={PositionTabs.tiling}></TabPanel>
-            <TabPanel value={PositionTabs.metadata}>
-              <TabMetadata images={selectedImages} />
-            </TabPanel>
-            <TabPanel value={PositionTabs.naming}>
-              <TabNaming images={selectedImages} />
-            </TabPanel>
-          </Box>
+          </DialogActions>
         </TabContext>
-      </ClosableDialog>
+      </Dialog>
       <ExperimentDialog
         open={openExpDlg}
         onClose={() => setOpenExpDlg(false)}
