@@ -57,6 +57,9 @@ async def testProcess():
     project_file_path = os.path.join(projectPath, 'TestProcess.ilp')
     shell = HeadlessShell()
 
+    sampleData = "/app/shared_static/at3.ome.tiff"
+    sampleMask = "/app/shared_static/at3_mask.jpg"
+
     newProjectFile = ProjectManager.createBlankProjectFile(project_file_path, PixelClassificationWorkflow, [])
     newProjectFile.close()
 
@@ -66,7 +69,7 @@ async def testProcess():
     # Add a file
     from ilastik.applets.dataSelection.opDataSelection import FilesystemDatasetInfo
 
-    info = FilesystemDatasetInfo(filePath=dataset_path)
+    info = FilesystemDatasetInfo(filePath=sampleData)
     opDataSelection = workflow.dataSelectionApplet.topLevelOperator
     opDataSelection.DatasetGroup.resize(1)
     opDataSelection.DatasetGroup[0][0].setValue(info)
@@ -121,8 +124,6 @@ async def testProcess():
     shell.closeCurrentProject()
     del shell
 
-    sampleData = "/app/shared_static/at3.ome.tiff"
-    sampleMask = "/app/shared_static/at3_mask.jpg"
     # NOTE: In this test, cmd-line args to tests will also end up getting "parsed" by ilastik.
     #       That shouldn't be an issue, since the pixel classification workflow ignores unrecognized options.
     #       See if __name__ == __main__ section, below.
