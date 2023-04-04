@@ -185,8 +185,8 @@ class TestPixelClassificationHeadless(object):
         # args += " --sys_tmp_dir=/tmp"
 
         # Batch export options
-        args += " --output_format=hdf5"
-        args += " --output_filename_format={dataset_dir}/{nickname}_prediction.h5"
+        args += " --output_format=tiff"
+        args += " --output_filename_format={dataset_dir}/{nickname}_prediction.tiff"
         args += " --output_internal_path=volume/pred_volume"
         args += " --raw_data"
         # test that relative path works correctly: should be relative to cwd, not project file.
