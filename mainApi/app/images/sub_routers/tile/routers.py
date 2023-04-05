@@ -23,6 +23,7 @@ from PIL import Image
 import json
 import uuid
 import aiofiles
+import subprocess
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
@@ -482,8 +483,8 @@ async def register_experiment_with_folders(
         paths=paths,
         current_user=current_user,
         db=db,
+        tiling=data.get("tiling")
     )
-    #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
 
@@ -1057,3 +1058,64 @@ async def get_outlines(request: Request,
             for item in file:
                 outlines.append(item)
     return JSONResponse({"success": outlines})
+
+@router.post("/train_model",
+             response_description="Train Model",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def train_model(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    # print(request)
+    data = await request.form()
+    file_url = data.get("file_url")
+    exp_url = data.get("exp_url")
+    init_model = data.get("init_model")
+    model_name = data.get("model_name")
+    segment = data.get("segment")
+    chan2 = data.get("chan2")
+    weight_decay = data.get("weight_decay")
+    learning_rate = data.get("learning_rate")
+    n_epochs = data.get("n_epochs")
+    #Get file's full abs path
+    exp_path = os.path.join(current_user_path, file_url)
+    exp_path = os.path.abspath(exp_path)
+    directory = exp_path.split('/')
+    directory_length = len(directory)
+    make_new_folder = ""
+    for i in range(directory_length - 2):
+        make_new_folder = make_new_folder + '/' + directory[i+1]
+    make_new_folder = make_new_folder + "/"
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
+    print('file_name', file_full_name)
+    print('file_folder', make_new_folder)
+    origin_file = ""
+    if "_conv_outlines.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_outlines.ome.tiff')
+        origin_file = file_temp[0]
+    if "_conv_masks.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_masks.ome.tiff')
+        origin_file = file_temp[0]
+    if "_conv_flows.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_flows.ome.tiff')
+        origin_file = file_temp[0]
+    print('origin_file', origin_file)
+    original_img = origin_file + ".ome.tiff"
+    original_mask = origin_file + ".ome_cp_masks.png"
+    mask_img = Image.open(make_new_folder + original_img)
+    mask_img.save(make_new_folder + origin_file + ".ome_img.tiff")
+    inputPath = make_new_folder + original_mask
+    outputPath = make_new_folder + origin_file + ".ome._masks.tiff"
+    out_file = origin_file + "_mask.ome.tiff"
+    cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
+    print('=====>', out_file, outputPath, cmd_str)
+    subprocess.run(cmd_str, shell=True)
+    # Train user custom model
+    command_string = "python -m cellpose --train --dir {make_new_folder} --pretrained_model {init_model} --chan {segment} --chan2 {chan_2} --img_filter img --mask_filter masks --learning_rate {learning_rate} --weight_decay {weight_decay} --n_epochs {n_epochs} ".format(make_new_folder=make_new_folder, init_model=init_model, segment=segment, chan_2=chan2, learning_rate=learning_rate, weight_decay=weight_decay, n_epochs=n_epochs)
+    print("my_command", command_string)
+    os.system(command_string)
+    result = 'OK'
+    return JSONResponse({"success": result})

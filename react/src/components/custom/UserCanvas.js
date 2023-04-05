@@ -4,9 +4,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useViewerStore, useFlagsStore } from '@/state';
 import DLRightContext from './DLRightContext';
+import * as api_experiment from '@/api/experiment';
+import { isNull } from 'lodash';
 
 const mapStateToProps = (state) => ({
   canvas_info: state.experiment.canvas_info,
+  selectedModel: state.experiment.current_model,
 });
 
 function Usercanvas(props) {
@@ -265,21 +268,30 @@ function Usercanvas(props) {
     }
   }, []);
 
-  const ContextItem = (item) => {
-    if (item === 'clear') {
+  const ContextItem = (item, model) => {
+    if(item === 'train') {
+      if(model === null) {
+        alert('Please select the model by doing cell segment');
+        return;
+      }
+      useFlagsStore.setState({ UserCanvasFlag: false });
+      setContext(false);
+      useFlagsStore.setState({ DialogTrainingFlag: true });
+    }
+    if(item === 'clear') {
       const context = canvas.current.getContext('2d');
       context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
       localStorage.setItem('CANV_ROIS', '');
       selected_rois = [];
       setContext(false);
     }
-    if (item === 'close') {
+    if(item === 'close') {
       useFlagsStore.setState({ UserCanvasFlag: false });
       localStorage.setItem('CANV_ROIS', '');
       selected_rois = [];
       setContext(false);
     }
-  };
+  }
 
   useEffect(() => {
     localStorage.setItem('CANV_ROIS', '');
@@ -319,13 +331,12 @@ function Usercanvas(props) {
         width={width}
         height={height}
       />
-      {context && (
-        <DLRightContext
-          left={contLeft}
-          top={contTop}
-          handleItem={ContextItem}
-        />
-      )}
+      {context && <DLRightContext 
+        left={contLeft} 
+        top={contTop} 
+        handleItem={ContextItem} 
+        selectedModel={props.selectedModel}
+      />}
     </div>
   );
 }

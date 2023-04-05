@@ -33,7 +33,17 @@ const DEFAULT_PARAMS = {
     c_threshold: 0,
     s_threshold: 0,
   },
+  train_info: {
+    init_model: '',
+    model_name: '',
+    segment: 0,
+    chan2: 0,
+    learning_rate: 0.1,
+    weight_decay: 0.0001,
+    n_epochs: 100
+  },
   models: [],
+  current_model: null,
   canvas_info: {
     outlines: [],
     draw_style: '',
@@ -111,6 +121,12 @@ const experiment = (state = initState, action) => {
       break;
     case 'set_canvas':
       state.canvas_info = action.content;
+      break;
+    case 'set_current_model':
+      state.current_model = action.content;
+      break;
+    case 'set_train_info':
+      state.train_info = action.content;
       break;
     default:
       break;
