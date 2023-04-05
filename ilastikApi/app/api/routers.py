@@ -21,6 +21,7 @@ import tempfile
 import numpy
 import sys
 import ilastik.__main__
+from more_itertools import consecutive_groups
 
 ilastik_startup = ilastik.__main__
 
@@ -164,6 +165,8 @@ async def processImage(request: Request):
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     projectPath = projectPath + tempfile.mkdtemp()
+    labelList = data.get("label_list")
+
 
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
@@ -223,15 +226,36 @@ async def processImage(request: Request):
     # Add some labels directly to the operator
     opPixelClass = workflow.pcApplet.topLevelOperator
 
-    opPixelClass.LabelNames.setValue(["Label 1", "Label 2"])
+    labelNames = []
+    index = 0
+    for label in labelList:
+        index = index + 1
+        labelNames.append(label["name"])
+        labelPositions = label["positions"]
+        coordinates=[]
+        for pos in labelPositions:
+            coordinates.append((pos["x"], pos["y"]))
 
-    slicing1 = sl[0:30, 0:10, 0:1]
-    labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
-    opPixelClass.LabelInputs[0][slicing1] = labels1
+        x = sorted(set([c[0] for c in coordinates]))
+        y = sorted(set([c[1] for c in coordinates]))
+        gx = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(x)]]
+        gy = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(y)]]
 
-    slicing2 = sl[0:30, 0:10, 0:1]
-    labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
-    opPixelClass.LabelInputs[0][slicing2] = labels2
+        # combine every min_x, max_x, with every min_y, max_y
+
+        results = [(mx[slice(2)], my[slice(2)]) for mx in gx for my in gy]
+        labels = index * numpy.ones(slicing2shape(results), dtype=numpy.uint8)
+        opPixelClass.LabelInputs[0][results] = labels
+
+    opPixelClass.LabelNames.setValue(labelNames)
+
+    # slicing1 = sl[0:30, 0:10, 0:1]
+    # labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
+    # opPixelClass.LabelInputs[0][slicing1] = labels1
+    #
+    # slicing2 = sl[0:30, 0:10, 0:1]
+    # labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
+    # opPixelClass.LabelInputs[0][slicing2] = labels2
 
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
