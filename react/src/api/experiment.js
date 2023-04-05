@@ -229,9 +229,20 @@ export const get_outlines = async (file_url, exp_name) => {
  *
  */
 
+export const MLPreprocessImage = async (original_image_url) => {
+  const payload = {
+    origial_image_url: original_image_url,
+  };
+  let response = await api.get('image/before_process', payload);
+  return response;
+};
+
 export const MLGetProcessedImage = async (payload) => {
   try {
-    let res = await ilastikApi.post('/ml_get_processed_image', payload);
+    let preprocessRes = await MLPreprocessImage(payload.original_image_url);
+    let _payload = payload;
+    _payload.original_image_url = preprocessRes.data.image_path;
+    let res = await ilastikApi.post('/ml_get_processed_image', _payload);
     return res.data;
   } catch (e) {
     // console.log(e)
@@ -239,7 +250,7 @@ export const MLGetProcessedImage = async (payload) => {
 };
 
 export const ilastikApi = axios.create({
-  baseURL: 'https://localhost:8001/api/',
+  baseURL: process.env.REACT_APP_BASE_ILASTIK_API_URL,
   timeout: 5000,
   headers: {
     'Access-Control-Allow-Origin': '*',

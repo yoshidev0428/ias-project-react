@@ -117,7 +117,7 @@ export default function MLBoxSelect() {
     _labelList[1].positions = MLBackgroundLabelPosInfo;
     const _payload = {
       workflow_name: 'pixel_classification',
-      origial_image_url: imgPath,
+      original_image_url: imgPath,
       experiment_name: exp_name,
       label_list: _labelList,
     };
