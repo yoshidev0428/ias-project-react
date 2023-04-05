@@ -1,33 +1,21 @@
-from pathlib import Path
 from typing import List
 import os
 import datetime
 from fastapi import UploadFile
 import aiofiles
-import PIL
-import tifffile
-from skimage import io
 import numpy as np
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from mainApi.app.auth.models.user import UserModelDB, PyObjectId, ShowUserModel
-from mainApi.app.images.sub_routers.tile.models import NamePattenModel
 from mainApi.app.images.sub_routers.tile.models import ExperimentModel
 from mainApi.app.images.sub_routers.tile.models import UserCustomModel
 from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
-from mainApi.app import main
-from mainApi.config import STATIC_PATH
-from bson.json_util import dumps
 import pydantic
-from pydantic import BaseModel
 from datetime import datetime
 from PIL import Image
 import subprocess
 from mainApi.app.images.utils.convert import get_metadata
-import matplotlib
-import json
 from cellpose import plot, utils
-from matplotlib import pyplot as plt
-import cv2
+from .asyncio import shell
 
 
 async def add_experiment(
@@ -92,6 +80,7 @@ async def add_experiment_with_folders(
     paths: List[str],
     current_user: UserModelDB or ShowUserModel,
     db: AsyncIOMotorDatabase,
+    tiling: bool = False
 ) -> ExperimentModel:
     index = 0
     folders = []
@@ -116,55 +105,55 @@ async def add_experiment_with_folders(
 
     for each_file_folder in files:
         index = index + 1
-        fPath = ""
-        fileName = ""
+        folder = ""
+        filename = ""
         if "/" in each_file_folder.filename:
-            fPath = folderPath
+            folder = folderPath
             new_folder_path = folderPath + "/" + each_file_folder.filename
-            fileName = each_file_folder.filename.split("/")[
+            filename = each_file_folder.filename.split("/")[
                 len(each_file_folder.filename.split("/")) - 1
             ]
-            files_in_folder.append(fileName)
+            files_in_folder.append(filename)
         else:
-            fPath = make_new_folder
-            fileName = each_file_folder.filename
-            files_in_folder.append(fileName)
+            folder = make_new_folder
+            filename = each_file_folder.filename
+            files_in_folder.append(filename)
             new_folder_path = make_new_folder + "/" + each_file_folder.filename
 
         if index == len(files):
-            folders.append({"folder": folderName, "files": files_in_folder})
+            # save tiling flag
+            folders.append({"folder": folderName, "files": files_in_folder, "tiling": tiling})
 
         async with aiofiles.open(new_folder_path, "wb") as f:
             content_folder = await each_file_folder.read()
             await f.write(content_folder)
 
-            if each_file_folder.filename[-9:].lower() != ".ome.tiff":
-                fileFormat = each_file_folder.filename.split(".")
-                inputPath = os.path.abspath(new_folder_path)
-                if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
-                    img = Image.open(inputPath)
-                    inputPath = os.path.abspath(
-                        fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
-                    )
-                    img.save(inputPath, "JPEG")
+            if not each_file_folder.filename.endswith((".ome.tiff", ".ome.tif")):
+                pre, ext = each_file_folder.filename.rsplit('.', 1)
+                input = os.path.abspath(new_folder_path)
+                jpg_output = None
 
-        if each_file_folder.filename[-9:].lower() != ".ome.tiff":
-            fileFormat = each_file_folder.filename.split(".")
-            inputPath = os.path.abspath(new_folder_path)
-            if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
-                img = Image.open(inputPath)
-                inputPath = os.path.abspath(
-                    fPath + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
-                )
-                img.save(inputPath, "JPEG")
+                # save temp jpg image to provide bfconvert input image
+                if ext.lower() not in ("jpg", "jpeg"):
+                    img = Image.open(input)
+                    jpg_output = os.path.abspath(f'{folder}/{pre}.jpg')
+                    img.save(jpg_output)
+                    
+                # save thumbnail image for tiling layout and previewing images
+                input_pre = os.path.splitext(input)[0]
+                img = Image.open(input)
+                img.thumbnail([100, 100])
+                img.save(input_pre + '.timg', 'png')
 
-            outputPath = os.path.abspath(
-                fPath + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
-            )
-            cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
-                inputPath=inputPath, outputPath=outputPath
-            )
-            subprocess.run(cmd_str, shell=True)
+                output = os.path.abspath(f'{folder}/{pre}.ome.tiff')
+                bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
+                await shell(bfconv_cmd)
+
+                # remove temp jpg image if exists
+                if jpg_output is not None:
+                    os.remove(jpg_output)
+            else: 
+                pass
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
@@ -192,7 +181,8 @@ async def add_experiment_with_folders(
             merged_files = []
             for files in file_lists:
                 merged_files += files
-            merged_data.append({"folder": folder, "files": list(set(merged_files))})
+            # save tiling flag when merging folder images too
+            merged_data.append({"folder": folder, "files": list(set(merged_files)), "tiling": tiling})
 
         await db["experiment"].update_one(
             {"_id": oldExpData["_id"]},

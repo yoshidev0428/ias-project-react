@@ -482,8 +482,8 @@ async def register_experiment_with_folders(
         paths=paths,
         current_user=current_user,
         db=db,
+        tiling=data.get("tiling")
     )
-    #     result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)) + "/" + folder_name)
 
     return JSONResponse(result)
 
