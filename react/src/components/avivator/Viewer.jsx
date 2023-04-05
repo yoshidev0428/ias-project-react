@@ -79,7 +79,10 @@ const Viewer = ({ isFullScreen }) => {
         u_target: target,
         u_zoom: viewState.zoom,
         u_iterNum: [inputNum_1, inputNum_2],
-        disWH:[localStorage.getItem('imageViewSizeWidth'), localStorage.getItem('imageViewSizeHeight')]
+        disWH: [
+          localStorage.getItem('imageViewSizeWidth'),
+          localStorage.getItem('imageViewSizeHeight'),
+        ],
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
@@ -154,7 +157,6 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-  debugger;
   return use3d ? (
     <VolumeViewer
       loader={loader}
@@ -232,7 +234,7 @@ const Viewer = ({ isFullScreen }) => {
       onViewStateChange={onViewStateChange}
       deckProps={{
         effects: [postProcessEffect],
-      }}      
+      }}
     />
   );
 };
