@@ -10,6 +10,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import store from '@/reducers';
 import { connect } from 'react-redux';
+import * as api_experiment from '@/api/experiment';
+import { isNull } from 'lodash';
 
 const mapStateToProps = (state) => ({
   selectedModel: state.experiment.current_model,
@@ -22,7 +24,7 @@ const TrainingDialog = (props) => {
     state.experiment.method,
   );
   const [customName] = React.useState(state.experiment.custom_name);
-  const segInfo = state.experiment.seg_info;
+  const train_info = state.experiment.train_info;
   const methods = {
     tissuenet: 'TissueNet',
     nuclei: 'Nuclei',
@@ -42,24 +44,73 @@ const TrainingDialog = (props) => {
     LC4: 'LC4',
   };
 
+  const getImageByUrl = async function (imagePath) {
+    try {
+      const state = store.getState();
+
+      const response = await fetch(
+        process.env.REACT_APP_BASE_API_URL +
+          'static/' +
+          state.auth.user._id +
+          '/' +
+          imagePath,
+        {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods':
+              'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers':
+              'Origin, Content-Type, X-Auth-Token',
+            Authorization: state.auth.tokenType + ' ' + state.auth.token,
+          },
+        },
+      );
+      const blob = await response.blob();
+      const file = new File([blob], imagePath, { type: 'image/tiff' });
+      file.path = imagePath;
+      return file;
+    } catch (err) {
+      return null;
+    }
+  };
+
   const close = (_event, reason) => {
     if (reason !== 'backdropClick') {
       useFlagsStore.setState({ DialogTrainingFlag: false });
     }
   };
 
-  const action = () => {
-    segInfo.custom_name = customName;
-    segInfo.custom_method = selectedMethod;
-    // segInfo.outline = outline;
-    // segInfo.cell_diam = diameter;
-    segInfo.chan_segment = segment;
-    segInfo.chan_2 = chan2;
-    // segInfo.f_threshold = f_threshold;
-    // segInfo.c_threshold = c_threshold;
-    // segInfo.s_threshold = s_threshold;
-    store.dispatch({ type: 'set_seg_info', content: segInfo });
+  const action = async () => {
+    train_info.init_model = init_model;
+    train_info.model_name = model_name;
+    train_info.segment = segment;
+    train_info.chan2 = chan2;
+    train_info.learning_rate = learning_rate;
+    train_info.weight_decay = weight_decay;
+    train_info.n_epochs = n_epochs;
+    store.dispatch({ type: 'set_train_info', content: train_info });
+    const state = store.getState();
+    if (isNull(state.files.imagePathForAvivator)) {
+      alert('Please enter your image file!');
+      return;
+    }
+    let imgPath = state.files.imagePathForAvivator[0].path;
+    let exp_name = imgPath.split('/');
+    exp_name = exp_name[0];
     useFlagsStore.setState({ DialogTrainingFlag: false });
+    useFlagsStore.setState({ DialogLoadingFlag: true });
+    let result = await api_experiment.train_model(
+      imgPath,
+      exp_name,
+      train_info
+    );
+    if (result.data.success === 'OK') {
+      alert(
+        'Your model is successfully trained!',
+      );
+      useFlagsStore.setState({ DialogLoadingFlag: false });
+      return;
+    }
   };
 
   const [init_model, setInitModel] = React.useState('tissuenet');
