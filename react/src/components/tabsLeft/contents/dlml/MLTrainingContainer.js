@@ -22,14 +22,32 @@ import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
 
 const defaultLabelList = [
-  { id: 0, name: 'label1', color: '#FF0000' },
-  { id: 1, name: 'label2', color: '#00FF00' },
+  {
+    id: 0,
+    name: 'object',
+    label_color: '#FF0000',
+    map_color: '#FF0000',
+    positions: [],
+  },
+  {
+    id: 1,
+    name: 'background',
+    label_color: '#00FF00',
+    map_color: '#00FF00',
+    positions: [],
+  },
 ];
 
 export default function MLBoxSelect() {
   const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag);
   const MLSelectTargetMode = useSelector(
     (state) => state.experiment.MLSelectTargetMode,
+  );
+  const MLObjectLabelPosInfo = useSelector(
+    (state) => state.experiment.MLObjectLabelPosInfo,
+  );
+  const MLBackgroundLabelPosInfo = useSelector(
+    (state) => state.experiment.MLBackgroundLabelPosInfo,
   );
 
   // const selectedLabel = useFlagsStore((store) => store.selectedLabel);
@@ -92,9 +110,19 @@ export default function MLBoxSelect() {
     let imgPath = state.files.imagePathForAvivator[0].path;
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
-    // console.log('===============>')
-    // console.log(imgPath, exp_name)
-    let res = await api_experiment.MLGetProcessedImage(imgPath, exp_name, {});
+
+    const _labelInfo = [];
+    let _labelList = defaultLabelList;
+    _labelList[0].positions = MLObjectLabelPosInfo;
+    _labelList[1].positions = MLBackgroundLabelPosInfo;
+    const _payload = {
+      workflow_name: 'pixel_classification',
+      original_image_url: imgPath,
+      experiment_name: exp_name,
+      label_list: _labelList,
+    };
+    // console.log('@@@@@@@ live update ====>', _payload)
+    let res = await api_experiment.MLGetProcessedImage(_payload);
   };
 
   const drawCurve = () => {
@@ -109,6 +137,7 @@ export default function MLBoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_area');
   };
 
   const drawCircle = () => {
@@ -140,6 +169,8 @@ export default function MLBoxSelect() {
   };
 
   const ClearRegion = () => {
+    store.dispatch({ type: 'clearMLObjectLabelPosInfo' });
+    store.dispatch({ type: 'clearMLBackgroundLabelPosInfo' });
     useFlagsStore.setState({ MLCanvasFlag: false });
   };
 

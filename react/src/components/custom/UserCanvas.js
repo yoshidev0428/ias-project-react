@@ -34,7 +34,7 @@ function Usercanvas(props) {
   let user_custom_areas = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
-    if(localStorage.getItem('CANV_ROIS') !== '') {
+    if (localStorage.getItem('CANV_ROIS') !== '') {
       selected_rois = localStorage.getItem('CANV_ROIS');
       selected_rois = selected_rois.split(',');
     }
@@ -44,9 +44,7 @@ function Usercanvas(props) {
       if (check_roi_valid(i, pos, new_pos) === true) {
         if (selected_rois.indexOf(i) === -1) {
           selected_rois.push(i);
-          localStorage.setItem(
-            'CANV_ROIS',selected_rois
-          );
+          localStorage.setItem('CANV_ROIS', selected_rois);
         }
       }
     }
@@ -115,15 +113,15 @@ function Usercanvas(props) {
     a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2;
 
   const onDown = useCallback((event) => {
-    if(event.button === 0) {
+    if (event.button === 0) {
       setContext(false);
       const coordinates = getCoordinates(event);
       if (coordinates) {
         setPosition(coordinates);
         setDrawing(true);
         // if (props.canvas_info.draw_style === 'user_custom_select') {
-          get_selected_rois(coordinates);
-          drawOutlines();
+        get_selected_rois(coordinates);
+        drawOutlines();
         // }
       }
     }
@@ -132,11 +130,11 @@ function Usercanvas(props) {
   const onUp = useCallback(() => {
     let draw_style = localStorage.getItem('CANV_STYLE');
     // console.log('track', mouse_track);
-    if(draw_style === 'user_custom_area') {
+    if (draw_style === 'user_custom_area') {
       user_custom_areas.push(mouse_track);
       // mouse_track = [];
     }
-    console.log('user_area', user_custom_areas)
+    // console.log('user_area', user_custom_areas)
     drawOutlines();
     setDrawing(false);
     setPosition(null);
@@ -197,7 +195,7 @@ function Usercanvas(props) {
       context.lineJoin = 'round';
       context.lineWidth = props.strokeWidth;
       mouse_track.push(originalPosition);
-      console.log('track', mouse_track);
+      // console.log('track', mouse_track);
       context.beginPath();
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
@@ -247,7 +245,7 @@ function Usercanvas(props) {
   };
 
   const drawOutlines = () => {
-    let zoom = localStorage.getItem('CANV_ZOOM')
+    let zoom = localStorage.getItem('CANV_ZOOM');
     const context = canvas.current.getContext('2d');
     context.fillStyle = activeColor;
     for (let i in selected_rois) {
@@ -297,7 +295,7 @@ function Usercanvas(props) {
 
   useEffect(() => {
     localStorage.setItem('CANV_ROIS', '');
-  }, [])
+  }, []);
 
   useEffect(() => {
     // initCanvas();
@@ -310,7 +308,7 @@ function Usercanvas(props) {
   }, [props, width, height]);
 
   useEffect(() => {
-    setTop(props.canvas_info.top );
+    setTop(props.canvas_info.top);
     setLeft(props.canvas_info.left);
     drawOutlines();
   }, [props.canvas_info.left, props.canvas_info.top]);
