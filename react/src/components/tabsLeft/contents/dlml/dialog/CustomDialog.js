@@ -91,7 +91,7 @@ const CustomDialog = () => {
     if (result.data.error) {
       //alert("Error occured while getting the tree")
     } else {
-      if (result.data.success == 'NO') {
+      if (result.data.success === 'NO') {
         alert(
           'Your custom model is not suitable for this image. Please choose another model',
         );
@@ -183,7 +183,8 @@ const CustomDialog = () => {
   const [selectedIcon, setSelectedIcon] = useState('');
 
   const handleSelectedMethod = (newValue) => {
-    setSelectedIcon(newValue);
+    setSelectedIcon(newValue.custom_name);
+    store.dispatch({ type: 'set_current_model', content: newValue });
   };
 
   const ImageBox = () => {
@@ -196,7 +197,7 @@ const CustomDialog = () => {
                 ? 'border method-img'
                 : 'method-img-selected'
             }
-            onClick={() => handleSelectedMethod(model.custom_name)}
+            onClick={() => handleSelectedMethod(model)}
           >
             <Image
               style={{ margin: '0 auto', width: '65px', height: '65px' }}
