@@ -161,7 +161,7 @@ async def testProcess():
 )
 async def processImage(request: Request):
     data = await request.form()
-    imagePath = data.get("origial_image_url")
+    imagePath = data.get("original_image_url")
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     projectPath = projectPath + tempfile.mkdtemp()
