@@ -38,7 +38,7 @@ from mainApi.app.images.sub_routers.tile.models import (
     UserCustomModel
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.file import add_image_tiles
+from mainApi.app.images.utils.tiling import add_image_tiles
 from mainApi.app.images.utils.experiment import (
     add_experiment,
     add_experiment_with_folders,
