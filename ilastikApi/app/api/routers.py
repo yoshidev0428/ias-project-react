@@ -249,6 +249,7 @@ async def processImage(request: Request):
             # combine every min_x, max_x, with every min_y, max_y
 
             results = [(mx[slice(2)], my[slice(2)]) for mx in gx for my in gy]
+            print("slice-results:", results)
             labels = index * numpy.ones(slicing2shape(results), dtype=numpy.uint8)
             opPixelClass.LabelInputs[0][results] = labels
 
