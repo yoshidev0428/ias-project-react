@@ -254,14 +254,21 @@ export const train_model = async (file_url, exp_name, train_info) => {
  */
 
 export const MLPreprocessImage = async (original_image_url) => {
-  const payload = JSON.stringify({
-    origial_image_url: original_image_url,
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('origial_image_url', original_image_url);
+
+  let response = await api.post('image/before_process', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
   });
-  // console.log("payload =======>", payload)
-  let response = await api.post('image/before_process', payload);
   return response;
 };
-
 export const MLGetProcessedImage = async (payload) => {
   try {
     let preprocessRes = await MLPreprocessImage(payload.original_image_url);
