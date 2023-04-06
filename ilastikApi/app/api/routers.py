@@ -29,6 +29,11 @@ from lazyflow.utility import PathComponents
 from lazyflow.operators.ioOperators import OpInputDataReader
 from lazyflow.operators.opReorderAxes import OpReorderAxes
 
+from lazyflow.graph import Graph
+from lazyflow.operators.ioOperators import OpInputDataReader
+from lazyflow.roi import roiToSlice, roiFromShape
+
+
 ilastik_startup = ilastik.__main__
 
 router = APIRouter(
@@ -112,29 +117,34 @@ async def testProcess():
     # Add some labels directly to the operator
     opPixelClass = workflow.pcApplet.topLevelOperator
 
-    file_path = '/app/shared_static/Labels.jpg'
-    internal_paths = DatasetInfo.getPossibleInternalPathsFor(file_path)
-    internal_path = internal_paths[0]
+    label_data_paths = ['/app/shared_static/Labels.jpg']
+    # Read each label volume and inject the label data into the appropriate training slot
+    cwd = os.getcwd()
+    label_classes = set()
+    for lane, label_data_path in enumerate(label_data_paths):
+        graph = Graph()
+        opReader = OpInputDataReader(graph=graph)
+        try:
+            opReader.WorkingDirectory.setValue(cwd)
+            opReader.FilePath.setValue(label_data_path)
 
-    path_components = PathComponents(file_path)
-    path_components.internalPath = str(internal_path)
+            print("Reading label volume: {}".format(label_data_path))
+            label_volume = opReader.Output[:].wait()
+        finally:
+            opReader.cleanUp()
 
-    try:
-        top_op = workflow.pcApplet.topLevelOperatorView
-        opReader = OpInputDataReader(parent=top_op.parent)
-        opReader.FilePath.setValue(path_components.totalPath())
+        raw_shape = opPixelClass.InputImages[lane].meta.shape
+        if label_volume.ndim != len(raw_shape):
+            # Append a singleton channel axis
+            assert label_volume.ndim == len(raw_shape) - 1
+            label_volume = label_volume[..., None]
 
-        # Reorder the axes
-        op5 = OpReorderAxes(parent=top_op.parent)
-        op5.AxisOrder.setValue(top_op.LabelInputs.meta.getAxisKeys())
-        op5.Input.connect(opReader.Output)
+        # Auto-calculate the max label value
+        label_classes.update(numpy.unique(label_volume))
 
-        # Finally, import the labels
-        top_op.importLabels(top_op.current_view_index(), op5.Output)
-
-    finally:
-        op5.cleanUp()
-        opReader.cleanUp()
+        print("Applying label volume to lane #{}".format(lane))
+        entire_volume_slicing = roiToSlice(*roiFromShape(label_volume.shape))
+        opPixelClass.LabelInputs[lane][entire_volume_slicing] = label_volume
 
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
