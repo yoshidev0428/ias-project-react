@@ -21,6 +21,7 @@ import tempfile
 import numpy
 import sys
 import ilastik.__main__
+import json
 from more_itertools import consecutive_groups
 
 ilastik_startup = ilastik.__main__
@@ -166,6 +167,8 @@ async def processImage(request: Request):
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     projectPath = projectPath + tempfile.mkdtemp()
     labelList = data.get("label_list")
+    labelList = json.loads(labelList)
+    print("process-image:", labelList)
 
 
     if not os.path.exists(projectPath):

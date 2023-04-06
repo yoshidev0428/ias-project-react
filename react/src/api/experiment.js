@@ -279,10 +279,22 @@ export const MLGetProcessedImage = async (payload) => {
     formData.append('original_image_url', preprocessRes.data.image_path);
     formData.append('experiment_name', payload.experiment_name);
     formData.append('label_list', JSON.stringify(payload.label_list));
-    const response = await ilastikApi.post('image/process_image', formData, {
+    // const response = await ilastikApi.post('image/process_image', formData, {
+    //   headers: {
+    //     'Access-Control-Allow-Origin': 'http://localhost:3000',
+    //     'Access-Control-Allow-Credentials': 'true',
+    //     'Access-Control-Allow-Methods':
+    //       'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    //     'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    // });
+    const response = await axios({
+      method: 'post',
+      url: 'http://ias.gtgjpj.jp:8001/image/process_image',
+      data: formData,
       headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
-        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods':
           'GET, POST, PATCH, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
