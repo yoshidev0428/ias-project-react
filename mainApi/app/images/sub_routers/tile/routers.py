@@ -38,11 +38,7 @@ from mainApi.app.images.sub_routers.tile.models import (
     UserCustomModel
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.file import (
-    save_upload_file,
-    add_image_tiles,
-    convol2D_processing,
-)
+from mainApi.app.images.utils.file import add_image_tiles
 from mainApi.app.images.utils.experiment import (
     add_experiment,
     add_experiment_with_folders,
@@ -91,7 +87,7 @@ async def upload_image_tiles(
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)), tiling_image_folder)
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
-    else:
+    elif clear_previous:
         for f in os.listdir(current_user_path):
             os.remove(os.path.join(current_user_path, f))
         await db["tile-image-cache"].delete_many(
