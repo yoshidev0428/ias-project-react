@@ -74,23 +74,9 @@ class TileModelDB(BaseModel):
 
 class FileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    # reference to the user who uploaded the tile
     user_id: PyObjectId = Field(default_factory=PyObjectId)
-    absolute_path: str
-    file_name: str
-    content_type: str  # MIME type
-    # width_px: int
-    # height_px: int
-    # series: Optional[str] = ""
-    # offset_x: Optional[int] = 0
-    # offset_y: Optional[int] = 0
+    filename: str
     
-    # row_index: Optional[int] = 0  # created by regex of name
-    # column_index: Optional[int] = 0  # created by regex of name
-    # channel: Optional[str] = "not specified"
-    # field: Optional[int] = 0
-    # z_position: Optional[int] = 0
-    # time_point: Optional[int] = 0
     class Config:
         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator
         allow_population_by_field_name = True

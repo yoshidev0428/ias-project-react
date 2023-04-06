@@ -19,7 +19,7 @@ from mainApi.app.images.utils.folder import get_user_cache_path, clear_path
 from mainApi.app import main
 from mainApi.config import STATIC_PATH
 from mainApi.app.images.utils.convert import convert_to_ome_format
-import subprocess
+from .asyncio import shell
 
 
 async def save_upload_file(upload_file: UploadFile, destination: Path, chunk_size: int = 1024) -> None:
@@ -29,7 +29,6 @@ async def save_upload_file(upload_file: UploadFile, destination: Path, chunk_siz
 
 async def add_image_tiles(path: Path,
                         files: List[UploadFile],
-                        clear_previous: bool,
                         current_user: UserModelDB or ShowUserModel,
                         db: AsyncIOMotorDatabase) -> List[FileModelDB]:
     """
@@ -38,99 +37,44 @@ async def add_image_tiles(path: Path,
     Front end should include a validator that checks if the file has already been uploaded and then reject it.
     No validation is done in the backend
     """
-    print(files)
     tiles: List[FileModelDB] = []
-    filenames = []
     for each_file in files:
         file_name = each_file.filename
-        content_type = each_file.content_type
-
         file_path = os.path.join(path, file_name) 
+        pre = file_path.rsplit('.', 1)[0]
         
         async with aiofiles.open(file_path, 'wb') as f:
             content = await each_file.read()
             await f.write(content)
-            # convert to ome format
-            # file_name = convert_to_ome_format(path, file_name)
-            # file_path = os.path.join(path, file_name)
+        
+        if file_name.endswith(('ome.tiff', 'ome.tif', 'tiff', 'tif')):
+            input = os.path.abspath(file_path)
+            output = os.path.abspath(f'{pre}.png')
+            
+            # convert tiff image to png for thumbnail
+            bf_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
+            await shell(bf_cmd)
 
-        # if file_name != "":
-        #     # print("add_image_tiles: ", path, file_name, content_type)
-        #     filenames.append(file_name)
-        #     with PIL.Image.open(file_path) as im:
-        #         width_px, height_px = im.size
+            # save thumbnail image 
+            img = Image.open(output)
+            img.thumbnail([100, 100])
+            img.save(f'{pre}.timg')
 
-            if file_name[-9:].lower() != ".ome.tiff":
-                fileFormat = file_name.split(".")
-                inputPath = os.path.abspath(file_path)
-                if fileFormat[-1].lower() == "png" or fileFormat[-1].lower() == "bmp":
-                    img = Image.open(inputPath)
-                    inputPath = os.path.abspath(
-                        path + "/" + ".".join(fileFormat[0:-1]) + ".jpg"
-                    )
-                    img.save(inputPath, "JPEG")
-
-                outputPath = os.path.abspath(
-                    path + "/" + ".".join(fileFormat[0:-1]) + ".ome.tiff"
-                )
-                cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '{inputPath}' '{outputPath}'".format(
-                    inputPath=inputPath, outputPath=outputPath
-                )
-                await asyncio.to_thread(subprocess.run, cmd_str, shell=True)
-
-            filenames.append(file_name)
-
-            tile = FileModelDB(
-                user_id=PyObjectId(current_user.id),
-                absolute_path=str(path),
-                file_name=file_name,
-                content_type=content_type,
-                # width_px=width_px,
-                # height_px=height_px
-            )
-            tiles.append(tile)
+            # remove temp png image
+            os.remove(output)
+        else:
+            img = Image.open(file_path)
+            img.thumbnail([100, 100])
+            img.save(f'{pre}.timg')
+            
+        tile = FileModelDB(
+            user_id=PyObjectId(current_user.id),
+            filename=file_name,
+        )
+        tiles.append(tile)
     
-    print("add_image_tiles: filenames", filenames)
     await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
-    return {"Flag_3d": True, "N_images": len(filenames), "images": filenames}
-    # cache_path = STATIC_PATH
-    # raw_source = io.imread(path, True)
-    # res = raw_source
-    # image_num = res.shape    
-    # current_time = datetime.datetime.now() 
-    # time_str = current_time.strftime("%Y%m%d_%H%M%S")
-    # path_images = []
-    # if image_num[2] > 3:
-    #     for i in range(image_num[0]):
-    #         path_image = os.path.join(cache_path, 'slice_{num:03d}'.format(num=i)+ '_' + time_str + '.png')
-    #         io.imsave(path_image, normalize_2Dim_uint8(res[i]))
-    #         path_image = path_image.split('/')[-1]
-    #         path_images.append(path_image)
-    #     D_flag = True
-    #     return D_flag, image_num[0], path_images
-    # else:
-        # tiles: List[TileModelDB] = []
-        # file = files[0]
-        # path_image = os.path.join(cache_path, 'slice_000_'+ time_str +'.png')
-        # io.imsave(path_image, normalize_2Dim_uint8(res))
-        # path_image = path_image.split('/')[-1]
-        # path_images.append(path_image)
-        # width_px, height_px = PIL.Image.open(file.file).size
-        # tile = TileModelDB(
-        #     user_id=PyObjectId(current_user.id),
-        #     absolute_path=str(path),
-        #     file_name=file.filename,
-        #     content_type=file.content_type,
-        #     width_px=width_px,
-        #     height_px=height_px
-        # )
-        # tiles.append(tile)
-        # await db['tile-image-cache'].insert_many([t.dict(exclude={'id'}) for t in tiles])
-        # path = tiles[0].absolute_path
-        # D_flag = False
-        # image_num = 1
-        # return D_flag, image_num, path_images
-
+ 
 def convol2D_processing(file_name):
     abs_path = STATIC_PATH
     file_path = str(abs_path) + "/" + str(file_name)

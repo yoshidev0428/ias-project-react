@@ -87,13 +87,14 @@ async def upload_image_tiles(
     current_user: UserModelDB = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[TileModelDB]:
-    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)), 'images')
+    tiling_image_folder = 'images'
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)), tiling_image_folder)
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
     else:
         for f in os.listdir(current_user_path):
             os.remove(os.path.join(current_user_path, f))
-        res = await db["tile-image-cache"].delete_many(
+        await db["tile-image-cache"].delete_many(
             {"user_id": PyObjectId(current_user.id)}
         )
     result = await add_image_tiles(
@@ -103,7 +104,7 @@ async def upload_image_tiles(
         current_user=current_user,
         db=db,
     )
-    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)), 'images')
+    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)), tiling_image_folder)
     return JSONResponse(result)
 
 
