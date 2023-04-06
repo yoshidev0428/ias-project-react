@@ -23,6 +23,11 @@ import sys
 import ilastik.__main__
 import json
 from more_itertools import consecutive_groups
+from ilastik.applets.dataSelection import DatasetInfo
+from ilastik.applets.dataSelection.dataSelectionGui import DataSelectionGui, SubvolumeSelectionDlg
+from lazyflow.utility import PathComponents
+from lazyflow.operators.ioOperators import OpInputDataReader
+from lazyflow.operators.opReorderAxes import OpReorderAxes
 
 ilastik_startup = ilastik.__main__
 
@@ -107,15 +112,29 @@ async def testProcess():
     # Add some labels directly to the operator
     opPixelClass = workflow.pcApplet.topLevelOperator
 
-    opPixelClass.LabelNames.setValue(["Label 1", "Label 2"])
+    file_path = '/app/shared_static/Labels.jpg'
+    internal_paths = DatasetInfo.getPossibleInternalPathsFor(file_path)
+    internal_path = internal_paths[0]
 
-    # slicing1 = sl[0:30, 0:10, 0:1]
-    # labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
-    # opPixelClass.LabelInputs[0][slicing1] = labels1
-    #
-    # slicing2 = sl[0:30, 0:10, 0:1]
-    # labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
-    # opPixelClass.LabelInputs[0][slicing2] = labels2
+    path_components = PathComponents(file_path)
+    path_components.internalPath = str(internal_path)
+
+    try:
+        top_op = workflow.pcApplet.topLevelOperatorView
+        opReader = OpInputDataReader(parent=top_op.parent)
+        opReader.FilePath.setValue(path_components.totalPath())
+
+        # Reorder the axes
+        op5 = OpReorderAxes(parent=top_op.parent)
+        op5.AxisOrder.setValue(top_op.LabelInputs.meta.getAxisKeys())
+        op5.Input.connect(opReader.Output)
+
+        # Finally, import the labels
+        top_op.importLabels(top_op.current_view_index(), op5.Output)
+
+    finally:
+        op5.cleanUp()
+        opReader.cleanUp()
 
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
