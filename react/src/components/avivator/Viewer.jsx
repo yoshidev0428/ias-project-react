@@ -67,7 +67,11 @@ const Viewer = ({ isFullScreen }) => {
   if (typeof target === 'undefined') {
     target = [255, 255];
   }
-
+  const element = document.getElementById("deckgl-overlay");
+  let canvasWH = [100., 100.];
+  if (element!=null) {
+    canvasWH = [element.width, element.height];
+  }
   const postProcessEffect = useMemo(
     () =>
       new PostProcessEffect(shaderModule, {
@@ -83,6 +87,7 @@ const Viewer = ({ isFullScreen }) => {
           localStorage.getItem('imageViewSizeWidth'),
           localStorage.getItem('imageViewSizeHeight'),
         ],
+        canWH: canvasWH,
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
