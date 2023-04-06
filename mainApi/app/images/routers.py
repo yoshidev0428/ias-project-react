@@ -4,11 +4,14 @@ from fastapi import (
     APIRouter,
     HTTPException,
     Request,
-    Response
+    Response,
+    Depends
 )
 from fastapi.responses import JSONResponse, FileResponse
 from mainApi.app.images.sub_routers.tile.routers import router as tile_router
 from mainApi.config import STATIC_PATH
+from mainApi.app.auth.auth import get_current_user
+from mainApi.app.auth.models.user import UserModelDB, PyObjectId
 import subprocess
 from datetime import date
 
@@ -52,9 +55,10 @@ async def download_exp_image(
     "/before_process",
     response_description="Process image",
 )
-async def processImage(request: Request):
+async def processImage(request: Request, current_user: UserModelDB = Depends(get_current_user)):
     data = await request.form()
-    imagePath = '/app/mainApi/app' + data.get("origial_image_url")
+    print("get-request-data:", data)
+    imagePath = '/app/mainApi/app/static/' + str(PyObjectId(current_user.id)) + '/' + data.get("origial_image_url")
     folderName = date.today().strftime("%y%m%d%H%M%s")
     sharedImagePath = os.path.join("/app/shared_static", folderName)
 
