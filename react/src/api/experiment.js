@@ -235,7 +235,7 @@ export const train_model = async (file_url, exp_name, train_info) => {
   formData.append('learning_rate', train_info.learning_rate);
   formData.append('weight_decay', train_info.weight_decay);
   formData.append('n_epochs', train_info.n_epochs);
-  console.log('log_time', train_info);
+  // console.log('log_time', train_info);
   return api.post('image/tile/train_model', formData, {
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -245,7 +245,7 @@ export const train_model = async (file_url, exp_name, train_info) => {
       Authorization: state.auth.tokenType + ' ' + state.auth.token,
     },
   });
-}
+};
 
 /**
  * @author QmQ
@@ -254,10 +254,11 @@ export const train_model = async (file_url, exp_name, train_info) => {
  */
 
 export const MLPreprocessImage = async (original_image_url) => {
-  const payload = {
+  const payload = JSON.stringify({
     origial_image_url: original_image_url,
-  };
-  let response = await api.get('image/before_process', payload);
+  });
+  // console.log("payload =======>", payload)
+  let response = await api.post('image/before_process', payload);
   return response;
 };
 
@@ -266,6 +267,8 @@ export const MLGetProcessedImage = async (payload) => {
     let preprocessRes = await MLPreprocessImage(payload.original_image_url);
     let _payload = payload;
     _payload.original_image_url = preprocessRes.data.image_path;
+    // console.log("payload ====== >", _payload)
+    _payload = JSON.stringify(_payload);
     let res = await ilastikApi.post('/ml_get_processed_image', _payload);
     return res.data;
   } catch (e) {

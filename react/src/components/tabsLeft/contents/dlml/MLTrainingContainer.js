@@ -121,8 +121,9 @@ export default function MLBoxSelect() {
       experiment_name: exp_name,
       label_list: _labelList,
     };
-    // console.log('@@@@@@@ live update ====>', _payload)
+
     let res = await api_experiment.MLGetProcessedImage(_payload);
+    // <description> based on the result image, we have to set that image into Avivator ** QmQ
   };
 
   const drawCurve = () => {
