@@ -230,22 +230,24 @@ async def processImage(request: Request):
     index = 0
     for label in labelList:
         index = index + 1
-        labelNames.append(label["name"])
         labelPositions = label["positions"]
-        coordinates=[]
-        for pos in labelPositions:
-            coordinates.append((pos["x"], pos["y"]))
 
-        x = sorted(set([c[0] for c in coordinates]))
-        y = sorted(set([c[1] for c in coordinates]))
-        gx = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(x)]]
-        gy = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(y)]]
+        if len(labelPositions) > 0:
+            labelNames.append(label["name"])
+            coordinates=[]
+            for pos in labelPositions:
+                coordinates.append((pos["x"], pos["y"]))
 
-        # combine every min_x, max_x, with every min_y, max_y
+            x = sorted(set([c[0] for c in coordinates]))
+            y = sorted(set([c[1] for c in coordinates]))
+            gx = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(x)]]
+            gy = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(y)]]
 
-        results = [(mx[slice(2)], my[slice(2)]) for mx in gx for my in gy]
-        labels = index * numpy.ones(slicing2shape(results), dtype=numpy.uint8)
-        opPixelClass.LabelInputs[0][results] = labels
+            # combine every min_x, max_x, with every min_y, max_y
+
+            results = [(mx[slice(2)], my[slice(2)]) for mx in gx for my in gy]
+            labels = index * numpy.ones(slicing2shape(results), dtype=numpy.uint8)
+            opPixelClass.LabelInputs[0][results] = labels
 
     opPixelClass.LabelNames.setValue(labelNames)
 
