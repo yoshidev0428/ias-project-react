@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { api } from './base';
 import store from '@/reducers';
 import mainApiService from '@/services/mainApiService';
@@ -222,16 +223,65 @@ export const get_outlines = async (file_url, exp_name) => {
   });
 };
 
+export const train_model = async (file_url, exp_name, train_info) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  formData.append('init_model', train_info.init_model);
+  formData.append('model_name', train_info.model_name);
+  formData.append('segment', train_info.segment);
+  formData.append('chan2', train_info.chan2);
+  formData.append('learning_rate', train_info.learning_rate);
+  formData.append('weight_decay', train_info.weight_decay);
+  formData.append('n_epochs', train_info.n_epochs);
+  console.log('log_time', train_info);
+  return api.post('image/tile/train_model', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+}
+
 /**
  * @author QmQ
  * @description send the image and receive the processed image using Machine Learning method.
  *
  */
 
-export const MLGetProcessedImage = async (file_url, exp_name, setting) => {
-  const formData = new FormData();
-  formData.append('file_url', file_url);
-  formData.append('ext_url', exp_name);
-  // console.log('============> ML get processed image', file_url, exp_name)
-  return api.post('image/tile/ml_get_processe_image', formData);
+export const MLPreprocessImage = async (original_image_url) => {
+  const payload = {
+    origial_image_url: original_image_url,
+  };
+  let response = await api.get('image/before_process', payload);
+  return response;
 };
+
+export const MLGetProcessedImage = async (payload) => {
+  try {
+    let preprocessRes = await MLPreprocessImage(payload.original_image_url);
+    let _payload = payload;
+    _payload.original_image_url = preprocessRes.data.image_path;
+    let res = await ilastikApi.post('/ml_get_processed_image', _payload);
+    return res.data;
+  } catch (e) {
+    // console.log(e)
+  }
+};
+
+export const ilastikApi = axios.create({
+  baseURL: process.env.REACT_APP_BASE_ILASTIK_API_URL,
+  timeout: 5000,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+    'X-Requested-With': 'XMLHttpRequest',
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
