@@ -256,11 +256,13 @@ export const train_model = async (file_url, exp_name, train_info) => {
 export const MLPreprocessImage = async (original_image_url) => {
   const state = store.getState();
   const formData = new FormData();
-  formData.append('origial_image_url', original_image_url);
+  formData.append('original_image_url', original_image_url);
 
   let response = await api.post('image/before_process', formData, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      // 'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'http://localhost:3000',
+      'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
       'Content-Type': 'multipart/form-data',
@@ -268,19 +270,6 @@ export const MLPreprocessImage = async (original_image_url) => {
     },
   });
   return response;
-};
-export const MLGetProcessedImage = async (payload) => {
-  try {
-    let preprocessRes = await MLPreprocessImage(payload.original_image_url);
-    let _payload = payload;
-    _payload.original_image_url = preprocessRes.data.image_path;
-    // console.log("payload ====== >", _payload)
-    _payload = JSON.stringify(_payload);
-    let res = await ilastikApi.post('/ml_get_processed_image', _payload);
-    return res.data;
-  } catch (e) {
-    // console.log(e)
-  }
 };
 
 export const ilastikApi = axios.create({
@@ -295,3 +284,41 @@ export const ilastikApi = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const MLGetProcessedImage = async (payload) => {
+  try {
+    let preprocessRes = await MLPreprocessImage(payload.original_image_url);
+    const formData = new FormData();
+    formData.append('workflow_name', payload.workflow_name);
+    formData.append('original_image_url', preprocessRes.data.image_path);
+    formData.append('experiment_name', payload.experiment_name);
+    formData.append('label_list', JSON.stringify(payload.label_list));
+    // console.log("formData====>", formData.get('label_list'))
+
+    const response = await axios({
+      method: 'post',
+      url: process.env.REACT_APP_BASE_ILASTIK_API_URL + 'api/process_image',
+      data: formData,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods':
+          'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+    // let res = await ilastikApi.post('api/process_image', formData, {
+    //   headers: {
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    //     'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+    //     'Content-Type': 'multipart/form-data',
+    //     Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    //   },
+    // });
+    // return res.data;
+  } catch (e) {
+    // console.log(e)
+  }
+};
