@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import TabItem from '@/components/custom/TabItem';
 import SmallCard from '@/components/custom/SmallCard';
 import PageHeader from './PageHeader';
@@ -13,8 +13,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import NativeSelect from '@mui/material/NativeSelect';
-import Button from '@mui/material/Button';
-import { mdiPagePrevious, mdiPageNext, mdiCheck, mdiCamera } from '@mdi/js';
+import { mdiCheck, mdiCamera } from '@mdi/js';
 import Icon from '@mdi/react';
 import TextField from '@mui/material/TextField';
 import { useChannelsStore } from '@/state';
@@ -73,7 +72,7 @@ const Filter2D = ({ setFilter }) => {
 
   const FilterApply = () => {};
   const GetKernel = (props) => {
-    const [item, radioName, radio] = props.content;
+    const [item, radio] = props.content;
     const [selectedIndex, setSelectedIndex] = useState(0);
     useEffect(() => {
       setSelectedIndex(0);
@@ -206,7 +205,7 @@ const Filter2D = ({ setFilter }) => {
       <>
         <Row>
           <Col xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
-            <GetKernel content={[item, radioName, radio]} />
+            <GetKernel content={[item, radio]} />
           </Col>
         </Row>
         {inputNumKeys.map((i, index) => (
