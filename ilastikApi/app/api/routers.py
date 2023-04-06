@@ -146,6 +146,10 @@ async def testProcess():
         entire_volume_slicing = roiToSlice(*roiFromShape(label_volume.shape))
         opPixelClass.LabelInputs[lane][entire_volume_slicing] = label_volume
 
+    assert len(label_classes) > 1, "Not enough label classes were found in your label data."
+    label_names = [str(label_class) for label_class in sorted(label_classes) if label_class != 0]
+    opPixelClass.LabelNames.setValue(label_names)
+
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
     _ = opPixelClass.Classifier.value
