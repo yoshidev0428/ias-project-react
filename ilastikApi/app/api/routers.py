@@ -26,8 +26,8 @@ from more_itertools import consecutive_groups
 ilastik_startup = ilastik.__main__
 
 router = APIRouter(
-    prefix="/api",
-    tags=["api"],
+    prefix="/image",
+    tags=["image"],
 )
 
 @router.get(

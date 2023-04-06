@@ -14,6 +14,18 @@ export const api = axios.create({
   },
 });
 
+export const ilastikApi = axios.create({
+  baseURL: process.env.REACT_APP_BASE_ILASTIK_API_URL,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+    'X-Requested-With': 'XMLHttpRequest',
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
 api.interceptors.request.use((request) => {
   state = store.getState();
   if (state.auth.token) {
