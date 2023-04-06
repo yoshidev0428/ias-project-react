@@ -76,6 +76,7 @@ class FileModelDB(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     user_id: PyObjectId = Field(default_factory=PyObjectId)
     filename: str
+    path: str
     
     class Config:
         # this is crucial for the id to work when given a set id from a dict, also needed when using alias_generator

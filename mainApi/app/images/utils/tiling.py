@@ -10,12 +10,7 @@ from mainApi.app.auth.models.user import UserModelDB, PyObjectId, ShowUserModel
 from mainApi.app.images.sub_routers.tile.models import FileModelDB
 from .asyncio import shell
 
-"""
-Saves the uploaded tiles to the cache-storage folder/volume under the user_id of the current_user
 
-Front end should include a validator that checks if the file has already been uploaded and then reject it.
-No validation is done in the backend
-"""
 async def add_image_tiles(
     path: Path,
     files: List[UploadFile],
@@ -53,9 +48,15 @@ async def add_image_tiles(
             img.save(f"{pre}.timg")
 
         tile = FileModelDB(
-            user_id=PyObjectId(current_user.id),
-            filename=file_name,
+            user_id=PyObjectId(current_user.id), filename=file_name, path=path
         )
         tiles.append(tile)
 
     await db["tile-image-cache"].insert_many([t.dict(exclude={"id"}) for t in tiles])
+    tiling_images = [
+        doc
+        async for doc in db["tile-image-cache"].find(
+            {"user_id": PyObjectId(current_user.id)}
+        )
+    ]
+    return tiling_images
