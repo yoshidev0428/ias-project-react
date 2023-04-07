@@ -334,4 +334,6 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     finally:
         sys.argv = old_sys_argv
 
-    return JSONResponse({"success": True, "project_path": project_file_path})
+    output_path = imagePath[:-5] + "_prediction.tiff"
+
+    return JSONResponse({"success": True, "image_path": output_path})
