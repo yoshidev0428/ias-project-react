@@ -196,9 +196,9 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     labelPath = os.path.join(STATIC_PATH, 'labels')
     projectPath = projectPath + tempfile.mkdtemp()
     labelPath = labelPath + tempfile.mkdtemp()
-    labelList = data.get("label_list")
-    labelList = json.loads(labelList)
-    print("process-image:", labelList)
+    # labelList = data.get("label_list")
+    # labelList = json.loads(labelList)
+    # print("process-image:", labelList)
 
     label_data_paths = []
 
@@ -318,6 +318,7 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     args += " --headless"
 
     # Batch export options
+    args += " --export_source=Simple Segmentation"
     args += " --output_format=tiff"
     args += " --output_filename_format={dataset_dir}/{nickname}_prediction.tiff"
     args += " --output_internal_path=volume/pred_volume"
