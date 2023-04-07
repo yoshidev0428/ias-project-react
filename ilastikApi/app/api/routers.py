@@ -324,8 +324,6 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     args += " --raw_data"
     # test that relative path works correctly: should be relative to cwd, not project file.
     args += " " + os.path.normpath(os.path.relpath(imagePath, os.getcwd()))
-    args += " --prediction_mask"
-    args += " " + SAMPLE_MASK
 
     print('ilastik-arg:', args)
 
