@@ -23,16 +23,11 @@ import sys
 import ilastik.__main__
 import json
 from more_itertools import consecutive_groups
-from ilastik.applets.dataSelection import DatasetInfo
-from ilastik.applets.dataSelection.dataSelectionGui import DataSelectionGui, SubvolumeSelectionDlg
-from lazyflow.utility import PathComponents
-from lazyflow.operators.ioOperators import OpInputDataReader
-from lazyflow.operators.opReorderAxes import OpReorderAxes
-
+from typing import List
 from lazyflow.graph import Graph
 from lazyflow.operators.ioOperators import OpInputDataReader
 from lazyflow.roi import roiToSlice, roiFromShape
-
+import aiofiles
 
 ilastik_startup = ilastik.__main__
 
@@ -193,15 +188,27 @@ async def testProcess():
     "/process_image",
     response_description="Process image",
 )
-async def processImage(request: Request):
+async def processImage(request: Request, files: List[UploadFile] = File(...)):
     data = await request.form()
     imagePath = data.get("original_image_url")
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
+    labelPath = os.path.join(STATIC_PATH, 'labels')
     projectPath = projectPath + tempfile.mkdtemp()
+    labelPath = labelPath + tempfile.mkdtemp()
     labelList = data.get("label_list")
     labelList = json.loads(labelList)
     print("process-image:", labelList)
+
+    label_data_paths = []
+
+    for each_file_folder in files:
+        filePath = labelPath + "/" + each_file_folder.filename
+        label_data_paths.append(filePath)
+
+        async with aiofiles.open(filePath, "wb") as f:
+            content_folder = await each_file_folder.read()
+            await f.write(content_folder)
 
 
     if not os.path.exists(projectPath):
@@ -262,39 +269,37 @@ async def processImage(request: Request):
     # Add some labels directly to the operator
     opPixelClass = workflow.pcApplet.topLevelOperator
 
-    labelNames = []
-    index = 0
-    for label in labelList:
-        index = index + 1
-        labelPositions = label["positions"]
+    # Read each label volume and inject the label data into the appropriate training slot
+    cwd = os.getcwd()
+    label_classes = set()
+    for lane, label_data_path in enumerate(label_data_paths):
+        graph = Graph()
+        opReader = OpInputDataReader(graph=graph)
+        try:
+            opReader.WorkingDirectory.setValue(cwd)
+            opReader.FilePath.setValue(label_data_path)
 
-        if len(labelPositions) > 0:
-            labelNames.append(label["name"])
-            coordinates=[]
-            for pos in labelPositions:
-                coordinates.append((pos["x"], pos["y"]))
+            print("Reading label volume: {}".format(label_data_path))
+            label_volume = opReader.Output[:].wait()
+        finally:
+            opReader.cleanUp()
 
-            x = sorted(set([c[0] for c in coordinates]))
-            y = sorted(set([c[1] for c in coordinates]))
-            gx = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(x)]]
-            gy = [[min(g), max(g) + 1] for g in [list(group) for group in consecutive_groups(y)]]
+        raw_shape = opPixelClass.InputImages[lane].meta.shape
+        if label_volume.ndim != len(raw_shape):
+            # Append a singleton channel axis
+            assert label_volume.ndim == len(raw_shape) - 1
+            label_volume = label_volume[..., None]
 
-            # combine every min_x, max_x, with every min_y, max_y
+        # Auto-calculate the max label value
+        label_classes.update(numpy.unique(label_volume))
 
-            results = [(mx[slice(2)], my[slice(2)]) for mx in gx for my in gy]
-            print("slice-results:", results)
-            labels = index * numpy.ones(slicing2shape(results), dtype=numpy.uint8)
-            opPixelClass.LabelInputs[0][results] = labels
+        print("Applying label volume to lane #{}".format(lane))
+        entire_volume_slicing = roiToSlice(*roiFromShape(label_volume.shape))
+        opPixelClass.LabelInputs[lane][entire_volume_slicing] = label_volume
 
-    opPixelClass.LabelNames.setValue(labelNames)
-
-    # slicing1 = sl[0:30, 0:10, 0:1]
-    # labels1 = 1 * numpy.ones(slicing2shape(slicing1), dtype=numpy.uint8)
-    # opPixelClass.LabelInputs[0][slicing1] = labels1
-    #
-    # slicing2 = sl[0:30, 0:10, 0:1]
-    # labels2 = 2 * numpy.ones(slicing2shape(slicing2), dtype=numpy.uint8)
-    # opPixelClass.LabelInputs[0][slicing2] = labels2
+    assert len(label_classes) > 1, "Not enough label classes were found in your label data."
+    label_names = [str(label_class) for label_class in sorted(label_classes) if label_class != 0]
+    opPixelClass.LabelNames.setValue(label_names)
 
     # Train the classifier
     opPixelClass.FreezePredictions.setValue(False)
