@@ -235,6 +235,8 @@ const DEFAUlT_FLAG_STATE = {
   DialogVisualFlag: false,
   DialogLoadingFlag: false,
   UserCanvasFlag: false,
+  DialogLockFlag: false,
+  DialogTrainingFlag: false,
   MLCanvasFlag: false, // added by QmQ
   selectedLabel: {}, //added by QmQ
   MLDialogMethodAddFlag: false, //added by QmQ

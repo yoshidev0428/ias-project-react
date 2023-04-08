@@ -5,7 +5,9 @@ from fastapi import (
     APIRouter,
     Depends,
     status,
-    HTTPException, Form
+    HTTPException, 
+    Form,
+    Request,
 )
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -19,7 +21,7 @@ from .auth import (
     authenticate_user,
     create_access_token,
     get_password_hash, get_current_admin_user, create_user, login, login_swagger, update_user_password,
-    update_current_user, get_user_by_email, authenticate_email_password
+    update_current_user, get_user_by_email, authenticate_email_password, verify_password
 )
 
 # from .settings import ACCESS_TOKEN_EXPIRE_MINUTES, db
@@ -237,3 +239,20 @@ async def delete_user(user_id: str,
         return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
 
     raise HTTPException(status_code=404, detail=f"User {user_id} not found")
+
+@router.post("/confirm_password",
+             response_description="Confirm Password",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[UserModelDB])
+async def confirm_password(request: Request,
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> ShowUserModel:
+    # print(request)
+    data = await request.form()
+    password = data.get("password")
+    hashed_password = get_password_hash(password)
+    verify_result = verify_password(password, current_user.hashed_password)
+    print('verify_result', verify_result)
+    if verify_result == True :
+        return JSONResponse({"success": 'Yes'})
+    return JSONResponse({"success": 'NO'})

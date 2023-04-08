@@ -18,10 +18,13 @@ export default function BoxSelect() {
   const UserCanvasFlag = useFlagsStore((store) => store.UserCanvasFlag);
   const select1 = async () => {
     const state = store.getState();
-    let outlines = await get_outline();
-    if(outlines === 'NO') {
-      alert('Please enter your image file!');
-      return;
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
     }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
@@ -33,78 +36,69 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_select');
     useFlagsStore.setState({ UserCanvasFlag: true });
-    // console.log("Select-1");
-
-    // 20230331 for Machine Larning. (from dev_dimco branch)
-/*
-    if (state.files.imagePathForAvivator == null) {
-      alert('Please enter your image file!');
-      return;
-    }
-    let imgPath = state.files.imagePathForAvivator[0].path;
-    let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
-    let result = await api_experiment.get_outlines(imgPath, exp_name);
-    if (result.data.error) {
-      alert('Error occured while getting the data');
-    } else {
-      if (result.data.success === 'NO') {
-        alert('Your custom model is not applied to your image.');
-        return;
-      }
-      let temp = [];
-      for (let i in result.data.success) {
-        let temp_row = result.data.success[i];
-        temp_row.replace(/\\n/g, '');
-        temp_row = temp_row.split(',');
-        let num_temp_row = temp_row.map(Number);
-        temp.push(num_temp_row);
-      }
-      let canvas_info = state.experiment.canvas_info;
-      let canv_info = {
-        ...canvas_info,
-        outlines: temp,
-      };
-      store.dispatch({
-        type: 'set_canvas',
-        content: canv_info,
-      });
-    }
-    useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
-*/
   };
-  const select2 = () => {
+  const select2 = async () => {
     // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
     const state = store.getState();
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_area',
+      outlines: outlines,
     };
     store.dispatch({
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_area');
+    useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-2");
   };
-  const select3 = () => {
+  const select3 = async () => {
     const state = store.getState();
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_ellipse',
+      outlines: outlines,
     };
     store.dispatch({
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_ellipse');
+    useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-3");
   };
   const select4 = () => {};
-  const select5 = () => {
+  const select5 = async () => {
     const state = store.getState();
     let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
@@ -115,14 +109,16 @@ export default function BoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_rectangle');
+    useFlagsStore.setState({ UserCanvasFlag: true });
     // console.log("Select-5");
   };
   const select6 = () => {
-    useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
+    // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
     // console.log("Select-6");
   };
   const select7 = () => {
-    useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
+    // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
     // console.log("Select-7")
   };
   const get_outline = async () => {

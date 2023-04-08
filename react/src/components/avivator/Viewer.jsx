@@ -84,8 +84,11 @@ const Viewer = ({ isFullScreen }) => {
         u_target: target,
         u_zoom: viewState.zoom,
         u_iterNum: [inputNum_1, inputNum_2],
-        disWH:[localStorage.getItem('imageViewSizeWidth'), localStorage.getItem('imageViewSizeHeight')],
-        canWH:canvasWH
+        disWH: [
+          localStorage.getItem('imageViewSizeWidth'),
+          localStorage.getItem('imageViewSizeHeight'),
+        ],
+        canWH: canvasWH,
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
@@ -237,7 +240,7 @@ const Viewer = ({ isFullScreen }) => {
       onViewStateChange={onViewStateChange}
       deckProps={{
         effects: [postProcessEffect],
-      }}      
+      }}
     />
   );
 };

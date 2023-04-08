@@ -2,6 +2,7 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useFlagsStore } from '@/state';
+import store from '@/reducers';
 
 const mapStateToProps = (state) => ({
   canvas_info: state.experiment.canvas_info,
@@ -12,18 +13,27 @@ function MLLabelCanvas(props) {
   const MLSelectTargetMode = useSelector(
     (state) => state.experiment.MLSelectTargetMode,
   );
+  const getActiveColor = () => {
+    return MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
+  };
 
   const canvas = useRef(null);
   const [drawing, setDrawing] = useState(false);
   const [position, setPosition] = useState(null);
-  const [width, setWidth] = React.useState(
+  const [width, setWidth] = useState(
     props.canvas_info.width * Math.pow(2, props.canvas_info.zoom),
   );
-  const [height, setHeight] = React.useState(
+  const [height, setHeight] = useState(
     props.canvas_info.height * Math.pow(2, props.canvas_info.zoom),
   );
-  const [top, setTop] = React.useState(props.canvas_info.top);
-  const [left, setLeft] = React.useState(props.canvas_info.left);
+  const [top, setTop] = useState(props.canvas_info.top);
+  const [left, setLeft] = useState(props.canvas_info.left);
+  const [mouseTrack, setMouseTrack] = useState([]);
+  // const [objectLabelPosInfo, setObjectLabelPosInfo] = useState([])
+  // const [backgroundLabelPosInfo, setBackgroundLabelPosInfo] = useState([])
+
+  let user_custom_area = [];
+  let track_record = [];
 
   const onDown = useCallback((event) => {
     const coordinates = getCoordinates(event);
@@ -33,10 +43,38 @@ function MLLabelCanvas(props) {
     }
   }, []);
 
-  const onUp = useCallback(() => {
+  const onUp = () => {
+    // add the drawn curve to the specific label position information.
+    if (mouseTrack?.length === 0) return;
+    if (MLSelectTargetMode === 'object') {
+      store.dispatch({
+        type: 'setMLObjectLabelPosInfo',
+        content: mouseTrack,
+      });
+      // let _labelPosInfo = objectLabelPosInfo;
+      // _labelPosInfo.push(...mouseTrack)
+      // setObjectLabelPosInfo(_labelPosInfo)
+      // console.log('===============> objet pos', _labelPosInfo)
+    } else if (MLSelectTargetMode === 'background') {
+      store.dispatch({
+        type: 'setMLBackgroundLabelPosInfo',
+        content: mouseTrack,
+      });
+      // let _labelPosInfo = backgroundLabelPosInfo;
+      // _labelPosInfo.push(...mouseTrack)
+      // setBackgroundLabelPosInfo(_labelPosInfo)
+      // console.log('===============> background pos', _labelPosInfo)
+    }
+
+    let draw_style = localStorage.getItem('CANV_ STYLE');
+    if (draw_style == 'user_custom_area') {
+      user_custom_area.push(mouseTrack);
+    }
+    // console.log('user_area', user_custom_area)
+    setMouseTrack([]);
     setDrawing(false);
     setPosition(null);
-  });
+  };
 
   const getCoordinates = (event) => {
     if (!canvas.current) {
@@ -62,8 +100,6 @@ function MLLabelCanvas(props) {
     (event) => {
       if (drawing) {
         const newPosition = getCoordinates(event);
-        // console.log(`MouseX: ${event.pageX} MouseY: ${event.pageY}`)
-        // console.log(`CaX: ${newPosition.x} CaY: ${newPosition.y}`)
         if (position && newPosition) {
           if (props.canvas_info.draw_style === 'user_custom_area') {
             drawLine(position, newPosition);
@@ -87,16 +123,18 @@ function MLLabelCanvas(props) {
     context.fillStyle = 'blue';
 
     if (context) {
-      // context.strokeStyle = activeColor
+      // update the mouse move track record **QmQ
+      let _mouseTrack = [...mouseTrack];
+      _mouseTrack.push(originalPosition);
+      setMouseTrack(_mouseTrack);
+
       context.lineJoin = 'round';
       context.lineWidth = props.strokeWidth;
-
       context.beginPath();
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
       context.closePath();
-      context.strokeStyle =
-        MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
+      context.strokeStyle = getActiveColor();
       context.stroke();
       handleDraw(context.getImageData(0, 0, width, height));
     }
@@ -114,8 +152,7 @@ function MLLabelCanvas(props) {
     let rwidth = newPosition.x - originalPosition.x;
     let rheight = newPosition.y - originalPosition.y;
     context.rect(originalPosition.x, originalPosition.y, rwidth, rheight);
-    context.strokeStyle =
-      MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
+    context.strokeStyle = getActiveColor();
     context.stroke();
     handleDraw(context.getImageData(0, 0, width, height));
   };
@@ -142,8 +179,7 @@ function MLLabelCanvas(props) {
       0,
       2 * Math.PI,
     );
-    context.strokeStyle =
-      MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
+    context.strokeStyle = getActiveColor();
     context.stroke();
     handleDraw(context.getImageData(0, 0, width, height));
   };

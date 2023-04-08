@@ -17,6 +17,8 @@ const DEFAULT_PARAMS = {
   MLMethodList: [],
   MLObjectBrightnessMode: 'light',
   MLSelectTargetMode: 'object',
+  MLObjectLabelPosInfo: [],
+  MLBackgroundLabelPosInfo: [],
   custom_name: 'New Model',
   seg_info: {
     custom_method: 'tissuenet',
@@ -31,7 +33,17 @@ const DEFAULT_PARAMS = {
     c_threshold: 0,
     s_threshold: 0,
   },
+  train_info: {
+    init_model: '',
+    model_name: '',
+    segment: 0,
+    chan2: 0,
+    learning_rate: 0.1,
+    weight_decay: 0.0001,
+    n_epochs: 100
+  },
   models: [],
+  current_model: null,
   canvas_info: {
     outlines: [],
     draw_style: '',
@@ -58,6 +70,8 @@ const experiment = (state = initState, action) => {
     case 'setMethod':
       state.method = action.content;
       break;
+
+    // ================ ML part <start>====================== ** QmQ
     case 'setMLMethod':
       state.MLMethod = action.content;
       break;
@@ -76,6 +90,26 @@ const experiment = (state = initState, action) => {
     case 'setMLSelectTargetMode':
       state.MLSelectTargetMode = action.content;
       break;
+    case 'setMLObjectLabelPosInfo':
+      state.MLObjectLabelPosInfo = [
+        ...state.MLObjectLabelPosInfo,
+        ...action.content,
+      ];
+      break;
+    case 'setMLBackgroundLabelPosInfo':
+      state.MLBackgroundLabelPosInfo = [
+        ...state.MLBackgroundLabelPosInfo,
+        ...action.content,
+      ];
+      break;
+    case 'clearMLObjectLabelPosInfo':
+      state.MLObjectLabelPosInfo = [];
+      break;
+    case 'clearMLBackgroundLabelPosInfo':
+      state.MLBackgroundLabelPosInfo = [];
+      break;
+    // ================ ML part <end>======================== ** QmQ
+
     case 'set_custom_name':
       state.custom_name = action.content;
       break;
@@ -87,6 +121,12 @@ const experiment = (state = initState, action) => {
       break;
     case 'set_canvas':
       state.canvas_info = action.content;
+      break;
+    case 'set_current_model':
+      state.current_model = action.content;
+      break;
+    case 'set_train_info':
+      state.train_info = action.content;
       break;
     default:
       break;
