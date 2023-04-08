@@ -72,6 +72,7 @@ const Viewer = ({ isFullScreen }) => {
   if (element!=null) {
     canvasWH = [element.width, element.height];
   }
+
   const postProcessEffect = useMemo(
     () =>
       new PostProcessEffect(shaderModule, {
