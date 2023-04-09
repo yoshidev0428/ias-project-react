@@ -16,6 +16,7 @@ function MLLabelCanvas(props) {
   const getActiveColor = () => {
     return MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
   };
+  const storeState = store.getState();
 
   const canvas = useRef(null);
   const [drawing, setDrawing] = useState(false);
@@ -34,6 +35,31 @@ function MLLabelCanvas(props) {
 
   let user_custom_area = [];
   let track_record = [];
+  let processedTrackInfo = [];
+
+  const processTrackInfo = (info) => {
+    let _pInfo = [];
+    let imageWidth = props.canvas_info.width;
+    let imageHeight = props.canvas_info.height;
+    let widthRatio = imageWidth / width;
+    let heightRatio = imageHeight / height;
+
+    const keepBound = (el) => {
+      let _el = {};
+      if (el.x < 0) _el.x = 0;
+      else if (el.x > imageWidth) _el.x = width;
+      else _el.x = el.x * widthRatio;
+
+      if (el.y < 0) _el.y = 0;
+      else if (el.y > imageHeight) _el.y = height;
+      else _el.y = el.y * heightRatio;
+      // console.log('======>', el, _el)
+      return _el;
+    };
+    _pInfo = info.map((el) => keepBound(el));
+    // console.log("======>", info, _pInfo)
+    return _pInfo;
+  };
 
   const onDown = useCallback((event) => {
     const coordinates = getCoordinates(event);
@@ -46,6 +72,8 @@ function MLLabelCanvas(props) {
   const onUp = () => {
     // add the drawn curve to the specific label position information.
     if (mouseTrack?.length === 0) return;
+    processedTrackInfo = processTrackInfo(mouseTrack);
+
     if (MLSelectTargetMode === 'object') {
       store.dispatch({
         type: 'setMLObjectLabelPosInfo',
@@ -126,6 +154,7 @@ function MLLabelCanvas(props) {
       // update the mouse move track record **QmQ
       let _mouseTrack = [...mouseTrack];
       _mouseTrack.push(originalPosition);
+      // console.log("=======>", originalPosition, width, height, props.canvas_info.width, props.canvas_info.height)
       setMouseTrack(_mouseTrack);
 
       context.lineJoin = 'round';
@@ -205,6 +234,69 @@ function MLLabelCanvas(props) {
     }
   };
 
+  const handleSaveClick = async () => {
+    const myCanvas = canvas.current;
+    const context = myCanvas.getContext('2d');
+    // console.log('====>authorization: ', storeState.auth.tokenType, storeState.auth.token)
+    // Draw the image
+    let imagePath = storeState.files.imagePathForAvivator[0].path;
+    // console.log(storeState.files.imagePathForAvivator[0])
+    // console.log(imagePath)
+
+    const url = URL.createObjectURL(storeState.files.imagePathForAvivator[0]);
+    // console.log('====> ', url)
+    const image = new Image();
+    image.src = url;
+    // let imageSrc =  process.env.REACT_APP_BASE_API_URL +
+    //   'static/' +
+    //   storeState.auth.user._id +
+    //   '/' +
+    //   imagePath;
+    // console.log('image source===>', imageSrc)
+    // const response = await fetch(
+    //   imageSrc,
+    //   {
+    //     headers: {
+    //       'Access-Control-Allow-Origin': '*',
+    //       'Access-Control-Allow-Methods':
+    //         'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+    //       'Access-Control-Allow-Headers':
+    //         'Origin, Content-Type, X-Auth-Token',
+    //       Authorization: storeState.auth.tokenType + ' ' + storeState.auth.token,
+    //     },
+    //   },
+    // );
+    // const blob = await response.blob();
+    // const file = new File([blob], imagePath, { type: 'image/tiff' });
+    // image.src = file;
+    // image.src = imagePath;
+    await image.decode();
+    context.drawImage(image, 0, 0);
+
+    // Draw the canvas drawing
+    context.beginPath();
+    context.moveTo(10, 10);
+    context.lineTo(100, 100);
+    context.stroke();
+
+    // Convert the canvas to a data URL
+    const dataUrl = myCanvas.toDataURL('image/png');
+    // console.log('=================>')
+    // console.log(dataUrl)
+    // Upload the data URL to the server
+    // const response = await fetch('/api/save-image', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ dataUrl }),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+    // const data = await response.json();
+
+    // Log the URL of the saved image
+    // console.log(data.imageUrl);
+  };
+
   // const initCanvas = () => {
   //   const context = canvas.current.getContext('2d');
   //   context.fillStyle = 'blue';
@@ -242,6 +334,7 @@ function MLLabelCanvas(props) {
         width={width}
         height={height}
       />
+      <button onClick={handleSaveClick}>Save Image</button>
     </div>
   );
 }
