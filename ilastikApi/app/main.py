@@ -13,10 +13,10 @@ from fastapi.staticfiles import StaticFiles
 middleware = [
     Middleware(
         CORSMiddleware,
-        # allow_origins=['*'],
+        allow_origins=['*'],
         allow_methods=['*'],
         allow_headers=['*'],
-        allow_origins=['http://ias.lifeanalytics.org']
+        # allow_origins=['http://ias.lifeanalytics.org']
     )
 ]
 app = FastAPI(title='IAS Project', middleware=middleware)
