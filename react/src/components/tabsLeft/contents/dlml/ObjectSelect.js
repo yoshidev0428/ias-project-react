@@ -17,12 +17,16 @@ import {
   mdiCog,
 } from '@mdi/js';
 import Icon from '@mdi/react';
+import { useFlagsStore } from '@/state';
 
 export default function ObjectSelect() {
   const onLight = () => {};
   const onBlack = () => {};
   const onObject = () => {};
-  const onArea = () => {};
+  const onArea = () => {
+    useFlagsStore.setState({ DialogTargetDrawingFlag: true });
+    useFlagsStore.setState({ UserCanvasFlag: false });
+  };
   const onBack = () => {};
   const onSet = () => {};
   const onAuto = () => {};
