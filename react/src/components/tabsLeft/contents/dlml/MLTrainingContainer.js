@@ -69,9 +69,6 @@ export default function MLBoxSelect() {
       return;
     }
     useFlagsStore.setState({ MLCanvasFlag: true });
-    let imgPath = state.files.imagePathForAvivator[0].path;
-    let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
 
     // let result = await api_experiment.get_outlines(imgPath, exp_name);
     // if (result.data.error) {
@@ -107,9 +104,19 @@ export default function MLBoxSelect() {
 
   const liveUpdate = async () => {
     const state = store.getState();
-    let imgPath = state.files.imagePathForAvivator[0].path;
+    let fullPath = state.files.imagePathForAvivator;
+
+    /**
+     * @author QmQ
+     * EX. : fullPath = "http://ias.gtgjpj.jp:8000/image/download/?path=642e25aeac84edfcb8ad83a4/aaa/test_images/aaa.ome.tiff"
+     * we get the imgPath = "aaa/test_images/aaa.ome.tiff"
+     */
+    let subPath = /path=(.*)/.exec(fullPath)[1];
+    let imgPath = subPath.split('/').slice(1).join('/');
     let exp_name = imgPath.split('/');
     exp_name = exp_name[0];
+    // console.log(fullPath, subPath, imgPath, exp_name)
+    // console.log(state.auth.tokenType + ' ' + state.auth.token)
 
     const _labelInfo = [];
     let _labelList = defaultLabelList;
