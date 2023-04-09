@@ -27,6 +27,7 @@ const LockScreen = () => {
       return
     }
     useFlagsStore.setState({ DialogLockFlag: false });
+    useFlagsStore.setState({ DialogCustomFlag: true });
   }
 
   return (
