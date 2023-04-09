@@ -14,7 +14,8 @@ module.exports = function (app) {
   app.use(
     '/ilastik-api',
     createProxyMiddleware({
-      target: process.env.REACT_APP_ILASTIK_PROXY_HOST,
+      target:
+        process.env.REACT_APP_ILASTIK_PROXY_HOST || 'http://localhost:8001/',
       changeOrigin: true,
       pathRewrite: {
         '^/ilastik-api/': '/',
