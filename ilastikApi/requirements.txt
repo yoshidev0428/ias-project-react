@@ -6,3 +6,5 @@ pytest-asyncio==0.20.3
 python-multipart==0.0.5
 more-itertools==9.1.0
 aiofiles==22.1.0
+opencv-python==4.7.0.72
+pillow==9.5.0

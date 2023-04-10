@@ -28,6 +28,8 @@ from lazyflow.graph import Graph
 from lazyflow.operators.ioOperators import OpInputDataReader
 from lazyflow.roi import roiToSlice, roiFromShape
 import aiofiles
+from PIL import Image
+import cv2
 
 ilastik_startup = ilastik.__main__
 
@@ -183,6 +185,49 @@ async def testProcess():
         sys.argv = old_sys_argv
 
     return JSONResponse({"success": True})
+
+@router.post(
+    "/test_label",
+    response_description="Test Draw for label",
+)
+async def testLabel(request: Request):
+    data = await request.form()
+    imagePath = data.get("original_image_url")
+    labelPath = os.path.join(STATIC_PATH, 'labels')
+    labelPath = labelPath + tempfile.mkdtemp()
+
+    if not os.path.exists(labelPath):
+        os.makedirs(labelPath)
+
+    labelList = data.get("label_list")
+    labelList = json.loads(labelList)
+
+    width, height = cv2.GetSize(imagePath)
+
+    blank_image = numpy.zeros((height, width, 3), numpy.uint8)
+
+    for label in labelList:
+        labelPositions = label["positions"]
+
+        if len(labelPositions) > 0:
+            coordinates=[]
+            for pos in labelPositions:
+                coordinates.append((pos["x"], pos["y"]))
+
+            pts = numpy.array(coordinates, numpy.int32)
+            pts = pts.reshape((-1, 1, 2))
+            color = (255, 0, 0)
+
+            thickness = 8
+            isClosed = False
+
+            blank_image = cv2.polylines(blank_image, [pts],
+                                  isClosed, color,
+                                  thickness)
+
+    blank_image.save(labelPath + "/Labels.png", "png")
+
+    return JSONResponse({"success": True, "image_path": labelPath + "/Labels.png"})
 
 @router.post(
     "/process_image",
