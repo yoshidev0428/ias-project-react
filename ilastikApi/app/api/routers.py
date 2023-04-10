@@ -224,7 +224,7 @@ async def testLabel(request: Request):
             color = (255, 0, 0)
 
             thickness = 8
-            isClosed = True
+            isClosed = False
 
             blank_image = cv2.polylines(blank_image, [pts],
                                   isClosed, color,
