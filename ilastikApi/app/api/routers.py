@@ -213,7 +213,7 @@ async def testLabel(request: Request):
 
     for label in labelList:
         labelPositionArr = label["positions"]
-        h = label["label_color"]
+        h = label["label_color"].lstrip('#')
 
         if len(labelPositionArr) > 0:
             for arr in labelPositionArr:
