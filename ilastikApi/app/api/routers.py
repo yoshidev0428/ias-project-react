@@ -423,7 +423,7 @@ async def processImage(request: Request):
     output_path = imagePath[:-5] + "_prediction.tiff"
     new_path = imagePath[:-5] + "_prediction.ome.tiff"
 
-    cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + output_path + "' '" + new_path + "'"
+    cmd_str = "sh /app/ilastikApi/bftools/bfconvert -separate -overwrite '" + output_path + "' '" + new_path + "'"
     subprocess.run(cmd_str, shell=True)
 
     return JSONResponse({"success": True, "image_path": new_path})
