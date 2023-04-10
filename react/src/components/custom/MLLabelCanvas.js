@@ -77,7 +77,7 @@ function MLLabelCanvas(props) {
     if (MLSelectTargetMode === 'object') {
       store.dispatch({
         type: 'setMLObjectLabelPosInfo',
-        content: mouseTrack,
+        content: processedTrackInfo,
       });
       // let _labelPosInfo = objectLabelPosInfo;
       // _labelPosInfo.push(...mouseTrack)
@@ -86,7 +86,7 @@ function MLLabelCanvas(props) {
     } else if (MLSelectTargetMode === 'background') {
       store.dispatch({
         type: 'setMLBackgroundLabelPosInfo',
-        content: mouseTrack,
+        content: processedTrackInfo,
       });
       // let _labelPosInfo = backgroundLabelPosInfo;
       // _labelPosInfo.push(...mouseTrack)
