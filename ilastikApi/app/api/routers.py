@@ -202,7 +202,11 @@ async def testLabel(request: Request):
     labelList = data.get("label_list")
     labelList = json.loads(labelList)
 
-    width, height = cv2.GetSize(imagePath)
+    img = cv2.imread(imagePath)
+    height = img.shape[0]
+    width = img.shape[1]
+    print("image-size: ", width, " : ", height)
+
 
     blank_image = numpy.zeros((height, width, 3), numpy.uint8)
 
