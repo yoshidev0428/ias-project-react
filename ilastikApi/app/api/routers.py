@@ -242,7 +242,7 @@ async def testLabel(request: Request):
     "/process_image",
     response_description="Process image",
 )
-async def processImage(request: Request, files: List[UploadFile] = File(...)):
+async def processImage(request: Request):
     data = await request.form()
     imagePath = data.get("original_image_url")
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
