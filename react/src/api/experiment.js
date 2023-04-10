@@ -291,7 +291,7 @@ export const MLGetProcessedImage = async (payload) => {
     // });
     const response = await axios({
       method: 'post',
-      url: 'http://ias.gtgjpj.jp:8001/image/process_image',
+      url: process.env.REACT_APP_BASE_ILASTIK_API_URL + 'image/process_image',
       data: formData,
       headers: {
         'Access-Control-Allow-Origin': '*',
