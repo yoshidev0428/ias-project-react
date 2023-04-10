@@ -31,6 +31,7 @@ from lazyflow.roi import roiToSlice, roiFromShape
 import aiofiles
 from PIL import Image
 import cv2
+import subprocess
 
 ilastik_startup = ilastik.__main__
 
@@ -420,8 +421,12 @@ async def processImage(request: Request):
         sys.argv = old_sys_argv
 
     output_path = imagePath[:-5] + "_prediction.tiff"
+    new_path = imagePath[:-5] + "_prediction.ome.tiff"
 
-    return JSONResponse({"success": True, "image_path": output_path})
+    cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + output_path + "' '" + new_path + "'"
+    subprocess.run(cmd_str, shell=True)
+
+    return JSONResponse({"success": True, "image_path": new_path})
 
 
 @router.get("/download")
