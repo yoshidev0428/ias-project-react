@@ -96,3 +96,7 @@ export const getImageUrl = (
 
   return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/${url}`);
 };
+
+export const toUrl = (path) => {
+  return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/${path}`);
+};

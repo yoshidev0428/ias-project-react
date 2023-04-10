@@ -72,12 +72,12 @@ router = APIRouter(
 
 # Upload Image file
 @router.post(
-    "/upload_image_tiles",
+    "/upload_tiles",
     response_description="Upload Image Tiles",
     status_code=status.HTTP_201_CREATED,
     response_model=List[TileModelDB],
 )
-async def upload_image_tiles(
+async def upload_tiles(
     files: List[UploadFile] = File(...),
     clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
@@ -95,11 +95,23 @@ async def upload_image_tiles(
     result = await add_image_tiles(
         path=current_user_path,
         files=files,
-        clear_previous=clear_previous,
         current_user=current_user,
         db=db,
     )
     return JSONResponse(result)
+
+@router.get(
+    "/get_tiles",
+    response_description="Get all image tiles",
+    status_code=status.HTTP_200_OK,
+)
+async def get_tiles(
+    current_user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[FileModelDB]:
+    tiles = [tile async for tile in db['tile-image-cache'].find({"user_id": current_user.id}, {"_id": 0, "user_id": 0})]
+    print(tiles)
+    return JSONResponse(tiles)
 
 #############################################################################
 # Delete Image files
