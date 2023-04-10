@@ -104,7 +104,6 @@ export default function MLBoxSelect() {
 
   const liveUpdate = async () => {
     const state = store.getState();
-    // let imgPath = state.files.imagePathForAvivator[0].path;
 
     /**
      * @author QmQ
@@ -115,9 +114,9 @@ export default function MLBoxSelect() {
     let subPath = /path=(.*)/.exec(fullPath)[1];
     let imgPath = subPath.split('/').slice(1).join('/');
     let exp_name = imgPath.split('/');
+    // let imgPath = state.files.imagePathForAvivator[0].path;
+    //  let exp_name = imgPath.split('/');
     // exp_name = exp_name[0];
-    // console.log(fullPath, subPath, imgPath, exp_name)
-    // console.log(state.auth.tokenType + ' ' + state.auth.token)
 
     const _labelInfo = [];
     let _labelList = defaultLabelList;
