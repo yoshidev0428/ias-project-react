@@ -212,23 +212,25 @@ async def testLabel(request: Request):
     blank_image = cv2.imread(labelImagePath)
 
     for label in labelList:
-        labelPositions = label["positions"]
+        labelPositionArr = label["positions"]
+        h = label["label_color"]
 
-        if len(labelPositions) > 0:
-            coordinates=[]
-            for pos in labelPositions:
-                coordinates.append((pos["x"], pos["y"]))
+        if len(labelPositionArr) > 0:
+            for arr in labelPositionArr:
+                coordinates = []
+                for pos in arr:
+                    coordinates.append((pos["x"], pos["y"]))
 
-            pts = numpy.array(coordinates, numpy.int32)
-            pts = pts.reshape((-1, 1, 2))
-            color = (255, 0, 0)
+                pts = numpy.array(coordinates, numpy.int32)
+                pts = pts.reshape((-1, 1, 2))
+                color = tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
-            thickness = 8
-            isClosed = False
+                thickness = 8
+                isClosed = False
 
-            blank_image = cv2.polylines(blank_image, [pts],
-                                  isClosed, color,
-                                  thickness)
+                blank_image = cv2.polylines(blank_image, [pts],
+                                      isClosed, color,
+                                      thickness)
 
     cv2.imwrite(labelImagePath, blank_image)
 
