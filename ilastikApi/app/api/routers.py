@@ -250,8 +250,8 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     labelPath = os.path.join(STATIC_PATH, 'labels')
     projectPath = projectPath + tempfile.mkdtemp()
     labelPath = labelPath + tempfile.mkdtemp()
-    # labelList = data.get("label_list")
-    # labelList = json.loads(labelList)
+    labelList = data.get("label_list")
+    labelList = json.loads(labelList)
     # print("process-image:", labelList)
 
     label_data_paths = []
@@ -259,14 +259,40 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     if not os.path.exists(labelPath):
         os.makedirs(labelPath)
 
-    for each_file_folder in files:
-        filePath = labelPath + "/" + each_file_folder.filename
-        label_data_paths.append(filePath)
+    # Generate label image
+    img = cv2.imread(imagePath)
+    height = img.shape[0]
+    width = img.shape[1]
+    print("image-size: ", width, " : ", height)
 
-        async with aiofiles.open(filePath, "wb") as f:
-            content_folder = await each_file_folder.read()
-            await f.write(content_folder)
+    labelImagePath = labelPath + "/Labels.png"
+    cv2.imwrite(labelImagePath, numpy.zeros((height, width, 3), numpy.uint8))
+    blank_image = cv2.imread(labelImagePath)
 
+    for label in labelList:
+        labelPositionArr = label["positions"]
+        h = label["label_color"].lstrip('#')
+
+        if len(labelPositionArr) > 0:
+            for arr in labelPositionArr:
+                coordinates = []
+                for pos in arr:
+                    coordinates.append((pos["x"], pos["y"]))
+
+                pts = numpy.array(coordinates, numpy.int32)
+                pts = pts.reshape((-1, 1, 2))
+                color = tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+                thickness = 8
+                isClosed = False
+
+                blank_image = cv2.polylines(blank_image, [pts],
+                                            isClosed, color,
+                                            thickness)
+
+    blank_image = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(labelImagePath, blank_image)
+    label_data_paths.append(labelImagePath)
 
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
