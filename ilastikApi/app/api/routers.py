@@ -232,6 +232,8 @@ async def testLabel(request: Request):
                                       isClosed, color,
                                       thickness)
 
+    blank_image = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+
     cv2.imwrite(labelImagePath, blank_image)
 
     return JSONResponse({"success": True, "image_path": labelImagePath})
