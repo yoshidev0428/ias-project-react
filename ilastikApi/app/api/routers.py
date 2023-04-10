@@ -207,8 +207,9 @@ async def testLabel(request: Request):
     width = img.shape[1]
     print("image-size: ", width, " : ", height)
 
-
-    blank_image = numpy.zeros((height, width, 3), numpy.uint8)
+    labelImagePath = labelPath + "/Labels.png"
+    cv2.imwrite(labelImagePath, numpy.zeros((height, width, 3), numpy.uint8))
+    blank_image = cv2.imread(labelImagePath)
 
     for label in labelList:
         labelPositions = label["positions"]
@@ -223,15 +224,15 @@ async def testLabel(request: Request):
             color = (255, 0, 0)
 
             thickness = 8
-            isClosed = False
+            isClosed = True
 
             blank_image = cv2.polylines(blank_image, [pts],
                                   isClosed, color,
                                   thickness)
 
-    blank_image.save(labelPath + "/Labels.png", "png")
+    cv2.imwrite(labelImagePath, blank_image)
 
-    return JSONResponse({"success": True, "image_path": labelPath + "/Labels.png"})
+    return JSONResponse({"success": True, "image_path": labelImagePath})
 
 @router.post(
     "/process_image",
