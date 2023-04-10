@@ -398,7 +398,7 @@ async def processImage(request: Request):
     args += " --headless"
 
     # Batch export options
-    args += " --export_source=uncertainty"
+    args += " --export_source=probabilities"
     args += " --output_format=tiff"
     args += " --output_filename_format={dataset_dir}/{nickname}_prediction.tiff"
     args += " --output_internal_path=volume/pred_volume"
