@@ -16,6 +16,7 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Response
 )
 import tempfile
 import numpy
@@ -421,3 +422,35 @@ async def processImage(request: Request):
     output_path = imagePath[:-5] + "_prediction.tiff"
 
     return JSONResponse({"success": True, "image_path": output_path})
+
+
+@router.get("/download")
+async def download_exp_image(
+    request: Request,
+    path: str
+):
+    file_size = os.path.getsize(path)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="File not found")
+    range = request.headers["Range"]
+    if range is None:
+        return FileResponse(path, filename=path)
+    ranges = range.replace("bytes=", "").split("-")
+    range_start = int(ranges[0]) if ranges[0] else None
+    range_end = int(ranges[1]) if ranges[1] else file_size - 1
+    if range_start is None:
+        return Response(content="Range header required", status_code=416)
+    if range_start >= file_size:
+        return Response(content="Range out of bounds", status_code=416)
+    if range_end >= file_size:
+        range_end = file_size - 1
+    content_length = range_end - range_start + 1
+    headers = {
+        "Content-Range": f"bytes {range_start}-{range_end}/{file_size}",
+        "Accept-Ranges": "bytes",
+        "Content-Length": str(content_length),
+    }
+    with open(path, "rb") as file:
+        file.seek(range_start)
+        content = file.read(content_length)
+        return Response(content, headers=headers, status_code=206)
