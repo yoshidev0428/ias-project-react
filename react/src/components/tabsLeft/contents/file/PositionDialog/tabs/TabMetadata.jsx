@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import CenterBox from '@/components/mui/BoxCenter';
+import BoxCenter from '@/components/mui/BoxCenter';
 import useMetadata from '@/hooks/useMetadata';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid } from '@mui/x-data-grid';
@@ -20,9 +20,9 @@ export default function TabMetadata({ images }) {
   );
 
   return loading ? (
-    <CenterBox height={300}>
+    <BoxCenter height={300}>
       <CircularProgress />
-    </CenterBox>
+    </BoxCenter>
   ) : (
     <Box sx={{ height: 300, width: '100%' }}>
       <DataGrid columns={METADATA_COLUMNS} rows={rows} />

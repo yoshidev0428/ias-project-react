@@ -462,3 +462,7 @@ export function toTiffPath(path) {
     ? path
     : path.replace(/\.\w+$/, '.ome.tiff');
 }
+
+export function toThumbnailPath(path) {
+  return path.replace(/\.\w+$/, '.timg');
+}

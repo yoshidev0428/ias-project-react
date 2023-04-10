@@ -39,11 +39,7 @@ from mainApi.app.images.sub_routers.tile.models import (
     UserCustomModel
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.file import (
-    save_upload_file,
-    add_image_tiles,
-    convol2D_processing,
-)
+from mainApi.app.images.utils.tiling import add_image_tiles
 from mainApi.app.images.utils.experiment import (
     add_experiment,
     add_experiment_with_folders,
@@ -77,12 +73,12 @@ router = APIRouter(
 
 # Upload Image file
 @router.post(
-    "/upload_image_tiles",
+    "/upload_tiles",
     response_description="Upload Image Tiles",
     status_code=status.HTTP_201_CREATED,
     response_model=List[TileModelDB],
 )
-async def upload_image_tiles(
+async def upload_tiles(
     files: List[UploadFile] = File(...),
     clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
@@ -91,22 +87,32 @@ async def upload_image_tiles(
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)), 'images')
     if not os.path.exists(current_user_path):
         os.makedirs(current_user_path)
-    else:
+    elif clear_previous:
         for f in os.listdir(current_user_path):
             os.remove(os.path.join(current_user_path, f))
-        res = await db["tile-image-cache"].delete_many(
+        await db["tile-image-cache"].delete_many(
             {"user_id": PyObjectId(current_user.id)}
         )
     result = await add_image_tiles(
         path=current_user_path,
         files=files,
-        clear_previous=clear_previous,
         current_user=current_user,
         db=db,
     )
-    result["path"] = os.path.join(CURRENT_STATIC, str(PyObjectId(current_user.id)), 'images')
     return JSONResponse(result)
 
+@router.get(
+    "/get_tiles",
+    response_description="Get all image tiles",
+    status_code=status.HTTP_200_OK,
+)
+async def get_tiles(
+    current_user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[FileModelDB]:
+    tiles = [tile async for tile in db['tile-image-cache'].find({"user_id": current_user.id}, {"_id": 0, "user_id": 0})]
+    print(tiles)
+    return JSONResponse(tiles)
 
 #############################################################################
 # Delete Image files
