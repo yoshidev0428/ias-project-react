@@ -92,23 +92,13 @@ const experiment = (state = initState, action) => {
       break;
     case 'setMLObjectLabelPosInfo':
       let tempOb = state.MLObjectLabelPosInfo;
-      state.MLObjectLabelPosInfo = tempOb;
       tempOb.push(action.content);
-
-      // state.MLObjectLabelPosInfo = [
-      //   ...state.MLObjectLabelPosInfo,
-      //   ...action.content,
-      // ];
+      state.MLObjectLabelPosInfo = tempOb;
       break;
     case 'setMLBackgroundLabelPosInfo':
       let tempBg = state.MLBackgroundLabelPosInfo;
-      state.MLBackgroundLabelPosInfo = tempBg;
       tempBg.push(action.content);
-
-      // state.MLBackgroundLabelPosInfo = [
-      //   ...state.MLBackgroundLabelPosInfo,
-      //   ...action.content,
-      // ];
+      state.MLBackgroundLabelPosInfo = tempBg;
       break;
     case 'clearMLObjectLabelPosInfo':
       state.MLObjectLabelPosInfo = [];
