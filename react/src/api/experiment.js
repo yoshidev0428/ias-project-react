@@ -279,6 +279,8 @@ export const MLGetProcessedImage = async (payload) => {
     formData.append('original_image_url', preprocessRes.data.image_path);
     formData.append('experiment_name', payload.experiment_name);
     formData.append('label_list', JSON.stringify(payload.label_list));
+    formData.append('thickness', payload.thickness);
+    formData.append('intensity', payload.intensity);
     // const response = await ilastikApi.post('image/process_image', formData, {
     //   headers: {
     //     'Access-Control-Allow-Origin': 'http://localhost:3000',

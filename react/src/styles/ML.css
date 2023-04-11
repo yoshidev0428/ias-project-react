@@ -1,0 +1,12 @@
+
+#thickness-label {
+ font-size: 12px;
+}   
+
+#thickness {
+    font-size: 14px;
+    padding: 4px 8px;
+}
+.MuiInputBase-root-MuiOutlinedInput-root {
+    width: 48px;
+}

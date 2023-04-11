@@ -13,7 +13,7 @@ const DEFAULT_PARAMS = {
   },
   metadatas: [],
   method: 'tissuenet',
-  MLMethod: 'pc',
+  MLMethod: null,
   MLMethodList: [],
   MLObjectBrightnessMode: 'light',
   MLSelectTargetMode: 'object',

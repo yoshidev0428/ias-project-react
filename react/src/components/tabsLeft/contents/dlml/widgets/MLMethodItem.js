@@ -8,24 +8,35 @@ const MLMethodItem = (props) => {
   return (
     <div
       className="d-flex flex-row justify-content-around"
-      style={{ fontSize: '1.2rem', width: '400px' }}
+      style={{ fontSize: '1.2rem', width: '400px', alignItems: 'center' }}
     >
       <div style={{ width: '20%' }}>
         <Avatar
           sx={{
-            bgcolor: 'red',
-            width: '1.6rem',
-            height: '1.6rem',
-            lineHeight: '2rem',
+            bgcolor: method.params.bgLabelColor,
+            color: method.params.objectLabelColor,
+            fontSize: '1rem',
+            width: '2rem',
+            height: '2rem',
           }}
-        >{`${method.type}`}</Avatar>
+        >
+          {`${method.type.toUpperCase()}`}
+        </Avatar>
       </div>
-      <label style={{ width: '40%' }} for="colorpicker">
-        {' '}
-        {`${method.name}`}{' '}
+      <label
+        style={{
+          width: '50%',
+          fontSize: '1rem',
+          fontFamily: 'monospace',
+          margin: 0,
+        }}
+        for="colorpicker"
+      >
+        {''}
+        {`Method Name: ${method.name.toUpperCase()}`}{' '}
       </label>
       <Icon
-        sx={{ width: '1.2rem' }}
+        sx={{ width: '15%' }}
         path={
           selectedMethod?.name === method.name
             ? mdiCheckCircle
@@ -35,7 +46,7 @@ const MLMethodItem = (props) => {
         onClick={(method) => onSelect(method)}
       />
       <Icon
-        sx={{ width: '20%' }}
+        sx={{ width: '15%' }}
         path={mdiDeleteCircle}
         size={1}
         onClick={(method) => onDelete(method)}

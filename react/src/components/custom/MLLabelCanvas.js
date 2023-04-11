@@ -9,12 +9,15 @@ const mapStateToProps = (state) => ({
 });
 
 function MLLabelCanvas(props) {
-  const selectedLabel = useFlagsStore((store) => store.selectedLabel);
+  const MLMethod = useSelector((state) => state.experiment.MLMethod);
+
   const MLSelectTargetMode = useSelector(
     (state) => state.experiment.MLSelectTargetMode,
   );
   const getActiveColor = () => {
-    return MLSelectTargetMode === 'object' ? '#FF0000' : '#00FF00';
+    return MLSelectTargetMode === 'object'
+      ? MLMethod?.params?.objectLabelColor ?? '#FF0000'
+      : MLMethod?.params?.bgLabelColor ?? '#00FF00';
   };
   const storeState = store.getState();
 
@@ -158,7 +161,7 @@ function MLLabelCanvas(props) {
       setMouseTrack(_mouseTrack);
 
       context.lineJoin = 'round';
-      context.lineWidth = props.strokeWidth;
+      context.lineWidth = MLMethod.params.thickness ?? props.strokeWidth;
       context.beginPath();
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
