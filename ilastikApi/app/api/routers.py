@@ -247,6 +247,7 @@ async def testLabel(request: Request):
 async def processImage(request: Request):
     data = await request.form()
     imagePath = data.get("original_image_url")
+    thickness = data.get("thickness")
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     labelPath = os.path.join(STATIC_PATH, 'labels')
@@ -285,7 +286,6 @@ async def processImage(request: Request):
                 pts = pts.reshape((-1, 1, 2))
                 color = tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
 
-                thickness = 8
                 isClosed = False
 
                 blank_image = cv2.polylines(blank_image, [pts],
