@@ -42,18 +42,19 @@ const defaultLabelList = [
 
 export default function MLBoxSelect() {
   const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag);
+  const MLMethod = useSelector((state) => state.experiment.MLMethod);
+
   const MLSelectTargetMode = useSelector(
     (state) => state.experiment.MLSelectTargetMode,
   );
+
   const MLObjectLabelPosInfo = useSelector(
     (state) => state.experiment.MLObjectLabelPosInfo,
   );
+
   const MLBackgroundLabelPosInfo = useSelector(
     (state) => state.experiment.MLBackgroundLabelPosInfo,
   );
-
-  // const selectedLabel = useFlagsStore((store) => store.selectedLabel);
-  // const [labelList, setLabelList] = useState(defaultLabelList);
 
   // useEffect(()=>{
   //   return ()=>{
@@ -67,37 +68,15 @@ export default function MLBoxSelect() {
       toast.error('Please select the image file!', {
         position: 'top-center',
       });
-      // alert('Please enter your image file!');
+      return;
+    }
+    if (MLMethod === null || MLMethod == undefined || !MLMethod) {
+      toast.error('Please Set the Machine Learning Method', {
+        position: 'top-center',
+      });
       return;
     }
     useFlagsStore.setState({ MLCanvasFlag: true });
-
-    // let result = await api_experiment.get_outlines(imgPath, exp_name);
-    // if (result.data.error) {
-    //   alert('Error occured while getting the data');
-    // } else {
-    //   if (result.data.success === 'NO') {
-    //     alert('Your custom model is not applied to your image.');
-    //     return;
-    //   }
-    //   let temp = [];
-    //   for (let i in result.data.success) {
-    //     let temp_row = result.data.success[i];
-    //     temp_row.replace(/\\n/g, '');
-    //     temp_row = temp_row.split(',');
-    //     let num_temp_row = temp_row.map(Number);
-    //     temp.push(num_temp_row);
-    //   }
-    //   let canvas_info = state.experiment.canvas_info;
-    //   let canv_info = {
-    //     ...canvas_info,
-    //     outlines: temp,
-    //   };
-    //   store.dispatch({
-    //     type: 'set_canvas',
-    //     content: canv_info,
-    //   });
-    // }
   };
 
   const stop = () => {
@@ -123,14 +102,23 @@ export default function MLBoxSelect() {
     const _labelInfo = [];
     let _labelList = defaultLabelList;
     _labelList[0].positions = MLObjectLabelPosInfo;
+    _labelList[0].label_color = MLMethod.params.objectLabelColor;
+    _labelList[0].map_color = MLMethod.params.objectLabelColor;
+
     _labelList[1].positions = MLBackgroundLabelPosInfo;
+    _labelList[1].label_color = MLMethod.params.bgLabelColor;
+    _labelList[1].map_color = MLMethod.params.bgLabelColor;
+
     const _payload = {
       workflow_name: 'pixel_classification',
       original_image_url: imgPath,
       experiment_name: exp_name,
       label_list: _labelList,
+      thickness: MLMethod.params.thickness,
+      intensity: MLMethod.params.intensity,
     };
     // console.log('label_list', _labelList)
+    useFlagsStore.setState({ MLCanvasFlag: false });
     let res = await api_experiment.MLGetProcessedImage(_payload);
     let source = getIlastikImageUrl(res.image_path);
     store.dispatch({ type: 'set_image_path_for_avivator', content: source });

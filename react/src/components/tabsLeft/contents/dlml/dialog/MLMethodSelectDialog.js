@@ -38,7 +38,6 @@ TabContainer.propTypes = {
 
 const MLMethodSelectDialog = () => {
   const MLMethodList = useSelector((state) => state.experiment.MLMethodList);
-  // console.log('ML method list', MLMethodList)
   const MLDialogMethodSelecFlag = useFlagsStore(
     (store) => store.MLDialogMethodSelectFlag,
   );
@@ -61,6 +60,7 @@ const MLMethodSelectDialog = () => {
     useFlagsStore.setState({ MLDialogMethodSelectFlag: false });
     store.dispatch({ type: 'setMLMethod', content: selectedMethod });
   };
+
   const close = () => {
     useFlagsStore.setState({ MLDialogMethodSelectFlag: false });
   };
@@ -89,10 +89,11 @@ const MLMethodSelectDialog = () => {
               bgcolor: 'background.paper',
             }}
           >
-            {MLMethodList?.map((mth) => {
+            {MLMethodList?.map((mth, idx) => {
               return (
                 <ListItem>
                   <MLMethodItem
+                    key={idx}
                     method={mth}
                     onDelete={() => handleDeleteMethod(mth)}
                     onSelect={() => handleSelectedMethod(mth)}
