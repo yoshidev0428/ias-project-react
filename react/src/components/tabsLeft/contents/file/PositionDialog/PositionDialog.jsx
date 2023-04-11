@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
-import { PositionTabLabels, PositionTabs } from './constants';
+import { PositionTabLabels, PositionTabs } from './tabs/constants';
 import TabImage from './tabs/TabImage';
 import TabMetadata from './tabs/TabMetadata';
 import TabNaming from './tabs/TabNaming';

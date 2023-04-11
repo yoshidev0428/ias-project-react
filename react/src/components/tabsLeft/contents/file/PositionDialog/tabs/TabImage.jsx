@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -12,12 +12,19 @@ import { Button, DialogActions, Typography } from '@mui/material';
 import { deleteTiles, uploadTiles } from '@/api/tiling';
 import useTilingStore from '@/stores/useTilingStore';
 
+const DEFAULT_PAGE_SIZE = 50;
+
 export default function TabImage({ onClose }) {
   const [loading, setLoading] = useState(false);
   const { tiles, loading: loadingTiles, loadTiles } = useTilingStore();
   const [selectedTiles, setSelectedTiles] = useState([]);
   const [files, setFiles] = useState([]);
   const [infoMessage, setInfoMessage] = useState('');
+  const [page, setPage] = useState(1);
+  const pageTiles = useMemo(
+    () => tiles.slice(0, page * DEFAULT_PAGE_SIZE),
+    [tiles, page],
+  );
   const forceClickRef = useRef();
 
   useEffect(() => {
@@ -71,12 +78,19 @@ export default function TabImage({ onClose }) {
     setLoading(false);
   };
 
+  const handleScrollContent = (e) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    setPage((p) => (bottom ? p + 1 : p));
+  };
+
   return (
     <>
       <DialogContent
         sx={{ px: 3, pb: 3 }}
         dividers
         loading={loadingTiles || loading}
+        onScroll={handleScrollContent}
       >
         <Dropzone onDrop={handleDropFiles}>
           {({ getRootProps, getInputProps }) => (
@@ -101,9 +115,9 @@ export default function TabImage({ onClose }) {
           )}
         </Dropzone>
         <ImageList sx={{ mb: 0 }} cols={5}>
-          {tiles.map(({ _id, thumbnail, filename }) => (
+          {pageTiles.map(({ _id, thumbnail, filename }) => (
             <ImageListItem key={_id}>
-              <img src={thumbnail} alt={filename} />
+              <img src={thumbnail} alt={filename} style={{ minHeight: 100 }} />
               <ImageListItemBar
                 title={filename}
                 actionIcon={
