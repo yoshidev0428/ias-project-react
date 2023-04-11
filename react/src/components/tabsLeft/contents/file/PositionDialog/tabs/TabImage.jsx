@@ -12,7 +12,7 @@ import { Button, DialogActions, Typography } from '@mui/material';
 import { deleteTiles, uploadTiles } from '@/api/tiling';
 import useTilingStore from '@/stores/useTilingStore';
 
-const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE_SIZE = 48;
 
 export default function TabImage({ onClose }) {
   const [loading, setLoading] = useState(false);
@@ -114,7 +114,7 @@ export default function TabImage({ onClose }) {
             </Box>
           )}
         </Dropzone>
-        <ImageList sx={{ mb: 0 }} cols={5}>
+        <ImageList sx={{ mb: 0 }} cols={8}>
           {pageTiles.map(({ _id, thumbnail, filename }) => (
             <ImageListItem key={_id}>
               <img src={thumbnail} alt={filename} style={{ minHeight: 100 }} />
