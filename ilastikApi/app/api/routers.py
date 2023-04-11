@@ -247,7 +247,7 @@ async def testLabel(request: Request):
 async def processImage(request: Request):
     data = await request.form()
     imagePath = data.get("original_image_url")
-    thickness = data.get("thickness")
+    thickness = int(data.get("thickness"))
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
     projectPath = os.path.join(STATIC_PATH, 'ilastik_projects')
     labelPath = os.path.join(STATIC_PATH, 'labels')
