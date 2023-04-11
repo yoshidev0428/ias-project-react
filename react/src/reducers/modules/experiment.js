@@ -40,7 +40,7 @@ const DEFAULT_PARAMS = {
     chan2: 0,
     learning_rate: 0.1,
     weight_decay: 0.0001,
-    n_epochs: 100
+    n_epochs: 100,
   },
   models: [],
   current_model: null,
@@ -91,16 +91,14 @@ const experiment = (state = initState, action) => {
       state.MLSelectTargetMode = action.content;
       break;
     case 'setMLObjectLabelPosInfo':
-      state.MLObjectLabelPosInfo = [
-        ...state.MLObjectLabelPosInfo,
-        ...action.content,
-      ];
+      let tempOb = state.MLObjectLabelPosInfo;
+      tempOb.push(action.content);
+      state.MLObjectLabelPosInfo = tempOb;
       break;
     case 'setMLBackgroundLabelPosInfo':
-      state.MLBackgroundLabelPosInfo = [
-        ...state.MLBackgroundLabelPosInfo,
-        ...action.content,
-      ];
+      let tempBg = state.MLBackgroundLabelPosInfo;
+      tempBg.push(action.content);
+      state.MLBackgroundLabelPosInfo = tempBg;
       break;
     case 'clearMLObjectLabelPosInfo':
       state.MLObjectLabelPosInfo = [];

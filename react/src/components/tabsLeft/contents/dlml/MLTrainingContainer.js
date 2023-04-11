@@ -104,19 +104,19 @@ export default function MLBoxSelect() {
 
   const liveUpdate = async () => {
     const state = store.getState();
-    let fullPath = state.files.imagePathForAvivator;
 
     /**
      * @author QmQ
      * EX. : fullPath = "http://ias.gtgjpj.jp:8000/image/download/?path=642e25aeac84edfcb8ad83a4/aaa/test_images/aaa.ome.tiff"
      * we get the imgPath = "aaa/test_images/aaa.ome.tiff"
      */
+    let fullPath = state.files.imagePathForAvivator;
     let subPath = /path=(.*)/.exec(fullPath)[1];
     let imgPath = subPath.split('/').slice(1).join('/');
     let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
-    // console.log(fullPath, subPath, imgPath, exp_name)
-    // console.log(state.auth.tokenType + ' ' + state.auth.token)
+    // let imgPath = state.files.imagePathForAvivator[0].path;
+    //  let exp_name = imgPath.split('/');
+    // exp_name = exp_name[0];
 
     const _labelInfo = [];
     let _labelList = defaultLabelList;
@@ -128,8 +128,9 @@ export default function MLBoxSelect() {
       experiment_name: exp_name,
       label_list: _labelList,
     };
-
+    // console.log('label_list', _labelList)
     let res = await api_experiment.MLGetProcessedImage(_payload);
+    // console.log(res)
     // <description> based on the result image, we have to set that image into Avivator ** QmQ
   };
 
