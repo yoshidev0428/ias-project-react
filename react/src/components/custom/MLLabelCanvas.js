@@ -234,69 +234,6 @@ function MLLabelCanvas(props) {
     }
   };
 
-  const handleSaveClick = async () => {
-    const myCanvas = canvas.current;
-    const context = myCanvas.getContext('2d');
-    // console.log('====>authorization: ', storeState.auth.tokenType, storeState.auth.token)
-    // Draw the image
-    let imagePath = storeState.files.imagePathForAvivator[0].path;
-    // console.log(storeState.files.imagePathForAvivator[0])
-    // console.log(imagePath)
-
-    const url = URL.createObjectURL(storeState.files.imagePathForAvivator[0]);
-    // console.log('====> ', url)
-    const image = new Image();
-    image.src = url;
-    // let imageSrc =  process.env.REACT_APP_BASE_API_URL +
-    //   'static/' +
-    //   storeState.auth.user._id +
-    //   '/' +
-    //   imagePath;
-    // console.log('image source===>', imageSrc)
-    // const response = await fetch(
-    //   imageSrc,
-    //   {
-    //     headers: {
-    //       'Access-Control-Allow-Origin': '*',
-    //       'Access-Control-Allow-Methods':
-    //         'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-    //       'Access-Control-Allow-Headers':
-    //         'Origin, Content-Type, X-Auth-Token',
-    //       Authorization: storeState.auth.tokenType + ' ' + storeState.auth.token,
-    //     },
-    //   },
-    // );
-    // const blob = await response.blob();
-    // const file = new File([blob], imagePath, { type: 'image/tiff' });
-    // image.src = file;
-    // image.src = imagePath;
-    await image.decode();
-    context.drawImage(image, 0, 0);
-
-    // Draw the canvas drawing
-    context.beginPath();
-    context.moveTo(10, 10);
-    context.lineTo(100, 100);
-    context.stroke();
-
-    // Convert the canvas to a data URL
-    const dataUrl = myCanvas.toDataURL('image/png');
-    // console.log('=================>')
-    // console.log(dataUrl)
-    // Upload the data URL to the server
-    // const response = await fetch('/api/save-image', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ dataUrl }),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    // const data = await response.json();
-
-    // Log the URL of the saved image
-    // console.log(data.imageUrl);
-  };
-
   // const initCanvas = () => {
   //   const context = canvas.current.getContext('2d');
   //   context.fillStyle = 'blue';
@@ -334,7 +271,6 @@ function MLLabelCanvas(props) {
         width={width}
         height={height}
       />
-      <button onClick={handleSaveClick}>Save Image</button>
     </div>
   );
 }
