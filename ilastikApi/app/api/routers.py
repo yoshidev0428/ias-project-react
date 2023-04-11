@@ -16,6 +16,7 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Response
 )
 import tempfile
 import numpy
@@ -28,6 +29,9 @@ from lazyflow.graph import Graph
 from lazyflow.operators.ioOperators import OpInputDataReader
 from lazyflow.roi import roiToSlice, roiFromShape
 import aiofiles
+from PIL import Image
+import cv2
+import subprocess
 
 ilastik_startup = ilastik.__main__
 
@@ -185,10 +189,62 @@ async def testProcess():
     return JSONResponse({"success": True})
 
 @router.post(
+    "/test_label",
+    response_description="Test Draw for label",
+)
+async def testLabel(request: Request):
+    data = await request.form()
+    imagePath = data.get("original_image_url")
+    labelPath = os.path.join(STATIC_PATH, 'labels')
+    labelPath = labelPath + tempfile.mkdtemp()
+
+    if not os.path.exists(labelPath):
+        os.makedirs(labelPath)
+
+    labelList = data.get("label_list")
+    labelList = json.loads(labelList)
+
+    img = cv2.imread(imagePath)
+    height = img.shape[0]
+    width = img.shape[1]
+    print("image-size: ", width, " : ", height)
+
+    labelImagePath = labelPath + "/Labels.png"
+    cv2.imwrite(labelImagePath, numpy.zeros((height, width, 3), numpy.uint8))
+    blank_image = cv2.imread(labelImagePath)
+
+    for label in labelList:
+        labelPositionArr = label["positions"]
+        h = label["label_color"].lstrip('#')
+
+        if len(labelPositionArr) > 0:
+            for arr in labelPositionArr:
+                coordinates = []
+                for pos in arr:
+                    coordinates.append((pos["x"], pos["y"]))
+
+                pts = numpy.array(coordinates, numpy.int32)
+                pts = pts.reshape((-1, 1, 2))
+                color = tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
+                thickness = 8
+                isClosed = False
+
+                blank_image = cv2.polylines(blank_image, [pts],
+                                      isClosed, color,
+                                      thickness)
+
+    blank_image = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+
+    cv2.imwrite(labelImagePath, blank_image)
+
+    return JSONResponse({"success": True, "image_path": labelImagePath})
+
+@router.post(
     "/process_image",
     response_description="Process image",
 )
-async def processImage(request: Request, files: List[UploadFile] = File(...)):
+async def processImage(request: Request):
     data = await request.form()
     imagePath = data.get("original_image_url")
     dataImagePath = os.path.join("/app/shared_static", 'processed_images', tempfile.mkdtemp())
@@ -196,8 +252,8 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     labelPath = os.path.join(STATIC_PATH, 'labels')
     projectPath = projectPath + tempfile.mkdtemp()
     labelPath = labelPath + tempfile.mkdtemp()
-    # labelList = data.get("label_list")
-    # labelList = json.loads(labelList)
+    labelList = data.get("label_list")
+    labelList = json.loads(labelList)
     # print("process-image:", labelList)
 
     label_data_paths = []
@@ -205,14 +261,40 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     if not os.path.exists(labelPath):
         os.makedirs(labelPath)
 
-    for each_file_folder in files:
-        filePath = labelPath + "/" + each_file_folder.filename
-        label_data_paths.append(filePath)
+    # Generate label image
+    img = cv2.imread(imagePath)
+    height = img.shape[0]
+    width = img.shape[1]
+    print("image-size: ", width, " : ", height)
 
-        async with aiofiles.open(filePath, "wb") as f:
-            content_folder = await each_file_folder.read()
-            await f.write(content_folder)
+    labelImagePath = labelPath + "/Labels.png"
+    cv2.imwrite(labelImagePath, numpy.zeros((height, width, 3), numpy.uint8))
+    blank_image = cv2.imread(labelImagePath)
 
+    for label in labelList:
+        labelPositionArr = label["positions"]
+        h = label["label_color"].lstrip('#')
+
+        if len(labelPositionArr) > 0:
+            for arr in labelPositionArr:
+                coordinates = []
+                for pos in arr:
+                    coordinates.append((pos["x"], pos["y"]))
+
+                pts = numpy.array(coordinates, numpy.int32)
+                pts = pts.reshape((-1, 1, 2))
+                color = tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+                thickness = 8
+                isClosed = False
+
+                blank_image = cv2.polylines(blank_image, [pts],
+                                            isClosed, color,
+                                            thickness)
+
+    blank_image = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(labelImagePath, blank_image)
+    label_data_paths.append(labelImagePath)
 
     if not os.path.exists(projectPath):
         os.makedirs(projectPath)
@@ -318,7 +400,7 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
     args += " --headless"
 
     # Batch export options
-    args += " --export_source=uncertainty"
+    args += " --export_source=probabilities"
     args += " --output_format=tiff"
     args += " --output_filename_format={dataset_dir}/{nickname}_prediction.tiff"
     args += " --output_internal_path=volume/pred_volume"
@@ -339,5 +421,41 @@ async def processImage(request: Request, files: List[UploadFile] = File(...)):
         sys.argv = old_sys_argv
 
     output_path = imagePath[:-5] + "_prediction.tiff"
+    new_path = imagePath[:-5] + "_prediction.ome.tiff"
 
-    return JSONResponse({"success": True, "image_path": output_path})
+    cmd_str = "sh /app/ilastikApi/bftools/bfconvert -separate -overwrite '" + output_path + "' '" + new_path + "'"
+    subprocess.run(cmd_str, shell=True)
+
+    return JSONResponse({"success": True, "image_path": new_path})
+
+
+@router.get("/download")
+async def download_exp_image(
+    request: Request,
+    path: str
+):
+    file_size = os.path.getsize(path)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="File not found")
+    range = request.headers["Range"]
+    if range is None:
+        return FileResponse(path, filename=path)
+    ranges = range.replace("bytes=", "").split("-")
+    range_start = int(ranges[0]) if ranges[0] else None
+    range_end = int(ranges[1]) if ranges[1] else file_size - 1
+    if range_start is None:
+        return Response(content="Range header required", status_code=416)
+    if range_start >= file_size:
+        return Response(content="Range out of bounds", status_code=416)
+    if range_end >= file_size:
+        range_end = file_size - 1
+    content_length = range_end - range_start + 1
+    headers = {
+        "Content-Range": f"bytes {range_start}-{range_end}/{file_size}",
+        "Accept-Ranges": "bytes",
+        "Content-Length": str(content_length),
+    }
+    with open(path, "rb") as file:
+        file.seek(range_start)
+        content = file.read(content_length)
+        return Response(content, headers=headers, status_code=206)

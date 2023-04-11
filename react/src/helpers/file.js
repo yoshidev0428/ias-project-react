@@ -100,3 +100,9 @@ export const getImageUrl = (
 export const toUrl = (path) => {
   return cleanUrl(`${process.env.REACT_APP_BASE_API_URL}/${path}`);
 };
+
+export const getIlastikImageUrl = (path) => {
+  let url = path;
+  url = `image/download/?path=${url}`;
+  return cleanUrl(`${process.env.REACT_APP_BASE_ILASTIK_API_URL}/${url}`);
+};

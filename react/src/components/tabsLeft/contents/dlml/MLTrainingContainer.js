@@ -20,6 +20,8 @@ import { toast } from 'react-toastify';
 
 import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
+import { getIlastikImageUrl, getImageUrl } from '@/helpers/file';
+import { toTiffPath } from '@/helpers/avivator';
 
 const defaultLabelList = [
   {
@@ -130,6 +132,8 @@ export default function MLBoxSelect() {
     };
     // console.log('label_list', _labelList)
     let res = await api_experiment.MLGetProcessedImage(_payload);
+    let source = getIlastikImageUrl(res.image_path);
+    store.dispatch({ type: 'set_image_path_for_avivator', content: source });
     // console.log(res)
     // <description> based on the result image, we have to set that image into Avivator ** QmQ
   };
