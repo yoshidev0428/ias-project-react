@@ -9,16 +9,16 @@ import Box from '@mui/material/Box';
 import Dropzone from 'react-dropzone';
 import DialogContent from '@/components/mui/DialogContent';
 import { Button, DialogActions, Typography } from '@mui/material';
-import { uploadTiles } from '@/api/tiling';
+import { deleteTiles, uploadTiles } from '@/api/tiling';
 import useTilingStore from '@/stores/useTilingStore';
 
 export default function TabImage({ onClose }) {
-  const [uploading, setUploading] = useState(false);
-  const { tiles, loading, loadTiles } = useTilingStore();
+  const [loading, setLoading] = useState(false);
+  const { tiles, loading: loadingTiles, loadTiles } = useTilingStore();
   const [selectedTiles, setSelectedTiles] = useState([]);
   const [files, setFiles] = useState([]);
   const [infoMessage, setInfoMessage] = useState('');
-  const fileInputRef = useRef();
+  const forceClickRef = useRef();
 
   useEffect(() => {
     loadTiles().then((tiles) => {
@@ -27,7 +27,7 @@ export default function TabImage({ onClose }) {
   }, [loadTiles]);
 
   const handleAddImages = () => {
-    fileInputRef.current.click();
+    forceClickRef.current.click();
   };
 
   const handleDropFiles = (files) => {
@@ -37,7 +37,7 @@ export default function TabImage({ onClose }) {
 
   const handleUploadTiles = async () => {
     try {
-      setUploading(true);
+      setLoading(true);
       const res = await uploadTiles(files);
       await loadTiles();
       setInfoMessage(`Successfully uploaded ${res.length} tiles`);
@@ -45,7 +45,7 @@ export default function TabImage({ onClose }) {
       setInfoMessage(err);
     }
     setFiles([]);
-    setUploading(false);
+    setLoading(false);
   };
 
   const handleClickTile = (id) => {
@@ -58,19 +58,30 @@ export default function TabImage({ onClose }) {
     }
   };
 
-  const handleDeleteTiles = () => {};
+  const handleDeleteTiles = async () => {
+    setLoading(true);
+    try {
+      const { deleted_count } = await deleteTiles(selectedTiles);
+      await loadTiles();
+      setSelectedTiles([]);
+      setInfoMessage(`Successfully deleted ${deleted_count} tiles`);
+    } catch (err) {
+      setInfoMessage(err);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
       <DialogContent
         sx={{ px: 3, pb: 3 }}
         dividers
-        loading={loading || uploading}
+        loading={loadingTiles || loading}
       >
         <Dropzone onDrop={handleDropFiles}>
           {({ getRootProps, getInputProps }) => (
-            <Box {...getRootProps()} flexGrow={1}>
-              <input {...getInputProps()} multiple ref={fileInputRef} />
+            <Box {...getRootProps()} flexGrow={1} ref={forceClickRef}>
+              <input {...getInputProps()} multiple />
               {!tiles.length && (
                 <Box
                   sx={{
@@ -89,7 +100,7 @@ export default function TabImage({ onClose }) {
             </Box>
           )}
         </Dropzone>
-        <ImageList sx={{ minHeight: 280, mb: 0 }} cols={5}>
+        <ImageList sx={{ mb: 0 }} cols={5}>
           {tiles.map(({ _id, thumbnail, filename }) => (
             <ImageListItem key={_id}>
               <img src={thumbnail} alt={filename} />

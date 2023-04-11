@@ -15,7 +15,7 @@ from fastapi import (
     HTTPException,
 )
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import List
+from typing import Any, FrozenSet, List
 import jsons
 import string
 from tokenize import String
@@ -39,7 +39,11 @@ from mainApi.app.images.sub_routers.tile.models import (
     UserCustomModel,
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
-from mainApi.app.images.utils.tiling import add_image_tiles, get_all_tiles
+from mainApi.app.images.utils.tiling import (
+    add_image_tiles,
+    delete_tiles_in,
+    get_all_tiles,
+)
 from mainApi.app.images.utils.experiment import (
     add_experiment,
     add_experiment_with_folders,
@@ -118,39 +122,17 @@ async def get_tiles(
     return JSONResponse(tiles)
 
 
-#############################################################################
-# Delete Image files
-#############################################################################
 @router.post(
-    "/delete_image_files",
-    response_description="Delete Image Tiles",
-    status_code=status.HTTP_201_CREATED,
-    response_model=List[TileModelDB],
+    "/delete_tiles",
+    response_description="Delete Tiles",
+    status_code=status.HTTP_200_OK,
 )
-async def delete_images(
-    request: Request,
-    clear_previous: bool = Form(False),
-    current_user: UserModelDB = Depends(get_current_user),
+async def delete_tiles(
+    tile_ids: List[str] = Form(...),
     db: AsyncIOMotorDatabase = Depends(get_database),
-) -> List[TileModelDB]:
-    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
-    data = await request.form()
-    files = data.get("images").split(",")
-    for filePath in files:
-        if not os.path.exists(filePath):
-            # return JSONResponse({error: "You are attemting to delete non-existing file"})
-            continue
-        if not os.path.isfile(filePath):
-            # return JSONResponse({error: "You are attemting to delete folder, not file"})
-            continue
-        os.remove(filePath)
-
-    for f in os.listdir(current_user_path):
-        path = os.path.join(current_user_path, f)
-        if os.path.isdir(path) and len(os.listdir(path)) == 0:
-            os.rmdir(path)
-
-    return JSONResponse({"success": "success"})
+) -> Any:
+    res = await delete_tiles_in(tile_ids, db)
+    return JSONResponse(res)
 
 
 #############################################################################
