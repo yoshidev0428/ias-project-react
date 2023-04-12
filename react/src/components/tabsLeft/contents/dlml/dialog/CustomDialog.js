@@ -15,6 +15,8 @@ import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
 import { isNull } from 'lodash';
 import * as Icon from './ModelIcons';
+import { toTiffPath } from '@/helpers/avivator';
+import { getImageUrl } from '@/helpers/file';
 
 
 function TabContainer(props) {
@@ -30,36 +32,6 @@ TabContainer.propTypes = {
 };
 
 const CustomDialog = () => {
-  const getImageByUrl = async function (imagePath) {
-    try {
-      const state = store.getState();
-
-      const response = await fetch(
-        process.env.REACT_APP_BASE_API_URL +
-          'static/' +
-          state.auth.user._id +
-          '/' +
-          imagePath,
-        {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods':
-              'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers':
-              'Origin, Content-Type, X-Auth-Token',
-            Authorization: state.auth.tokenType + ' ' + state.auth.token,
-          },
-        },
-      );
-      const blob = await response.blob();
-      const file = new File([blob], imagePath, { type: 'image/tiff' });
-      file.path = imagePath;
-      return file;
-    } catch (err) {
-      return null;
-    }
-  };
-
   const DialogCustomFlag = useFlagsStore((store) => store.DialogCustomFlag);
   const DialogCustomNameFlag = useFlagsStore(
     (store) => store.DialogCustomNameFlag,
@@ -77,17 +49,22 @@ const CustomDialog = () => {
       return;
     }
 
-    let imgPath = state.files.imagePathForAvivator[0].path;
+    let imgPath = '';
+    if(typeof state.files.imagePathForAvivator === 'string') {
+      imgPath = state.files.imagePathForAvivator;
+    }
+    else if (typeof state.files.imagePathForAvivator === 'object') {
+      imgPath = state.files.imagePathForAvivator[0].path;
+    }
     let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
     useFlagsStore.setState({ DialogCustomFlag: false });
     useFlagsStore.setState({ DialogLoadingFlag: true });
     let result = await api_experiment.testSegment(
       imgPath,
       exp_name,
       selectedIcon,
-    );
-    const imagePathForAvivator = [];
+      );
+    let imagePathForAvivator = null;
     if (result.data.error) {
       //alert("Error occured while getting the tree")
     } else {
@@ -99,11 +76,12 @@ const CustomDialog = () => {
         return;
       }
       let file_path = result.data.success;
-
-      const file = await getImageByUrl(exp_name + '/' + file_path);
-      if (file) imagePathForAvivator.push(file);
+      exp_name = exp_name[exp_name.length-2];
+      console.log('exp_name', exp_name);
+      const file = await getImageUrl(exp_name + '/' + file_path, true, true);
+      if (file) imagePathForAvivator = file
     }
-    if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
+    // if (imagePathForAvivator.length <= 0) imagePathForAvivator = null;
     store.dispatch({
       type: 'set_image_path_for_avivator',
       content: imagePathForAvivator,

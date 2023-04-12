@@ -101,8 +101,7 @@ const TargetDrawingDialog = () => {
     useFlagsStore.setState({ DialogTargetDrawingFlag: false });
     // console.log("Select-3");
   };
-  const select4 = () => {};
-  const select5 = async () => {
+  const select4 = async () => {
     const state = store.getState();
     let outlines = state.experiment.canvas_info.outlines;
     if(outlines.length === 0) {
@@ -127,23 +126,20 @@ const TargetDrawingDialog = () => {
     useFlagsStore.setState({ DialogTargetDrawingFlag: false });
     // console.log("Select-5");
   };
-  const select6 = () => {
-    // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
-    // console.log("Select-6");
-  };
-  const select7 = () => {
-    // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
-    // console.log("Select-7")
-  };
   const get_outline = async () => {
     const state = store.getState();
     if (state.files.imagePathForAvivator == null) {
       // alert('Please enter your image file!');
       return 'NO';
     }
-    let imgPath = state.files.imagePathForAvivator[0].path;
+    let imgPath = '';
+    if(typeof state.files.imagePathForAvivator === 'string') {
+      imgPath = state.files.imagePathForAvivator;
+    }
+    else if (typeof state.files.imagePathForAvivator === 'object') {
+      imgPath = state.files.imagePathForAvivator[0].path;
+    }
     let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
     let result = await api_experiment.get_outlines(imgPath, exp_name);
     if (result.data.error) {
       alert('Error occured while getting the data');
@@ -184,10 +180,7 @@ const TargetDrawingDialog = () => {
                   icon={mdiCheckboxBlankCircleOutline}
                   click={() => select3()}
                 />
-                <CustomButton icon={mdiDotsVertical} click={() => select4()} />
-                <CustomButton icon={mdiVectorRectangle} click={() => select5()} />
-                <CustomButton icon={mdiSquareEditOutline} click={() => select6()} />
-                <CustomButton icon={mdiTrashCanOutline} click={() => select7()} />
+                <CustomButton icon={mdiVectorRectangle} click={() => select4()} />
               </div>
             </SmallCard>
             </Col>
