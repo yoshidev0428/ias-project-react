@@ -94,9 +94,14 @@ const TrainingDialog = (props) => {
       alert('Please enter your image file!');
       return;
     }
-    let imgPath = state.files.imagePathForAvivator[0].path;
+    let imgPath = '';
+    if(typeof state.files.imagePathForAvivator === 'string') {
+      imgPath = state.files.imagePathForAvivator;
+    }
+    else if (typeof state.files.imagePathForAvivator === 'object') {
+      imgPath = state.files.imagePathForAvivator[0].path;
+    }
     let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
     useFlagsStore.setState({ DialogTrainingFlag: false });
     useFlagsStore.setState({ DialogLoadingFlag: true });
     let result = await api_experiment.train_model(
