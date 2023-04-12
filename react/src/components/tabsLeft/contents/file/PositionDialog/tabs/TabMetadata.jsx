@@ -3,11 +3,14 @@ import BoxCenter from '@/components/mui/BoxCenter';
 import useMetadata from '@/hooks/useMetadata';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataGrid } from '@mui/x-data-grid';
-import { METADATA_COLUMNS } from '../constants';
+import { METADATA_COLUMNS } from './constants';
 import { Box } from '@mui/material';
 
-export default function TabMetadata({ images }) {
-  const urls = useMemo(() => images.map((img) => img.tiffUrl), [images]);
+export default function TabMetadata({ tiles }) {
+  const urls = useMemo(
+    () => tiles.filter((tile) => /tif?f/.test(tile.path)).map((img) => img.url),
+    [tiles],
+  );
   const [metadata, loading] = useMetadata(urls);
   const rows = useMemo(
     () =>

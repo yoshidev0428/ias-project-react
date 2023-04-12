@@ -73,7 +73,7 @@ class TileModelDB(BaseModel):
         alias_generator = to_camel
 
 class FileModelDB(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: PyObjectId = Field(default_factory=PyObjectId)
     user_id: PyObjectId = Field(default_factory=PyObjectId)
     filename: str
     path: str

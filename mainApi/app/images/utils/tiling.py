@@ -1,15 +1,28 @@
 from pathlib import Path
-from typing import List
+from typing import Any, List
 import os
+from bson import ObjectId
 from fastapi import UploadFile
 import aiofiles
 from PIL import Image
 
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from mainApi.app.auth.models.user import UserModelDB, ShowUserModel
+from mainApi.config import STATIC_PATH
+from mainApi.app.auth.models.user import PyObjectId, UserModelDB, ShowUserModel
 from mainApi.app.images.sub_routers.tile.models import FileModelDB
 from mainApi.config import CURRENT_STATIC
 from .asyncio import shell
+
+
+async def get_all_tiles(user: UserModelDB, db: AsyncIOMotorDatabase):
+    tiles = []
+    async for tile in db["tile-image-cache"].find({"user_id": user.id}, {"user_id": 0}):
+        # Convert ObjectId fields to string values
+        for key in tile.keys():
+            if isinstance(tile[key], ObjectId):
+                tile[key] = str(tile[key])
+        tiles.append(tile)
+    return tiles
 
 
 async def add_image_tiles(
@@ -55,17 +68,26 @@ async def add_image_tiles(
         }
         new_tiles.append(tile)
     # delete documents of same image path
-    await db["tile-image-cache"].delete_many(
+    delete_res = await db["tile-image-cache"].delete_many(
         {"path": {"$in": [t.get("path") for t in new_tiles]}}
     )
     # insert new tile images
-    await db["tile-image-cache"].insert_many(new_tiles)
+    insert_res = await db["tile-image-cache"].insert_many(new_tiles)
+    inserted_ids = [str(id) for id in insert_res.inserted_ids]
 
-    # return all tile images as response
-    all_tiles = [
-        doc
-        async for doc in db["tile-image-cache"].find(
-            {"user_id": current_user.id}, {"_id": 0, "user_id": 0}
-        )
-    ]
-    return all_tiles
+    if delete_res.deleted_count == len(inserted_ids):
+        return []
+    return inserted_ids
+
+
+async def delete_tiles_in(
+    tile_ids: List[str],
+    db: AsyncIOMotorDatabase,
+) -> Any:
+    tile_obj_ids = [PyObjectId(tile_id) for tile_id in tile_ids]
+    async for tile in db["tile-image-cache"].find({"_id": {"$in": tile_obj_ids}}):
+        pre = tile["filename"].rsplit(".", 1)[0]
+        os.remove(os.path.abspath(os.path.join(STATIC_PATH, str(tile["user_id"]), 'images', tile["filename"])))
+        os.remove(os.path.abspath(os.path.join(STATIC_PATH, str(tile["user_id"]), 'images', f'{pre}.timg')))
+    res = await db["tile-image-cache"].delete_many({"_id": {"$in": tile_obj_ids}})
+    return {"deleted_count": res.deleted_count}

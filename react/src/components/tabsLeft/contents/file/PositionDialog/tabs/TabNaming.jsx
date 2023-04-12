@@ -8,7 +8,7 @@ import {
   DEFAULT_NAME_PATTERNS,
   NAME_PATTERN_ORDER,
   NAME_TABLE_COLUMNS,
-} from '../constants';
+} from './constants';
 
 export default function TabNaming({ images }) {
   // Names & Files Tab
