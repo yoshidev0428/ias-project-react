@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Col, Container } from 'react-bootstrap';
 // import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
@@ -16,8 +16,17 @@ import {
 } from '@mdi/js';
 import { connect } from 'react-redux';
 import StepRangeSlider from 'react-step-range-slider';
-
 import store from '@/reducers';
+import {
+  useChannelsStore,
+  useImageSettingsStore,
+  useLoader,
+  useViewerStore,
+} from '@/state';
+import debounce from 'lodash/debounce';
+import { getMultiSelectionStats, range } from '@/helpers/avivator';
+import { unstable_batchedUpdates } from 'react-dom';
+import shallow from 'zustand/shallow';
 
 const Input = styled(TextField)`
   width: 50px;
@@ -32,10 +41,13 @@ const mapStateToProps = (state) => ({
 });
 
 const Timeline = (props) => {
+  const loader = useLoader();
+  const { shape, labels } = loader[0];
+
+  const label = 't';
   const { isImageLoading } = props;
-  var contents = [];
   const [isLoading, setIsLoading] = useState(false);
-  const [range, setRange] = useState([
+  const [sliderRange, setSliderRange] = useState([
     { value: 1, step: 1 },
     { value: 2, step: 1 },
     { value: 3, step: 1 },
@@ -51,7 +63,67 @@ const Timeline = (props) => {
   const [minSlider, setMinSlider] = useState(1);
   const [maxSlider, setMaxSlider] = useState(10);
 
+  const [selections, setPropertiesForChannel] = useChannelsStore(
+    (store) => [store.selections, store.setPropertiesForChannel],
+    shallow,
+  );
+  const globalSelection = useViewerStore((store) => store.globalSelection);
+  const changeSelection = useCallback(
+    debounce(
+      (newValue) => {
+        useViewerStore.setState({
+          isChannelLoading: selections.map(() => true),
+        });
+        const newSelections = [...selections].map((sel) => ({
+          ...sel,
+          [label]: newValue,
+        }));
+        getMultiSelectionStats({
+          loader,
+          selections: newSelections,
+          use3d: false,
+        }).then(({ domains, contrastLimits }) => {
+          unstable_batchedUpdates(() => {
+            range(newSelections.length).forEach((channel, j) =>
+              setPropertiesForChannel(channel, {
+                domains: domains[j],
+                contrastLimits: contrastLimits[j],
+              }),
+            );
+          });
+          unstable_batchedUpdates(() => {
+            useImageSettingsStore.setState({
+              onViewportLoad: () => {
+                useImageSettingsStore.setState({
+                  onViewportLoad: () => {},
+                });
+                useViewerStore.setState({
+                  isChannelLoading: selections.map(() => false),
+                });
+              },
+            });
+            range(newSelections.length).forEach((channel, j) =>
+              setPropertiesForChannel(channel, {
+                selections: newSelections[j],
+              }),
+            );
+          });
+        });
+      },
+      50,
+      { trailing: true },
+    ),
+    [loader, selections],
+  );
+
   const updateTime = (newValue) => {
+    useViewerStore.setState({
+      globalSelection: {
+        ...globalSelection,
+        [label]: newValue,
+      },
+    });
+    changeSelection(newValue);
     store.dispatch({ type: 'vessel_selectedVesselTime', content: newValue });
   };
 
@@ -62,7 +134,10 @@ const Timeline = (props) => {
     setIsLoading(true);
   };
 
-  const onRefresh = () => {};
+  const onRefresh = () => {
+    setValue(1);
+    updateTime(1);
+  };
   const onSetting = () => {};
   // const onPlay = () => {
   // }
@@ -87,65 +162,25 @@ const Timeline = (props) => {
       setIsLoading(true);
     }
   };
-  useEffect(() => {
-    if (props.selectedVesselHole && props.content) {
-      if (props.content.length > 0) {
-        // let contents = props.content; let zMin = 0; let zMax = 0;
-        // for (let i = 0; i < contents.length; i++) {
-        //     if (contents[i].z > zMax) {
-        //         zMax = contents[i].z;
-        //     }
-        //     if (contents[i].z < zMin) {
-        //         zMin = contents[i].z;
-        //     }
-        // }
-        // if (zMax > 0) {
-        //     let rangeValues = [];
-        //     for (let i = 0; i < zMax - zMin; i++) {
-        //         rangeValues.push({value: i + 1, step: i + 1});
-        //     }
-        //     setRange(rangeValues);
-        //     setMinSlider(zMin + 1);
-        //     setMaxSlider(zMax + 1);
-        //     setIsZ(true);
-        // }
-      }
-      // setZPosConfig(props.viewConfigsObj.z);
-    }
-  }, [props.selectedVesselHole]);
 
   useEffect(() => {
-    if (props.content) {
-      if (props.content.length > 0) {
-        setIsLoading(false);
-        contents = props.content;
-        let timeMin = contents[0].time;
-        let timeMax = contents[0].time;
-        for (let i = 0; i < contents.length; i++) {
-          if (contents[i].time > timeMax) {
-            timeMax = contents[i].time;
-          }
-          if (contents[i].time < timeMin) {
-            timeMin = contents[i].time;
-          }
+    const timeControlLabels = labels.filter((itemLabel) => itemLabel === label);
+    if (timeControlLabels.length > 0) {
+      const size = shape[labels.indexOf('t')];
+      setMaxSlider(size);
+      setIsLoading(true);
+      if (size > 0) {
+        let ranges = [];
+        for (let i = 0; i < size; i++) {
+          ranges.push({
+            value: i + 1,
+            step: 1,
+          });
         }
-        if (timeMax > 0) {
-          let rangeValues = [];
-          for (let i = timeMin; i <= timeMax; i++) {
-            rangeValues.push({ value: i, step: 1 });
-          }
-          // rangeValues.sort((a, b) => a.value - b.value);
-          setValue(timeMin);
-          setRange(rangeValues);
-          setMinSlider(timeMin);
-          setMaxSlider(timeMax);
-          setIsLoading(true);
-          updateTime(timeMin);
-        }
+        setSliderRange(ranges);
       }
-      // setZPosConfig(props.viewConfigsObj.z);
     }
-  }, [props.content]);
+  }, [labels]);
 
   return (
     <>
@@ -171,7 +206,7 @@ const Timeline = (props) => {
             <Grid item xs={6} m>
               <StepRangeSlider
                 value={value}
-                range={range}
+                range={sliderRange}
                 onChange={(value) => {
                   SliderChange(value);
                 }}
