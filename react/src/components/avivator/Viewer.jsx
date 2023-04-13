@@ -29,7 +29,7 @@ const Viewer = ({ isFullScreen }) => {
     (state) => state,
     shallow,
   );
-  const {
+  let {
     colors,
     contrastLimits,
     brightness,
@@ -40,6 +40,7 @@ const Viewer = ({ isFullScreen }) => {
     inputNum_2,
     channelsVisible,
     selections,
+    selectedChannel,
   } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
@@ -67,11 +68,16 @@ const Viewer = ({ isFullScreen }) => {
   if (typeof target === 'undefined') {
     target = [255, 255];
   }
-  const element = document.getElementById("deckgl-overlay");
-  let canvasWH = [100., 100.];
-  if (element!=null) {
+  const element = document.getElementById('deckgl-overlay');
+  let canvasWH = [100, 100];
+  if (element != null) {
     canvasWH = [element.width, element.height];
   }
+
+  const currentChannel = selectedChannel === -1 ? 0 : selectedChannel;
+  brightness = brightness[currentChannel];
+  contrast = contrast[currentChannel];
+  gamma = gamma[currentChannel];
 
   const postProcessEffect = useMemo(
     () =>
