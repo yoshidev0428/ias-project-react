@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import SmallCard from '../../../custom/SmallCard';
 import CustomButton from '../../../custom/CustomButton';
 import { useFlagsStore } from '@/state';
+
 // import LabelItem from './widgets/LabelItem';
 // import LabelItemInput from './widgets/LabelItemInput';
 
@@ -15,7 +16,9 @@ import {
   mdiVectorRectangle,
   mdiTrashCanOutline,
   mdiUpdate,
+  mdiArrowRightBoldHexagonOutline,
 } from '@mdi/js';
+
 import { toast } from 'react-toastify';
 
 import store from '@/reducers';
@@ -265,8 +268,8 @@ export default function MLBoxSelect() {
             click={() => ClearRegion()}
           />
           <CustomButton
-            icon={mdiUpdate}
-            label={'update'}
+            icon={mdiArrowRightBoldHexagonOutline}
+            label={'process'}
             click={() => liveUpdate()}
           />
         </div>
