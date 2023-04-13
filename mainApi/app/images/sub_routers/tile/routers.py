@@ -135,6 +135,28 @@ async def delete_tiles(
     return JSONResponse(res)
 
 
+@router.post(
+    "/update_tiles_meta_info",
+    response_description="Delete Tiles",
+    status_code=status.HTTP_200_OK,
+)
+async def update_tiles_meta_info(
+    request: Request,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> Any:
+    body_bytes = await request.body()
+    data = json.loads(body_bytes)
+    for meta_info in data["tiles_meta_info"]:
+        await db["tile-image-cache"].update_one(
+            {"_id": ObjectId(meta_info["_id"])},
+            {
+                "$set": {
+                    "series": int(meta_info["series"]),
+                }
+            },
+        )
+
+
 #############################################################################
 # Register Experiment
 #############################################################################

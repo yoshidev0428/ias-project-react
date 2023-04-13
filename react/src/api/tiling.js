@@ -21,12 +21,7 @@ export const deleteTiles = async (tileIds) => {
 };
 
 export const updateTilesMetaInfo = async (tilesMetaInfo) => {
-  const formData = tilesMetaInfo.reduce((acc, metaInfo) => {
-    acc.append('tiles_meta_info', metaInfo);
-    return acc;
-  }, new FormData());
-  return await mainApiService.post(
-    '/image/tile/update_tiles_meta_info',
-    formData,
-  );
+  return await mainApiService.post('/image/tile/update_tiles_meta_info', {
+    tiles_meta_info: tilesMetaInfo,
+  });
 };
