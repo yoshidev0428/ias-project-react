@@ -20,7 +20,7 @@ import { updateTilesMetaInfo } from '@/api/tiling';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function TabNaming() {
-  const { tiles } = useTilingStore();
+  const { tiles, loadTiles } = useTilingStore();
   const exampleBox = useRef(null);
 
   const [contents, setContents] = useState([]);
@@ -147,7 +147,7 @@ export default function TabNaming() {
     return [result, resultContent];
   };
 
-  const updateNameType = () => {
+  const updateNameType = async () => {
     setUpdating(true);
 
     const newContents = contents.map((oldContent) => ({
@@ -155,10 +155,10 @@ export default function TabNaming() {
       ...getNamePatternPerFileForProcessing(oldContent)[1],
     }));
 
-    updateTilesMetaInfo(newContents).then(() => {
-      setSearchRows(newContents);
-      setUpdating(false);
-    });
+    await updateTilesMetaInfo(newContents);
+    await loadTiles();
+    setSearchRows(newContents);
+    setUpdating(false);
   };
 
   // clear button + change file name
