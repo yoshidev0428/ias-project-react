@@ -5,13 +5,19 @@ import { mdiPlusBox, mdiPlayBox } from '@mdi/js';
 import { useFlagsStore } from '@/state';
 import MLMethodSelectDialog from './dialog/MLMethodSelectDialog';
 import MLMethodAddDialog from './dialog/MLMethodAddDialog';
+import { mdiUpdate } from '@mdi/js';
 
 export default function MLMethodSelection() {
   const showMLDialogMethodSelect = () => {
     useFlagsStore.setState({ MLDialogMethodSelectFlag: true });
   };
+
   const showMLDialogMethodAdd = () => {
     useFlagsStore.setState({ MLDialogMethodAddFlag: true });
+  };
+
+  const handleUpdate = () => {
+    alert('update button click!');
   };
   // const closeMLDialogMethodSelect = () => {
   //   useFlagsStore.setState({MLDialogMethodSelecFlag: false})
@@ -32,6 +38,11 @@ export default function MLMethodSelection() {
           icon={mdiPlayBox}
           label={`Set`}
           click={() => showMLDialogMethodSelect()}
+        />
+        <CustomButton
+          icon={mdiUpdate}
+          label={`Update`}
+          click={() => handleUpdate()}
         />
       </div>
       {<MLMethodAddDialog />}

@@ -10,3 +10,15 @@
 .MuiInputBase-root-MuiOutlinedInput-root {
     width: 48px;
 }
+
+.toggleBtn {
+    padding: 4px !important;
+    width: 30px;
+    height: 30px;
+}
+
+.tabContainer { 
+    width: 100%;
+    display: flex !important;
+    justify-content: space-between !important;
+}
