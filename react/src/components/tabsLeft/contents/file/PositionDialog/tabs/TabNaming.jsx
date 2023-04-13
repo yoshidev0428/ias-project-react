@@ -16,6 +16,8 @@ import {
 import useTilingStore from '@/stores/useTilingStore';
 import DialogContent from '@/components/mui/DialogContent';
 import DataTable from '@/components/mui/DataTable';
+import { updateTilesMetaInfo } from '@/api/tiling';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export default function TabNaming() {
   const { tiles } = useTilingStore();
@@ -25,6 +27,7 @@ export default function TabNaming() {
   const [searchrows, setSearchRows] = useState([]); // Search Bar
   const [selectedFileName, setSelectedFileName] = useState('');
   const [namePattern, setNamePattern] = useState(DEFAULT_NAME_PATTERNS);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const contents = tiles.map((tile, idx) => ({
@@ -145,39 +148,17 @@ export default function TabNaming() {
   };
 
   const updateNameType = () => {
-    if (tiles === null || tiles === undefined) {
-      return '';
-    }
-    let new_content = [];
-    let new_content_processing = [];
-    let old_content = [...contents];
-    let old_content_p = JSON.parse(JSON.stringify(old_content));
-    let channels = [];
-    let maxcol = '01',
-      maxrow = 'A',
-      zposition = 0,
-      maxTimeLine = 'p00';
-    for (let i = 0; i < old_content.length; i++) {
-      let result = getNamePatternPerFileForProcessing(old_content_p[i]);
-      new_content.push(result[1]);
-      new_content_processing.push(result[0]);
-      if (channels.length === 0) {
-        channels.push(result[1].channel);
-      } else {
-        if (
-          channels.findIndex((channel) => channel === result[1].channel) === -1
-        ) {
-          channels.push(result[1].channel);
-        }
-      }
+    setUpdating(true);
 
-      if (maxTimeLine.localeCompare(result[1].time) === 1)
-        maxTimeLine = result[1].time;
-      if (maxcol.localeCompare(result[1].col) === -1) maxcol = result[1].col;
-      if (maxrow.localeCompare(result[1].row) === -1) maxrow = result[1].row;
-      if (zposition < result[1].z) zposition = result[1].z;
-    }
-    setSearchRows(new_content);
+    const newContents = contents.map((oldContent) => ({
+      ...oldContent,
+      ...getNamePatternPerFileForProcessing(oldContent)[1],
+    }));
+
+    updateTilesMetaInfo(newContents).then(() => {
+      setSearchRows(newContents);
+      setUpdating(false);
+    });
   };
 
   // clear button + change file name
@@ -205,7 +186,7 @@ export default function TabNaming() {
 
   return (
     <>
-      <DialogContent dividers>
+      <DialogContent dividers loading={updating}>
         <BoxCenter px={2} py={1}>
           <Typography mr={1}>Example:</Typography>
           <Box
@@ -284,9 +265,14 @@ export default function TabNaming() {
         <DataTable rows={searchrows} columns={NAME_TABLE_COLUMNS} />
       </DialogContent>
       <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button variant="contained" color="primary" onClick={updateNameType}>
+        <LoadingButton
+          variant="contained"
+          color="primary"
+          onClick={updateNameType}
+          loading={updating}
+        >
           Update
-        </Button>
+        </LoadingButton>
         <Button variant="outlined" color="error" onClick={clearNameType}>
           Reset
         </Button>
