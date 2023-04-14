@@ -40,6 +40,7 @@ from mainApi.app.images.sub_routers.tile.models import (
     UserCustomModel,
 )
 from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
+from mainApi.app.images.utils.asyncio import shell
 from mainApi.app.images.utils.tiling import (
     add_image_tiles,
     delete_tiles_in,
@@ -138,7 +139,7 @@ async def delete_tiles(
 
 @router.post(
     "/update_tiles_meta_info",
-    response_description="Delete Tiles",
+    response_description="Update Tiles Metainfo",
     status_code=status.HTTP_200_OK,
 )
 async def update_tiles_meta_info(
@@ -147,12 +148,23 @@ async def update_tiles_meta_info(
 ) -> Any:
     body_bytes = await request.body()
     data = json.loads(body_bytes)
+
     for meta_info in data["tiles_meta_info"]:
+        dir = meta_info["path"].rsplit("/", 1)[0]
+        ext = meta_info["filename"].rsplit(".", 1)[1]
+        new_path = f"{CURRENT_STATIC}/{dir}/tile_image_series{str(meta_info['series']).rjust(5, '0')}.{ext}"
+        old_rel_path = meta_info["path"].rsplit("/static/", 1)[1]
+        new_rel_path = new_path.rsplit("/static/", 1)[1]
+        old_abs_path = os.path.join(STATIC_PATH, old_rel_path)
+        new_abs_path = os.path.join(STATIC_PATH, new_rel_path)
+        os.rename(old_abs_path, new_abs_path)
+
         await db["tile-image-cache"].update_one(
             {"_id": ObjectId(meta_info["_id"])},
             {
                 "$set": {
                     "series": int(meta_info["series"]),
+                    "path": new_path
                 }
             },
         )
@@ -186,6 +198,31 @@ async def create_tiles(
     inserted_ids = [str(id) for id in insert_res.inserted_ids]
 
     return JSONResponse(inserted_ids)
+
+@router.post(
+    "/build_pyramid",
+    response_description="Delete Tiles",
+    status_code=status.HTTP_200_OK,
+)
+async def build_pyramid(
+    request: Request,
+    user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[FileModelDB]:
+    body_bytes = await request.body()
+    ashlar_params = json.loads(body_bytes)
+
+    tiles = await db["tile-image-cache"].find(
+        {"user_id": user.id}
+    )
+    rel_path = tiles[0].path.rsplit('/static/', 1)[1]
+    rel_dir = rel_path.rsplit("/", 1)[0]
+    tiles_dir = os.path.join(STATIC_PATH, rel_dir)
+    ext = tiles[0].filename.rsplit(".", 1)[1]
+    
+    await shell(f'ashlar "fileseries|{tiles_dir}|pattern=tile_image_series{{series}}.{ext}|overlap=0.2|width={ashlar_params["width"]}|height={ashlar_params["height"]}|layout={ashlar_params["layout"]}"')
+
+    return JSONResponse("ok")
 
 #############################################################################
 # Register Experiment

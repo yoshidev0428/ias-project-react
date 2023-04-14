@@ -31,3 +31,7 @@ export const updateTilesMetaInfo = async (tilesMetaInfo) => {
     tiles_meta_info: tilesMetaInfo,
   });
 };
+
+export const buildPyramid = async (params) => {
+  return await mainApiService.post('/image/tile/build_pyramid', params);
+};
