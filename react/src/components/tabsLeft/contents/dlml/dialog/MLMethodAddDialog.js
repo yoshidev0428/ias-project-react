@@ -21,6 +21,9 @@ import store from '../../../../../reducers';
 import pcImg from '../../../../../assets/images/PC.png';
 import ocImg from '../../../../../assets/images/OC.png';
 import ncImg from '../../../../../assets/images/NC.png';
+import LabelItemInput from '../widgets/LabelItemInput';
+import LabelColorItem from '../widgets/LabelColorItem';
+import '@/styles/ML.css';
 
 function TabContainer(props) {
   return (
@@ -38,17 +41,16 @@ const MLMethodSelectDialog = () => {
   const MLDialogMethodAddFlag = useFlagsStore(
     (store) => store.MLDialogMethodAddFlag,
   );
-  // const showCellposeDialog = () => {
-  //   useFlagsStore.setState({ MLDialogMethodSelecFlag: false });
-  //   useFlagsStore.setState({ DialogCellposeFlag: true });
-  //   store.dispatch({ type: 'setMethod', content: selectedMethod });
-  //   store.dispatch({ type: 'set_custom_name', content: 'New Model' });
-  // };
+
   const [selectedMethod, setSelectedMethod] = useState('pc');
   const [methodName, setMethodName] = useState('');
   const [params, setParams] = useState({
     intensity: 0.5,
+    thickness: 2,
+    objectLabelColor: '#FF0000',
+    bgLabelColor: '#00FF00',
   });
+
   const handleSelectedMethod = (newValue) => {
     setSelectedMethod(newValue);
   };
@@ -65,7 +67,6 @@ const MLMethodSelectDialog = () => {
       params: params,
       name: methodName,
     };
-    // console.log('-------------> content: ', content)
     useFlagsStore.setState({ MLDialogMethodAddFlag: false });
     store.dispatch({ type: 'addMLMethod', content: content });
     toast.success('Successfully Added', { position: 'top-center' });
@@ -142,11 +143,22 @@ const MLMethodSelectDialog = () => {
             </Col>
           </Row>
         </div>
+        <div className="mx-auto my-2" style={{ width: 400 }}>
+          <TextField
+            variant="outlined"
+            label="Method Name"
+            size="small"
+            fullWidth
+            value={methodName}
+            onChange={(e) => setMethodName(e.target.value)}
+          />
+        </div>
         <div className="mx-3 my-2" style={{ width: 450 }}>
           <Box sx={{ width: 400, margin: 'auto' }}>
             <Typography>Intensity</Typography>
             <Slider
-              aria-label="Temperature"
+              aria-label="intensity"
+              sx={{ color: '#0F9688' }}
               defaultValue={0.5}
               value={params.intensity}
               getAriaValueText={valuetext}
@@ -164,15 +176,37 @@ const MLMethodSelectDialog = () => {
             />
           </Box>
         </div>
-        <div className="mx-auto my-2" style={{ width: 400 }}>
-          <TextField
-            variant="outlined"
-            label="Method Name"
-            size="small"
-            fullWidth
-            value={methodName}
-            onChange={(e) => setMethodName(e.target.value)}
-          />
+        <div className="mx-3 my-2" style={{ width: 450 }}>
+          <Box
+            className="d-flex  flex-row justify-content-around"
+            sx={{ width: 400, margin: 'auto' }}
+          >
+            <LabelColorItem
+              label={{ name: 'Object', color: params.objectLabelColor }}
+              onColorChange={(val) =>
+                setParams({ ...params, objectLabelColor: val })
+              }
+            />
+            <LabelColorItem
+              label={{ name: 'Background', color: params.bgLabelColor }}
+              onColorChange={(val) =>
+                setParams({ ...params, bgLabelColor: val })
+              }
+            />
+            <TextField
+              type="number"
+              id="thickness"
+              InputProps={{ inputProps: { min: 1, max: 10 } }}
+              size="small"
+              // sx={{padding: 0,}}
+              label="Thickness"
+              variant="outlined"
+              onChange={(e) =>
+                setParams({ ...params, thickness: e.target.value })
+              }
+              value={params.thickness}
+            />
+          </Box>
         </div>
         <div className="border-top mt-2">
           <DialogActions>

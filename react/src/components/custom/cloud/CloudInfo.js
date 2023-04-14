@@ -1,6 +1,6 @@
 // import { formatDistanceToNow, subHours } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import {
   Box,
@@ -22,18 +22,19 @@ const mapStateToProps = (state) => ({
 });
 
 const CloudInfo = (props) => {
+  const user = useSelector((state) => state.auth.user);
   const products = [
     {
       id: uuid(),
       name: 'Name ',
       imageUrl: 'public/icons/product_1.png',
-      detail: '2021-05-06',
+      detail: user.fullName,
     },
     {
       id: uuid(),
       name: 'Email',
       imageUrl: '/public/icons/product_2.png',
-      detail: 'IAS001M1 (30days, 500GB)',
+      detail: user.email,
     },
     // {
     //   id: uuid(),

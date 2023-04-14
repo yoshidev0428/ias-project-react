@@ -171,6 +171,8 @@ async def get_user_by_email(email: str, db: AsyncIOMotorClient) -> UserModelDB o
 async def get_user_by_id(user_id: str or ObjectId, db: AsyncIOMotorClient) -> UserModelDB or None:
 
     user = await db["users"].find_one({"_id": ObjectId(user_id)})
+    if user is None:
+      user = await db["users"].find_one({"_id": user_id})
 
     if user is not None:
         return UserModelDB.parse_obj(user)

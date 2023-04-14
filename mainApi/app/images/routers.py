@@ -4,12 +4,16 @@ from fastapi import (
     APIRouter,
     HTTPException,
     Request,
-    Response
+    Response,
+    Depends
 )
-from fastapi.responses import FileResponse
-
+from fastapi.responses import JSONResponse, FileResponse
 from mainApi.app.images.sub_routers.tile.routers import router as tile_router
 from mainApi.config import STATIC_PATH
+from mainApi.app.auth.auth import get_current_user
+from mainApi.app.auth.models.user import UserModelDB, PyObjectId
+import subprocess
+from datetime import date
 
 router = APIRouter(prefix="/image", tags=[])
 
@@ -46,3 +50,27 @@ async def download_exp_image(
         file.seek(range_start)
         content = file.read(content_length)
         return Response(content, headers=headers, status_code=206)
+
+@router.post(
+    "/before_process",
+    response_description="Process image",
+)
+async def processImage(request: Request, current_user: UserModelDB = Depends(get_current_user)):
+    data = await request.form()
+    print("get-request-data:", data)
+    imagePath = '/app/mainApi/app/static/' + str(PyObjectId(current_user.id)) + '/' + data.get("original_image_url")
+    folderName = date.today().strftime("%y%m%d%H%M%s")
+    sharedImagePath = os.path.join("/app/shared_static", folderName)
+
+    if not os.path.exists(sharedImagePath):
+        os.makedirs(sharedImagePath)
+
+    fileName = imagePath.split("/")[len(imagePath.split("/")) - 1]
+    newImagePath = os.path.join(sharedImagePath, fileName)
+
+    cmd_str = "cp '{inputPath}' '{outputPath}'".format(
+        inputPath=imagePath, outputPath=newImagePath
+    )
+    subprocess.call(cmd_str, shell=True)
+
+    return JSONResponse({"success": "success", "image_path": newImagePath})

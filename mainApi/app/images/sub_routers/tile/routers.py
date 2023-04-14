@@ -24,6 +24,7 @@ import json
 from bson import ObjectId, json_util
 import uuid
 import aiofiles
+import subprocess
 
 from mainApi.app.auth.auth import get_current_user
 from mainApi.app.db.mongodb import get_database
@@ -942,84 +943,103 @@ async def get_focus_stacked(
 
     return JSONResponse({"result": "static/tmp/{}/output/merged.png".format(tmp_uuid)})
 
-
-@router.post(
-    "/test_segment",
-    response_description="Test Segment",
-    status_code=status.HTTP_201_CREATED,
-    response_model=List[ExperimentModel],
-)
-async def test_segment(
-    request: Request,
-    clear_previous: bool = Form(False),
-    current_user: UserModelDB = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database),
-) -> List[ExperimentModel]:
+@router.post("/test_segment",
+             response_description="Test Segment",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def test_segment(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     # print(request)
     data = await request.form()
     file_url = data.get("file_url")
-    exp_url = data.get("exp_url")
     model_name = data.get("model_name")
-    model = await get_model(
-        model_name=model_name,
-        clear_previous=clear_previous,
-        current_user=current_user,
-        db=db,
-    )
-    print("my_model", model[0]["custom_name"])
+    model = await get_model(model_name=model_name,clear_previous=clear_previous , current_user=current_user, db=db)
+    print('my_model', model[0]['custom_name'])
     # parameter control
-    custom_method = model[0]["custom_method"]
-    viewValue = model[0]["viewValue"]
-    outline = model[0]["outline"]
-    cell_diam = model[0]["cell_diam"]
-    chan_segment = model[0]["chan_segment"]
-    chan_2 = model[0]["chan_2"]
-    f_threshold = model[0]["f_threshold"]
-    c_threshold = model[0]["c_threshold"]
-    s_threshold = model[0]["s_threshold"]
-    # Get file's full abs path
+    custom_method = model[0]['custom_method']
+    viewValue = model[0]['viewValue']
+    outline = model[0]['outline']
+    cell_diam = model[0]['cell_diam']
+    chan_segment = model[0]['chan_segment']
+    chan_2 = model[0]['chan_2']
+    f_threshold = model[0]['f_threshold']
+    c_threshold = model[0]['c_threshold']
+    s_threshold = model[0]['s_threshold']
+    #Get file's full abs path
+    file_url = file_url.replace('download/?path=', '')
+    temp_url = file_url.split('/')
+    temp_length = len(temp_url)
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1];
+    print('file_url', file_url)
+
     exp_path = os.path.join(current_user_path, file_url)
     exp_path = os.path.abspath(exp_path)
-    directory = exp_path.split("/")
+    directory = exp_path.split('/')
     directory_length = len(directory)
     make_new_folder = ""
     for i in range(directory_length - 2):
-        make_new_folder = make_new_folder + "/" + directory[i + 1]
+        make_new_folder = make_new_folder + '/' + directory[i+1]
     make_new_folder = make_new_folder + "/"
-    # Get file's name except type
-    file_full_name = directory[directory_length - 1]
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
     file_name_array = file_full_name.split(".")
     file_name = ""
     file_name_length = len(file_name_array)
     for i in range(file_name_length - 1):
-        if i == 0:
+        if(i == 0):
             file_name = file_name + file_name_array[i]
-        if i > 0:
-            file_name = file_name + "." + file_name_array[i]
-    print("file_name", file_name)
+        if(i>0):
+            file_name = file_name + '.' + file_name_array[i]
+    print('file_name', file_name)
     # Run cellpose and test cell segmnent
-    command_string = 'python -m cellpose --image_path "{file_full_path}" --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor'.format(
-        file_full_path=exp_path,
-        custom_method=custom_method,
-        chan_segment=chan_segment,
-        chan_2=chan_2,
-        cell_diam=cell_diam,
-        s_threshold=s_threshold,
-        f_threshold=f_threshold,
-        c_threshold=c_threshold,
-    )
+    command_string = "python -m cellpose --image_path \"{file_full_path}\" --pretrained_model {custom_method} --chan {chan_segment} --chan2 {chan_2} --diameter {cell_diam} --stitch_threshold {s_threshold} --flow_threshold {f_threshold} --cellprob_threshold {c_threshold} --fast_mode  --save_png  --save_flows --save_outlines --save_ncolor".format(file_full_path=exp_path, custom_method=custom_method, chan_segment=chan_segment, chan_2=chan_2, cell_diam=cell_diam, s_threshold=s_threshold, f_threshold=f_threshold, c_threshold=c_threshold)
     print("my_command", command_string)
     os.system(command_string)
-    result = await convert_npy_to_jpg(
-        file_full_path=make_new_folder,
-        clear_previous=clear_previous,
-        model_info=model[0],
-        file_name=file_name,
-        current_user=current_user,
-    )
+    result = await convert_npy_to_jpg(file_full_path=make_new_folder,clear_previous=clear_previous , model_info = model[0],file_name=file_name, current_user=current_user)
+    delete_junk_data(file_url, make_new_folder)
     return JSONResponse({"success": result})
 
+def delete_junk_data(file_name, 
+            dir_name,
+            current_user: UserModelDB = Depends(get_current_user),
+            db: AsyncIOMotorDatabase = Depends(get_database)
+)-> List[UserCustomModel]:
+    origin_name = file_name.split('.ome.tiff')[0]
+    origin_name = origin_name.split('/')[1]
+    #delete segmentation files 
+    seg_output = origin_name + '.ome_cp_output.png'
+    print('seg_output', dir_name + seg_output)
+    if(os.path.isfile(dir_name + seg_output)) :
+        os.unlink(dir_name + seg_output)
+    seg_dp = dir_name + origin_name + '.ome_dP.tif'
+    if(os.path.isfile(seg_dp)) :
+        os.unlink(seg_dp)
+    seg_flow = dir_name + origin_name + '.ome_flows.tif'
+    if(os.path.isfile(seg_flow)) :
+        os.unlink(seg_flow)
+    seg_input_mask = dir_name + origin_name + '.ome_mask.jpg'
+    if(os.path.isfile(seg_input_mask)) :
+        os.unlink(seg_input_mask)
+    seg_res_mask = dir_name + origin_name + '.ome_conv_masks.jpg'
+    if(os.path.isfile(seg_res_mask)) :
+        os.unlink(seg_res_mask)
+    seg_outline = dir_name + origin_name + '.ome_outlines.png'
+    if(os.path.isfile(seg_outline)) :
+        os.unlink(seg_outline)
+    #delete training files
+    dir_name = dir_name + 'train/'
+    train_img = dir_name + origin_name + '_img.tiff'
+    if(os.path.isfile(train_img)) :
+        os.unlink(train_img)
+    train_mask_flow = dir_name + origin_name + '_img_flows.tif'
+    if(os.path.isfile(train_mask_flow)) :
+        os.unlink(train_mask_flow)
+    train_mask = dir_name + origin_name + '_masks.tiff'
+    if(os.path.isfile(train_mask)) :
+        os.unlink(train_mask)
 
 @router.post(
     "/save_model",
@@ -1064,92 +1084,147 @@ async def save_model(
         await db["usercustom"].insert_one(usercustom.dict(exclude={"id"}))
     return JSONResponse({"success": "OK"})
 
-
-@router.post(
-    "/get_models",
-    response_description="Get Model",
-    status_code=status.HTTP_201_CREATED,
-    response_model=List[UserCustomModel],
-)
-async def get_models(
-    request: Request,
-    clear_previous: bool = Form(False),
-    current_user: UserModelDB = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database),
-) -> List[UserCustomModel]:
+@router.post("/get_models",
+             response_description="Get Model",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[UserCustomModel])
+async def get_models(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[UserCustomModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     data = await request.form()
-    model = "all"
+    model = 'all'
     models = []
-    if model == "all":
-        models = [
-            doc
-            async for doc in db["usercustom"].find(
-                {"user_id": current_user.id}, {"_id": 0, "update_time": 0}
-            )
-        ]
-    else:
-        models = [
-            doc
-            async for doc in db["usercustom"].find(
-                {"custom_name": model, "user_id": current_user.id},
-                {"_id": 0, "update_time": 0},
-            )
-        ]
-    for mo in models:
-        mo["user_id"] = ""
-    print("models", models)
+    if model == 'all' :
+        models = [doc async for doc in
+                db['usercustom'].find({'user_id': current_user.id}, {'_id': 0, 'update_time': 0})]
+    else :
+        models = [doc async for doc in
+             db['usercustom'].find({'custom_name': model, 'user_id': current_user.id}, {'_id': 0, 'update_time': 0})]
+    for mo in models :
+        mo['user_id'] = ''
+    print('models', models)
     if len(models) == 0:
         return JSONResponse({"error": "NO"})
     return JSONResponse({"success": True, "data": models})
 
-
-@router.post(
-    "/get_outlines",
-    response_description="Get outlines",
-    status_code=status.HTTP_201_CREATED,
-    response_model=List[ExperimentModel],
-)
-async def get_outlines(
-    request: Request,
-    clear_previous: bool = Form(False),
-    current_user: UserModelDB = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database),
-) -> List[ExperimentModel]:
+@router.post("/get_outlines",
+             response_description="Get outlines",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def get_outlines(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
     current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
     # print(request)
     data = await request.form()
     file_url = data.get("file_url")
-    exp_url = data.get("exp_url")
-    # Get file's full abs path
+    #Get file's full abs path
+    file_url = file_url.replace('download/?path=', '')
+    temp_url = file_url.split('/')
+    temp_length = len(temp_url)
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1]
+    print('file_url', file_url)
     exp_path = os.path.join(current_user_path, file_url)
     exp_path = os.path.abspath(exp_path)
-    directory = exp_path.split("/")
+    directory = exp_path.split('/')
     directory_length = len(directory)
     make_new_folder = ""
     for i in range(directory_length - 2):
-        make_new_folder = make_new_folder + "/" + directory[i + 1]
+        make_new_folder = make_new_folder + '/' + directory[i+1]
     make_new_folder = make_new_folder + "/"
-    # Get file's name except type
-    file_full_name = directory[directory_length - 1]
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
     file_name_array = file_full_name.split(".")
     file_name = ""
     file_name_length = len(file_name_array)
     for i in range(file_name_length - 1):
-        if i == 0:
+        if(i == 0):
             file_name = file_name + file_name_array[i]
-        if i > 0:
-            file_name = file_name + "." + file_name_array[i]
+        if(i>0):
+            file_name = file_name + '.' + file_name_array[i]
     outlines = []
     valid_file_name = file_name
-    if file_name.find("_conv_masks") == -1:
+    if file_name.find('_conv_masks') == -1 :
         valid_file_name = file_name
-    else:
-        valid_file_name = file_name.split("_conv_masks")[0]
-    if os.path.isfile(make_new_folder + valid_file_name + "_cp_outlines.txt") == False:
-        return JSONResponse({"success": "NO"})
-    else:
-        with open(make_new_folder + valid_file_name + "_cp_outlines.txt") as file:
+    else :
+        valid_file_name = file_name.split('_conv_masks')[0]
+    if os.path.isfile(make_new_folder + valid_file_name + '_cp_outlines.txt') == False :
+        return JSONResponse({"success": 'NO'})
+    else :
+        with open(make_new_folder + valid_file_name + '_cp_outlines.txt') as file:
             for item in file:
                 outlines.append(item)
     return JSONResponse({"success": outlines})
+
+@router.post("/train_model",
+             response_description="Train Model",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def train_model(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    # print(request)
+    data = await request.form()
+    file_url = data.get("file_url")
+    init_model = data.get("init_model")
+    model_name = data.get("model_name")
+    segment = data.get("segment")
+    chan2 = data.get("chan2")
+    weight_decay = data.get("weight_decay")
+    learning_rate = data.get("learning_rate")
+    n_epochs = data.get("n_epochs")
+    #Get file's full abs path
+    file_url = file_url.replace('download/?path=', '')
+    temp_url = file_url.split('/')
+    temp_length = len(temp_url)
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1]
+    print('file_url', file_url)
+    exp_path = os.path.join(current_user_path, file_url)
+    exp_path = os.path.abspath(exp_path)
+    directory = exp_path.split('/')
+    directory_length = len(directory)
+    make_new_folder = ""
+    for i in range(directory_length - 2):
+        make_new_folder = make_new_folder + '/' + directory[i+1]
+    make_new_folder = make_new_folder + "/"
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
+    print('file_name', file_full_name)
+    print('file_folder', make_new_folder)
+    origin_file = ""
+    if "_conv_outlines.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_outlines.ome.tiff')
+        origin_file = file_temp[0]
+    if "_conv_masks.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_masks.ome.tiff')
+        origin_file = file_temp[0]
+    if "_conv_flows.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_flows.ome.tiff')
+        origin_file = file_temp[0]
+    print('origin_file', origin_file)
+    original_img = origin_file + ".ome.tiff"
+    original_mask = origin_file + ".ome_cp_masks.png"
+    mask_img = Image.open(make_new_folder + original_img)
+    inputPath = make_new_folder + original_mask
+    make_new_folder = make_new_folder + 'train/'
+    if os.path.isdir(make_new_folder):
+        make_new_folder = make_new_folder
+    else:
+        os.mkdir(make_new_folder)
+    mask_img.save(make_new_folder + origin_file + "_img.tiff")
+    outputPath = make_new_folder + origin_file + "_masks.tiff"
+    out_file = origin_file + "_mask.ome.tiff"
+    cmd_str = "sh /app/mainApi/bftools/bfconvert -separate -overwrite '" + inputPath + "' '" + outputPath + "'"
+    print('=====>', out_file, outputPath, cmd_str)
+    subprocess.run(cmd_str, shell=True)
+    # Train user custom model
+    command_string = "python -m cellpose --train --dir {make_new_folder} --pretrained_model {init_model} --chan {segment} --chan2 {chan_2} --img_filter _img --mask_filter _masks --learning_rate {learning_rate} --weight_decay {weight_decay} --n_epochs {n_epochs}  ".format(make_new_folder=make_new_folder, init_model=init_model, segment=segment, chan_2=chan2, learning_rate=learning_rate, weight_decay=weight_decay, n_epochs=n_epochs)
+    print("my_command", command_string)
+    os.system(command_string)
+    result = 'OK'
+    return JSONResponse({"success": result})

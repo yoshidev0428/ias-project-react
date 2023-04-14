@@ -128,6 +128,12 @@ export const useImage = (source) => {
           useColormap: true,
         });
       }
+      let values = [];
+      let gammas = [];
+      for (let i = 0; i < newContrastLimits.length; i++) {
+        values.push(0);
+        gammas.push(50);
+      }
       useChannelsStore.setState({
         ids: newDomains.map(() => randomId()),
         selections: newSelections,
@@ -135,6 +141,9 @@ export const useImage = (source) => {
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
+        brightness: values,
+        contrast: values,
+        gamma: gammas,
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),

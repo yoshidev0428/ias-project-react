@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import SmallCard from '../../../custom/SmallCard';
 import CustomButton from '../../../custom/CustomButton';
 import { useFlagsStore } from '@/state';
+
 // import LabelItem from './widgets/LabelItem';
 // import LabelItemInput from './widgets/LabelItemInput';
 
@@ -15,25 +16,48 @@ import {
   mdiVectorRectangle,
   mdiTrashCanOutline,
   mdiUpdate,
+  mdiArrowRightBoldHexagonOutline,
 } from '@mdi/js';
+
 import { toast } from 'react-toastify';
 
 import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
+import { getIlastikImageUrl, getImageUrl } from '@/helpers/file';
+import { toTiffPath } from '@/helpers/avivator';
 
 const defaultLabelList = [
-  { id: 0, name: 'label1', color: '#FF0000' },
-  { id: 1, name: 'label2', color: '#00FF00' },
+  {
+    id: 0,
+    name: 'object',
+    label_color: '#FF0000',
+    map_color: '#FF0000',
+    positions: [],
+  },
+  {
+    id: 1,
+    name: 'background',
+    label_color: '#00FF00',
+    map_color: '#00FF00',
+    positions: [],
+  },
 ];
 
 export default function MLBoxSelect() {
   const MLCanvasFlag = useFlagsStore((store) => store.MLCanvasFlag);
+  const MLMethod = useSelector((state) => state.experiment.MLMethod);
+
   const MLSelectTargetMode = useSelector(
     (state) => state.experiment.MLSelectTargetMode,
   );
 
-  // const selectedLabel = useFlagsStore((store) => store.selectedLabel);
-  // const [labelList, setLabelList] = useState(defaultLabelList);
+  const MLObjectLabelPosInfo = useSelector(
+    (state) => state.experiment.MLObjectLabelPosInfo,
+  );
+
+  const MLBackgroundLabelPosInfo = useSelector(
+    (state) => state.experiment.MLBackgroundLabelPosInfo,
+  );
 
   // useEffect(()=>{
   //   return ()=>{
@@ -47,40 +71,15 @@ export default function MLBoxSelect() {
       toast.error('Please select the image file!', {
         position: 'top-center',
       });
-      // alert('Please enter your image file!');
+      return;
+    }
+    if (MLMethod === null || MLMethod == undefined || !MLMethod) {
+      toast.error('Please Set the Machine Learning Method', {
+        position: 'top-center',
+      });
       return;
     }
     useFlagsStore.setState({ MLCanvasFlag: true });
-    let imgPath = state.files.imagePathForAvivator[0].path;
-    let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
-
-    // let result = await api_experiment.get_outlines(imgPath, exp_name);
-    // if (result.data.error) {
-    //   alert('Error occured while getting the data');
-    // } else {
-    //   if (result.data.success === 'NO') {
-    //     alert('Your custom model is not applied to your image.');
-    //     return;
-    //   }
-    //   let temp = [];
-    //   for (let i in result.data.success) {
-    //     let temp_row = result.data.success[i];
-    //     temp_row.replace(/\\n/g, '');
-    //     temp_row = temp_row.split(',');
-    //     let num_temp_row = temp_row.map(Number);
-    //     temp.push(num_temp_row);
-    //   }
-    //   let canvas_info = state.experiment.canvas_info;
-    //   let canv_info = {
-    //     ...canvas_info,
-    //     outlines: temp,
-    //   };
-    //   store.dispatch({
-    //     type: 'set_canvas',
-    //     content: canv_info,
-    //   });
-    // }
   };
 
   const stop = () => {
@@ -89,12 +88,45 @@ export default function MLBoxSelect() {
 
   const liveUpdate = async () => {
     const state = store.getState();
-    let imgPath = state.files.imagePathForAvivator[0].path;
+
+    /**
+     * @author QmQ
+     * EX. : fullPath = "http://ias.gtgjpj.jp:8000/image/download/?path=642e25aeac84edfcb8ad83a4/aaa/test_images/aaa.ome.tiff"
+     * we get the imgPath = "aaa/test_images/aaa.ome.tiff"
+     */
+    let fullPath = state.files.imagePathForAvivator;
+    let subPath = /path=(.*)/.exec(fullPath)[1];
+    let imgPath = subPath.split('/').slice(1).join('/');
     let exp_name = imgPath.split('/');
-    exp_name = exp_name[0];
-    // console.log('===============>')
-    // console.log(imgPath, exp_name)
-    let res = await api_experiment.MLGetProcessedImage(imgPath, exp_name, {});
+    // let imgPath = state.files.imagePathForAvivator[0].path;
+    //  let exp_name = imgPath.split('/');
+    // exp_name = exp_name[0];
+
+    const _labelInfo = [];
+    let _labelList = defaultLabelList;
+    _labelList[0].positions = MLObjectLabelPosInfo;
+    _labelList[0].label_color = MLMethod.params.objectLabelColor;
+    _labelList[0].map_color = MLMethod.params.objectLabelColor;
+
+    _labelList[1].positions = MLBackgroundLabelPosInfo;
+    _labelList[1].label_color = MLMethod.params.bgLabelColor;
+    _labelList[1].map_color = MLMethod.params.bgLabelColor;
+
+    const _payload = {
+      workflow_name: 'pixel_classification',
+      original_image_url: imgPath,
+      experiment_name: exp_name,
+      label_list: _labelList,
+      thickness: MLMethod.params.thickness,
+      intensity: MLMethod.params.intensity,
+    };
+    // console.log('label_list', _labelList)
+    useFlagsStore.setState({ MLCanvasFlag: false });
+    let res = await api_experiment.MLGetProcessedImage(_payload);
+    let source = getIlastikImageUrl(res.image_path);
+    store.dispatch({ type: 'set_image_path_for_avivator', content: source });
+    // console.log(res)
+    // <description> based on the result image, we have to set that image into Avivator ** QmQ
   };
 
   const drawCurve = () => {
@@ -109,6 +141,7 @@ export default function MLBoxSelect() {
       type: 'set_canvas',
       content: canv_info,
     });
+    localStorage.setItem('CANV_STYLE', 'user_custom_area');
   };
 
   const drawCircle = () => {
@@ -140,6 +173,8 @@ export default function MLBoxSelect() {
   };
 
   const ClearRegion = () => {
+    store.dispatch({ type: 'clearMLObjectLabelPosInfo' });
+    store.dispatch({ type: 'clearMLBackgroundLabelPosInfo' });
     useFlagsStore.setState({ MLCanvasFlag: false });
   };
 
@@ -233,8 +268,8 @@ export default function MLBoxSelect() {
             click={() => ClearRegion()}
           />
           <CustomButton
-            icon={mdiUpdate}
-            label={'update'}
+            icon={mdiArrowRightBoldHexagonOutline}
+            label={'process'}
             click={() => liveUpdate()}
           />
         </div>

@@ -32,9 +32,9 @@ const PARAMS = [
   {
     name: 'gamma',
     icon: LightModeIcon,
-    default: 0,
-    min: -1,
-    max: 1,
+    default: 50,
+    min: 0,
+    max: 100,
     step: 0.1,
   },
 ];

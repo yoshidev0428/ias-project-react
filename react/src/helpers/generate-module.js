@@ -372,6 +372,28 @@ vec3 Thinning(sampler2D texture, vec2 texCoord, vec2 texSize) {
   return sum.rgb;
 
 }
+vec3 local_equalizer(sampler2D texture, vec2 texCoord, vec2 texSize) {
+  vec2 onePixel = vec2(1) / texSize;
+  vec2 midPoint = vec2(float(1), float(1));
+  vec3 cfd = vec3(0.);
+  vec3 midColor = texture2D(texture, texCoord + onePixel*midPoint).rgb;
+  for (int i = -1; i <= 1; i++) {
+    for (int j = -1; j <= 1; j++) {
+      
+      vec2 offset = vec2(float(j), float(i));
+      if (texture2D(texture, texCoord + onePixel*offset).r <= midColor.r) {
+        cfd.r = cfd.r + 1./9.;
+      }
+      if (texture2D(texture, texCoord + onePixel*offset).g <= midColor.g) {
+        cfd.g = cfd.g + 1./9.;
+      }
+      if (texture2D(texture, texCoord + onePixel*offset).b <= midColor.b) {
+        cfd.b = cfd.b + 1./9.;
+      }                
+    }
+  }
+  return cfd;
+}
 vec3 colorChange(
   sampler2D texture,
   vec2 texCoord,
@@ -382,8 +404,9 @@ vec3 colorChange(
 ) {
     vec3 sum = vec3(0.85);
     if (gl_FragCoord.x > cx-u_Slice[0]/2.*ky && gl_FragCoord.x < cx+u_Slice[0]/2.*ky && gl_FragCoord.y > cy -u_Slice[1]/2.*ky && gl_FragCoord.y < cy+u_Slice[1]/2.*ky){
-      
-      if (${index} == 19) {
+      if (${index} == 6) {
+        sum = local_equalizer(texture, texCoord, texSize);
+      } else if (${index} == 19) {
         float edge = cannyEdgeDetection(
           texture, texCoord, u_Resolution, u_WeakThreshold, u_StrongThreshold);
           sum = vec3(edge);  
@@ -417,11 +440,11 @@ vec3 colorChange(
       //   sum = Pruning(texture, texCoord);    
       } else {
         sum = vec3(0.);
+        vec2 onePixel = vec2(1) / texSize;
         // for (int num = 1; num<=u_iterNum; num++) {
           for (int i = -${bound}; i <= ${bound}; i++) {
             for (int j = -${bound}; j <= ${bound}; j++) {
               // vec2 onePixel = vec2(1) / texSize(texture, 0);
-              vec2 onePixel = vec2(1) / texSize;
               vec2 offset = vec2(float(j), float(i));
               sum += texture2D(texture, texCoord + onePixel*offset).rgb * u_deblurKernel[(i+${bound})*(${bound}*2+1) + j+${bound}];
             }
@@ -443,11 +466,6 @@ vec4 viv_sampleColor(sampler2D texture, vec2 texSize, vec2 texCoord) {
   vec4 color = vec4(0.0);
   if (${bound} <=0 ){
     color = texture2D(texture, texCoord); 
-    // float edge = cannyEdgeDetection(
-    //   texture, texCoord, u_Resolution, u_WeakThreshold, u_StrongThreshold);
-    //   color = vec4(vec3(edge), 1.);
-
-    /////////////
   } else {
     vec3 sum;
     sum = colorChange(texture, texCoord,texSize, u_Resolution, u_iterNum[0]/100., u_iterNum[1]/100.);

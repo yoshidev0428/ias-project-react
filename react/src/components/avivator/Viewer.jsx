@@ -29,7 +29,7 @@ const Viewer = ({ isFullScreen }) => {
     (state) => state,
     shallow,
   );
-  const {
+  let {
     colors,
     contrastLimits,
     brightness,
@@ -40,6 +40,7 @@ const Viewer = ({ isFullScreen }) => {
     inputNum_2,
     channelsVisible,
     selections,
+    selectedChannel,
   } = useChannelsStore((state) => state, shallow);
   const {
     lensSelection,
@@ -67,6 +68,16 @@ const Viewer = ({ isFullScreen }) => {
   if (typeof target === 'undefined') {
     target = [255, 255];
   }
+  const element = document.getElementById('deckgl-overlay');
+  let canvasWH = [100, 100];
+  if (element != null) {
+    canvasWH = [element.width, element.height];
+  }
+
+  const currentChannel = selectedChannel === -1 ? 0 : selectedChannel;
+  brightness = brightness[currentChannel];
+  contrast = contrast[currentChannel];
+  gamma = gamma[currentChannel];
 
   const postProcessEffect = useMemo(
     () =>
@@ -79,7 +90,11 @@ const Viewer = ({ isFullScreen }) => {
         u_target: target,
         u_zoom: viewState.zoom,
         u_iterNum: [inputNum_1, inputNum_2],
-        disWH:[localStorage.getItem('imageViewSizeWidth'), localStorage.getItem('imageViewSizeHeight')]
+        disWH: [
+          localStorage.getItem('imageViewSizeWidth'),
+          localStorage.getItem('imageViewSizeHeight'),
+        ],
+        canWH: canvasWH,
       }),
     [brightness, contrast, gamma, deblur, target, shaderModule],
   );
@@ -154,7 +169,6 @@ const Viewer = ({ isFullScreen }) => {
     const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
     useViewerStore.setState({ pyramidResolution: z, viewState });
   };
-  debugger;
   return use3d ? (
     <VolumeViewer
       loader={loader}
@@ -232,7 +246,7 @@ const Viewer = ({ isFullScreen }) => {
       onViewStateChange={onViewStateChange}
       deckProps={{
         effects: [postProcessEffect],
-      }}      
+      }}
     />
   );
 };
