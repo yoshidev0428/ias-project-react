@@ -175,16 +175,15 @@ async def create_tiles(
             "filename": tile_path.rsplit('/', 1)[1],
             "path": f"{CURRENT_STATIC}/{user.id}/{tile_path}"
         })
-    delete_res = await db["tile-image-cache"].delete_many(
-        {"path": {"$in": [t.get("path") for t in tiles]}}
+
+    await db["tile-image-cache"].delete_many(
+        {"user_id": user.id}
     )
+
     # insert new tile images
     insert_res = await db["tile-image-cache"].insert_many(tiles)
     inserted_ids = [str(id) for id in insert_res.inserted_ids]
 
-    if delete_res.deleted_count == len(inserted_ids):
-        return JSONResponse([])
-    
     return JSONResponse(inserted_ids)
 
 #############################################################################

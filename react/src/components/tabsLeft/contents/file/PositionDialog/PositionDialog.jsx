@@ -30,7 +30,7 @@ const PositionDialog = ({ open, onClose }) => {
       open={open}
       onClose={onClose}
       fullWidth
-      maxWidth="md"
+      maxWidth="xl"
       sx={{
         '& .MuiDialog-container': {
           alignItems: 'start',

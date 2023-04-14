@@ -66,6 +66,8 @@ export default function TabTiling() {
           <Grid
             item
             container
+            xl={2}
+            lg={3}
             xs={4}
             sx={{ p: 2, height: 'fit-content' }}
             spacing={2}
@@ -127,7 +129,7 @@ export default function TabTiling() {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid item xs={8} sx={{ height: '100%' }}>
+          <Grid item xl={10} lg={9} xs={8} sx={{ height: '100%' }}>
             <Paper variant="outlined" sx={{ height: '100%' }}>
               <TransformWrapper minScale={0.1}>
                 <TransformComponent

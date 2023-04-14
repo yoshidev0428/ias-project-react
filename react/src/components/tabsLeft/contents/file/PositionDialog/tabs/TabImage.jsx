@@ -7,18 +7,17 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import CheckIcon from '@mui/icons-material/Check';
 import DialogContent from '@/components/mui/DialogContent';
 import { Button, DialogActions, Typography } from '@mui/material';
-import { createTilesFromCloud, deleteTiles, uploadTiles } from '@/api/tiling';
+import { createTilesFromCloud, deleteTiles } from '@/api/tiling';
 import useTilingStore from '@/stores/useTilingStore';
 import ExperimentDialog from '../../ExperimentDialog';
 
-const DEFAULT_PAGE_SIZE = 48;
+const DEFAULT_PAGE_SIZE = 80;
 
 export default function TabImage({ onClose }) {
   const [loading, setLoading] = useState(false);
   const { tiles, loading: loadingTiles, loadTiles } = useTilingStore();
   const [selectedTiles, setSelectedTiles] = useState([]);
   const [cloudOpen, setCloudOpen] = useState(false);
-  const [files, setFiles] = useState([]);
   const [infoMessage, setInfoMessage] = useState('');
   const [page, setPage] = useState(1);
   const pageTiles = useMemo(
@@ -41,7 +40,6 @@ export default function TabImage({ onClose }) {
     } catch (err) {
       setInfoMessage(err);
     }
-    setFiles([]);
     setLoading(false);
   };
 
