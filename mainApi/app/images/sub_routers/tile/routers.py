@@ -156,6 +156,36 @@ async def update_tiles_meta_info(
             },
         )
 
+@router.post(
+    "/create_tiles",
+    response_description="Delete Tiles",
+    status_code=status.HTTP_200_OK,
+)
+async def create_tiles(
+    request: Request,
+    user: UserModelDB = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+) -> List[FileModelDB]:
+    body_bytes = await request.body()
+    data = json.loads(body_bytes)
+    tiles = []
+    for tile_path in data["paths"]:
+        tiles.append({
+            "user_id": user.id,
+            "filename": tile_path.rsplit('/', 1)[1],
+            "path": f"{CURRENT_STATIC}/{user.id}/{tile_path}"
+        })
+    delete_res = await db["tile-image-cache"].delete_many(
+        {"path": {"$in": [t.get("path") for t in tiles]}}
+    )
+    # insert new tile images
+    insert_res = await db["tile-image-cache"].insert_many(tiles)
+    inserted_ids = [str(id) for id in insert_res.inserted_ids]
+
+    if delete_res.deleted_count == len(inserted_ids):
+        return JSONResponse([])
+    
+    return JSONResponse(inserted_ids)
 
 #############################################################################
 # Register Experiment

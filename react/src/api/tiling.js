@@ -8,6 +8,12 @@ export const uploadTiles = async (files) => {
   return await mainApiService.post('/image/tile/upload_tiles', formData);
 };
 
+export const createTilesFromCloud = async (paths) => {
+  return await mainApiService.post('/image/tile/create_tiles', {
+    paths: paths,
+  });
+};
+
 export const getTiles = async () => {
   return await mainApiService.get('/image/tile/get_tiles');
 };
