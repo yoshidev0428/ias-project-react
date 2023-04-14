@@ -108,7 +108,9 @@ const ExperimentDialog = ({
             justifyContent="space-between"
           >
             <Box flexGrow={1} display="flex" flexDirection="column">
-              <Typography mb={2}>Upload Experiment data</Typography>
+              <Typography mb={2} component="div">
+                Upload Experiment data
+              </Typography>
               <ExpAutoComplete
                 value={experiment}
                 onChange={setExperiment}

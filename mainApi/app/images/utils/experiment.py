@@ -129,31 +129,25 @@ async def add_experiment_with_folders(
             await f.write(content_folder)
 
             if not each_file_folder.filename.endswith((".ome.tiff", ".ome.tif")):
-                pre, ext = each_file_folder.filename.rsplit('.', 1)
+                pre = each_file_folder.filename.rsplit('.', 1)[0]
                 input = os.path.abspath(new_folder_path)
-                jpg_output = None
 
-                # save temp jpg image to provide bfconvert input image
-                if ext.lower() not in ("jpg", "jpeg"):
-                    img = Image.open(input)
-                    jpg_output = os.path.abspath(f'{folder}/{pre}.jpg')
-                    img.save(jpg_output)
-                    
-                # save thumbnail image for tiling layout and previewing images
                 input_pre = os.path.splitext(input)[0]
+
+                if input.lower().endswith((".tiff", ".tif")):
+                    output = os.path.abspath(f'{folder}/{pre}.png')
+                    bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -overwrite '{input}' '{output}'"
+                    await shell(bfconv_cmd)
+                    input = output
+
+                # save thumbnail image for tiling layout and previewing images
                 img = Image.open(input)
                 img.thumbnail([100, 100])
                 img.save(input_pre + '.timg', 'png')
 
-                output = os.path.abspath(f'{folder}/{pre}.ome.tiff')
-                bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
-                await shell(bfconv_cmd)
-
-                # remove temp jpg image if exists
-                if jpg_output is not None:
-                    os.remove(jpg_output)
-            else: 
-                pass
+                # output = os.path.abspath(f'{folder}/{pre}.ome.tiff')
+                # bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
+                # await shell(bfconv_cmd)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),

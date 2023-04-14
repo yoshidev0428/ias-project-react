@@ -8,6 +8,12 @@ export const uploadTiles = async (files) => {
   return await mainApiService.post('/image/tile/upload_tiles', formData);
 };
 
+export const createTilesFromCloud = async (paths) => {
+  return await mainApiService.post('/image/tile/create_tiles', {
+    paths: paths,
+  });
+};
+
 export const getTiles = async () => {
   return await mainApiService.get('/image/tile/get_tiles');
 };
@@ -18,4 +24,10 @@ export const deleteTiles = async (tileIds) => {
     return acc;
   }, new FormData());
   return await mainApiService.post('/image/tile/delete_tiles', formData);
+};
+
+export const updateTilesMetaInfo = async (tilesMetaInfo) => {
+  return await mainApiService.post('/image/tile/update_tiles_meta_info', {
+    tiles_meta_info: tilesMetaInfo,
+  });
 };

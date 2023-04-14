@@ -1,12 +1,15 @@
-import { useMemo } from 'react';
 import BoxCenter from '@/components/mui/BoxCenter';
+import DataTable from '@/components/mui/DataTable';
+import DialogContent from '@/components/mui/DialogContent';
 import useMetadata from '@/hooks/useMetadata';
-import CircularProgress from '@mui/material/CircularProgress';
-import { DataGrid } from '@mui/x-data-grid';
-import { METADATA_COLUMNS } from './constants';
+import useTilingStore from '@/stores/useTilingStore';
 import { Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useMemo } from 'react';
+import { METADATA_COLUMNS } from './constants';
 
-export default function TabMetadata({ tiles }) {
+export default function TabMetadata() {
+  const { tiles } = useTilingStore();
   const urls = useMemo(
     () => tiles.filter((tile) => /tif?f/.test(tile.path)).map((img) => img.url),
     [tiles],
@@ -22,13 +25,17 @@ export default function TabMetadata({ tiles }) {
     [metadata],
   );
 
-  return loading ? (
-    <BoxCenter height={300}>
-      <CircularProgress />
-    </BoxCenter>
-  ) : (
-    <Box sx={{ height: 300, width: '100%' }}>
-      <DataGrid columns={METADATA_COLUMNS} rows={rows} />
-    </Box>
+  return (
+    <DialogContent dividers sx={{ height: '100%' }}>
+      {loading ? (
+        <BoxCenter height="100%">
+          <CircularProgress />
+        </BoxCenter>
+      ) : (
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataTable columns={METADATA_COLUMNS} rows={rows} />
+        </Box>
+      )}
+    </DialogContent>
   );
 }

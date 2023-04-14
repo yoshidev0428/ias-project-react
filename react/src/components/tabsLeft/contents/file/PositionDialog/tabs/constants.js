@@ -14,6 +14,34 @@ export const PositionTabLabels = {
   [PositionTabs.groups]: 'Groups',
 };
 
+export const TilingTabs = {
+  alignment: 'aligment',
+};
+
+export const TilingTabLabels = {
+  [TilingTabs.alignment]: 'Alignment',
+};
+
+export const Alignments = {
+  raster: 'raster',
+  snake: 'snake',
+};
+
+export const AlignmentLabels = {
+  [Alignments.raster]: 'Raster',
+  [Alignments.snake]: 'Snake',
+};
+
+export const Directions = {
+  horizontal: 'horizontal',
+  vertical: 'vertical',
+};
+
+export const DirectionLabels = {
+  [Directions.horizontal]: 'Horizontal',
+  [Directions.vertical]: 'Vertical',
+};
+
 export const METADATA_COLUMNS = [
   { field: 'id', headerName: 'ID', width: 40 },
   {
@@ -63,55 +91,55 @@ export const DEFAULT_NAME_PATTERNS = [
     label: 'Series',
     text: '',
     start: 0,
-    end: 17,
+    end: 0,
     color: '#4caf50',
     field: 'series',
   },
   {
     label: 'Row',
     text: '',
-    start: 24,
-    end: 25,
+    start: 0,
+    end: 0,
     color: '#1976d2',
     field: 'row',
   },
   {
     label: 'Column',
     text: '',
-    start: 25,
-    end: 27,
+    start: 0,
+    end: 0,
     color: '#ff5722',
     field: 'col',
   },
   {
     label: 'Field',
     text: '',
-    start: 27,
-    end: 30,
+    start: 0,
+    end: 0,
     color: '#fb8c00',
     field: 'field',
   },
   {
     label: 'Channel',
     text: '',
-    start: 30,
-    end: 32,
+    start: 0,
+    end: 0,
     color: '#9c27b0',
     field: 'channel',
   },
   {
     label: 'Z-Index',
     text: '',
-    start: 22,
-    end: 23,
+    start: 0,
+    end: 0,
     color: '#607d8b',
     field: 'z',
   },
   {
     label: 'Time',
     text: '',
-    start: 18,
-    end: 21,
+    start: 0,
+    end: 0,
     color: '#ff5252',
     field: 'time',
   },
@@ -131,8 +159,8 @@ export const NAME_PATTERN_ORDER = [
 
 export const NAME_TABLE_COLUMNS = [
   { headerName: 'No', field: 'id', width: 40 },
-  { headerName: 'File Name', field: 'filename', width: 250 },
-  { headerName: 'Series', field: 'series' },
+  { headerName: 'File Name', field: 'filename', width: 300 },
+  { headerName: 'Series', field: 'series', width: 60 },
   { headerName: 'Row', field: 'row', width: 60 },
   { headerName: 'Col', field: 'col', width: 60 },
   { headerName: 'Field', field: 'field', width: 60 },
