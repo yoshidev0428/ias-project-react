@@ -29,6 +29,8 @@ export default function TabTiling() {
   const [dir, setDir] = useState(Directions.horizontal);
   const dims = useMemo(() => getAvailableDimensions(tiles.length), [tiles]);
   const [dim, setDim] = useState(dims?.[0] || [0, 0]);
+  const [building, setBuilding] = useState(false);
+
   const sorted = useMemo(
     () => tiles.sort((a, b) => a.series - b.series),
     [tiles],
@@ -67,12 +69,14 @@ export default function TabTiling() {
       direction: dir,
     };
 
+    setBuilding(true);
     await buildPyramid(ashlarParams);
+    setBuilding(false);
   };
 
   return (
     <>
-      <DialogContent dividers sx={{ height: '100%' }}>
+      <DialogContent dividers sx={{ height: '100%' }} loading={building}>
         <Grid container sx={{ height: '100%' }}>
           <Grid
             item
