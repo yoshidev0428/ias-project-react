@@ -1,3 +1,0 @@
-include versioneer.py
-include ashlar/_version.py
-recursive-include ashlar/jars *.jar

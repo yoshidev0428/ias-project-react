@@ -39,7 +39,6 @@ from mainApi.app.images.sub_routers.tile.models import (
     MetadataModel,
     UserCustomModel,
 )
-from mainApi.app.images.utils.align_tiles import align_tiles_naive, align_ashlar
 from mainApi.app.images.utils.asyncio import shell
 from mainApi.app.images.utils.tiling import (
     add_image_tiles,
@@ -695,29 +694,29 @@ async def get_tile_list(
     return pydantic.parse_obj_as(List[TileModelDB], tiles)
 
 
-@router.get(
-    "/align_tiles_naive",
-    response_description="Align Tiles",
-    response_model=List[AlignedTiledModel],
-    status_code=status.HTTP_200_OK,
-)
-async def _align_tiles_naive(
-    request: AlignNaiveRequest, tiles: List[TileModelDB] = Depends(get_tile_list)
-) -> List[AlignedTiledModel]:
-    """
-    performs a naive aligning of the tiles simply based on the given rows and method.
-    does not perform any advanced stitching or pixel checking
+# @router.get(
+#     "/align_tiles_naive",
+#     response_description="Align Tiles",
+#     response_model=List[AlignedTiledModel],
+#     status_code=status.HTTP_200_OK,
+# )
+# async def _align_tiles_naive(
+#     request: AlignNaiveRequest, tiles: List[TileModelDB] = Depends(get_tile_list)
+# ) -> List[AlignedTiledModel]:
+#     """
+#     performs a naive aligning of the tiles simply based on the given rows and method.
+#     does not perform any advanced stitching or pixel checking
 
-    Called using concurrent.futures to make it async
-    """
-    print(tiles, " : align_tiles_naive : ----------------------------")
-    loop = asyncio.get_event_loop()
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        # await result
-        aligned_tiles = await loop.run_in_executor(
-            pool, align_tiles_naive, request, tiles
-        )
-        return aligned_tiles
+#     Called using concurrent.futures to make it async
+#     """
+#     print(tiles, " : align_tiles_naive : ----------------------------")
+#     loop = asyncio.get_event_loop()
+#     with concurrent.futures.ProcessPoolExecutor() as pool:
+#         # await result
+#         aligned_tiles = await loop.run_in_executor(
+#             pool, align_tiles_naive, request, tiles
+#         )
+#         return aligned_tiles
 
 
 # @router.get("/align_tiles_ashlar",
