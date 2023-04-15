@@ -77,6 +77,7 @@ class FileModelDB(BaseModel):
     user_id: PyObjectId = Field(default_factory=PyObjectId)
     filename: str
     path: str
+    ashlar_path: Optional[str] = ''
     series: Optional[int] = -1
     row: Optional[int] = -1
     col: Optional[int] = -1
