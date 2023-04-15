@@ -22,6 +22,7 @@ import {
   Directions,
 } from './constants';
 import { getAvailableDimensions } from './helpers';
+import store from '@/reducers';
 
 export default function TabTiling() {
   const { tiles } = useTilingStore();
@@ -70,7 +71,8 @@ export default function TabTiling() {
     };
 
     setBuilding(true);
-    await buildPyramid(ashlarParams);
+    const output = await buildPyramid(ashlarParams);
+    store.dispatch({ type: 'set_image_path_for_avivator', content: output });
     setBuilding(false);
   };
 

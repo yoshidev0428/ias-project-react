@@ -88,7 +88,7 @@ async def upload_tiles(
     clear_previous: bool = Form(False),
     current_user: UserModelDB = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database),
-) -> List[TileModelDB]:
+) -> List[FileModelDB]:
     current_user_path = os.path.join(
         STATIC_PATH, str(PyObjectId(current_user.id)), "images"
     )
@@ -163,7 +163,7 @@ async def update_tiles_meta_info(
             {
                 "$set": {
                     "series": int(meta_info["series"]),
-                    "path": new_path
+                    "ashlar_path": new_path
                 }
             },
         )
@@ -211,17 +211,21 @@ async def build_pyramid(
     body_bytes = await request.body()
     ashlar_params = json.loads(body_bytes)
 
-    tiles = await db["tile-image-cache"].find(
+    tile = await db["tile-image-cache"].find_one(
         {"user_id": user.id}
     )
-    rel_path = tiles[0].path.rsplit('/static/', 1)[1]
+    rel_path = tile["path"].rsplit('/static/', 1)[1]
     rel_dir = rel_path.rsplit("/", 1)[0]
     tiles_dir = os.path.join(STATIC_PATH, rel_dir)
-    ext = tiles[0].filename.rsplit(".", 1)[1]
-    
-    await shell(f'ashlar "fileseries|{tiles_dir}|pattern=tile_image_series{{series}}.{ext}|overlap=0.2|width={ashlar_params["width"]}|height={ashlar_params["height"]}|layout={ashlar_params["layout"]}"')
+    ext = tile["filename"].rsplit(".", 1)[1]
+    output_filename = "ashlar_output.ome.tiff"
+    output_path = os.path.join(STATIC_PATH, rel_dir, output_filename)
+    output_rel_path = os.path.join(CURRENT_STATIC, rel_dir, output_filename)
 
-    return JSONResponse("ok")
+    ashlar_cmd = f'ashlar --output {output_path} "fileseries|{tiles_dir}|pattern=tile_image_series{{series}}.{ext}|overlap=0.2|width={ashlar_params["width"]}|height={ashlar_params["height"]}|layout={ashlar_params["layout"]}"'
+    await shell(ashlar_cmd)
+
+    return JSONResponse(output_rel_path)
 
 #############################################################################
 # Register Experiment
