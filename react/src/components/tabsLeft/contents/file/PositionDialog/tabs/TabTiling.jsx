@@ -1,3 +1,4 @@
+import { buildPyramid } from '@/api/tiling';
 import DialogContent from '@/components/mui/DialogContent';
 import useTilingStore from '@/stores/useTilingStore';
 import {
@@ -11,11 +12,9 @@ import {
   MenuItem,
   Paper,
   Select,
-  TextField,
-  Typography,
 } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import {
   AlignmentLabels,
   Alignments,
@@ -29,7 +28,7 @@ export default function TabTiling() {
   const [align, setAlign] = useState(Alignments.raster);
   const [dir, setDir] = useState(Directions.horizontal);
   const dims = useMemo(() => getAvailableDimensions(tiles.length), [tiles]);
-  const [dim, setDim] = useState(dims?.[0]);
+  const [dim, setDim] = useState(dims?.[0] || [0, 0]);
   const sorted = useMemo(
     () => tiles.sort((a, b) => a.series - b.series),
     [tiles],
@@ -59,6 +58,18 @@ export default function TabTiling() {
     return result;
   }, [sorted, align, dir, dim]);
 
+  const handleBuild = async () => {
+    const [height, width] = dim;
+    const ashlarParams = {
+      width,
+      height,
+      layout: align,
+      direction: dir,
+    };
+
+    await buildPyramid(ashlarParams);
+  };
+
   return (
     <>
       <DialogContent dividers sx={{ height: '100%' }}>
@@ -66,6 +77,8 @@ export default function TabTiling() {
           <Grid
             item
             container
+            xl={2}
+            lg={3}
             xs={4}
             sx={{ p: 2, height: 'fit-content' }}
             spacing={2}
@@ -127,7 +140,7 @@ export default function TabTiling() {
               </FormControl>
             </Grid>
           </Grid>
-          <Grid item xs={8} sx={{ height: '100%' }}>
+          <Grid item xl={10} lg={9} xs={8} sx={{ height: '100%' }}>
             <Paper variant="outlined" sx={{ height: '100%' }}>
               <TransformWrapper minScale={0.1}>
                 <TransformComponent
@@ -155,8 +168,8 @@ export default function TabTiling() {
         </Grid>
       </DialogContent>
       <DialogActions sx={{ px: 3, py: 2 }}>
-        <Button variant="contained" color="primary">
-          Preview
+        <Button variant="contained" color="primary" onClick={handleBuild}>
+          Build
         </Button>
         <Button variant="outlined" color="warning">
           Cancel
