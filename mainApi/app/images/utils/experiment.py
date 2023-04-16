@@ -141,13 +141,16 @@ async def add_experiment_with_folders(
                     input = output
 
                 # save thumbnail image for tiling layout and previewing images
-                img = Image.open(input)
-                img.thumbnail([100, 100])
-                img.save(input_pre + '.timg', 'png')
+                try:
+                    img = Image.open(input)
+                    img.thumbnail([100, 100])
+                    img.save(input_pre + '.timg', 'png')
+                except:
+                    pass
 
-                # output = os.path.abspath(f'{folder}/{pre}.ome.tiff')
-                # bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
-                # await shell(bfconv_cmd)
+                output = os.path.abspath(f'{folder}/{pre}.ome.tiff')
+                bfconv_cmd = f"sh /app/mainApi/bftools/bfconvert -separate -overwrite '{input}' '{output}'"
+                await shell(bfconv_cmd)
 
     experimentData = {
         "user_id": str(PyObjectId(current_user.id)),
