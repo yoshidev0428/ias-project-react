@@ -37,11 +37,17 @@ const TargetDrawingDialog = () => {
         return;
       }
     }
+    let outline_obj = [];
+    for (let i in outlines) {
+      outline_obj.push(
+        { line: outlines[i], show: true }
+      )
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_select',
-      outlines: outlines,
+      outlines: outline_obj,
     };
     store.dispatch({
       type: 'set_canvas',
@@ -52,7 +58,6 @@ const TargetDrawingDialog = () => {
     useFlagsStore.setState({ DialogTargetDrawingFlag: false });
   };
   const select2 = async () => {
-    // useFlagsStore.setState({ UserCanvasFlag: !UserCanvasFlag });
     const state = store.getState();
     let outlines = state.experiment.canvas_info.outlines;
     if(outlines.length === 0) {
@@ -62,11 +67,17 @@ const TargetDrawingDialog = () => {
         return;
       }
     }
+    let outline_obj = [];
+    for (let i in outlines) {
+      outline_obj.push(
+        { line: outlines[i], show: true }
+      )
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_area',
-      outlines: outlines,
+      outlines: outline_obj,
     };
     store.dispatch({
       type: 'set_canvas',
@@ -74,6 +85,7 @@ const TargetDrawingDialog = () => {
     });
     localStorage.setItem('CANV_STYLE', 'user_custom_area');
     useFlagsStore.setState({ UserCanvasFlag: true });
+    useFlagsStore.setState({ DialogTargetDrawingFlag: false });
     // console.log("Select-2");
   };
   const select3 = async () => {
@@ -86,11 +98,17 @@ const TargetDrawingDialog = () => {
         return;
       }
     }
+    let outline_obj = [];
+    for (let i in outlines) {
+      outline_obj.push(
+        { line: outlines[i], show: true }
+      )
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_ellipse',
-      outlines: outlines,
+      outlines: outline_obj,
     };
     store.dispatch({
       type: 'set_canvas',
@@ -111,11 +129,17 @@ const TargetDrawingDialog = () => {
         return;
       }
     }
+    let outline_obj = [];
+    for (let i in outlines) {
+      outline_obj.push(
+        { line: outlines[i], show: true }
+      )
+    }
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
       draw_style: 'user_custom_rectangle',
-      outlines: outlines,
+      outlines: outline_obj,
     };
     store.dispatch({
       type: 'set_canvas',

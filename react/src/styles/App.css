@@ -287,6 +287,10 @@
     position: absolute!important;
 }
 
+.user-custom-canvas canvas {
+    opacity: 0.3;
+}
+
 .contextContainer {
     z-index: 10000!important;
     position: absolute!important;

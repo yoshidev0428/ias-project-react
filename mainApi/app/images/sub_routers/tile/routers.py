@@ -69,6 +69,7 @@ from mainApi.app.images.utils.contrastlimits import calculateImageStats
 from mainApi.app.images.utils.focus_stack import focus_stack
 
 import cv2
+import base64
 
 router = APIRouter(
     prefix="/tile",
@@ -1012,7 +1013,7 @@ async def test_segment(request: Request,
     file_url = file_url.replace('download/?path=', '')
     temp_url = file_url.split('/')
     temp_length = len(temp_url)
-    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1];
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1]
     print('file_url', file_url)
 
     exp_path = os.path.join(current_user_path, file_url)
@@ -1041,6 +1042,60 @@ async def test_segment(request: Request,
     result = await convert_npy_to_jpg(file_full_path=make_new_folder,clear_previous=clear_previous , model_info = model[0],file_name=file_name, current_user=current_user)
     delete_junk_data(file_url, make_new_folder)
     return JSONResponse({"success": result})
+
+@router.post("/get_mask_path",
+             response_description="Get Mask Path",
+             status_code=status.HTTP_201_CREATED,
+             response_model=List[ExperimentModel])
+async def get_mask_path(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    # print(request)
+    data = await request.form()
+    file_url = data.get("file_url")
+    final_temp = file_url
+    #Get file's full abs path]
+    file_url = file_url.replace('download/?path=', '')
+    temp_url = file_url.split('/')
+    temp_length = len(temp_url)
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1]
+    print('file_url', file_url)
+    exp_path = os.path.join(current_user_path, file_url)
+    exp_path = os.path.abspath(exp_path)
+    directory = exp_path.split('/')
+    directory_length = len(directory)
+    make_new_folder = ""
+    for i in range(directory_length - 2):
+        make_new_folder = make_new_folder + '/' + directory[i+1]
+    make_new_folder = make_new_folder + "/"
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
+    print('file_name', file_full_name)
+    print('file_folder', make_new_folder)
+    origin_file = ""
+    if "_conv_outlines.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_outlines.ome.tiff')
+        file_full_name = file_temp[0]
+        origin_file = file_temp[0]
+    if "_conv_masks.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_masks.ome.tiff')
+        file_full_name = file_temp[0]
+        origin_file = file_temp[0]
+    if "_conv_flows.ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome_conv_flows.ome.tiff')
+        file_full_name = file_temp[0]
+        origin_file = file_temp[0]
+    if ".ome.tiff" in file_full_name:
+        file_temp = file_full_name.split('.ome.tiff')
+        file_full_name = file_temp[0]
+        origin_file = file_temp[0]
+    print('origin_file', origin_file)
+    host_url = final_temp.split("image/download/?path=")[0]
+    mask_full_path = host_url + "static/" + str(PyObjectId(current_user.id)) + '/' + file_url.split('/')[0] + '/' + origin_file + ".ome_mask.png"
+    print("mask_path", mask_full_path)
+    return JSONResponse({"success": mask_full_path})
 
 def delete_junk_data(file_name, 
             dir_name,
@@ -1162,6 +1217,7 @@ async def get_outlines(request: Request,
     data = await request.form()
     file_url = data.get("file_url")
     #Get file's full abs path
+    mask_temp = file_url
     file_url = file_url.replace('download/?path=', '')
     temp_url = file_url.split('/')
     temp_length = len(temp_url)
@@ -1187,6 +1243,7 @@ async def get_outlines(request: Request,
             file_name = file_name + '.' + file_name_array[i]
     outlines = []
     valid_file_name = file_name
+    mask_url= ""
     if file_name.find('_conv_masks') == -1 :
         valid_file_name = file_name
     else :
@@ -1194,10 +1251,20 @@ async def get_outlines(request: Request,
     if os.path.isfile(make_new_folder + valid_file_name + '_cp_outlines.txt') == False :
         return JSONResponse({"success": 'NO'})
     else :
+        #check if colored mask image exist
+        print('o_mask', make_new_folder + valid_file_name + "_mask.jpg")
+        if os.path.isfile(make_new_folder + valid_file_name + "_mask.jpg") == True :
+            mask_url = mask_temp
+            mask_temp = mask_temp.split('/')
+            temp_length = len(mask_temp)
+            mask_url = mask_url.replace(mask_temp[temp_length-1], valid_file_name + "_mask.jpg")
+            print('mask_url', mask_url)
+        else :
+            mask_url = "NO"
         with open(make_new_folder + valid_file_name + '_cp_outlines.txt') as file:
             for item in file:
                 outlines.append(item)
-    return JSONResponse({"success": outlines})
+    return JSONResponse({"success": outlines, "mask_data": mask_url})
 
 @router.post("/train_model",
              response_description="Train Model",
@@ -1248,10 +1315,10 @@ async def train_model(request: Request,
         origin_file = file_temp[0]
     print('origin_file', origin_file)
     original_img = origin_file + ".ome.tiff"
-    original_mask = origin_file + ".ome_cp_masks.png"
     mask_img = Image.open(make_new_folder + original_img)
-    inputPath = make_new_folder + original_mask
     make_new_folder = make_new_folder + 'train/'
+    original_mask = origin_file + "_mask.ome.png"
+    inputPath = make_new_folder + original_mask
     if os.path.isdir(make_new_folder):
         make_new_folder = make_new_folder
     else:
@@ -1263,8 +1330,60 @@ async def train_model(request: Request,
     print('=====>', out_file, outputPath, cmd_str)
     subprocess.run(cmd_str, shell=True)
     # Train user custom model
-    command_string = "python -m cellpose --train --dir {make_new_folder} --pretrained_model {init_model} --chan {segment} --chan2 {chan_2} --img_filter _img --mask_filter _masks --learning_rate {learning_rate} --weight_decay {weight_decay} --n_epochs {n_epochs}  ".format(make_new_folder=make_new_folder, init_model=init_model, segment=segment, chan_2=chan2, learning_rate=learning_rate, weight_decay=weight_decay, n_epochs=n_epochs)
+    command_string = "python -m cellpose --train --dir {make_new_folder} --pretrained_model {init_model} --chan {segment} --chan2 {chan_2} --img_filter _img --mask_filter _masks --learning_rate {learning_rate} --weight_decay {weight_decay} --n_epochs {n_epochs}  --fast_mode".format(make_new_folder=make_new_folder, init_model=init_model, segment=segment, chan_2=chan2, learning_rate=learning_rate, weight_decay=weight_decay, n_epochs=n_epochs)
     print("my_command", command_string)
     os.system(command_string)
+    result = 'OK'
+    return JSONResponse({"success": result})
+
+@router.post("/upload_mask",
+            response_description="Upload Chaged mask",
+            status_code=status.HTTP_201_CREATED,
+            response_model=List[ExperimentModel])
+async def upload_mask(request: Request,
+                         clear_previous: bool = Form(False),
+                         current_user: UserModelDB = Depends(get_current_user),
+                         db: AsyncIOMotorDatabase = Depends(get_database)) -> List[ExperimentModel]:
+    current_user_path = os.path.join(STATIC_PATH, str(PyObjectId(current_user.id)))
+    # print(request)
+    data = await request.form()
+    file_url = data.get("file_url")
+    init_model = data.get("init_model")
+    mask_info = data.get("mask_info")
+    #Get file's full abs path
+    file_url = file_url.replace('download/?path=', '')
+    temp_url = file_url.split('/')
+    temp_length = len(temp_url)
+    file_url = temp_url[temp_length-2] + '/' + temp_url[temp_length-1]
+    print('file_url', file_url)
+    exp_path = os.path.join(current_user_path, file_url)
+    exp_path = os.path.abspath(exp_path)
+    directory = exp_path.split('/')
+    directory_length = len(directory)
+    make_new_folder = ""
+    for i in range(directory_length - 2):
+        make_new_folder = make_new_folder + '/' + directory[i+1]
+    make_new_folder = make_new_folder + "/"
+    #Get file's name except type
+    file_full_name = directory[directory_length-1]
+    print('file_name', file_full_name)
+    print('file_folder', make_new_folder)
+    origin_file = ""
+    file_temp = file_full_name.split('.ome_conv_masks.ome.tiff')
+    origin_file = file_temp[0]
+    print('origin_file', origin_file)
+    make_new_folder = make_new_folder + 'train/'
+    if os.path.isdir(make_new_folder):
+        make_new_folder = make_new_folder
+    else:
+        os.mkdir(make_new_folder)
+    inputPath = make_new_folder + origin_file + "_mask.ome.png"
+    print('input', inputPath)
+    mask_info = mask_info.replace('data:image/png;base64,', '')
+    mask_info = mask_info.replace(' ', '+')
+    img_data = base64.b64decode(mask_info)
+    with open(inputPath, "wb") as binary_file:
+        # Write bytes to file
+        binary_file.write(img_data)
     result = 'OK'
     return JSONResponse({"success": result})

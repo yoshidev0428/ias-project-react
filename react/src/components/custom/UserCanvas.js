@@ -4,8 +4,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useViewerStore, useFlagsStore } from '@/state';
 import DLRightContext from './DLRightContext';
+import * as image from '@/api/image';
 import * as api_experiment from '@/api/experiment';
 import { isNull } from 'lodash';
+import { toTiffPath } from '@/helpers/avivator';
+import { getImageUrl } from '@/helpers/file';
 
 const mapStateToProps = (state) => ({
   canvas_info: state.experiment.canvas_info,
@@ -29,9 +32,8 @@ function Usercanvas(props) {
   const [context, setContext] = React.useState(false);
   const [contLeft, setContLeft] = React.useState(0);
   const [contTop, setContTop] = React.useState(0);
+  const [mouse_track, setMouseTrack] = React.useState([]);
   let selected_rois = [];
-  let mouse_track = [];
-  let user_custom_areas = [];
 
   const get_selected_rois = (pos, new_pos = null) => {
     if (localStorage.getItem('CANV_ROIS') !== '') {
@@ -42,10 +44,12 @@ function Usercanvas(props) {
       // let temp = outlines[i];
       // let temp_border = get_roi_border(i);
       if (check_roi_valid(i, pos, new_pos) === true) {
-        if (selected_rois.indexOf(i) === -1) {
-          selected_rois.push(i);
-          localStorage.setItem('CANV_ROIS', selected_rois);
+        outlines[i] = {
+          line: outlines[i].line, show: !outlines[i].show
         }
+        selected_rois.push(i);
+        selected_rois = selected_rois.filter( item => outlines[item].show === false)
+        localStorage.setItem('CANV_ROIS', selected_rois);
       }
     }
   };
@@ -87,7 +91,7 @@ function Usercanvas(props) {
   const get_roi_border = (roi_num) => {
     let zoom = localStorage.getItem('CANV_ZOOM');
     if (outlines.length > 0) {
-      let roi_now = outlines[roi_num];
+      let roi_now = outlines[roi_num].line;
       let minX = 10000;
       let minY = 10000;
       let maxX = 0;
@@ -101,16 +105,81 @@ function Usercanvas(props) {
         if (x <= minY) minY = y;
       }
       return {
-        minX: minX,
-        maxX: maxX,
-        minY: minY,
-        maxY: maxY,
+        minX: Math.floor(minX),
+        maxX: Math.floor(maxX),
+        minY: Math.floor(minY),
+        maxY: Math.floor(maxY),
       };
     }
   };
 
+  const get_drawing_border = (track) => {
+    if (outlines.length > 0) {
+      let minX = 10000;
+      let minY = 10000;
+      let maxX = 0;
+      let maxY = 0;
+      for (let j = 0; j < track.length; j++) {
+        let x = track[j].x;
+        let y = track[j].y
+        if (x >= maxX) maxX = x;
+        if (x <= minX) minX = x;
+        if (y >= maxY) maxY = y;
+        if (x <= minY) minY = y;
+      }
+      return {
+        minX: Math.floor(minX),
+        maxX: Math.floor(maxX),
+        minY: Math.floor(minY),
+        maxY: Math.floor(maxY),
+      };
+    }
+  }
+
+  function rectanglesOverlap(rect1, rect2) {
+    let x1 = rect1.minX; let y1 = rect1.minY;
+    let w1 = rect1.maxX - rect1.minX; let h1 = rect1.maxY - rect1.minY;
+    let x2 = rect2.minX; let y2= rect2.minY;
+    let w2 = rect2.maxX - rect2.minX; let h2 = rect2.maxY - rect2.minY;
+    return x1 < x2 + w2 &&
+           x1 + w1 > x2 &&
+           y1 < y2 + h2 &&
+           h1 + y1 > y2;
+  }
+
   const contains = (a, b) =>
     a.x1 <= b.x1 && a.y1 <= b.y1 && a.x2 >= b.x2 && a.y2 >= b.y2;
+  
+  const check_duplicate = (arr1, arr2) => {
+    let dump = {};
+    let line_dump = [];
+    let zoom = localStorage.getItem('CANV_ZOOM');
+    let temp_row = arr2.line;
+    for (let j = 0; j < temp_row.length; j += 2) {
+      let x = Math.floor(temp_row[j] * Math.pow(2, zoom));
+      let y = Math.floor(temp_row[j + 1] * Math.pow(2, zoom));
+      line_dump.push({x: x, y: y});
+    }
+    let myPath = line_dump;
+    line_dump = Array.from(new Set(myPath.map(JSON.stringify))).map(JSON.parse);
+    myPath= arr1;
+    // arr1 = Array.from(new Set(myPath.map(JSON.stringify))).map(JSON.parse);
+    // console.log('arr1', arr1);
+    // console.log('arr2', line_dump);
+    let count = 0;
+    for (let i = 0; i < arr1.length ; i++) {
+      if(!dump[arr1[i]]) {
+        const element = arr1[i];
+        dump[element] = true;
+      }
+    }
+    for (let j= 0 ; j < line_dump.length ; j++) {
+      if(dump[line_dump[j]]) {
+        count ++;
+      }
+    }
+    return count;
+  }
 
   const onDown = useCallback((event) => {
     if (event.button === 0) {
@@ -119,10 +188,10 @@ function Usercanvas(props) {
       if (coordinates) {
         setPosition(coordinates);
         setDrawing(true);
-        // if (props.canvas_info.draw_style === 'user_custom_select') {
-        get_selected_rois(coordinates);
-        drawOutlines();
-        // }
+        if (props.canvas_info.draw_style === 'user_custom_select') {
+          get_selected_rois(coordinates);
+          drawOutlines();
+        }
       }
     }
   }, []);
@@ -131,11 +200,16 @@ function Usercanvas(props) {
     let draw_style = localStorage.getItem('CANV_STYLE');
     // console.log('track', mouse_track);
     if (draw_style === 'user_custom_area') {
-      user_custom_areas.push(mouse_track);
-      // mouse_track = [];
+      console.log('final-track', mouse_track);
+      for (let i in outlines) {
+        let count= check_duplicate(mouse_track,  outlines[i]);
+        if(count > 0) {
+          console.log('duplicate', i)
+        }
+      }
     }
     // console.log('user_area', user_custom_areas)
-    drawOutlines();
+    // drawOutlines();
     setDrawing(false);
     setPosition(null);
   }, []);
@@ -154,8 +228,8 @@ function Usercanvas(props) {
     const y = event.pageY || event.touches[0].pageY;
 
     return {
-      x: x - canv_left - parent_left,
-      y: y - canv_top - parent_top,
+      x: Math.floor(x - canv_left - parent_left),
+      y: Math.floor(y - canv_top - parent_top),
     };
   };
 
@@ -192,11 +266,12 @@ function Usercanvas(props) {
 
     if (context) {
       // context.strokeStyle = activeColor
+      const track = [...mouse_track, originalPosition];
+      setMouseTrack(track);
       context.lineJoin = 'round';
-      context.lineWidth = props.strokeWidth;
-      mouse_track.push(originalPosition);
-      // console.log('track', mouse_track);
       context.beginPath();
+      context.lineWidth = "15";
+      context.strokeStyle = "red";
       context.moveTo(originalPosition.x, originalPosition.y);
       context.lineTo(newPosition.x, newPosition.y);
       context.closePath();
@@ -210,9 +285,10 @@ function Usercanvas(props) {
     }
 
     const context = canvas.current.getContext('2d');
-    context.fillStyle = activeColor;
     context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
     context.beginPath();
+    context.lineWidth = "2";
+    context.strokeStyle = "red";
     let rwidth = newPosition.x - originalPosition.x;
     let rheight = newPosition.y - originalPosition.y;
     context.rect(originalPosition.x, originalPosition.y, rwidth, rheight);
@@ -225,9 +301,10 @@ function Usercanvas(props) {
     }
 
     const context = canvas.current.getContext('2d');
-    context.fillStyle = 'red';
     context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
     context.beginPath();
+    context.lineWidth = "2";
+    context.strokeStyle = "red";
     let radiusX = (newPosition.x - originalPosition.x) / 2;
     let radiusY = (newPosition.y - originalPosition.y) / 2;
     let centerX = originalPosition.x + radiusX;
@@ -244,18 +321,48 @@ function Usercanvas(props) {
     context.stroke();
   };
 
-  const drawOutlines = () => {
+  const drawOutlines = async () => {
     let zoom = localStorage.getItem('CANV_ZOOM');
     const context = canvas.current.getContext('2d');
-    context.fillStyle = activeColor;
-    for (let i in selected_rois) {
-      let temp_row = outlines[selected_rois[i]];
-      for (let j = 0; j < temp_row.length; j += 2) {
-        let x = temp_row[j] * Math.pow(2, zoom);
-        let y = temp_row[j + 1] * Math.pow(2, zoom);
-        context.fillRect(x, y, 2, 2);
-      }
+    context.clearRect(0, 0, canvas.current.width, canvas.current.height); //clear canvas
+    // for(let i = 0; i< outlines.length; i++) {
+    //   if(selected_rois.length > 0) {
+    //     if (selected_rois.indexOf(i.toString()) !== -1) {
+    //       continue;
+    //     }
+    //   }
+    //   let temp_row = outlines[i].line;
+    //   context.font = '20px san-serif';
+    //   for (let j = 0; j < temp_row.length; j += 2) {
+    //     context.fillStyle = activeColor;
+    //     let x = temp_row[j] * Math.pow(2, zoom);
+    //     let y = temp_row[j + 1] * Math.pow(2, zoom);
+    //     context.fillRect(x, y, 2, 2);
+    //     if(j === (temp_row.length-8)) {
+    //       context.fillStyle = 'green';
+    //       context.fillText(`${i}`, x, y);
+    //     }
+    //   }
+    // }
+    const state = store.getState();
+    let imgPath = '';
+    if(typeof state.files.imagePathForAvivator === 'string') {
+      imgPath = state.files.imagePathForAvivator;
     }
+    else if (typeof state.files.imagePathForAvivator === 'object') {
+      imgPath = state.files.imagePathForAvivator[0].path;
+    }
+    let exp_name = imgPath.split('/');
+    let result = await api_experiment.get_mask_path(
+      imgPath,
+      exp_name
+    );
+    const image = new Image();
+    image.src = result.data.success;
+    image.onload = () => {
+      context.drawImage(image, 0, 0, canvas.current.width, canvas.current.height);
+    };
+    image.setAttribute('crossorigin', 'anonymous');
   };
 
   const showNav = useCallback((event) => {
@@ -268,12 +375,27 @@ function Usercanvas(props) {
     }
   }, []);
 
-  const ContextItem = (item, model) => {
+  const ContextItem = async (item, model) => {
     if(item === 'train') {
       if(model === null) {
         alert('Please select the model by doing cell segment');
         return;
       }
+      const state = store.getState();
+      let imgPath = '';
+      if(typeof state.files.imagePathForAvivator === 'string') {
+        imgPath = state.files.imagePathForAvivator;
+      }
+      else if (typeof state.files.imagePathForAvivator === 'object') {
+        imgPath = state.files.imagePathForAvivator[0].path;
+      }
+      let exp_name = imgPath.split('/');
+      let mask_info = canvas.current.toDataURL("image/png");
+      let result = await api_experiment.upload_mask(
+        imgPath,
+        exp_name,
+        mask_info,
+      );
       useFlagsStore.setState({ UserCanvasFlag: false });
       setContext(false);
       useFlagsStore.setState({ DialogTrainingFlag: true });
