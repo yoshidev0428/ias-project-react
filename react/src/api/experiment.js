@@ -247,6 +247,41 @@ export const train_model = async (file_url, exp_name, train_info) => {
   });
 };
 
+export const upload_mask = async (file_url, exp_name, mask_info) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  formData.append('mask_info', mask_info);
+  // console.log('log_time', train_info);
+  return api.post('image/tile/upload_mask', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+};
+
+export const get_mask_path = async (file_url, exp_name) => {
+  const state = store.getState();
+  const formData = new FormData();
+  formData.append('file_url', file_url);
+  formData.append('exp_url', exp_name);
+  // console.log('log_time', train_info);
+  return api.post('image/tile/get_mask_path', formData, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+      'Content-Type': 'multipart/form-data',
+      Authorization: state.auth.tokenType + ' ' + state.auth.token,
+    },
+  });
+}
+
 /**
  * @author QmQ
  * @description send the image and receive the processed image using Machine Learning method.

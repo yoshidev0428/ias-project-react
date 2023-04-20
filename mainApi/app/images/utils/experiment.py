@@ -297,6 +297,19 @@ async def convert_npy_to_jpg(file_full_path: str,
     inputPath = ""
     outputPath = ""
     out_file_name = ""
+    #create grayscale image for training
+    inputPath = file_full_path + file_name + "_mask.png"
+    maks_img = Image.open(file_full_path + file_name + "_cp_masks.png").convert("RGBA")
+    width, height = maks_img.size
+    outX, outY = np.nonzero(masks)
+    print('color_panel', masks[outX, outY])
+    new_img = Image.new("RGB", (height, width), (255, 0, 0))
+    image_blank = np.zeros((height, width), np.uint8)
+    # image_blank[:0:width] = (0, 0, 255) # Green in BGR format
+    new_overlay = plot.mask_overlay(image_blank, masks)
+    new_overlay[outX, outY] = np.array([255,0,0]) #pure red 
+    new_maks = Image.fromarray(new_overlay, 'RGB')
+    new_maks.save(inputPath, 'PNG')
     if model_info['outline'] == 0 :
         im = Image.fromarray(imgout, 'RGB')
         rgb_im = im.convert('RGB')
