@@ -239,17 +239,20 @@ function Usercanvas(props) {
         const newPosition = getCoordinates(event);
         let draw_style = localStorage.getItem('CANV_STYLE');
         if (position && newPosition) {
-          if (draw_style === 'user_custom_area') {
+          if (draw_style === "user_custom_area") {
             drawLine(position, newPosition);
             setPosition(newPosition);
-          } else if (draw_style === 'user_custom_rectangle') {
+          } else if (draw_style === "user_custom_rectangle") {
             drawRectangle(position, newPosition);
             get_selected_rois(position, newPosition);
             drawOutlines();
-          } else if (draw_style === 'user_custom_ellipse') {
+          } else if (draw_style === "user_custom_ellipse") {
             drawEllipse(position, newPosition);
             get_selected_rois(position, newPosition);
             drawOutlines();
+          } else if (draw_style == "user_custom_eraser") {
+            Eraser(position, newPosition);
+            setPosition(newPosition);
           }
         }
       }
@@ -268,6 +271,7 @@ function Usercanvas(props) {
       // context.strokeStyle = activeColor
       const track = [...mouse_track, originalPosition];
       setMouseTrack(track);
+      context.globalCompositeOperation="source-over";
       context.lineJoin = 'round';
       context.beginPath();
       context.lineWidth = "15";
@@ -278,6 +282,14 @@ function Usercanvas(props) {
       context.stroke();
     }
   };
+
+  const Eraser = (originalPosition, newPosition) => {
+    const context = canvas.current.getContext('2d');
+    context.beginPath();
+    context.globalCompositeOperation="destination-out";
+    context.arc(originalPosition.x,originalPosition.y,8,0,Math.PI*2,false);
+    context.fill();
+  }
 
   const drawRectangle = (originalPosition, newPosition) => {
     if (!canvas.current) {
@@ -411,6 +423,14 @@ function Usercanvas(props) {
       useFlagsStore.setState({ UserCanvasFlag: false });
       localStorage.setItem('CANV_ROIS', '');
       selected_rois = [];
+      setContext(false);
+    }
+    if(item === 'eraser') {
+      localStorage.setItem('CANV_STYLE', 'user_custom_eraser');
+      setContext(false);
+    }
+    if(item === 'drawing') {
+      localStorage.setItem('CANV_STYLE', 'user_custom_area');
       setContext(false);
     }
   }

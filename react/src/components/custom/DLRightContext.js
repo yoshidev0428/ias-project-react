@@ -26,6 +26,12 @@ function DLRightContext(props) {
           {/* <div className="menuElement" onClick={() => initMenu('train', 'current_mode')}>
             Train
           </div> */}
+          <div className="menuElement" onClick={() => initMenu("drawing")}>
+            Drawing Tool
+          </div> 
+          <div className="menuElement" onClick={() => initMenu("eraser")}>
+            Eraser Tool
+          </div> 
           <div className="menuElement" onClick={() => initMenu("clear")}>
             Clear Drawing Area
           </div> 

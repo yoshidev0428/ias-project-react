@@ -283,12 +283,16 @@
 }
 
 .user-custom-canvas {
-    z-index: 9999!important;
+    z-index: 2!important;
     position: absolute!important;
 }
 
 .user-custom-canvas canvas {
     opacity: 0.3;
+}
+
+.target_drawing_dlg {
+    z-index: 9999!important;
 }
 
 .contextContainer {
