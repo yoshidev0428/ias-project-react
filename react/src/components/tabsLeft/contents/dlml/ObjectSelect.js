@@ -25,7 +25,6 @@ export default function ObjectSelect() {
   const onObject = () => {};
   const onArea = () => {
     useFlagsStore.setState({ DialogTargetDrawingFlag: true });
-    useFlagsStore.setState({ UserCanvasFlag: false });
   };
   const onBack = () => {};
   const onSet = () => {};

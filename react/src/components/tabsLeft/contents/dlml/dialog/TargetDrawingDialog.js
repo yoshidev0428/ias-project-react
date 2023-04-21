@@ -10,10 +10,8 @@ import {
   mdiNearMe,
   mdiPencil,
   mdiCheckboxBlankCircleOutline,
-  mdiDotsVertical,
   mdiVectorRectangle,
-  mdiSquareEditOutline,
-  mdiTrashCanOutline,
+  mdiEraser
 } from '@mdi/js';
 import store from '@/reducers';
 import * as api_experiment from '@/api/experiment';
@@ -138,6 +136,37 @@ const TargetDrawingDialog = () => {
     let canvas_info = state.experiment.canvas_info;
     let canv_info = {
       ...canvas_info,
+      draw_style: 'user_custom_eraser',
+      outlines: outline_obj,
+    };
+    store.dispatch({
+      type: 'set_canvas',
+      content: canv_info,
+    });
+    localStorage.setItem('CANV_STYLE', 'user_custom_eraser');
+    useFlagsStore.setState({ UserCanvasFlag: true });
+    useFlagsStore.setState({ DialogTargetDrawingFlag: false });
+    // console.log("Select-5");
+  };
+  const select5 = async() => {
+    const state = store.getState();
+    let outlines = state.experiment.canvas_info.outlines;
+    if(outlines.length === 0) {
+      outlines = await get_outline();
+      if(outlines === 'NO') {
+        alert('Please enter your image file and rocess with cellpose!');
+        return;
+      }
+    }
+    let outline_obj = [];
+    for (let i in outlines) {
+      outline_obj.push(
+        { line: outlines[i], show: true }
+      )
+    }
+    let canvas_info = state.experiment.canvas_info;
+    let canv_info = {
+      ...canvas_info,
       draw_style: 'user_custom_rectangle',
       outlines: outline_obj,
     };
@@ -148,8 +177,7 @@ const TargetDrawingDialog = () => {
     localStorage.setItem('CANV_STYLE', 'user_custom_rectangle');
     useFlagsStore.setState({ UserCanvasFlag: true });
     useFlagsStore.setState({ DialogTargetDrawingFlag: false });
-    // console.log("Select-5");
-  };
+  }
   const get_outline = async () => {
     const state = store.getState();
     if (state.files.imagePathForAvivator == null) {
@@ -187,7 +215,7 @@ const TargetDrawingDialog = () => {
   return (
     <>
       <Dialog open={DialogTargetDrawingFlag} onClose={close} maxWidth={'450'}>
-        <div className="d-flex border-bottom">
+        <div className="d-flex border-bottom target_drawing_dlg">
           <DialogTitle>Select Method for drawing target area.</DialogTitle>
           <button className="dialog-close-btn" color="primary" onClick={close}>
             &times;
@@ -204,7 +232,8 @@ const TargetDrawingDialog = () => {
                   icon={mdiCheckboxBlankCircleOutline}
                   click={() => select3()}
                 />
-                <CustomButton icon={mdiVectorRectangle} click={() => select4()} />
+                <CustomButton icon={mdiEraser} click={() => select4()} />
+                <CustomButton icon={mdiVectorRectangle} click={() => select5()} />
               </div>
             </SmallCard>
             </Col>
