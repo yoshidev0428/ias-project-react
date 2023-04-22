@@ -16,12 +16,15 @@ export default function MethodSelect() {
 
   const showBasicDialog = () => {
     useFlagsStore.setState({ DialogBasicFlag: true });
+    useFlagsStore.setState({ LockFlag: true });
   };
   const showCustomDialog = () => {
     useFlagsStore.setState({ DialogCustomFlag: true });
+    useFlagsStore.setState({ LockFlag: false });
   };
   const onCall = () => {
-    useFlagsStore.setState({ DialogLockFlag: true });
+    useFlagsStore.setState({ DialogCustomFlag: true });
+    useFlagsStore.setState({ LockFlag: true });
   };
 
   return (
