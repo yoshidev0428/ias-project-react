@@ -157,3 +157,4 @@ ENV/
 /shared_utils
 react/.env
 storage-credential
+mainApi/app/images/h5_test/NEONDSImagingSpectrometerData.h5
