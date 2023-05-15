@@ -10,6 +10,7 @@ import {
   mdiRefresh,
   mdiCog,
   mdiPlay,
+  mdiPause,
   // mdiStop,
   // mdiRewind,
   // mdiFastForward
@@ -47,6 +48,7 @@ const Timeline = (props) => {
   const label = 't';
   const { isImageLoading } = props;
   const [isLoading, setIsLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [sliderRange, setSliderRange] = useState([
     { value: 1, step: 1 },
     { value: 2, step: 1 },
@@ -138,7 +140,14 @@ const Timeline = (props) => {
     setValue(1);
     updateTime(1);
   };
+
   const onSetting = () => {};
+  
+  const onPlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+
   // const onPlay = () => {
   // }
   // const onStop = () => {
@@ -201,7 +210,8 @@ const Timeline = (props) => {
         <Container fluid={true} className="px-0 py-0 mt-2">
           <Grid container spacing={1} alignItems="left">
             <Grid item xs={2}>
-              <Icon path={mdiPlay} size={1} />
+              {!isPlaying && <Icon path={mdiPlay} size={1} onClick={onPlay}/>}
+              {isPlaying && <Icon path={mdiPause} size={1} onClick={onPlay}/>}
             </Grid>
             <Grid item xs={6} m>
               <StepRangeSlider

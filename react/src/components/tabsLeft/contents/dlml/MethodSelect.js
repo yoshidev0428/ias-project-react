@@ -16,7 +16,7 @@ export default function MethodSelect() {
 
   const showBasicDialog = () => {
     useFlagsStore.setState({ DialogBasicFlag: true });
-    useFlagsStore.setState({ LockFlag: true });
+    useFlagsStore.setState({ LockFlag: false });
   };
   const showCustomDialog = () => {
     useFlagsStore.setState({ DialogCustomFlag: true });
